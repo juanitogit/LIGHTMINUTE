@@ -111,8 +111,7 @@ exige repositorio público: hay que cambiar la visibilidad en GitHub antes de en
 - **`LICENSE`** Apache-2.0 (texto canónico, 202 líneas) — el ítem que bloqueaba la entrega.
 - **CI** en `.github/workflows/ci.yml`, dos jobs: `engine` (76 tests + 30 casos de red-team + smoke de
   la API en modo plantilla, sin red) y `frontend` (`npm ci && npm run build` + vectores de la cadena de
-  auditoría + `node --check` del runner). YAML validado y snippet de API probado en local; todavía no ha
-  corrido en GitHub Actions.
+  auditoría + `node --check` del runner). Corrió **verde** en GitHub Actions el 14-nov (run `43613134201`): los dos jobs, tests y build incluidos.
 - **README** reescrito: badges de Space Apps / stack / datos / disclaimer, tabla de stack con el porqué de
   cada elección, y tres listas explícitas — funciona (con la comprobación que lo demuestra), parcial
   (sin llamada real a DeepSeek, MMASH es proxy, paneles sin re-verificar) y falta (parche `alpha`, repo

@@ -81,6 +81,7 @@ Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not
 | **Audit chain** | SHA-256 hash chain, same canonical JSON as the Python engine, viewer names the first tampered entry | JS ↔ Python vectors identical, **8/8** (`node apps/ground-console/src/audit.test.mjs`) |
 | **Real NOAA snapshot** | `scripts/fetch_noaa.py` writes an immutable snapshot + manifest (url, retrieved_at, sha256, rows, license) and derives `public/data/radiation.json`; `ingest.verify_snapshot()` checks sha256 and row count | Real run 2026-11-14T14:38:16Z, 2 288 rows, S-scale 0 (quiet Sun) |
 | **Validation harness** | Four detectors at an equal false-alarm budget, plus interval calibration, missing-reading robustness and baseline-length sensitivity | `python ml/validation/run_all.py` → `docs/validation.md`, `ml/validation/results.json`, `public/data/validation.json` (~2.5 min) |
+| **CI** | GitHub Actions on every push to `main`: engine job (76 tests, 30 red-team cases, API smoke with no key) and frontend job (`npm ci` + build, audit vectors, syntax checks) | run 43613134201: both jobs green |
 
 ### 🟡 Partial — usable, but read the limit
 
@@ -102,7 +103,7 @@ Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not
 - The **`alpha` fix** in `bayes/nof1.py` (see below) is not applied on `main` — the single open code defect.
 - **Repository is private.** Space Apps requires a public repo, so visibility has to be changed before submission.
 - Submission assets: screenshots, the 60-second video and the team/roles section.
-- `.github/workflows/ci.yml` runs the tests and the tablet build on every push to `main` and on PRs, but it has not run on a public repo yet, and the ownership map (`scripts/check_ownership.py --overlaps`) still needs `vault/` registered in `agents/OWNERS.json`.
+- `.github/workflows/ci.yml` runs the tests and the tablet build on every push to `main` and on PRs, it ran green on both jobs on 14-nov (run 43613134201) but never on a public repo, and the ownership map (`scripts/check_ownership.py --overlaps`) still needs `vault/` registered in `agents/OWNERS.json`.
 - OSDR / Inspiration4 data (blocked by 404s), and any prospective validation on real crew data.
 - Vision / voice input endpoints, DeepSeek web-search use, auth, database, multi-crew sessions — all deliberately out of scope for the prototype.
 - Expert clinical review of thresholds and protocol steps, and regulatory classification work.
