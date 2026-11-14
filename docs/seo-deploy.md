@@ -15,6 +15,22 @@ with in-page views, so there are no path routes to list.
 
 Everything in `public/` is copied verbatim into `dist/` by Vite.
 
+## Verification tag across pages
+
+The same `google-site-verification` token is present exactly once inside `<head>`
+in all four HTML entry points: the crew tablet, the ground console, the standalone
+protocol runner demo and the three-lens prototype. The tablet's Glance, Why, Act,
+Radiation, Validation and Check-in views share its single HTML document and tag.
+
+This tag verifies ownership in Search Console; submitting `sitemap.xml` is a
+separate step. Google checks the public homepage for HTML-tag verification:
+[Google's ownership verification instructions](https://support.google.com/webmasters/answer/9008080?hl=en).
+Keep the token after verification so ownership can be checked again.
+
+The other three HTML files are standalone repository demos and are not included
+in the crew tablet's Vite `dist/`. They do not add public URLs to the sitemap.
+Add URLs only when those pages are actually deployed at their final locations.
+
 ## Deploy
 
 ```powershell
