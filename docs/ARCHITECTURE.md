@@ -1,4 +1,4 @@
-# TETHER — Architecture
+# LIGHTMINUTE — Architecture
 
 > Autonomous medical reasoning for Earth-independent crews. Decision support, **not** a medical device.
 

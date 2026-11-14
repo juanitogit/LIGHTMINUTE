@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-/* TETHER ground console - static, no build step, no external network.
+/* LIGHTMINUTE ground console - static, no build step, no external network.
  *
  * Reads a scenario document, one day at a time, and renders what a flight
  * surgeon would see: crew levels, personal-baseline trends, the delayed message
@@ -11,7 +11,7 @@
  * timeline is recomputed from the selected mission profile, and it says so.
  */
 
-const { appendEntry, verifyChain, renderChainRows } = globalThis.TetherAudit;
+const { appendEntry, verifyChain, renderChainRows } = globalThis.LightminuteAudit;
 
 const SCENARIO_LABELS = {
   cmo_fever: "CMO fever-like pattern",
@@ -85,7 +85,7 @@ async function loadScenario(name) {
       /* file:// or missing file: try the next candidate */
     }
   }
-  const fixture = globalThis.__TETHER_SAMPLE__;
+  const fixture = globalThis.__LIGHTMINUTE_SAMPLE__;
   if (fixture && Array.isArray(fixture.days) && fixture.days.length) {
     return { doc: fixture, source: "data/sample-scenario.js (file:// fixture)" };
   }

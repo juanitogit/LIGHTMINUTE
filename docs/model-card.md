@@ -1,8 +1,8 @@
-# TETHER — Model card
+# LIGHTMINUTE — Model card
 
 | | |
 |---|---|
-| **System** | TETHER on-board health decision support (NASA Space Apps 2026) |
+| **System** | LIGHTMINUTE on-board health decision support (NASA Space Apps 2026) |
 | **Model version** | 0.1.0 (hackathon snapshot, 2026-11-14) |
 | **Model type** | Per-person (N-of-1) conjugate Bayesian baseline + CUSUM + directional syndrome score. No neural network, no training set. |
 | **Intended use** | Decision *support* for trained crew on long missions: flag a change from a person's own normal, state how sure it is, suggest protocol steps. |

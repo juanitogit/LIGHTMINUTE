@@ -191,7 +191,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -349,7 +349,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -507,7 +507,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -665,7 +665,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -847,7 +847,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -1005,7 +1005,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -1163,7 +1163,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -1301,7 +1301,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -1483,7 +1483,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -1621,7 +1621,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -1779,7 +1779,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -1937,7 +1937,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -2119,7 +2119,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -2257,7 +2257,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -2415,7 +2415,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -2573,7 +2573,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -2755,7 +2755,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -2913,7 +2913,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -3071,7 +3071,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -3229,7 +3229,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -3411,7 +3411,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -3569,7 +3569,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -3727,7 +3727,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -3885,7 +3885,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -4067,7 +4067,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -4225,7 +4225,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -4383,7 +4383,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -4541,7 +4541,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -4723,7 +4723,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -4881,7 +4881,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -5039,7 +5039,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -5197,7 +5197,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -5379,7 +5379,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -5537,7 +5537,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -5695,7 +5695,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -5853,7 +5853,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -6035,7 +6035,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -6193,7 +6193,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -6351,7 +6351,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -6509,7 +6509,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -6691,7 +6691,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -6829,7 +6829,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -6987,7 +6987,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -7145,7 +7145,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -7327,7 +7327,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -7485,7 +7485,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -7643,7 +7643,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -7781,7 +7781,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -7963,7 +7963,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -8121,7 +8121,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -8279,7 +8279,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -8437,7 +8437,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -8619,7 +8619,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -8777,7 +8777,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -8915,7 +8915,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -9073,7 +9073,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -9416,7 +9416,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -9574,7 +9574,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -9732,7 +9732,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -10075,7 +10075,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -10233,7 +10233,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -10371,7 +10371,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -10535,7 +10535,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -10693,7 +10693,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -10851,7 +10851,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -11009,7 +11009,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -11352,7 +11352,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -11510,7 +11510,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -11668,7 +11668,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -12011,7 +12011,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -12169,7 +12169,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -12327,7 +12327,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -12652,7 +12652,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -12810,7 +12810,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -12968,7 +12968,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -13152,7 +13152,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -13310,7 +13310,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -13448,7 +13448,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -13566,7 +13566,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -13889,7 +13889,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -14047,7 +14047,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -14205,7 +14205,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -14387,7 +14387,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -14706,7 +14706,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -14864,7 +14864,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -15046,7 +15046,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -15204,7 +15204,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -15362,7 +15362,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -15520,7 +15520,7 @@
       "escalate_if": [
        "Any new symptom"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: routine monitoring; within the current personal pattern. Continue scheduled measurements.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]

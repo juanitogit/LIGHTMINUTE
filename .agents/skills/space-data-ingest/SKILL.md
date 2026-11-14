@@ -1,6 +1,6 @@
 ---
 name: space-data-ingest
-description: How to fetch, snapshot, checksum and cite real NASA/NOAA data for TETHER (OSDR/GeneLab incl. Inspiration4, OSD-569 blood counts, RadLab radiation, NOAA SWPC GOES proton flux, NASA DONKI solar events, PhysioNet MMASH). Use whenever you need real data, priors, a radiation panel, a replayed solar storm, proxy cohorts for validation, or a data card. Trigger on "NASA data", "OSDR", "GeneLab", "Inspiration4", "solar proton", "radiation data", "dataset".
+description: How to fetch, snapshot, checksum and cite real NASA/NOAA data for LIGHTMINUTE (OSDR/GeneLab incl. Inspiration4, OSD-569 blood counts, RadLab radiation, NOAA SWPC GOES proton flux, NASA DONKI solar events, PhysioNet MMASH). Use whenever you need real data, priors, a radiation panel, a replayed solar storm, proxy cohorts for validation, or a data card. Trigger on "NASA data", "OSDR", "GeneLab", "Inspiration4", "solar proton", "radiation data", "dataset".
 ---
 # Space data ingest
 

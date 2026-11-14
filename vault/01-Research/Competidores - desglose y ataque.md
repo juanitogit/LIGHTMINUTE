@@ -14,3 +14,5 @@ Estudiamos **ideas**, no copiamos código (licencias y ética). Comparamos *enfo
 
 ## Dónde atacamos (con evidencia)
 Ver [[Matriz de superioridad]] · [[Resultados de validacion]] · [[Demo killer - lentes en desacuerdo]]. Skill: `competitive-edge`.
+
+Relacionado: [[00-Home]].

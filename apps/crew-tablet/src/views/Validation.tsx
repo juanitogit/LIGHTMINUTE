@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Bullets, DataTable, RawDetails, Tiles } from "../components/DataView";
+import { BenchmarkEvidence } from "../components/BenchmarkEvidence";
 import { DataNotice, EmptyState, Panel } from "../components/primitives";
 import { loadLlmStats, loadValidation } from "../lib/api";
 import { formatValue } from "../lib/inspect";
@@ -81,8 +82,8 @@ export function Validation() {
     <div className="view">
       <header className="viewhead">
         <div>
-          <p className="micro">Evidence · validation</p>
-          <h1>Validation &amp; live system stats</h1>
+          <p className="micro">EVIDENCE / METHODS / LIMITATIONS</p>
+          <h1>Trust starts with evidence.</h1>
           <p className="viewhead__sub">
             What we measured, what we did not, and how the explanation layer is behaving.
           </p>
@@ -98,6 +99,7 @@ export function Validation() {
 
       {phase === "ready" ? (
         <div className="stack">
+          {doc && Array.isArray(doc.scenarios) ? <BenchmarkEvidence doc={doc} /> : null}
           <Panel
             title="Live LLM layer"
             aside={
@@ -129,8 +131,8 @@ export function Validation() {
             <Panel title="Benchmark" labelledBy="bench-title">
               <EmptyState title="Benchmark results not published yet">
                 <p>
-                  This page reads <code>public/data/validation.json</code> (validation workstream).
-                  Until it lands, no result is claimed here.
+                  Benchmark results are unavailable. No comparative result is claimed until the
+                  published evidence can be loaded.
                 </p>
               </EmptyState>
             </Panel>
@@ -142,9 +144,17 @@ export function Validation() {
                 </Panel>
               ) : null}
 
-              {tables.map((table) => (
+              {tables.filter((table) => table.key !== "scenarios").map((table) => (
                 <Panel key={table.key} title={table.key.replace(/_/g, " ")} labelledBy={`val-${table.key}`}>
-                  <DataTable rows={table.rows} caption={table.key} />
+                  <DataTable rows={table.rows.map((row) => {
+                    const recall = pickRecord(row.recall_moderate);
+                    const fa = pickRecord(row.fa_per_week);
+                    if (!recall) return row;
+                    const flat = Object.fromEntries(Object.entries(row).filter(([, v]) => typeof v !== "object"));
+                    for (const [id, value] of Object.entries(recall)) flat[`${id} recall (moderate)`] = typeof value === "number" ? `${(value * 100).toFixed(1)}%` : String(value);
+                    if (fa) for (const [id, value] of Object.entries(fa)) flat[`${id} FA/week`] = value;
+                    return flat;
+                  })} caption={table.key} />
                 </Panel>
               ))}
 

@@ -1,5 +1,5 @@
 import { BandChart, type BandPoint } from "../components/BandChart";
-import { CrewPills } from "../components/CrewPills";
+import { CrewSelector } from "../components/CrewSelector";
 import { Icon } from "../components/Icon";
 import { LevelBadge, Panel } from "../components/primitives";
 import { SyndromeStrip, SYNDROME_ALERT_Z } from "../components/SyndromeStrip";
@@ -77,7 +77,7 @@ export function Why({
           <p className="viewhead__sub">{meta.blurb} Personal band, Earth line and the lens verdicts.</p>
         </div>
         <div className="viewhead__tools">
-          <CrewPills crewIds={crewIds} crew={crewId} onCrew={onCrew} />
+          <CrewSelector crewIds={crewIds} crew={crewId} onCrew={onCrew} />
           {role ? <span className="chip chip--quiet">{role}</span> : null}
           {member ? <LevelBadge level={member.level} /> : null}
         </div>

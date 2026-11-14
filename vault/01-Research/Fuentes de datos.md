@@ -13,3 +13,5 @@ updated: 2026-11-13
 | Eventos SEP | NASA DONKI (api.nasa.gov) | línea de tiempo | #verify endpoint |
 | MMASH | PhysioNet | validar con señales tipo wearable | usado por ganadores |
 Regla: descargar a `data/snapshots/` con manifest+sha256 (skill `space-data-ingest`).
+
+Relacionado: [[00-Home]].

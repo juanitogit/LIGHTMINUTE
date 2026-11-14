@@ -1,0 +1,76 @@
+{
+  "status": "passed",
+  "executed_at": "2026-11-14T19:23:29.061Z",
+  "checks": [
+    {
+      "name": "Static fallback, six indicators, four crew and LIGHTMINUTE branding",
+      "detail": "passed"
+    },
+    {
+      "name": "CC BY reference anatomy renders; male/female, systems, rotation, zoom and reset respond",
+      "detail": "passed"
+    },
+    {
+      "name": "No-WebGL devices retain all six readings and a clear 3D unavailable state",
+      "detail": "passed"
+    },
+    {
+      "name": "Signal drilldown preserves the engine value and three-lens disagreement",
+      "detail": "passed"
+    },
+    {
+      "name": "Action checklist, simulated send and cited protocol runner",
+      "detail": "passed"
+    },
+    {
+      "name": "Crew switch resets message simulation, protocol and checklist context",
+      "detail": "passed"
+    },
+    {
+      "name": "Local check-in persists across reload and stays scoped to mission day",
+      "detail": "passed"
+    },
+    {
+      "name": "Three-signal trend limit, grounded offline handbook and explicit missing signal sources",
+      "detail": "passed"
+    },
+    {
+      "name": "NOAA historical snapshot, real-public label, timestamp and flux plot",
+      "detail": "passed"
+    },
+    {
+      "name": "Both benchmark cohorts, all four methods and published calibration",
+      "detail": "passed"
+    },
+    {
+      "name": "All three scenarios at start, day 16 and day 24",
+      "detail": "passed"
+    },
+    {
+      "name": "Ten views without page overflow at 375, 768, 1024 and 1440px",
+      "detail": "passed"
+    },
+    {
+      "name": "Light/dark persistence and presentation mode",
+      "detail": "passed"
+    },
+    {
+      "name": "Ground console, real scenario selection and private behavioural default",
+      "detail": "passed"
+    },
+    {
+      "name": "Double-click ground console and protocol demo using file://",
+      "detail": "passed"
+    },
+    {
+      "name": "Earth-link demo login, authenticated queue, persisted report and logout",
+      "detail": "passed"
+    },
+    {
+      "name": "Production UI with real local API and LLM_PROVIDER=none",
+      "detail": "passed"
+    }
+  ],
+  "uncaught_errors": [],
+  "failure": null
+}

@@ -29,10 +29,18 @@ jobs:
       - name: Install runtime dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install numpy scipy "fastapi>=0.110" uvicorn "pydantic>=2" httpx "openai>=1.50"
+          python -m pip install numpy scipy "fastapi>=0.110" uvicorn "pydantic>=2" httpx "openai>=1.50" ruff
+
+      - name: Python lint
+        run: ruff check services/engine
 
       - name: Unit tests (dependency-free runner)
         run: python scripts/run_tests.py
+
+      - name: Obsidian links, checklist inventory and ownership
+        run: |
+          python scripts/audit_vault.py
+          python scripts/check_ownership.py --overlaps
 
       - name: Adversarial suite (30 cases, offline)
         env:
@@ -78,6 +86,25 @@ jobs:
       - name: Typecheck and build
         working-directory: apps/crew-tablet
         run: npm run build
+
+      - name: Install Chromium for browser integration checks
+        working-directory: apps/crew-tablet
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser integration checks (static build, no external API)
+        working-directory: apps/crew-tablet
+        env:
+          LIGHTMINUTE_SKIP_API: "1"
+        run: npm run test:e2e
+
+      - name: Browser screenshots and verification results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lightminute-browser-evidence
+          path: |
+            docs/screenshots/
+            docs/qa/browser-results.json
 
       - name: Ground console audit chain matches the Python vectors
         run: node apps/ground-console/src/audit.test.mjs

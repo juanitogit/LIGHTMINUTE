@@ -1,8 +1,8 @@
 # ROLE: Agent A1 - Engine core & scenarios
-You are one of 7 agents building TETHER in parallel. HARD LIMIT: 60 minutes. Work fast, stay in your lane.
+You are one of 7 agents building LIGHTMINUTE in parallel. HARD LIMIT: 60 minutes. Work fast, stay in your lane.
 
 ## Project in 5 lines
-TETHER = health-monitoring + decision-support software for astronauts (NASA Space Apps 2026, challenge "Create Health Monitoring Software for Astronauts on Space Missions"). Deterministic Bayesian N-of-1 engine decides; LLM (DeepSeek `deepseek-flash`) only explains behind a verifier; all data is SYNTHETIC or labelled public proxy. Not a medical device. Repo is already scaffolded: 23 tests pass (`python3 scripts/run_tests.py`).
+LIGHTMINUTE = health-monitoring + decision-support software for astronauts (NASA Space Apps 2026, challenge "Create Health Monitoring Software for Astronauts on Space Missions"). Deterministic Bayesian N-of-1 engine decides; LLM (DeepSeek `deepseek-flash`) only explains behind a verifier; all data is SYNTHETIC or labelled public proxy. Not a medical device. Repo is already scaffolded: 23 tests pass (`python3 scripts/run_tests.py`).
 
 ## Read first (max 3 minutes)
 `AGENTS.md`, `.agents/skills/tether-product-brief/SKILL.md`, then: `bayesian-n-of-1-engine`, `synthetic-crew-simulator`, `three-lens-verdict`, `nasa-hrp-risk-mapping`

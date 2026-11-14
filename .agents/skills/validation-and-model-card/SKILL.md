@@ -1,6 +1,6 @@
 ---
 name: validation-and-model-card
-description: How to validate the TETHER engine honestly and write the model card/validation page - false-alarm rate, detection delay, recall on mild vs strong effects, calibration, small-sample proxies (Inspiration4, MMASH), leakage checks, LLM-verifier rejection stats. Use whenever you claim performance, build the validation page, tune thresholds, or prepare answers to "does this actually work?". Trigger on "accuracy", "validation", "metrics", "benchmark", "model card", "false positives".
+description: How to validate the LIGHTMINUTE engine honestly and write the model card/validation page - false-alarm rate, detection delay, recall on mild vs strong effects, calibration, small-sample proxies (Inspiration4, MMASH), leakage checks, LLM-verifier rejection stats. Use whenever you claim performance, build the validation page, tune thresholds, or prepare answers to "does this actually work?". Trigger on "accuracy", "validation", "metrics", "benchmark", "model card", "false positives".
 ---
 # Validation & model card
 

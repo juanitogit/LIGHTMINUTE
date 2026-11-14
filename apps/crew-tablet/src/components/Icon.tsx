@@ -1,6 +1,11 @@
 import type { ReactNode } from "react";
 
 type IconName =
+  | "overview"
+  | "pulse"
+  | "orbit"
+  | "chart"
+  | "earth"
   | "info"
   | "watch"
   | "act"
@@ -19,6 +24,11 @@ type IconName =
 
 
 const PATHS: Record<IconName, ReactNode> = {
+  overview: <><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></>,
+  pulse: <><path d="M2 12h5l3-8 4 16 3-8h5" /></>,
+  orbit: <><circle cx="12" cy="12" r="4" /><ellipse cx="12" cy="12" rx="11" ry="5" transform="rotate(-40 12 12)" /><path d="m17 4 1-2" /></>,
+  chart: <><path d="M4 3v17h17M8 15l4-5 4 2 5-7" /></>,
+  earth: <><circle cx="12" cy="12" r="9" /><ellipse cx="12" cy="12" rx="4" ry="9" /><path d="M3 12h18M5 6.5h14M5 17.5h14" /></>,
   info: (
     <>
       <circle cx="12" cy="12" r="9" />

@@ -1,4 +1,4 @@
-# TETHER — Data card
+# LIGHTMINUTE — Data card
 
 Every source is labelled `real-public`, `proxy` or `synthetic`. Nothing here is real
 astronaut health data, and no personal health data is stored in this repository.

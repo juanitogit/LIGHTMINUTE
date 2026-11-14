@@ -1,6 +1,6 @@
 # @tether/ui-kit
 
-Shared visual tokens for TETHER surfaces. One file, no build step: import
+Shared visual tokens for LIGHTMINUTE surfaces. One file, no build step: import
 `packages/ui-kit/tokens.css` before your own stylesheet.
 
 ```ts

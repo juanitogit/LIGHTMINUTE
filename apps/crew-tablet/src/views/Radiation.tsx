@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Bullets, DataTable, RawDetails, Tiles } from "../components/DataView";
-import { DataNotice, EmptyState, Panel } from "../components/primitives";
+import { Chip, EmptyState, Panel } from "../components/primitives";
+import { FluxChart } from "../components/FluxChart";
 import { loadRadiation } from "../lib/api";
 import {
   isRecord,
@@ -45,13 +46,13 @@ export function Radiation() {
     <div className="view">
       <header className="viewhead">
         <div>
-          <p className="micro">Context · radiation</p>
-          <h1>{title ?? "Radiation & space weather"}</h1>
+          <p className="micro">MISSION ENVIRONMENT / NOAA SWPC</p>
+          <h1>{title ?? "A wider view of the mission."}</h1>
           <p className="viewhead__sub">
-            Hazard context for the crew. Values are rendered exactly as published.
+            Space weather adds context. Your personal baseline stays at the center.
           </p>
         </div>
-        <DataNotice />
+        <div className="chips"><Chip tone="accent">{record?.label === "real-public" ? "REAL-PUBLIC DATA" : "See source labels"}</Chip><Chip tone="quiet">Archived snapshot · not live</Chip></div>
       </header>
 
       {state.phase === "loading" ? (
@@ -64,8 +65,8 @@ export function Radiation() {
         <Panel title="Snapshot not published yet" labelledBy="rad-missing">
           <EmptyState title="No radiation data available">
             <p>
-              This panel reads <code>public/data/radiation.json</code>. It has not been published
-              in this build yet, so TETHER shows nothing rather than estimating a dose.
+              The space-weather snapshot is unavailable. Check your connection and try again.
+              No dose or space-weather conditions are estimated.
             </p>
           </EmptyState>
         </Panel>
@@ -73,6 +74,19 @@ export function Radiation() {
 
       {state.phase === "ready" && record ? (
         <div className="stack">
+          {Array.isArray(record.points) ? <>
+            <dl className="mission-metrics">
+              <div><dt>NOAA S-scale / last reading</dt><dd>S{String(record.s_scale_now ?? "—")}<span>published classification</span></dd></div>
+              <div><dt>Last proton flux</dt><dd>{String(pickRecord(record.current)?.flux ?? "—")}<span>pfu</span></dd></div>
+              <div><dt>Peak proton flux</dt><dd>{String(pickRecord(record.peak)?.flux ?? "—")}<span>pfu in this snapshot</span></dd></div>
+              <div><dt>Observation satellite</dt><dd>GOES {String(record.satellite ?? "—")}<span>≥10 MeV channel</span></dd></div>
+            </dl>
+            <Panel title="Proton flux / archived observation window" labelledBy="flux-title" aside={<Chip tone="quiet">Context only</Chip>}>
+              <FluxChart points={record.points} />
+              <p className="small muted">Retrieved: {String(record.retrieved_at ?? "Unknown")} · Last observation: {String(pickRecord(record.current)?.ts ?? "Unknown")}</p>
+              {typeof record.source_url === "string" && record.source_url.startsWith("https://") ? <p className="small"><a href={record.source_url} target="_blank" rel="noreferrer">NOAA SWPC source</a> · {String(record.license ?? "See source license")}</p> : null}
+            </Panel>
+          </> : null}
           {kind ? (
             <p className="chips">
               <span className="chip chip--warn">{kind}</span>
@@ -84,7 +98,7 @@ export function Radiation() {
             </p>
           ) : null}
 
-          {summary ? (
+          {!Array.isArray(record.points) && (summary ? (
             <Panel title="Summary" labelledBy="rad-summary">
               <Tiles entries={primitiveEntries(summary, 9)} />
             </Panel>
@@ -92,9 +106,9 @@ export function Radiation() {
             <Panel title="Snapshot" labelledBy="rad-snapshot">
               <Tiles entries={primitiveEntries(record, 9)} />
             </Panel>
-          )}
+          ))}
 
-          {tables.map((table) => (
+          {tables.filter((table) => table.key !== "points").map((table) => (
             <Panel key={table.key} title={table.key.replace(/_/g, " ")} labelledBy={`rad-${table.key}`}>
               <DataTable rows={table.rows} caption={table.key} />
             </Panel>

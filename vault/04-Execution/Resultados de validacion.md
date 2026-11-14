@@ -11,3 +11,5 @@ updated: 2026-11-13
 - Las ganancias: **CUSUM** (cambios sostenidos), **síndrome** (señales coordinadas) y **heterogeneidad**.
 - El síndrome usa una dirección clínica previa (límite declarado). Todo es sintético; no es validación clínica.
 Reproducir: `python ml/validation/run_all.py`. Ver [[Matriz de superioridad]].
+
+Relacionado: [[00-Home]].

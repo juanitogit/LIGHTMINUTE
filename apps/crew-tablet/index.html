@@ -1,50 +1,24 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="dark light" />
-    <meta name="theme-color" content="#0b1016" />
-    <meta name="google-site-verification" content="qHznM4pcKgtis3SqM9c9eMWA-Kg5TRxGNvULQlbQALc" />
-    <!-- Public brand is LIGHTMINUTE (matches the deployed page title); TETHER is the internal project name. -->
+    <meta name="theme-color" content="#fdfdfe" />
+    <script>
+      try {
+        if (localStorage.getItem("lightminute-design-version") === "2") {
+          const theme = localStorage.getItem("lightminute-theme");
+          if (theme === "dark" || theme === "light") document.documentElement.dataset.theme = theme;
+        }
+      } catch { /* storage can be disabled */ }
+    </script>
     <meta
       name="description"
-      content="LIGHTMINUTE (TETHER crew tablet): personal baselines, three-lens verdicts and cited Decision Cards for astronauts across the light-delay gap. Synthetic data only; not a medical device."
+      content="LIGHTMINUTE crew tablet: personal baselines, three-lens verdicts and cited Decision Cards for astronauts. Synthetic data only; not a medical device."
     />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
-    <link rel="canonical" href="https://lightminute.pages.dev/" />
-    <!-- Open Graph / Twitter: no image yet, so keep the small summary card. -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="LIGHTMINUTE" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:url" content="https://lightminute.pages.dev/" />
-    <meta property="og:title" content="LIGHTMINUTE — crew health navigation for the light-delay gap" />
-    <meta
-      property="og:description"
-      content="Glance, Why, Act: personal baselines, three-lens verdicts and cited Decision Cards for astronauts. Synthetic data only; not a medical device."
-    />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="LIGHTMINUTE — crew health navigation for the light-delay gap" />
-    <meta
-      name="twitter:description"
-      content="Glance, Why, Act: personal baselines, three-lens verdicts and cited Decision Cards for astronauts. Synthetic data only; not a medical device."
-    />
-    <link
-      rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b1016'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%235aa9ff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2.5' fill='%235aa9ff'/%3E%3C/svg%3E"
-    />
-    <title>LIGHTMINUTE — crew health navigation for the light-delay gap</title>
-    <!-- WebSite only: no medical/health claims are made in structured data. -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "LIGHTMINUTE",
-        "alternateName": "TETHER crew tablet",
-        "url": "https://lightminute.pages.dev/",
-        "description": "LIGHTMINUTE (TETHER crew tablet): personal baselines, three-lens verdicts and cited Decision Cards for astronauts across the light-delay gap. Synthetic data only; not a medical device."
-      }
-    </script>
+    <link rel="icon" type="image/png" href="./assets/lightminute-official.png" />
+    <title>LIGHTMINUTE — crew tablet</title>
   </head>
   <body>
     <div id="root"></div>

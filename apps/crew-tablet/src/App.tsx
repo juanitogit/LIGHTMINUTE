@@ -1,25 +1,34 @@
 import { useEffect, useMemo, useState } from "react";
-import { CrewPills } from "./components/CrewPills";
-import { Icon } from "./components/Icon";
+import { CrewSelector } from "./components/CrewSelector";
+import { Brand } from "./components/Brand";
+import { Icon, type IconName } from "./components/Icon";
 import { Chip, DataNotice, EmptyState, Panel } from "./components/primitives";
 import { ScenarioBar } from "./components/ScenarioBar";
 import { useExplainedCard, useScenarioData } from "./hooks/useScenarioData";
 import { useHashState, type View } from "./hooks/useHashState";
 import { FALLBACK_SCENARIOS, loadHealth, loadScenarioIndex } from "./lib/api";
-import { fmtDay, titleFromName } from "./lib/format";
+import { fmtDay, fmtDelay, titleFromName } from "./lib/format";
 import type { ApiHealth, DecisionCard, ScenarioSummary } from "./lib/types";
 import { Act } from "./views/Act";
 import { Glance } from "./views/Glance";
 import { Radiation } from "./views/Radiation";
 import { Validation } from "./views/Validation";
+import { MissionWorkspace } from "./views/MissionWorkspace";
+import { SignalLibrary } from "./views/SignalLibrary";
+import { EarthLink } from "./views/EarthLink";
 import { Why } from "./views/Why";
 
-const VIEW_LABELS: { id: View; label: string }[] = [
-  { id: "glance", label: "Glance" },
-  { id: "why", label: "Why" },
-  { id: "act", label: "Act" },
-  { id: "radiation", label: "Radiation" },
-  { id: "validation", label: "Validation" },
+const VIEW_LABELS: { id: View; label: string; detail: string; icon: IconName }[] = [
+  { id: "glance", label: "Overview", detail: "Glance", icon: "overview" },
+  { id: "why", label: "Personal baseline", detail: "Why", icon: "pulse" },
+  { id: "act", label: "Actions", detail: "Act", icon: "check" },
+  { id: "radiation", label: "Space weather", detail: "NOAA", icon: "orbit" },
+  { id: "today", label: "Today & check-in", detail: "Today", icon: "check" },
+  { id: "signals", label: "Signal library", detail: "Signals", icon: "pulse" },
+  { id: "trends", label: "Mission trends", detail: "Trends", icon: "chart" },
+  { id: "handbook", label: "Onboard handbook", detail: "Ask", icon: "info" },
+  { id: "earth", label: "Earth link", detail: "Earth", icon: "earth" },
+  { id: "validation", label: "Evidence & validation", detail: "Data", icon: "chart" },
 ];
 
 const FALLBACK_CREW = ["A", "B", "C", "D"];
@@ -27,12 +36,13 @@ const PLAY_MS = 1400;
 
 function readStoredTheme(): "dark" | "light" {
   try {
-    const stored = window.localStorage.getItem("tether-theme");
+    if (window.localStorage.getItem("lightminute-design-version") !== "2") return "light";
+    const stored = window.localStorage.getItem("lightminute-theme") ?? window.localStorage.getItem("tether-theme");
     if (stored === "light" || stored === "dark") return stored;
   } catch {
     /* storage disabled */
   }
-  return "dark";
+  return "light";
 }
 
 export function App() {
@@ -65,8 +75,12 @@ export function App() {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
+    const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    if (themeColor) themeColor.content = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
     try {
-      window.localStorage.setItem("tether-theme", theme);
+      window.localStorage.setItem("lightminute-theme", theme);
+      window.localStorage.setItem("lightminute-design-version", "2");
+      window.localStorage.removeItem("tether-theme");
     } catch {
       /* storage disabled */
     }
@@ -131,6 +145,10 @@ export function App() {
 
   useEffect(() => {
     if (!playing) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setPlaying(false);
+      return;
+    }
     const timer = window.setInterval(() => {
       const next = day >= maxDay ? 1 : day + 1;
       update({ day: next });
@@ -141,9 +159,12 @@ export function App() {
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
+      if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey || target?.closest(".protocol-host")) return;
       if (
         target &&
         (target.tagName === "INPUT" ||
+          target.tagName === "BUTTON" ||
+          target.tagName === "A" ||
           target.tagName === "SELECT" ||
           target.tagName === "TEXTAREA" ||
           target.isContentEditable)
@@ -191,34 +212,32 @@ export function App() {
         Skip to content
       </a>
 
+      <aside className="sidebar" aria-label="Mission workspace">
+        <Brand />
+        <div className="sidebar__mission"><span className="mission-dot" />MISSION LM-01 <span className="mono">/ 2026</span></div>
+        <p className="sidebar__label micro">Crew workspace</p>
+        <nav className="views" aria-label="Views">
+          {VIEW_LABELS.map(({ id, label, detail, icon }) => (
+            <button key={id} type="button" className={`views__btn views__btn--${id} ${state.view === id ? "is-active" : ""}`} aria-current={state.view === id ? "page" : undefined} onClick={() => goView(id)}>
+              <Icon name={icon} size={19} /><span>{label}</span><span className="views__detail">{detail}</span>
+            </button>
+          ))}
+          <details className="mobile-more"><summary>More</summary><div>{VIEW_LABELS.filter(v=>!["glance","today","act","earth"].includes(v.id)).map(v=><button type="button" key={v.id} onClick={e=>{goView(v.id);e.currentTarget.closest("details")?.removeAttribute("open");}}>{v.label}</button>)}</div></details>
+        </nav>
+        <div className="sidebar__bottom">
+          <div className="ground-connection"><Icon name="earth" size={19} /><div><p>Ground round trip</p><strong>{fmtDelay(member?.routing?.expected_reply_s)}</strong><span> simulated</span></div></div>
+          <DataNotice />
+          <p className="sidebar__edition mono">LIGHTMINUTE / RESEARCH EDITION</p>
+        </div>
+      </aside>
+
+      <div className="workspace">
       <div className="chrome">
         <header className="topbar">
-          <div className="brand">
-            <span className="brand__mark" aria-hidden="true">
-              <Icon name="info" size={16} />
-            </span>
-            <span className="brand__text">
-              TETHER
-              <span className="brand__sub">crew tablet</span>
-            </span>
-          </div>
-
-          <nav className="views" aria-label="Views">
-            {VIEW_LABELS.map(({ id, label }) => (
-              <button
-                key={id}
-                type="button"
-                className={`views__btn ${state.view === id ? "is-active" : ""}`}
-                aria-current={state.view === id ? "page" : undefined}
-                onClick={() => goView(id)}
-              >
-                {label}
-              </button>
-            ))}
-          </nav>
+          <div className="topbar__breadcrumb"><span className="mobile-brand">LIGHTMINUTE</span><span>Crew health</span><span aria-hidden="true">/</span><b>{VIEW_LABELS.find((v) => v.id === state.view)?.label}</b></div>
 
           <div className="topbar__tools">
-            <DataNotice compact />
+            <span className={`engine-badge ${health ? "is-online" : ""}`}><span className="status__dot" />{health ? "Engine connected" : health === undefined ? "Connecting…" : "Local simulation"}</span>
             <button
               type="button"
               className="icon-btn"
@@ -234,7 +253,7 @@ export function App() {
               aria-pressed={state.pres}
               onClick={() => update({ pres: !state.pres })}
             >
-              Present
+              <Icon name="play" size={14} /> Present
             </button>
           </div>
         </header>
@@ -263,7 +282,8 @@ export function App() {
           <Chip tone="quiet">not a medical device</Chip>
           {health === null ? <Chip tone="quiet">static JSON · API off</Chip> : null}
         </div>
-      </div>              <main id="main" className="main">
+      </div>
+      <main id="main" className="main" tabIndex={-1}>
         {scenario.phase === "loading" ? (
           <div className="view">
             <Panel>
@@ -278,9 +298,7 @@ export function App() {
             <Panel title="Scenario could not load" labelledBy="load-error">
               <EmptyState title="No data source reachable">
                 <p>
-                  TETHER could not reach the engine API or the static scenario files. Start the API
-                  (<code>uvicorn tether_engine.api.main:app --port 8000</code>) or serve the build
-                  from <code>apps/crew-tablet</code>.
+                  The mission data is unavailable. Check your connection and try again.
                 </p>
                 <p className="mono small">{scenario.error}</p>
               </EmptyState>
@@ -313,7 +331,7 @@ export function App() {
                 scenario={scenario.data}
                 dayNumber={day}
                 crewId={crew}
-                onCrew={(id) => update({ crew: id, view: "why" })}
+                onCrew={goCrew}
                 onOpenWhy={() => update({ view: "why" })}
                 onOpenAct={() => update({ view: "act" })}
                 onOpenIndicator={(key) => update({ indicator: key, view: "why" })}
@@ -354,13 +372,16 @@ export function App() {
                       <p>Pick another day or crew member. Nothing is generated in the UI.</p>
                     </EmptyState>
                     <div className="chips">
-                      <CrewPills crewIds={crewIds} crew={crew} onCrew={goCrew} />
+                      <CrewSelector crewIds={crewIds} crew={crew} onCrew={goCrew} />
                     </div>
                   </Panel>
                 </div>
               )
             ) : null}
 
+            {(["today","trends","handbook"] as string[]).includes(state.view) ? <MissionWorkspace scenario={scenario.data} crewId={crew} dayNumber={day} mode={state.view as "today"|"trends"|"handbook"} /> : null}
+            {state.view === "signals" ? <SignalLibrary scenario={scenario.data} crewId={crew} dayNumber={day} /> : null}
+            {state.view === "earth" ? <EarthLink scenario={scenario.data} crewId={crew} dayNumber={day} /> : null}
             {state.view === "radiation" ? <Radiation /> : null}
             {state.view === "validation" ? <Validation /> : null}
           </>
@@ -391,6 +412,7 @@ export function App() {
           <Chip tone="quiet">SYNTHETIC</Chip>
         </span>
       </footer>
+      </div>
     </div>
   );
 }

@@ -15,3 +15,5 @@ Elegibles al juicio global: responder a un reto oficial (no "Create Your Own"), 
 | Validity | Página de validación + model card + proxy real n=4 | [[Alcance MoSCoW]] |
 | Relevance | Inmune/hueso/CV/conductual + radiación + CO₂ | [[Mapa indicador-riesgo]] |
 | Presentation | Video 60 s + demo 3 min | [[Guion pitch y video]] |
+
+Relacionado: [[00-Home]].

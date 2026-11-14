@@ -1,4 +1,5 @@
 import random
+
 from tether_engine.bayes import BaselineModel, SyndromeScore
 from tether_engine.simulate.mini import INDICATORS, make_series, pop_stats
 

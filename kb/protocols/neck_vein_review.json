@@ -1,0 +1,34 @@
+{
+  "id": "neck_vein_review",
+  "title": "Neck-vein finding \u2014 mission review",
+  "trigger_patterns": [
+    "Selected by trained crew during a demonstration; no automatic clinical trigger is adopted."
+  ],
+  "steps": [
+    {
+      "text": "Alert trained crew support and open the mission-approved onboard procedure.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE original demonstration wording; not an operational medical procedure"
+    },
+    {
+      "text": "Record the observed situation and the mission time without assigning a diagnosis.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE original demonstration wording; not an operational medical procedure"
+    },
+    {
+      "text": "Assign an available crew member to follow the onboard procedure and document the response.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE original demonstration wording; not an operational medical procedure"
+    },
+    {
+      "text": "Prepare a concise synthetic status report for the flight surgeon.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE original demonstration wording; not an operational medical procedure"
+    },
+    {
+      "text": "Continue the mission-approved procedure and record the handover; do not wait for a delayed reply to begin trained onboard support.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE original demonstration wording; not an operational medical procedure"
+    }
+  ]
+}

@@ -21,3 +21,5 @@ sources: [api-docs.deepseek.com/updates, /guides/thinking_mode, /quick_start/pri
 - Datos sintéticos únicamente al llamar una API alojada.
 - Proveedor intercambiable + producto funcional sin LLM (`LLM_PROVIDER=none`).
 - Pendiente: licencia exacta de V4.1 (V4-Flash-0731 era MIT) → [[Lecturas pendientes y verificar]].
+
+Relacionado: [[00-Home]].

@@ -1,0 +1,32 @@
+name: Deploy LIGHTMINUTE to Cloudflare Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cloudflare-pages-production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: apps/crew-tablet/package-lock.json
+      - name: Install dependencies and build
+        working-directory: apps/crew-tablet
+        run: |
+          npm ci
+          npm run build
+      - name: Publish to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: 5fc0a51f8f4c5716e3076f4bab63bfd5
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo 'Configure CLOUDFLARE_API_TOKEN in repository Actions secrets'; exit 1; }
+          npx --yes wrangler@4 pages deploy apps/crew-tablet/dist --project-name lightminute --branch main --commit-dirty=true

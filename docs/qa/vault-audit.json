@@ -1,0 +1,319 @@
+{
+  "vault": "vault/",
+  "notes": 46,
+  "wiki_edges": 211,
+  "markdown_edges": 44,
+  "broken_links": [],
+  "ambiguous_links": [],
+  "missing_frontmatter": [],
+  "checkbox_count": 51,
+  "checked": 28,
+  "checkboxes": [
+    {
+      "file": "vault/01-Research/Lecturas pendientes y verificar.md",
+      "line": 7,
+      "checked": false,
+      "item": "**Página oficial del reto + recursos** (no pude abrirla) → spaceappschallenge.org/2026"
+    },
+    {
+      "file": "vault/01-Research/Lecturas pendientes y verificar.md",
+      "line": 8,
+      "checked": false,
+      "item": "Hora exacta de cierre de entrega de TU evento local"
+    },
+    {
+      "file": "vault/01-Research/Lecturas pendientes y verificar.md",
+      "line": 9,
+      "checked": false,
+      "item": "Texto 2026 de la Judging Guide y T&C (código público, divulgación de IA, elegibilidad)"
+    },
+    {
+      "file": "vault/01-Research/Lecturas pendientes y verificar.md",
+      "line": 10,
+      "checked": false,
+      "item": "Licencia de DeepSeek-V4.1-Flash (V4-Flash-0731 fue MIT)"
+    },
+    {
+      "file": "vault/01-Research/Lecturas pendientes y verificar.md",
+      "line": 11,
+      "checked": true,
+      "item": "Parámetro `response_format` JSON: documentado como `json_object` en [la guía oficial](https://api-docs.deepseek.com/guides/json_mode/). Esto verifica el contrato documentado; no una llamada real."
+    },
+    {
+      "file": "vault/01-Research/Lecturas pendientes y verificar.md",
+      "line": 12,
+      "checked": false,
+      "item": "Endpoint/clave de NASA DONKI para eventos SEP"
+    },
+    {
+      "file": "vault/01-Research/Lecturas pendientes y verificar.md",
+      "line": 13,
+      "checked": false,
+      "item": "Rangos de NASA-STD-3001 Vol.1/2; límite de dosis de carrera (otro repo cita 600 mSv)"
+    },
+    {
+      "file": "vault/01-Research/Lecturas pendientes y verificar.md",
+      "line": 14,
+      "checked": false,
+      "item": "Límites de CO₂ y SOPs de escalada"
+    },
+    {
+      "file": "vault/01-Research/Lecturas pendientes y verificar.md",
+      "line": 15,
+      "checked": false,
+      "item": "Qué subconjunto de OSD-569 / Inspiration4 usar"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 10,
+      "checked": true,
+      "item": "**A1** — `pipeline.run_scenario()` + QC + 3 escenarios × strong/mild (6 indicadores) + exports estáticos"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 11,
+      "checked": true,
+      "item": "**A2** — API de 5 endpoints, `card_service` con prefijo cacheable, verificador y 30 casos de red-team"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 12,
+      "checked": true,
+      "item": "**A3** — tablet Glance → Why → Act sobre los escenarios reales, runner de A4 montado, build verde"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 13,
+      "checked": true,
+      "item": "**A4** — protocol runner (ESM + classic), 3 protocolos sin dosis, consola de tierra con retraso y cadena de auditoría"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 14,
+      "checked": true,
+      "item": "**A5** — snapshot NOAA real + panel de radiación, proxy MMASH, benchmark ampliado, model card y data card, defecto `alpha` aislado"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 15,
+      "checked": true,
+      "item": "**A6** — README de entrega, 5 documentos de pitch, `SUBMISSION.md`, `ATTRIBUTIONS.md`, arquitectura y estructura"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 16,
+      "checked": true,
+      "item": "**Entrega** — repo git en GitHub con `main`, vault versionado en `vault/`, `LICENSE` Apache-2.0, CI en `.github/workflows/ci.yml`"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 17,
+      "checked": true,
+      "item": "README reescrito: badges de Space Apps/stack/datos, tabla de stack con el porqué y estado works/partial/missing"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 18,
+      "checked": true,
+      "item": "**Parche `alpha`** aplicado en `bayes/nof1.py` + test de regresión (`test_interval_stays_honest_after_many_updates`); validación, MMASH, circadiano y todas las cifras publicadas regenerados (77/77 tests)"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 21,
+      "checked": false,
+      "item": "**Tú** — poner el repo en **público** (Space Apps lo exige; hoy es privado)"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 22,
+      "checked": true,
+      "item": "**Capturas** — ocho estados en `docs/screenshots/`, generados durante las pruebas de navegador"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 23,
+      "checked": false,
+      "item": "**Tú/A6** — video de 60 s y roles del equipo"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 24,
+      "checked": true,
+      "item": "**A3** — re-verificar los paneles de validación y radiación con los JSON que publicó A5"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 27,
+      "checked": true,
+      "item": "Ensayo del demo sin LLM, API conectada/fallback, consola y runner por HTTP y file://"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 28,
+      "checked": false,
+      "item": "Plan A: llamada real a DeepSeek con clave y saldo"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 29,
+      "checked": true,
+      "item": "`agents/OWNERS.json`: registrar `vault/` para que `check_ownership.py --overlaps` quede limpio"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 30,
+      "checked": false,
+      "item": "Evidencia OSDR (bloqueada por 404) y revisión clínica de umbrales y protocolos"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 33,
+      "checked": true,
+      "item": "Página de validación dentro de la app"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 33,
+      "checked": false,
+      "item": "Firmado y consentimiento real del envío a tierra"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 33,
+      "checked": false,
+      "item": "Persistencia multi-sesión"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 7,
+      "checked": true,
+      "item": "Reto oficial correcto (no \"Create Your Own\")"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 7,
+      "checked": true,
+      "item": "Repo en GitHub + `LICENSE` Apache-2.0"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 7,
+      "checked": true,
+      "item": "README ≤5 comandos"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 8,
+      "checked": false,
+      "item": "URL en vivo o video"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 8,
+      "checked": true,
+      "item": "Capturas"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 8,
+      "checked": true,
+      "item": "Data card"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 8,
+      "checked": true,
+      "item": "Model card"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 8,
+      "checked": true,
+      "item": "Validación"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 9,
+      "checked": true,
+      "item": "Declaración de uso de IA"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 9,
+      "checked": true,
+      "item": "Citas a datos NASA/NOAA"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 9,
+      "checked": true,
+      "item": "Limitaciones"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 9,
+      "checked": false,
+      "item": "Equipo y roles"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 10,
+      "checked": false,
+      "item": "Repo **público** (requisito de Space Apps; hoy es privado)"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 10,
+      "checked": true,
+      "item": "CI (tests + build en cada push)"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 11,
+      "checked": true,
+      "item": "Probado con contexto aislado sin sesión (Chromium automatizado)"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 11,
+      "checked": true,
+      "item": "Plan B offline del demo"
+    },
+    {
+      "file": "vault/04-Execution/Checklist de entrega.md",
+      "line": 11,
+      "checked": false,
+      "item": "Enviado con ≥3 h de margen"
+    },
+    {
+      "file": "vault/04-Execution/Plan 48h.md",
+      "line": 8,
+      "checked": false,
+      "item": "Registrarse, elegir evento, confirmar **hora de cierre de entrega** y leer la página oficial del reto + recursos"
+    },
+    {
+      "file": "vault/04-Execution/Plan 48h.md",
+      "line": 9,
+      "checked": false,
+      "item": "Repo público + LICENSE; `cp .env.example .env`; clave DeepSeek + saldo; `make skills`"
+    },
+    {
+      "file": "vault/04-Execution/Plan 48h.md",
+      "line": 10,
+      "checked": false,
+      "item": "`dsh web` o Claude Code funcionando contra `deepseek-flash`"
+    },
+    {
+      "file": "vault/04-Execution/Plan 48h.md",
+      "line": 11,
+      "checked": false,
+      "item": "Descargar snapshots (NOAA GOES, RadLab, OSDR I4, MMASH) con manifest"
+    },
+    {
+      "file": "vault/04-Execution/Plan 48h.md",
+      "line": 12,
+      "checked": false,
+      "item": "Roles; dormir"
+    }
+  ]
+}

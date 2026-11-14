@@ -1,0 +1,12 @@
+{
+  "name": "Male base mesh — MakeHuman-derived human",
+  "source": "https://www.innerscene.com/tools/library/3d-parts/male-base-mesh-3d-person-rigged-a-pose-380e6d89",
+  "download_url": "https://files.innerscene.com/library/male-base-mesh-3d-person-rigged-a-pose-380e6d89/038f3a526b2fc3efd012/male-base-mesh-base_male.glb",
+  "creator": "Innerscene, adapted from MakeHuman CC0 assets",
+  "license": "CC0-1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "retrieved_at": "2026-11-14",
+  "sha256": "86c7cdfa989924b45e2e5110c131a4a4e6251ceb4e71246be68e468f3a32ca86",
+  "bytes": 4498248,
+  "modifications": "Original GLB preserved. Runtime materials are replaced with a neutral visualization material; landmarks are illustrative and display engine verdicts, not anatomy or diagnosis."
+}

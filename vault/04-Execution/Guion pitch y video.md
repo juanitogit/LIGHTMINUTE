@@ -11,3 +11,5 @@ updated: 2026-11-13
 1) Glance (4 tripulantes) → 2) escenario `cmo_fever` → 3) Why (banda + confianza) → 4) Act (checklist) → 5) desenchufar LLM: sigue funcionando → 6) página de validación.
 ## Preguntas probables
 "¿Es dispositivo médico?" No. "¿Datos reales?" Sintéticos + proxy real público etiquetado. "¿Y si el LLM falla?" Plantillas; el motor decide. "¿Por qué no deep learning?" n=4. "¿Por qué DeepSeek?" Contexto 1M + caché; proveedor intercambiable.
+
+Relacionado: [[00-Home]].

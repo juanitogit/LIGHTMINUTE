@@ -8,14 +8,16 @@ updated: 2026-11-14
 > Derivado de leer la bóveda completa + estado real del repo (2026-11-14).
 > Regla: toda idea respeta [[ADR-001 Motor decide LLM explica]], datos sintéticos etiquetados y citas de KB. Nada de diagnóstico.
 
-## Estado real vs. plan (lo que condiciona las ideas)
+## Estado anterior a la integración (histórico)
 - Motor: `bayes/nof1.py`, `syndrome.py`, `lenses.py`, `crew/attribution.py`, `ground/delay.py`, `audit.py`, `llm/verifier.py` + tests. ✔
 - KB y protocolos: `kb/evidence.yaml`, `thresholds.json`, `syndromes.json`, 3 protocolos. ✔
 - UI tablet: solo `prototype/three-lens.html` + `public/demo-data.json`. **Falta la PWA Glance→Why→Act.**
 - Simulador: `simulate/mini.py` + `scenarios.py`; faltan escenarios CMO/CO₂ completos y `labels.json`.
 - Consola de tierra: estática. Validación: `ml/validation/results.json` + `docs/validation.md`. ✔
 
-## P0 — cierra el MVP (sin esto no hay demo)
+Actualización 2026-11-14: simulador, tablet, API, runner y paneles ya existen. Estado vigente: [[Auditoria integral LIGHTMINUTE]]. El listado conserva las ideas y su motivación; no describe bloqueos actuales.
+
+## P0 — implementado; ver auditoría para la evidencia
 1. **Simulador de 4 tripulantes completo**: `sep_sleep_loss`, `co2_creep`, `cmo_fever` (+ variantes leve), `labels.json` separado que el motor nunca lee. Alimenta todo lo demás.
 2. **Protocol Runner integrado**: los 3 protocolos de `kb/protocols/` ejecutables, cronometrados y auditados; escalera autochequeo→re-medir→compañero→protocolo→tierra→emergencia.
 3. **Tablet Glance→Why→Act**: tira de tripulación, Why con 3 lentes y banda 95%, Act con checklist. Es la entrega visible del reto.
@@ -49,3 +51,5 @@ Diagnóstico real · datos personales reales · auth/login · app nativa · hard
 - Umbrales sin fuente NASA-STD-3001 / CO₂ / DONKI / licencia DeepSeek siguen en [[Lecturas pendientes y verificar]] → marcar `unverified`.
 
 Ver [[Alcance MoSCoW]] · [[Demo killer - lentes en desacuerdo]] · [[Matriz de superioridad]] · [[Plan 48h]].
+
+Relacionado: [[00-Home]].

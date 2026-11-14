@@ -72,9 +72,9 @@ export function GroundMessage({
           type="button"
           className="btn btn--primary"
           onClick={() => setRequested(true)}
-          disabled={requested && remaining > 0}
+          disabled={overBudget || requested}
         >
-          <Icon name="send" size={16} /> {requested ? "Sent (simulated)" : "Send to ground"}
+          <Icon name="send" size={16} /> {requested ? "Sent (simulated)" : "Simulate send to ground"}
         </button>
         <button type="button" className="btn btn--ghost" onClick={copy}>
           <Icon name="copy" size={16} /> {copied ? "Copied" : "Copy"}

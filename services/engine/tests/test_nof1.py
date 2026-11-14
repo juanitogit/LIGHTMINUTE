@@ -1,5 +1,6 @@
 import random
-from tether_engine.bayes import BaselineModel, CUSUM
+
+from tether_engine.bayes import CUSUM, BaselineModel
 
 
 def _baseline(seed=1, n=14, mean=58.0, sd=2.0):

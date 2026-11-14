@@ -13,3 +13,5 @@ sources: [repos públicos GitHub vistos el 13-nov]
 | VITALS / AUREON / PulseOrbit / AL-KASAV | Dashboards con datos simulados (algunos cámara/radiación ISS) | Poca validación |
 **Lección:** *no* compitas en cifrado/offline contra AURORA. Compite en **ciencia (N-of-1 + validación honesta), decisión (cards citadas) y relato**. Hay equipos que no vemos (en una edición reciente hubo 940+ nominados globales) → diferénciate por contenido, no por pantalla.
 Ver [[Tesis y diferenciadores]].
+
+Relacionado: [[00-Home]].

@@ -5,7 +5,8 @@ Our addition: a personal lens with uncertainty, and a named pattern when the
 lenses disagree -- that disagreement is where the insight is.
 """
 from __future__ import annotations
-from .protocols.thresholds import Threshold, Rule
+
+from .protocols.thresholds import Rule, Threshold
 
 
 def _band(rule: Rule | None, x: float) -> str:

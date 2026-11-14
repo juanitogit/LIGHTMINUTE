@@ -9,3 +9,5 @@ En sept-2026 HRP premió 10 proyectos del *Artemis II Data Methodology Challenge
 
 **Implicación:** nuestro motor ([[ADR-002 N-of-1 conjugado]]) habla el idioma que NASA acaba de validar. Pitch: *"No comparamos a un astronauta con un promedio; con n=4 el promedio no existe."*
 Ver [[Tesis y diferenciadores]].
+
+Relacionado: [[00-Home]].

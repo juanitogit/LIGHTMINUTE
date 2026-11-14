@@ -4,7 +4,7 @@ status: verified
 updated: 2026-11-14
 ---
 # Board
-> Estado real y verificado: [[Estado real del repo y bloqueos]]. Log del día: [[2026-11-14]].
+> Auditoría vigente: [[Auditoria integral LIGHTMINUTE]]. Estado histórico e integración: [[Estado real del repo y bloqueos]]. Log del día: [[2026-11-14]].
 
 ## Hecho (verificado sobre `main`)
 - [x] **A1** — `pipeline.run_scenario()` + QC + 3 escenarios × strong/mild (6 indicadores) + exports estáticos
@@ -19,13 +19,17 @@ updated: 2026-11-14
 
 ## Ahora (bloquea la entrega)
 - [ ] **Tú** — poner el repo en **público** (Space Apps lo exige; hoy es privado)
-- [ ] **Tú/A6** — capturas, video de 60 s y roles del equipo
-- [ ] **A3** — re-verificar los paneles de validación y radiación con los JSON que publicó A5
+- [x] **Capturas** — ocho estados en `docs/screenshots/`, generados durante las pruebas de navegador
+- [ ] **Tú/A6** — video de 60 s y roles del equipo
+- [x] **A3** — re-verificar los paneles de validación y radiación con los JSON que publicó A5
 
 ## Siguiente
-- [ ] Ensayo del demo: plan B (`LLM_PROVIDER=none`) y plan A (con clave)
-- [ ] `agents/OWNERS.json`: registrar `vault/` para que `check_ownership.py --overlaps` quede limpio
+- [x] Ensayo del demo sin LLM, API conectada/fallback, consola y runner por HTTP y file://
+- [ ] Plan A: llamada real a DeepSeek con clave y saldo
+- [x] `agents/OWNERS.json`: registrar `vault/` para que `check_ownership.py --overlaps` quede limpio
 - [ ] Evidencia OSDR (bloqueada por 404) y revisión clínica de umbrales y protocolos
 
 ## Después
-- [ ] Página de validación dentro de la app · [ ] Firmado y consentimiento real del envío a tierra · [ ] Persistencia multi-sesión
+- [x] Página de validación dentro de la app · [ ] Firmado y consentimiento real del envío a tierra · [ ] Persistencia multi-sesión
+
+Relacionado: [[00-Home]].

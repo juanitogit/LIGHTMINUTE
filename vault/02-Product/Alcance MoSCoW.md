@@ -9,3 +9,5 @@ updated: 2026-11-13
 **COULD** PWA offline · lotes firmados · manos libres ASR/TTS · módulo temperatura central ([[Riesgos HRP de NASA]]).
 **WON'T** diagnóstico real · datos reales de personas · hardware propio · login · app nativa.
 Regla: congelar features **T-4 h** ([[Plan 48h]]).
+
+Relacionado: [[00-Home]].

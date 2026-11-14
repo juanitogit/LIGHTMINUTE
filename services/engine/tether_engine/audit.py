@@ -1,6 +1,9 @@
 """Tamper-evident hash-chained audit log (who saw/did what, when)."""
 from __future__ import annotations
-import hashlib, json, time
+
+import hashlib
+import json
+import time
 
 
 def _h(prev: str, body: dict) -> str:

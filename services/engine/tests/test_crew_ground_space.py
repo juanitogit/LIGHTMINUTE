@@ -1,7 +1,7 @@
-from tether_engine.crew.attribution import attribute
-from tether_engine.ground.delay import triage_routing, PROFILES
-from tether_engine.hazards.space_weather import noaa_s_scale, dose_budget, latest_flux
 from tether_engine.audit import AuditLog
+from tether_engine.crew.attribution import attribute
+from tether_engine.ground.delay import PROFILES, triage_routing
+from tether_engine.hazards.space_weather import dose_budget, latest_flux, noaa_s_scale
 
 
 def test_shared_vs_individual_attribution():

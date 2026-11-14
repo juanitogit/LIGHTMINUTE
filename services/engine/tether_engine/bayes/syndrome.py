@@ -12,6 +12,7 @@ supplies `signs` from a clinical prior (see kb/syndromes.json); this is a
 strength (power) and a limitation (blind to other directions) -- report both.
 """
 from __future__ import annotations
+
 import numpy as np
 from scipy import stats
 

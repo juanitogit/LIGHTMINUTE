@@ -48,14 +48,14 @@ def _try_engine(name: str, seed: int, days: int) -> dict | None:
     """A1's pipeline, if it is importable and actually returns a scenario."""
     try:  # local import: the module may not exist yet while A1 is building it
         from ..pipeline import run_scenario  # type: ignore[attr-defined]
-    except Exception:
+    except Exception:  # noqa: BLE001 -- optional engine imports may fail; static exports remain available
         return None
     try:
         try:
             doc = run_scenario(name, seed=seed, days=days)
         except TypeError:  # older signature without kwargs
             doc = run_scenario(name)
-    except Exception:
+    except Exception:  # noqa: BLE001 -- a failed optional engine must not disable the verified static demo
         return None
     return doc if isinstance(doc, dict) and doc.get("days") else None
 

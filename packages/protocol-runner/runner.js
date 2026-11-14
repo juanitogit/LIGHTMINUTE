@@ -1,8 +1,8 @@
-/* TETHER Protocol Runner - classic-script build (works from file:// and http).
+/* LIGHTMINUTE Protocol Runner - classic-script build (works from file:// and http).
  * index.js re-exports the same API as an ES module. */
 (function (global) {
   "use strict";
-/* TETHER Protocol Runner - framework-free, one step per screen.
+/* LIGHTMINUTE Protocol Runner - framework-free, one step per screen.
  *
  *   mountProtocolRunner(el, {protocolId, onStep, onDone})  ->  controller
  *

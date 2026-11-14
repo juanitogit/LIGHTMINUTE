@@ -1,30 +1,144 @@
 {
- "A1": {"name":"Engine core & scenarios","own":[
-   "services/engine/tether_engine/__init__.py","services/engine/tether_engine/bayes/","services/engine/tether_engine/crew/",
-   "services/engine/tether_engine/ground/","services/engine/tether_engine/hazards/","services/engine/tether_engine/protocols/",
-   "services/engine/tether_engine/qc/","services/engine/tether_engine/simulate/","services/engine/tether_engine/lenses.py",
-   "services/engine/tether_engine/audit.py","services/engine/tether_engine/pipeline.py",
-   "services/engine/tests/test_nof1.py","services/engine/tests/test_syndrome.py","services/engine/tests/test_crew_ground_space.py",
-   "services/engine/tests/test_lenses_thresholds.py","services/engine/tests/test_simulate","services/engine/tests/test_pipeline","services/engine/tests/test_qc",
-   "scripts/export_demo_json.py","kb/thresholds.json","kb/syndromes.json","data/synthetic/",
-   "apps/crew-tablet/public/demo-data.json","apps/crew-tablet/public/data/scenario-","handoff/a1.md"]},
- "A2": {"name":"LLM layer & API","own":[
-   "services/engine/tether_engine/llm/","services/engine/tether_engine/api/","llm/","kb/evidence.yaml",
-   "services/engine/tests/test_verifier.py","services/engine/tests/test_llm","services/engine/tests/test_api","handoff/a2.md"]},
- "A3": {"name":"Crew tablet UI","own":[
-   "apps/crew-tablet/src/","apps/crew-tablet/prototype/","apps/crew-tablet/user-ui/","apps/crew-tablet/index.html","apps/crew-tablet/package.json",
-   "apps/crew-tablet/package-lock.json","apps/crew-tablet/vite.config","apps/crew-tablet/tsconfig","apps/crew-tablet/public/assets/",
-   "apps/crew-tablet/.gitkeep","packages/ui-kit/","packages/schemas/","handoff/a3.md"]},
- "A4": {"name":"Protocol runner & Ground console","own":[
-   "apps/ground-console/","packages/protocol-runner/","kb/protocols/","handoff/a4.md"]},
- "A5": {"name":"Validation, real data & model/data cards","own":[
-   "ml/","data/snapshots/","data/raw/","scripts/fetch_","services/engine/tether_engine/ingest/",
-   "docs/validation.md","docs/data-card.md","docs/model-card.md",
-   "apps/crew-tablet/public/data/validation.json","apps/crew-tablet/public/data/radiation.json","handoff/a5.md"]},
- "A6": {"name":"Docs, pitch & submission","own":[
-   "README.md","docs/ARCHITECTURE.md","docs/FOLDER_STRUCTURE.md","docs/SUBMISSION.md","ATTRIBUTIONS.md","pitch/","handoff/a6.md"]},
- "A7": {"name":"Integrator, QA & DevOps","own":[
-   ".github/",".agents/",".gitignore",".env.example","Makefile","LICENSE","AGENTS.md","pyproject.toml","services/engine/pyproject.toml",
-   "Dockerfile","docker-compose.yml","scripts/run_tests.py","scripts/link-skills.sh","scripts/setup_worktrees.sh","scripts/merge_agents.sh",
-   "scripts/check_ownership.py","scripts/check_all.sh","scripts/.gitkeep","agents/","docs/DEMO_DATA_CONTRACT.md","docs/demo-runbook.md","tests/","handoff/a7.md"]}
+  "A1": {
+    "name": "Engine core & scenarios",
+    "own": [
+      "services/engine/tether_engine/__init__.py",
+      "services/engine/tether_engine/bayes/",
+      "services/engine/tether_engine/crew/",
+      "services/engine/tether_engine/ground/",
+      "services/engine/tether_engine/hazards/",
+      "services/engine/tether_engine/protocols/",
+      "services/engine/tether_engine/qc/",
+      "services/engine/tether_engine/simulate/",
+      "services/engine/tether_engine/lenses.py",
+      "services/engine/tether_engine/audit.py",
+      "services/engine/tether_engine/pipeline.py",
+      "services/engine/tests/test_nof1.py",
+      "services/engine/tests/test_syndrome.py",
+      "services/engine/tests/test_crew_ground_space.py",
+      "services/engine/tests/test_lenses_thresholds.py",
+      "services/engine/tests/test_simulate",
+      "services/engine/tests/test_pipeline",
+      "services/engine/tests/test_qc",
+      "scripts/export_demo_json.py",
+      "kb/thresholds.json",
+      "kb/syndromes.json",
+      "data/synthetic/",
+      "apps/crew-tablet/public/demo-data.json",
+      "apps/crew-tablet/public/data/scenario-",
+      "handoff/a1.md"
+    ]
+  },
+  "A2": {
+    "name": "LLM layer & API",
+    "own": [
+      "services/engine/tether_engine/llm/",
+      "services/engine/tether_engine/api/",
+      "llm/",
+      "kb/evidence.yaml",
+      "services/engine/tests/test_verifier.py",
+      "services/engine/tests/test_llm",
+      "services/engine/tests/test_api",
+      "handoff/a2.md",
+      "services/engine/tests/test_mission_link.py"
+    ]
+  },
+  "A3": {
+    "name": "Crew tablet UI",
+    "own": [
+      "apps/crew-tablet/src/",
+      "apps/crew-tablet/prototype/",
+      "apps/crew-tablet/user-ui/",
+      "apps/crew-tablet/index.html",
+      "apps/crew-tablet/package.json",
+      "apps/crew-tablet/package-lock.json",
+      "apps/crew-tablet/vite.config",
+      "apps/crew-tablet/tsconfig",
+      "apps/crew-tablet/public/assets/",
+      "apps/crew-tablet/.gitkeep",
+      "packages/ui-kit/",
+      "packages/schemas/",
+      "handoff/a3.md",
+      "apps/crew-tablet/scripts/",
+      "apps/crew-tablet/public/logo-lightminute.svg"
+    ]
+  },
+  "A4": {
+    "name": "Protocol runner & Ground console",
+    "own": [
+      "apps/ground-console/",
+      "packages/protocol-runner/",
+      "kb/protocols/",
+      "handoff/a4.md"
+    ]
+  },
+  "A5": {
+    "name": "Validation, real data & model/data cards",
+    "own": [
+      "ml/",
+      "data/snapshots/",
+      "data/raw/",
+      "scripts/fetch_",
+      "services/engine/tether_engine/ingest/",
+      "docs/validation.md",
+      "docs/data-card.md",
+      "docs/model-card.md",
+      "apps/crew-tablet/public/data/validation.json",
+      "apps/crew-tablet/public/data/radiation.json",
+      "handoff/a5.md"
+    ]
+  },
+  "A6": {
+    "name": "Docs, pitch & submission",
+    "own": [
+      "README.md",
+      "docs/ARCHITECTURE.md",
+      "docs/FOLDER_STRUCTURE.md",
+      "docs/SUBMISSION.md",
+      "ATTRIBUTIONS.md",
+      "pitch/",
+      "handoff/a6.md",
+      "vault/",
+      "docs/reportes.md",
+      "docs/AstroVital_Documento_Maestro_COMPLETADO_v0.2.0.docx",
+      "docs/ui-audit.md",
+      "docs/qa/",
+      "docs/screenshots/",
+      "docs/Obsidian.md",
+      "mockup/",
+      "docs/native-design.md",
+      "docs/reference-coverage.md"
+    ]
+  },
+  "A7": {
+    "name": "Integrator, QA & DevOps",
+    "own": [
+      ".github/",
+      ".agents/",
+      ".gitignore",
+      ".env.example",
+      "Makefile",
+      "LICENSE",
+      "AGENTS.md",
+      "pyproject.toml",
+      "services/engine/pyproject.toml",
+      "Dockerfile",
+      "docker-compose.yml",
+      "scripts/run_tests.py",
+      "scripts/link-skills.sh",
+      "scripts/setup_worktrees.sh",
+      "scripts/merge_agents.sh",
+      "scripts/check_ownership.py",
+      "scripts/check_all.sh",
+      "scripts/.gitkeep",
+      "agents/",
+      "docs/DEMO_DATA_CONTRACT.md",
+      "docs/demo-runbook.md",
+      "tests/",
+      "handoff/a7.md",
+      "scripts/audit_vault.py",
+      "scripts/sync_vault.py",
+      "services/engine/tether_engine.egg-info/"
+    ]
+  }
 }

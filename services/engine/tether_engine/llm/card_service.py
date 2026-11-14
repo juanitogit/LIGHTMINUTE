@@ -158,7 +158,7 @@ def get_card(scenario: str, crew: str, day: int, *, fast: bool = False,
         try:
             res = ask_json(cl, system_prefix=prefix, case_payload=payload,
                            effort=effort, max_tokens=2000)
-        except Exception as exc:                  # transport/JSON failure: no retry, fall back
+        except Exception as exc:  # noqa: BLE001 -- third-party transport boundary must preserve the verified fallback
             reason = f"llm_error: {type(exc).__name__}"
             stats.record(fallback=True, error=reason)
             return {"card": fallback, "card_source": "template", "verifier_errors": [reason],
