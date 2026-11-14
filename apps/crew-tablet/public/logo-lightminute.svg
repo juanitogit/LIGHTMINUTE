@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <!-- Circular emblem background -->
+  <circle cx="200" cy="200" r="180" fill="#10213d"/>
+  <!-- Outer rings -->
+  <circle cx="200" cy="200" r="170" fill="none" stroke="#10213d" stroke-width="8"/>
+  <circle cx="200" cy="200" r="140" fill="none" stroke="#10213d" stroke-width="8"/>
+  <!-- White gap -->
+  <circle cx="200" cy="200" r="130" fill="none" stroke="#fff" stroke-width="3"/>
+  <!-- Second thin navy ring -->
+  <circle cx="200" cy="200" r="120" fill="none" stroke="#10213d" stroke-width="3"/>
+  <!-- Arc text: EST. 2026 -->
+  <path d="M200,150 A50,50 0 0,1 200,100" stroke="#fff" stroke-width="2" fill="none"/>
+  <text x="200" y="135" fill="#fff" font-family="sans-serif" font-size="20" text-anchor="middle">EST. 2026</text>
+  <!-- Arc text: MISSION ID . LM-01 -->
+  <path d="M200,250 A50,50 0 0,1 200,300" stroke="#fff" stroke-width="2" fill="none"/>
+  <text x="200" y="275" fill="#fff" font-family="sans-serif" font-size="20" text-anchor="middle">MISSION ID . LM-01</text>
+  <!-- Inner planet/moon (muted purple-to-blue) -->
+  <circle cx="260" cy="200" r="50" fill="#4a90e2"/>
+  <!-- Comet streak: pink/red to purple to cyan-blue -->
+  <!-- Simplified comet path -->
+  <path d="M300,150 Q250,200 200,250 Q150,300 100,250 Q50,200 0,150" fill="none" stroke="#ff6b6b" stroke-width="8"/>
+  <!-- Comet tail gradient implied by stroke color variation -->
+  <!-- White four-pointed star at head of comet -->
+  <polygon points="200,240 195,235 200,230 205,235 200,240" fill="#fff"/>
+  <!-- Two small cross-shaped stars in upper right -->
+  <path d="M320,130 L325,135 L315,135 L325,135 L325,140 M322,132 L328,138" stroke="#fff" stroke-width="1.5"/>
+  <path d="M330,130 L335,135 L325,135 L335,135 L335,140 M332,132 L338,138" stroke="#fff" stroke-width="1.5"/>
+  <!-- LIGHTMINUTE text below emblem -->
+  <text x="200" y="340" fill="#10213d" font-family="sans-serif" font-size="48" font-weight="bold" text-anchor="middle">LIGHTMINUTE</text>
+</svg>
