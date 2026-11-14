@@ -72,7 +72,34 @@ export const INDICATORS: IndicatorMeta[] = [
     decimals: 0,
     blurb: "Median response time on a 3-minute vigilance test.",
   },
+  {
+    key: "co2_ppm",
+    label: "Cabin CO₂",
+    short: "CO₂",
+    unit: "ppm",
+    decimals: 0,
+    blurb: "Carbon dioxide concentration reported by the cabin sensors.",
+  },
+  {
+    key: "headache_score",
+    label: "Headache score",
+    short: "Headache",
+    unit: "0-10",
+    decimals: 1,
+    blurb: "Crew-reported headache severity on the engine's 0–10 scale.",
+  },
 ];
+
+export function crewRoles(doc: {
+  crew?: Record<string, { role?: string; label?: string }>;
+  crew_roles?: Record<string, string>;
+}): Record<string, string> {
+  const roles: Record<string, string> = { ...(doc.crew_roles ?? {}) };
+  for (const [id, info] of Object.entries(doc.crew ?? {})) {
+    if (info?.role) roles[id] = info.role;
+  }
+  return roles;
+}
 
 export function indicatorMeta(key: string): IndicatorMeta {
   return (

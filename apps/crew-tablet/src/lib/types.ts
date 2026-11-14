@@ -88,6 +88,15 @@ export interface ScenarioDoc {
   degraded?: boolean;
   synthetic?: boolean;
   note?: string;
+  /** A1 exports title/description at the top level; `meta` is the older shape. */
+  title?: string;
+  description?: string;
+  scenario?: string;
+  variant?: string;
+  delay_profile?: string;
+  onset_day?: number;
+  crew?: Record<string, { role?: string; label?: string }>;
+  crew_roles?: Record<string, string>;
   meta?: ScenarioMeta;
   indicators?: string[];
   days: ScenarioDay[];

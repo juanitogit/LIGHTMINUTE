@@ -20,6 +20,7 @@ interface Range {
 function paddedRange(values: number[]): Range {
   const finite = values.filter((v) => Number.isFinite(v));
   if (finite.length === 0) return { min: 0, max: 1 };
+  const nonNegative = finite.every((v) => v >= 0);
   let min = Math.min(...finite);
   let max = Math.max(...finite);
   if (min === max) {
@@ -27,7 +28,8 @@ function paddedRange(values: number[]): Range {
     max += 1;
   }
   const pad = (max - min) * 0.12;
-  return { min: min - pad, max: max + pad };
+  const lower = nonNegative ? Math.max(0, min - pad) : min - pad;
+  return { min: lower, max: max + pad };
 }
 
 export function BandChart({

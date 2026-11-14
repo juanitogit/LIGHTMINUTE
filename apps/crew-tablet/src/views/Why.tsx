@@ -5,6 +5,7 @@ import { LevelBadge, Panel } from "../components/primitives";
 import { SyndromeStrip, SYNDROME_ALERT_Z } from "../components/SyndromeStrip";
 import { fmt, fmtRange, humanise, unitLabel } from "../lib/format";
 import {
+  crewRoles,
   DISAGREEMENT_PATTERNS,
   EARTH_LABEL,
   indicatorMeta,
@@ -44,9 +45,12 @@ export function Why({
 }) {
   const day = scenario.doc.days.find((d) => d.day === dayNumber) ?? scenario.doc.days[0];
   const member = day?.crew?.[crewId];
-  const meta = indicatorMeta(indicator);
   const reading = member?.indicators?.[indicator];
+  const baseMeta = indicatorMeta(indicator);
+  // Unit comes from the payload; the static meta only supplies labels/decimals.
+  const meta = { ...baseMeta, unit: reading?.unit ?? baseMeta.unit };
   const card = member?.card;
+  const role = crewRoles(scenario.doc)[crewId];
 
   const windowDays = scenario.doc.days.filter((d) => d.day <= dayNumber).slice(-WINDOW);
   const points: BandPoint[] = windowDays.map((d) => ({
@@ -78,6 +82,7 @@ export function Why({
         </div>
         <div className="viewhead__tools">
           <CrewPills crewIds={crewIds} crew={crewId} onCrew={onCrew} />
+          {role ? <span className="chip chip--quiet">{role}</span> : null}
           {member ? <LevelBadge level={member.level} /> : null}
         </div>
       </header>

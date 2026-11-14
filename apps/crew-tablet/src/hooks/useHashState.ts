@@ -67,7 +67,9 @@ export function useHashState(): [HashState, (patch: Partial<HashState>) => void]
   }));
 
   useEffect(() => {
-    const onHashChange = () => setState((prev) => ({ ...prev, ...parse(window.location.hash) }));
+    // A hash change is a full state declaration: keys that were removed must fall
+    // back to their defaults instead of keeping the previous view's value.
+    const onHashChange = () => setState({ ...DEFAULTS, ...parse(window.location.hash) });
     window.addEventListener("hashchange", onHashChange);
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);

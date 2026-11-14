@@ -5,6 +5,7 @@ import { Icon } from "../components/Icon";
 import { Chip, LevelBadge, Panel } from "../components/primitives";
 import { ProtocolRunner } from "../components/ProtocolRunner";
 import type { ExplainedCard } from "../hooks/useScenarioData";
+import { crewRoles } from "../lib/meta";
 import type { DecisionCard, LoadedScenario, Routing } from "../lib/types";
 
 function CardSourceBadge({
@@ -63,6 +64,7 @@ export function Act({
   const keyPrefix = `${scenario.doc.name ?? ""}|${crewId}|${dayNumber}|`;
   const done = card.do_now.filter((_, index) => checked[`${keyPrefix}${index}`]).length;
   const level = member?.level ?? card.level;
+  const role = crewRoles(scenario.doc)[crewId];
 
   return (
     <div className="view act">
@@ -78,6 +80,7 @@ export function Act({
         </div>
         <div className="viewhead__tools">
           <CrewPills crewIds={crewIds} crew={crewId} onCrew={onCrew} />
+          {role ? <span className="chip chip--quiet">{role}</span> : null}
         </div>
       </header>
 

@@ -261,7 +261,7 @@ export function App() {
         <div className="mobile-notice">
           <Chip tone="warn">SYNTHETIC DATA</Chip>
           <Chip tone="quiet">not a medical device</Chip>
-          {health === null ? <Chip tone="quiet">offline · static JSON</Chip> : null}
+          {health === null ? <Chip tone="quiet">static JSON · API off</Chip> : null}
         </div>
       </div>              <main id="main" className="main">
         {scenario.phase === "loading" ? (
