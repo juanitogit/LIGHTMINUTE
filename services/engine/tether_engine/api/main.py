@@ -7,12 +7,10 @@ when this API is unreachable - every response here is reproducible from it.
 """
 from __future__ import annotations
 
+import psycopg
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-import psycopg
-
-from .database import DatabaseNotConfigured, check_connection
 
 from ..llm.card_service import (
     DEFAULT_EFFORT,
@@ -29,6 +27,7 @@ from ..llm.case_data import (
 )
 from ..llm.deepseek_client import MODEL
 from ..llm.stats import snapshot
+from .database import DatabaseNotConfigured, check_connection
 from .mission_link import router as mission_link_router
 
 VERSION = "0.1.0"

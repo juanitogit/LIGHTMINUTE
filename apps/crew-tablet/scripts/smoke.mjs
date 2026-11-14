@@ -49,8 +49,17 @@ const server = createServer(async (req, res) => {
 });
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const base = `http://127.0.0.1:${server.address().port}`;
-// Use the Chrome installed on this machine instead of downloading a browser.
-const browser = await chromium.launch({channel:"chrome", headless:true});
+// Prefer the bundled Playwright build (CI installs it); fall back to the Chrome
+// that is already on this machine so nothing has to be downloaded locally.
+const launchBrowser = async () => {
+  try {
+    return await chromium.launch({headless:true});
+  } catch (error) {
+    if (!/Executable doesn't exist/i.test(String(error))) throw error;
+    return chromium.launch({channel:"chrome", headless:true});
+  }
+};
+const browser = await launchBrowser();
 let api;
 const record = (name, detail = "passed") => {results.push({name, detail});console.log("PASS", name);};
 const context = await browser.newContext({ viewport:{width:1440,height:1000}, reducedMotion:"reduce" });

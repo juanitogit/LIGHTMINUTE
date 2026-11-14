@@ -81,3 +81,15 @@ Verificación sobre el árbol fusionado: `typecheck` 0, `build` 0, `test:e2e` 17
 Estado final: `main` en **2d1c5a9**, idéntico a `origin/main` (`fcd5a7a..2d1c5a9`), árbol limpio. El remoto redirige a `juanitogit/LIGHTMINUTE-NASASPACEAPPS2026`.
 
 Commits de la ronda: `096afa8` (crew-tablet restaurado + E2E), `81773cd` (cred), `93b5d30` (engine), `2b3a285` (docs/handoff) y `2d1c5a9` (merge).
+
+## Arreglos de CI tras el push
+
+El job `Engine, API and LLM layer (Python 3.12)` falló a los 21 s. Reproducido en local y corregido:
+
+- `ruff` marcaba dos imports desordenados en `services/engine/tether_engine/api/main.py` (psycopg y `.database`); aplicado `ruff --fix`.
+- `scripts/check_ownership.py --overlaps` daba **57 rutas sin dueño** (capturas, tests, `docs/autonomy`, `docs/safety`, `organs/`, `tools/researcher`, `handoff/*`, snapshot DONKI). Añadidas a A3/A5 en `agents/OWNERS.json`; ahora `ownership map OK`.
+- `scripts/audit_vault.py` fallaba por un wiki-link a `docs/` fuera del vault; convertido a enlace markdown relativo correcto (`../../../docs/...`). Ahora 0 problemas.
+- El test de checksums DONKI fallaba en Windows por la conversión CRLF; ahora normaliza `\r\n` antes de hashear (el blob LF ya coincidía con el manifest, así que en Linux pasaba).
+- El smoke lanzaba solo Chrome instalado, pero el runner de CI usa el Chromium de Playwright: ahora intenta el bundle y cae a `channel: "chrome"` solo si no existe. Mismo fallback en `tests/e2e.mjs`.
+
+Reproducción local del job completo: `ruff` limpio, `run_tests.py` **88/88**, `audit_vault` 0 problemas, `check_ownership` OK, redteam 30/30, API `LLM_PROVIDER=none` OK; frontend: build, SEO (tag/sitemap/robots), `test:auth` 12/12, `wrangler pages functions build`, `LIGHTMINUTE_SKIP_API=1 test:e2e` 15 grupos, auditoría del ground console y `node --check` OK.

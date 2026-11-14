@@ -75,6 +75,16 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+/** Bundled Chromium when installed, otherwise the Chrome already on the machine. */
+async function launchBrowser() {
+  try {
+    return await chromium.launch({ headless: true });
+  } catch (error) {
+    if (!/Executable doesn't exist/i.test(String(error))) throw error;
+    return chromium.launch({ channel: "chrome", headless: true });
+  }
+}
+
 /** Sticky chrome would swallow a click when the element lands at the top. */
 async function tap(page, selector) {
   const locator = page.locator(selector).first();
@@ -103,7 +113,7 @@ async function main() {
   const base = `http://127.0.0.1:${server.address().port}`;
   console.log(`crew-tablet browser e2e · ${base}`);
 
-  const browser = await chromium.launch({ channel: "chrome", headless: true });
+  const browser = await launchBrowser();
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await context.newPage();
   page.__base = base;

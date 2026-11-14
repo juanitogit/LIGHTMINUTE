@@ -68,7 +68,12 @@
       "apps/crew-tablet/server/",
       "apps/crew-tablet/wrangler.toml",
       "apps/crew-tablet/public/_routes.json",
-      "apps/crew-tablet/public/logo-lightminute.svg"
+      "apps/crew-tablet/public/logo-lightminute.svg",
+      "apps/crew-tablet/screenshots/",
+      "apps/crew-tablet/tests/",
+      "apps/crew-tablet/public/data/space-weather.json",
+      "organs/",
+      "handoff/freebuff-checklist.md"
     ]
   },
   "A4": {
@@ -93,7 +98,15 @@
       "docs/model-card.md",
       "apps/crew-tablet/public/data/validation.json",
       "apps/crew-tablet/public/data/radiation.json",
-      "handoff/a5.md"
+      "handoff/a5.md",
+      "docs/autonomy/",
+      "docs/safety/",
+      "docs/licencias-modelos-organos.md",
+      "docs/organ-models-licenses.md",
+      "licencias-modelos-organos.md",
+      "handoff/credibility.md",
+      "tools/researcher/",
+      "services/engine/tests/test_space_weather_snapshot.py"
     ]
   },
   "A6": {

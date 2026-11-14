@@ -56,7 +56,9 @@ def test_donki_sources_are_provenanced_and_manifest_checksums_match():
         assert all("api_key" not in url for url in entry.get("request_urls", []))
         assert entry.get("license", "").startswith("NASA open data")
         path = ROOT / str(entry["snapshot"])
-        raw = path.read_bytes()
+        # The manifest hashes the LF bytes as committed; a Windows checkout with
+        # autocrlf rewrites them to CRLF, so normalise before hashing.
+        raw = path.read_bytes().replace(b"\r\n", b"\n")
         assert hashlib.sha256(raw).hexdigest() == entry["sha256"]
         rows = json.loads(raw)
         assert len(rows) == entry["rows_raw"]

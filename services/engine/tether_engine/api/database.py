@@ -1,7 +1,7 @@
 """Server-only Neon/Postgres connection. Never expose the DSN to clients."""
-from contextlib import contextmanager
-from collections.abc import Iterator
 import os
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 
 import psycopg
