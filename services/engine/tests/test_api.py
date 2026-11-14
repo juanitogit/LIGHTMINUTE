@@ -3,7 +3,6 @@ import os
 from contextlib import contextmanager
 
 from fastapi.testclient import TestClient
-
 from tether_engine.api.main import app
 
 CLIENT = TestClient(app)
@@ -40,9 +39,8 @@ def test_health_reports_provider_without_leaking_the_key():
 
 
 def test_health_reports_none_provider_without_a_key():
-    with env(LLM_PROVIDER=None, DEEPSEEK_API_KEY=None):
-        with env(DEEPSEEK_API_KEY=""):
-            body = CLIENT.get("/api/health").json()
+    with env(LLM_PROVIDER=None, DEEPSEEK_API_KEY=None), env(DEEPSEEK_API_KEY=""):
+        body = CLIENT.get("/api/health").json()
     assert body["llm_provider"] == "none"
     assert body["llm_key_present"] is False
 

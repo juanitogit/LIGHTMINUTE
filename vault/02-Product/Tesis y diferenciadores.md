@@ -15,3 +15,5 @@ updated: 2026-11-13
 
 ## Frase de pitch
 > "Con 4 astronautas no existe el promedio. Compara a cada persona consigo misma, dile cuánta seguridad tienes, y dile qué hacer mientras la Tierra tarda 20 minutos en responder."
+
+Relacionado: [[00-Home]].

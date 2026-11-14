@@ -1,6 +1,6 @@
 ---
 name: visual-polish-playbook
-description: Plan and checklist to reach top-tier visual polish for the TETHER UI within hackathon time - design tokens, hero visual (body silhouette or 3D from original open datasets with attribution), motion, data-viz rules, dark/light, accessibility, loading performance, screenshot-ready states. Use whenever styling, restyling, adding a hero visual, or someone says "make it look as good as / better than another team's". Pair with crew-ux-design and frontend-design.
+description: Plan and checklist to reach top-tier visual polish for the LIGHTMINUTE UI within hackathon time - design tokens, hero visual (body silhouette or 3D from original open datasets with attribution), motion, data-viz rules, dark/light, accessibility, loading performance, screenshot-ready states. Use whenever styling, restyling, adding a hero visual, or someone says "make it look as good as / better than another team's". Pair with crew-ux-design and frontend-design.
 ---
 # Visual polish playbook
 

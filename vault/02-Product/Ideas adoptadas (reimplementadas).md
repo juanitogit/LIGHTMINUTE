@@ -12,3 +12,5 @@ updated: 2026-11-13
 6. PVT-B → módulo de vigilancia en la tablet (SHOULD).
 7. Cadena de auditoría → `audit.py`.
 **No adoptado:** cuerpo 3D (13 MB, tiempo) — alternativa barata: silueta SVG con regiones resaltadas (COULD).
+
+Relacionado: [[00-Home]].

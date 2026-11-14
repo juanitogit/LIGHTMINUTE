@@ -60,7 +60,7 @@ def main() -> int:
     if not a.verify:
         if not os.path.exists(ARCHIVE):
             print(f"downloading {URL} (~24 MB)...")
-            req = Request(URL, headers={"User-Agent": "TETHER-space-apps/1.0 (snapshot script)"})
+            req = Request(URL, headers={"User-Agent": "LIGHTMINUTE-space-apps/1.0 (snapshot script)"})
             with urlopen(req, timeout=a.timeout) as r, open(ARCHIVE, "wb") as f:  # noqa: S310
                 f.write(r.read())
         else:

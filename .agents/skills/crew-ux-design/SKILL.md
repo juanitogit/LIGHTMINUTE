@@ -1,6 +1,6 @@
 ---
 name: crew-ux-design
-description: UX and visual design rules for the TETHER crew tablet and ground console - Glance->Why->Act hierarchy, cognitive-load limits, color-blind-safe status, WCAG 2.2 AA, glove/low-light friendliness, offline states, motion restraint. Use whenever you build or restyle any screen, component, chart or alert. Pairs with the frontend-design skill for distinctive (non-template) aesthetics.
+description: UX and visual design rules for the LIGHTMINUTE crew tablet and ground console - Glance->Why->Act hierarchy, cognitive-load limits, color-blind-safe status, WCAG 2.2 AA, glove/low-light friendliness, offline states, motion restraint. Use whenever you build or restyle any screen, component, chart or alert. Pairs with the frontend-design skill for distinctive (non-template) aesthetics.
 ---
 # Crew UX design
 

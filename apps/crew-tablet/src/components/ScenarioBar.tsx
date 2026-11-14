@@ -1,6 +1,6 @@
 import { titleFromName } from "../lib/format";
 import type { ScenarioSummary } from "../lib/types";
-import { CrewPills } from "./CrewPills";
+import { CrewSelector } from "./CrewSelector";
 import { Icon } from "./Icon";
 
 export function ScenarioBar({
@@ -55,7 +55,7 @@ export function ScenarioBar({
           <span className="micro" id="crew-label">
             Crew
           </span>
-          <CrewPills crewIds={crewIds} crew={crew} onCrew={onCrew} label="Crew member" />
+          <CrewSelector crewIds={crewIds} crew={crew} onCrew={onCrew} label="Crew member" />
         </div>
       </div>
 

@@ -21,7 +21,7 @@
   source: https://doi.org/10.1038/s41526-024-00393-5
   status: verified
 - id: SOP-RECHECK-ABNORMAL
-  claim: Re-measure an abnormal single reading after rest before acting (reduces artifact-driven alarms). Local TETHER protocol, not a NASA procedure.
+  claim: Re-measure an abnormal single reading after rest before acting (reduces artifact-driven alarms). Local LIGHTMINUTE protocol, not a NASA procedure.
   source: tether-internal
   status: unverified
 - id: HRP-IMMUNE-SPACEFLIGHT-STRESSORS

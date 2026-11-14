@@ -1,7 +1,7 @@
-/* TETHER audit chain - classic-script build. src/audit.js re-exports it. */
+/* LIGHTMINUTE audit chain - classic-script build. src/audit.js re-exports it. */
 (function (global) {
   "use strict";
-/* TETHER audit chain - browser twin of services/engine/tether_engine/audit.py.
+/* LIGHTMINUTE audit chain - browser twin of services/engine/tether_engine/audit.py.
  *
  * Same canonical JSON as the engine: sorted keys, compact separators, ASCII-escaped
  * (Python's json.dumps(..., sort_keys=True, separators=(",", ":"))).
@@ -81,5 +81,5 @@ function renderChainRows(tbody, entries, badIndex) {
   }
 }
 
-  global.TetherAudit = { GENESIS, canonicalJson, sha256Hex, appendEntry, verifyChain, renderChainRows };
+  global.LightminuteAudit = { GENESIS, canonicalJson, sha256Hex, appendEntry, verifyChain, renderChainRows };
 })(globalThis);

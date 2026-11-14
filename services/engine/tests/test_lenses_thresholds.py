@@ -1,6 +1,9 @@
-import os, json, tempfile
-from tether_engine.protocols.thresholds import load_thresholds
+import json
+import os
+import tempfile
+
 from tether_engine.lenses import three_lens
+from tether_engine.protocols.thresholds import load_thresholds
 
 KB = os.path.join(os.path.dirname(__file__), "..", "..", "..", "kb", "thresholds.json")
 
@@ -17,11 +20,14 @@ def test_kb_thresholds_load_and_are_labelled():
 def test_unlabelled_or_unsourced_thresholds_are_rejected():
     bad = [{"indicator": "x", "unit": "u", "hrp_risk": "r", "hazard": "h",
             "earth": {"low": 1, "high": 2, "status": "verified", "source": "trust me"}}]
-    f = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False); json.dump(bad, f); f.close()
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as f:
+        json.dump(bad, f)
     try:
         load_thresholds(f.name); raise AssertionError("should fail")
     except ValueError:
         pass
+    finally:
+        os.unlink(f.name)
 
 
 def test_pattern_hidden_in_range_and_expected_for_you():

@@ -1,5 +1,3 @@
-import { LEVEL_COPY } from "../lib/meta";
-import { fmt } from "../lib/format";
 import type { CrewDay, Level } from "../lib/types";
 import { Icon } from "./Icon";
 import { LevelBadge } from "./primitives";
@@ -24,37 +22,19 @@ export function CrewStrip({
           <li key={id}>
             <button
               type="button"
-              className={`crew-card crew-card--${level} ${isSelected ? "is-selected" : ""}`}
+              className={`crew-row crew-row--${level} ${isSelected ? "is-selected" : ""}`}
               aria-pressed={isSelected}
               onClick={() => onOpen(id)}
             >
-              <span className="crew-card__top">
+              <span className="crew-row__top">
                 <span className="avatar" aria-hidden="true">
                   {id}
                 </span>
-                <span className="crew-card__id">Crew {id}</span>
-                {roles[id] ? <span className="crew-card__role">{roles[id]}</span> : null}
+                <span className="crew-row__id">Crew {id}</span>
+                {roles[id] ? <span className="crew-row__role">{roles[id]}</span> : null}
                 <LevelBadge level={level} compact />
               </span>
 
-              <span className="crew-card__headline">{member.card?.headline ?? "No card today"}</span>
-
-              <span className="crew-card__meta">
-                <span className="mono">z {fmt(member.syndrome_z, 1)}</span>
-                {member.learning ? (
-                  <span className="chip chip--quiet">
-                    <Icon name="clock" size={13} />
-                    learning baseline
-                  </span>
-                ) : null}
-                {member.card_source === "llm" ? (
-                  <span className="chip chip--accent">DeepSeek</span>
-                ) : null}
-              </span>
-
-              <span className="crew-card__hint">
-                <Icon name="arrow" size={14} /> {LEVEL_COPY[level]?.hint ?? "Open the why-view"}
-              </span>
             </button>
           </li>
         );

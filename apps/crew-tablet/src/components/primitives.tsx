@@ -7,7 +7,7 @@ import { Icon } from "./Icon";
 export function LevelBadge({ level, compact = false }: { level: Level; compact?: boolean }) {
   const copy = LEVEL_COPY[level] ?? LEVEL_COPY.info;
   return (
-    <span className={`level level--${level}`}>
+    <span className={`status-label status-label--${level}`}>
       <Icon name={level} size={compact ? 14 : 16} />
       <span>{compact ? copy.short : copy.label}</span>
     </span>
@@ -24,7 +24,7 @@ export function Chip({
   title?: string;
 }) {
   return (
-    <span className={`chip chip--${tone}`} title={title}>
+    <span className={`inline-label inline-label--${tone}`} title={title}>
       {children}
     </span>
   );

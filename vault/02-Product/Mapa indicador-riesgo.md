@@ -15,3 +15,5 @@ updated: 2026-11-13
 | Ambiente cerrado | ambiente | CO₂, temp, humedad | umbral + tiempo de exposición |
 | Temp. central (RFI NASA) | gravedad, ejercicio | temp. central/piel 24 h | ritmo circadiano + ejercicio |
 Skill relacionada: `nasa-hrp-risk-mapping`. Límites/rangos → citar NASA-STD-3001 o marcar `#verify`.
+
+Relacionado: [[00-Home]].

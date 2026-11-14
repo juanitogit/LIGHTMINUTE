@@ -1,0 +1,481 @@
+{
+  "source": "docs/AstroVital_Documento_Maestro_COMPLETADO_v0.2.0.docx",
+  "role": "Historical design proposal; not an implementation specification adopted by this MVP",
+  "paragraphs": 6817,
+  "legacy_brand_mentions": 44,
+  "phase_sections": [
+    {
+      "paragraph": 5809,
+      "text": "21.2 Fases",
+      "following": [
+        "Fase",
+        "Actividades",
+        "Criterio de entrada",
+        "Criterio de salida"
+      ]
+    }
+  ],
+  "checkbox_controls": 0,
+  "unicode_boxes": 10,
+  "markdown_checkboxes": 72,
+  "checklist_paragraphs": [
+    {
+      "paragraph": 1217,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1226,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1235,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1244,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1253,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1262,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1271,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1280,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1289,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1298,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1307,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1316,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1325,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1334,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1343,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1352,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1361,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1370,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1379,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1388,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1397,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1406,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1415,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 1424,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 2691,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 2696,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 2701,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 3260,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 3265,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 3270,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 3975,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 3980,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 3985,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5345,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5350,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5355,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5360,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5365,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5370,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5375,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5380,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5385,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5390,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5395,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5400,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5405,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5410,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5415,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5420,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5425,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5430,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5435,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5440,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5445,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5450,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5455,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 5460,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 6617,
+      "text": "RF-[ ] / RNF-[ ]"
+    },
+    {
+      "paragraph": 6623,
+      "text": "OBJ-[ ] / fuente [n]"
+    },
+    {
+      "paragraph": 6627,
+      "text": "CA-[ ]"
+    },
+    {
+      "paragraph": 6629,
+      "text": "MOD-[ ]"
+    },
+    {
+      "paragraph": 6631,
+      "text": "TC-[ ]"
+    },
+    {
+      "paragraph": 6641,
+      "text": "MOD-[ ]"
+    },
+    {
+      "paragraph": 6645,
+      "text": "RF-[ ]"
+    },
+    {
+      "paragraph": 6647,
+      "text": "IF-[ ]"
+    },
+    {
+      "paragraph": 6661,
+      "text": "TC-[ ]"
+    },
+    {
+      "paragraph": 6663,
+      "text": "RF-[ ]"
+    },
+    {
+      "paragraph": 6673,
+      "text": "EV-[ ]"
+    },
+    {
+      "paragraph": 6681,
+      "text": "ESC-[ ]"
+    },
+    {
+      "paragraph": 6687,
+      "text": "EVT-[ ]"
+    },
+    {
+      "paragraph": 6699,
+      "text": "VAR-[ ]"
+    },
+    {
+      "paragraph": 6720,
+      "text": "☐"
+    },
+    {
+      "paragraph": 6724,
+      "text": "☐"
+    },
+    {
+      "paragraph": 6728,
+      "text": "☐"
+    },
+    {
+      "paragraph": 6732,
+      "text": "☐"
+    },
+    {
+      "paragraph": 6736,
+      "text": "☐"
+    },
+    {
+      "paragraph": 6740,
+      "text": "☐"
+    },
+    {
+      "paragraph": 6744,
+      "text": "☐"
+    },
+    {
+      "paragraph": 6748,
+      "text": "☐"
+    },
+    {
+      "paragraph": 6752,
+      "text": "☐"
+    },
+    {
+      "paragraph": 6756,
+      "text": "☐"
+    }
+  ],
+  "phase_tables": [
+    [
+      [
+        "Fase",
+        "Actividades",
+        "Criterio de entrada",
+        "Criterio de salida"
+      ],
+      [
+        "F0",
+        "Redactar y revisar documento; verificar fuentes",
+        "Plantilla aprobada",
+        "Revisión científica de cap. 2 y 6"
+      ],
+      [
+        "F1",
+        "Implementar ingesta, validación, RIDGE y persistencia",
+        "F0 cerrada",
+        "TC-001…008, 025…033 aprobados"
+      ],
+      [
+        "F2",
+        "Generador de escenarios; visor 3D con astronauta.glb",
+        "RIDGE estable",
+        "TC-010…013 aprobados; ≥ 30 FPS"
+      ],
+      [
+        "F3",
+        "Colas S&F, prioridades, alertas, DONKI",
+        "F2 cerrada",
+        "TC-014…019 aprobados"
+      ],
+      [
+        "F4",
+        "Detección, predicción, asistente; seguridad",
+        "F3 cerrada",
+        "TC-008, 009, 022, 040 aprobados"
+      ],
+      [
+        "F5",
+        "Pruebas de sistema, usabilidad y aceptación",
+        "F4 cerrada",
+        "CA-001…006 aceptados"
+      ]
+    ]
+  ],
+  "review_checklist": [
+    {
+      "paragraph": 6720,
+      "criterion": "Toda sección tiene estado ([POR COMPLETAR], [IMPLEMENTADO], etc.)",
+      "status": "not signed off"
+    },
+    {
+      "paragraph": 6724,
+      "criterion": "Ningún elemento aparece como [IMPLEMENTADO] sin evidencia",
+      "status": "not signed off"
+    },
+    {
+      "paragraph": 6728,
+      "criterion": "Matriz de trazabilidad (3.9) sin huecos",
+      "status": "not signed off"
+    },
+    {
+      "paragraph": 6732,
+      "criterion": "Todo dato mostrado indica su naturaleza",
+      "status": "not signed off"
+    },
+    {
+      "paragraph": 6736,
+      "criterion": "El estado de salud se presenta por dimensiones, sin porcentaje único",
+      "status": "not signed off"
+    },
+    {
+      "paragraph": 6740,
+      "criterion": "El simulador 3D usa solo astronauta.glb",
+      "status": "not signed off"
+    },
+    {
+      "paragraph": 6744,
+      "criterion": "Citas [n] verificadas contra el capítulo 23",
+      "status": "not signed off"
+    },
+    {
+      "paragraph": 6748,
+      "criterion": "No se afirma afiliación oficial con NASA",
+      "status": "not signed off"
+    },
+    {
+      "paragraph": 6752,
+      "criterion": "Glosario actualizado",
+      "status": "not signed off"
+    },
+    {
+      "paragraph": 6756,
+      "criterion": "Historial de versiones actualizado",
+      "status": "not signed off"
+    }
+  ],
+  "placeholder_markers": {
+    "markdown_bracket_markers": 72,
+    "interpretation": "These 72 bracket markers are empty evidence/requirement IDs such as EV-[ ], RF-[ ] and TC-[ ], not 72 completed or pending product tasks."
+  },
+  "phase_assessment": [
+    {
+      "id": "F0",
+      "status": "partial",
+      "reason": "Document exists, but chapter 2/6 scientific review and source reconciliation are not signed off."
+    },
+    {
+      "id": "F1",
+      "status": "partial",
+      "reason": "Ingestion/QC and N-of-1 are implemented. The proposed RIDGE engine and persistence are not implemented; TC identifiers belong to this historical proposal."
+    },
+    {
+      "id": "F2",
+      "status": "partial",
+      "reason": "Scenario generation exists. No astronauta.glb viewer or 30 FPS evidence; 3D is excluded from the adopted MVP."
+    },
+    {
+      "id": "F3",
+      "status": "partial",
+      "reason": "Delay, queue preview, priorities and audit exist. Real store-and-forward and DONKI ingestion do not."
+    },
+    {
+      "id": "F4",
+      "status": "partial",
+      "reason": "Detection, verified explanation and template fallback exist. Short-term prediction and wider security design are not implemented; live LLM not exercised."
+    },
+    {
+      "id": "F5",
+      "status": "partial",
+      "reason": "Automated engine and browser checks pass. No usability study or signed acceptance against CA-001..006."
+    }
+  ]
+}

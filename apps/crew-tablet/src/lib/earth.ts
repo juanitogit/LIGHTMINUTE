@@ -1,4 +1,4 @@
-import { thresholds } from "virtual:tether-thresholds";
+import { thresholds } from "virtual:lightminute-thresholds";
 import { fmtRule } from "./format";
 import type { Reading } from "./types";
 

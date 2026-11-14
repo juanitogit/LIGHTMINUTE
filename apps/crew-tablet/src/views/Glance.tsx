@@ -1,20 +1,13 @@
 import { AttributionBanner, CrewStrip } from "../components/CrewStrip";
+import { BodyModel3D } from "../components/BodyModel3D";
 import { Icon } from "../components/Icon";
 import { LevelBadge, Panel } from "../components/primitives";
-import { fmt, titleFromName } from "../lib/format";
-import { crewRoles } from "../lib/meta";
+import { SyndromeStrip } from "../components/SyndromeStrip";
+import { fmt, fmtDelay, unitLabel } from "../lib/format";
+import { crewRoles, indicatorMeta, PERSONAL_LABEL } from "../lib/meta";
 import type { LoadedScenario } from "../lib/types";
-import { BodyMap } from "../components/BodyMap";
 
-export function Glance({
-  scenario,
-  dayNumber,
-  crewId,
-  onCrew,
-  onOpenWhy,
-  onOpenAct,
-  onOpenIndicator,
-}: {
+export function Glance({ scenario, dayNumber, crewId, onCrew, onOpenWhy, onOpenAct, onOpenIndicator }: {
   scenario: LoadedScenario;
   dayNumber: number;
   crewId: string;
@@ -23,84 +16,61 @@ export function Glance({
   onOpenAct: () => void;
   onOpenIndicator: (key: string) => void;
 }) {
-  const day = scenario.doc.days.find((d) => d.day === dayNumber) ?? scenario.doc.days[0];
-  const member = day?.crew?.[crewId] ?? (day ? day.crew[Object.keys(day.crew)[0] ?? ""] : undefined);
-  const title =
-    scenario.doc.meta?.title ?? scenario.doc.title ?? titleFromName(scenario.doc.name ?? "");
-  const description = scenario.doc.description ?? scenario.doc.meta?.summary ?? null;
+  const day = scenario.doc.days.find((d) => d.day === dayNumber);
+  const member = day?.crew?.[crewId];
+  const members = Object.values(day?.crew ?? {});
+  const roles = crewRoles(scenario.doc);
+  const attention = members.filter((m) => m.level === "act" || m.level === "escalate").length;
+  const history = scenario.doc.days.filter((d) => d.day <= dayNumber).slice(-14);
+  const series = history.flatMap((d) => {
+    const z = d.crew[crewId]?.syndrome_z;
+    return typeof z === "number" && Number.isFinite(z) ? [{ day: d.day, z }] : [];
+  });
 
-  return (
-    <div className="view glance">
-      <header className="viewhead">
-        <div>
-          <p className="micro">Glance · 2 seconds</p>
-          <h1>{title}</h1>
-          {description ? <p className="viewhead__sub">{description}</p> : null}
-          <p className="viewhead__meta mono small">
-            Day {dayNumber} · {Object.keys(day?.crew ?? {}).length} crew · status is icon, text and
-            colour
-          </p>
-        </div>
-      </header>
-
+  return <div className="view glance">
+    <header className="viewhead overview-heading">
+      <div><p className="micro">LIGHTMINUTE / CREW WORKSPACE</p><h1>Crew health</h1><p className="viewhead__sub">Your own baseline. A clearer picture.</p></div>
+      <div className="overview-day"><span>Mission day</span><strong>{String(dayNumber).padStart(2,"0")}</strong><span>of {scenario.doc.days.length}</span></div>
+    </header>
+    <div className="overview-context"><span>{members.length} crew members</span><span className={attention ? "context-attention" : ""}>{attention ? `${attention} requiring action` : "No action-level findings"}</span><span>Earth round trip {fmtDelay(member?.routing.expected_reply_s)}</span></div>
+    <section className="crew-section" aria-label="Select a crew member">
+      {day ? <CrewStrip crew={day.crew} roles={roles} selected={crewId} onOpen={onCrew} /> : null}
+    </section>
+    {member ? <>
       <div className="glance__grid">
-        <Panel
-          className="glance__hero"
-          title={`Crew ${crewId} · hazard map`}
-          aside={member ? <LevelBadge level={member.level} compact /> : null}
-          labelledBy="glance-hero-title"
-        >
-          {member ? (
-            <>
-              <p className="glance__headline">{member.card?.headline ?? "No card for this day"}</p>
-              <BodyMap
-                readings={member.indicators ?? {}}
-                crewLabel={`Crew ${crewId}`}
-                onOpenIndicator={onOpenIndicator}
-              />
-              <div className="glance__hero-meta">
-                <span className="mono">combined score z {fmt(member.syndrome_z, 1)}</span>
-                <span className="mono">confidence {member.card?.confidence ?? "—"}</span>
-                {member.learning ? <span className="chip chip--quiet">learning baseline</span> : null}
-              </div>
-              <div className="glance__actions">
-                <button type="button" className="btn btn--primary" onClick={onOpenWhy}>
-                  See why <Icon name="arrow" size={16} />
-                </button>
-                <button type="button" className="btn" onClick={onOpenAct}>
-                  Open the action card
-                </button>
-              </div>
-            </>
-          ) : (
-            <p className="chart-empty">No crew data for day {dayNumber}.</p>
-          )}
-        </Panel>
-
+        <section className="body-column" aria-labelledby="body-title">
+          <header className="body-heading"><div><p className="micro">PERSONAL VIEW</p><h2 id="body-title">Crew {crewId} <span>{roles[crewId]}</span></h2></div><LevelBadge level={member.level} /></header>
+          <BodyModel3D readings={member.indicators} crewLabel={`Crew ${crewId}`} onOpenIndicator={onOpenIndicator} />
+          <p className="body-context"><span className="landmark-key" />Landmarks reflect the personal lens.<br />{member.learning ? "Your baseline is still learning." : "Compared with your own 95% personal band."}</p>
+        </section>
         <div className="glance__side">
-          <AttributionBanner attribution={day?.attribution} />
-          <section aria-labelledby="crew-strip-title">
-            <header className="panel__head">
-              <h2 className="micro" id="crew-strip-title">
-                Crew status
-              </h2>
-              <p className="muted small">tap a member to open their why-view</p>
-            </header>
-            {day ? (
-              <CrewStrip
-                crew={day.crew}
-                roles={crewRoles(scenario.doc)}
-                selected={crewId}
-                onOpen={onCrew}
-              />
-            ) : null}
+          <section className="signals-section" aria-labelledby="signals-title">
+            <header className="panel__head"><h2 id="signals-title">Today's signals</h2><span className="small muted">Last {history.length} days</span></header>
+            <div className="signal-list">
+              {(scenario.doc.indicators ?? Object.keys(member.indicators)).map((key) => {
+                const reading = member.indicators[key], meta = indicatorMeta(key);
+                const values = history.map((d) => d.crew[crewId]?.indicators[key]?.value);
+                const finite = values.filter((v): v is number => typeof v === "number" && Number.isFinite(v));
+                const lo = Math.min(...finite), hi = Math.max(...finite);
+                const segments = values.map((v,i)=>typeof v === "number" && Number.isFinite(v) ? `${5+i*90/Math.max(1,values.length-1)},${32-(v-lo)/(hi-lo||1)*23}` : null)
+                  .reduce<string[]>((all,p)=>{if(p===null)all.push("");else all[all.length-1]+=`${p} `;return all;},[""]);
+                const verdict=reading?.lens.personal, unusual=verdict==="unusual_high"||verdict==="unusual_low";
+                return <button type="button" key={key} className={`signal-row ${unusual?"is-unusual":""}`} onClick={()=>onOpenIndicator(key)} aria-label={`${meta.label}: ${reading?fmt(reading.value,meta.decimals):"no reading"}. Open personal baseline`}>
+                  <span className="signal-row__name"><strong>{meta.label}</strong><small>{PERSONAL_LABEL[verdict??""]??"No reading today"}</small></span>
+                  <span className="signal-row__value">{reading?fmt(reading.value,meta.decimals):"—"}<small>{unitLabel(reading?.unit??meta.unit)}</small></span>
+                  <svg className="signal-spark" viewBox="0 0 100 40" aria-hidden="true">{segments.filter(Boolean).map((s,i)=><polyline key={i} points={s}/>)}{finite.length===1?<circle cx="5" cy="32" r="2"/>:null}</svg>
+                  <Icon name="chevron" size={13} className="disclosure-arrow" />
+                </button>;
+              })}
+            </div>
           </section>
-          <p className="glance__footnote">
-            <Icon name="info" size={14} /> One reading is never a verdict: TETHER compares today to
-            your own 95% band, then asks the Earth, space and personal lenses separately.
-          </p>
+          <section className="trend-panel" aria-labelledby="combined-title"><header className="panel__head"><h2 id="combined-title">Signals, together</h2><span className="trend-score">z {fmt(member.syndrome_z,2)}</span></header><SyndromeStrip series={series} selectedDay={dayNumber}/></section>
+          <button type="button" className="text-action" onClick={onOpenWhy}>Explore personal baseline <Icon name="arrow" size={15}/></button>
         </div>
       </div>
-    </div>
-  );
+      <AttributionBanner attribution={day?.attribution}/>
+      <section className="overview-decision" aria-labelledby="next-title"><div><p className="micro">NEXT STEPS / CREW {crewId}</p><h2 id="next-title">{member.card.headline}</h2><p>{member.card.do_now[0]}</p></div><button type="button" className="text-action" onClick={onOpenAct}>Review actions <Icon name="arrow" size={16}/></button></section>
+    </> : <Panel><p>No crew readings for this day.</p></Panel>}
+    <p className="glance__footnote">Synthetic mission data. Decision support for demonstration. Not a medical device.</p>
+  </div>;
 }

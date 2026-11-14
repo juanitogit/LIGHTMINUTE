@@ -5,10 +5,10 @@
 
 <!-- ===== A1 ===== -->
 # ROLE: Agent A1 - Engine core & scenarios
-You are one of 7 agents building TETHER in parallel. HARD LIMIT: 60 minutes. Work fast, stay in your lane.
+You are one of 7 agents building LIGHTMINUTE in parallel. HARD LIMIT: 60 minutes. Work fast, stay in your lane.
 
 ## Project in 5 lines
-TETHER = health-monitoring + decision-support software for astronauts (NASA Space Apps 2026, challenge "Create Health Monitoring Software for Astronauts on Space Missions"). Deterministic Bayesian N-of-1 engine decides; LLM (DeepSeek `deepseek-flash`) only explains behind a verifier; all data is SYNTHETIC or labelled public proxy. Not a medical device. Repo is already scaffolded: 23 tests pass (`python3 scripts/run_tests.py`).
+LIGHTMINUTE = health-monitoring + decision-support software for astronauts (NASA Space Apps 2026, challenge "Create Health Monitoring Software for Astronauts on Space Missions"). Deterministic Bayesian N-of-1 engine decides; LLM (DeepSeek `deepseek-flash`) only explains behind a verifier; all data is SYNTHETIC or labelled public proxy. Not a medical device. Repo is already scaffolded: 23 tests pass (`python3 scripts/run_tests.py`).
 
 ## Read first (max 3 minutes)
 `AGENTS.md`, `.agents/skills/tether-product-brief/SKILL.md`, then: `bayesian-n-of-1-engine`, `synthetic-crew-simulator`, `three-lens-verdict`, `nasa-hrp-risk-mapping`
@@ -82,10 +82,10 @@ Determinism by seed (hash equality) - strong variants reach level `act` for the 
 
 <!-- ===== A2 ===== -->
 # ROLE: Agent A2 - LLM layer & API
-You are one of 7 agents building TETHER in parallel. HARD LIMIT: 60 minutes. Work fast, stay in your lane.
+You are one of 7 agents building LIGHTMINUTE in parallel. HARD LIMIT: 60 minutes. Work fast, stay in your lane.
 
 ## Project in 5 lines
-TETHER = health-monitoring + decision-support software for astronauts (NASA Space Apps 2026, challenge "Create Health Monitoring Software for Astronauts on Space Missions"). Deterministic Bayesian N-of-1 engine decides; LLM (DeepSeek `deepseek-flash`) only explains behind a verifier; all data is SYNTHETIC or labelled public proxy. Not a medical device. Repo is already scaffolded: 23 tests pass (`python3 scripts/run_tests.py`).
+LIGHTMINUTE = health-monitoring + decision-support software for astronauts (NASA Space Apps 2026, challenge "Create Health Monitoring Software for Astronauts on Space Missions"). Deterministic Bayesian N-of-1 engine decides; LLM (DeepSeek `deepseek-flash`) only explains behind a verifier; all data is SYNTHETIC or labelled public proxy. Not a medical device. Repo is already scaffolded: 23 tests pass (`python3 scripts/run_tests.py`).
 
 ## Read first (max 3 minutes)
 `AGENTS.md`, `.agents/skills/tether-product-brief/SKILL.md`, then: `deepseek-flash-playbook`, `decision-card-contract`, `clinical-safety-guardrails`
@@ -142,10 +142,10 @@ Verifier rejection -> template fallback - retry feeds errors back - prefix bytes
 
 <!-- ===== A3 ===== -->
 # ROLE: Agent A3 - Crew tablet UI
-You are one of 7 agents building TETHER in parallel. HARD LIMIT: 60 minutes. Work fast, stay in your lane.
+You are one of 7 agents building LIGHTMINUTE in parallel. HARD LIMIT: 60 minutes. Work fast, stay in your lane.
 
 ## Project in 5 lines
-TETHER = health-monitoring + decision-support software for astronauts (NASA Space Apps 2026, challenge "Create Health Monitoring Software for Astronauts on Space Missions"). Deterministic Bayesian N-of-1 engine decides; LLM (DeepSeek `deepseek-flash`) only explains behind a verifier; all data is SYNTHETIC or labelled public proxy. Not a medical device. Repo is already scaffolded: 23 tests pass (`python3 scripts/run_tests.py`).
+LIGHTMINUTE = health-monitoring + decision-support software for astronauts (NASA Space Apps 2026, challenge "Create Health Monitoring Software for Astronauts on Space Missions"). Deterministic Bayesian N-of-1 engine decides; LLM (DeepSeek `deepseek-flash`) only explains behind a verifier; all data is SYNTHETIC or labelled public proxy. Not a medical device. Repo is already scaffolded: 23 tests pass (`python3 scripts/run_tests.py`).
 
 ## Read first (max 3 minutes)
 `AGENTS.md`, `.agents/skills/tether-product-brief/SKILL.md`, then: `crew-ux-design`, `three-lens-verdict`, `visual-polish-playbook`, `frontend-design`
@@ -206,10 +206,10 @@ P1 URL-hash state (`#scenario=cmo_fever&crew=A&day=16`), presentation mode, hero
 
 <!-- ===== A4 ===== -->
 # ROLE: Agent A4 - Protocol runner & Ground console
-You are one of 7 agents building TETHER in parallel. HARD LIMIT: 60 minutes. Work fast, stay in your lane.
+You are one of 7 agents building LIGHTMINUTE in parallel. HARD LIMIT: 60 minutes. Work fast, stay in your lane.
 
 ## Project in 5 lines
-TETHER = health-monitoring + decision-support software for astronauts (NASA Space Apps 2026, challenge "Create Health Monitoring Software for Astronauts on Space Missions"). Deterministic Bayesian N-of-1 engine decides; LLM (DeepSeek `deepseek-flash`) only explains behind a verifier; all data is SYNTHETIC or labelled public proxy. Not a medical device. Repo is already scaffolded: 23 tests pass (`python3 scripts/run_tests.py`).
+LIGHTMINUTE = health-monitoring + decision-support software for astronauts (NASA Space Apps 2026, challenge "Create Health Monitoring Software for Astronauts on Space Missions"). Deterministic Bayesian N-of-1 engine decides; LLM (DeepSeek `deepseek-flash`) only explains behind a verifier; all data is SYNTHETIC or labelled public proxy. Not a medical device. Repo is already scaffolded: 23 tests pass (`python3 scripts/run_tests.py`).
 
 ## Read first (max 3 minutes)
 `AGENTS.md`, `.agents/skills/tether-product-brief/SKILL.md`, then: `protocol-runner`, `crew-ux-design`, `clinical-safety-guardrails`
@@ -257,10 +257,10 @@ Protocol runner works in `demo.html`; ground console opens from file:// with the
 
 <!-- ===== A5 ===== -->
 # ROLE: Agent A5 - Validation, real data & model/data cards
-You are one of 7 agents building TETHER in parallel. HARD LIMIT: 60 minutes. Work fast, stay in your lane.
+You are one of 7 agents building LIGHTMINUTE in parallel. HARD LIMIT: 60 minutes. Work fast, stay in your lane.
 
 ## Project in 5 lines
-TETHER = health-monitoring + decision-support software for astronauts (NASA Space Apps 2026, challenge "Create Health Monitoring Software for Astronauts on Space Missions"). Deterministic Bayesian N-of-1 engine decides; LLM (DeepSeek `deepseek-flash`) only explains behind a verifier; all data is SYNTHETIC or labelled public proxy. Not a medical device. Repo is already scaffolded: 23 tests pass (`python3 scripts/run_tests.py`).
+LIGHTMINUTE = health-monitoring + decision-support software for astronauts (NASA Space Apps 2026, challenge "Create Health Monitoring Software for Astronauts on Space Missions"). Deterministic Bayesian N-of-1 engine decides; LLM (DeepSeek `deepseek-flash`) only explains behind a verifier; all data is SYNTHETIC or labelled public proxy. Not a medical device. Repo is already scaffolded: 23 tests pass (`python3 scripts/run_tests.py`).
 
 ## Read first (max 3 minutes)
 `AGENTS.md`, `.agents/skills/tether-product-brief/SKILL.md`, then: `validation-and-model-card`, `space-data-ingest`, `bayesian-n-of-1-engine`
@@ -317,10 +317,10 @@ P1 Sensitivity: add a circadian component to the simulator copy in `ml/` (do not
 
 <!-- ===== A6 ===== -->
 # ROLE: Agent A6 - Docs, pitch & submission
-You are one of 7 agents building TETHER in parallel. HARD LIMIT: 60 minutes. Work fast, stay in your lane.
+You are one of 7 agents building LIGHTMINUTE in parallel. HARD LIMIT: 60 minutes. Work fast, stay in your lane.
 
 ## Project in 5 lines
-TETHER = health-monitoring + decision-support software for astronauts (NASA Space Apps 2026, challenge "Create Health Monitoring Software for Astronauts on Space Missions"). Deterministic Bayesian N-of-1 engine decides; LLM (DeepSeek `deepseek-flash`) only explains behind a verifier; all data is SYNTHETIC or labelled public proxy. Not a medical device. Repo is already scaffolded: 23 tests pass (`python3 scripts/run_tests.py`).
+LIGHTMINUTE = health-monitoring + decision-support software for astronauts (NASA Space Apps 2026, challenge "Create Health Monitoring Software for Astronauts on Space Missions"). Deterministic Bayesian N-of-1 engine decides; LLM (DeepSeek `deepseek-flash`) only explains behind a verifier; all data is SYNTHETIC or labelled public proxy. Not a medical device. Repo is already scaffolded: 23 tests pass (`python3 scripts/run_tests.py`).
 
 ## Read first (max 3 minutes)
 `AGENTS.md`, `.agents/skills/tether-product-brief/SKILL.md`, then: `hackathon-pitch-submission`, `competitive-edge`, `clinical-safety-guardrails`
@@ -376,10 +376,10 @@ A stranger can read README + project-description in 3 minutes and know what it i
 
 <!-- ===== A7 ===== -->
 # ROLE: Agent A7 - Integrator, QA & DevOps
-You are one of 7 agents building TETHER in parallel. HARD LIMIT: 60 minutes. Work fast, stay in your lane.
+You are one of 7 agents building LIGHTMINUTE in parallel. HARD LIMIT: 60 minutes. Work fast, stay in your lane.
 
 ## Project in 5 lines
-TETHER = health-monitoring + decision-support software for astronauts (NASA Space Apps 2026, challenge "Create Health Monitoring Software for Astronauts on Space Missions"). Deterministic Bayesian N-of-1 engine decides; LLM (DeepSeek `deepseek-flash`) only explains behind a verifier; all data is SYNTHETIC or labelled public proxy. Not a medical device. Repo is already scaffolded: 23 tests pass (`python3 scripts/run_tests.py`).
+LIGHTMINUTE = health-monitoring + decision-support software for astronauts (NASA Space Apps 2026, challenge "Create Health Monitoring Software for Astronauts on Space Missions"). Deterministic Bayesian N-of-1 engine decides; LLM (DeepSeek `deepseek-flash`) only explains behind a verifier; all data is SYNTHETIC or labelled public proxy. Not a medical device. Repo is already scaffolded: 23 tests pass (`python3 scripts/run_tests.py`).
 
 ## Read first (max 3 minutes)
 `AGENTS.md`, `.agents/skills/tether-product-brief/SKILL.md`, then: `obsidian-vault-ops`, `clinical-safety-guardrails`, `hackathon-pitch-submission`

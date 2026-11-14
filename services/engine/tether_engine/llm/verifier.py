@@ -16,10 +16,10 @@ REQUIRED = {"headline", "what_changed", "why_it_matters", "confidence",
             "do_now", "monitor", "escalate_if", "ground_message", "citations", "level"}
 ALLOWED_FIELDS = REQUIRED                       # llm/schemas/decision_card.schema.json
 DIAGNOSIS = re.compile(r"\byou have\b|(?<!not a )(?<!no )\bdiagnos(is|ed)\b|"
-                       r"\bit is (definitely|certainly)\b|\bconfirmed infection\b", re.I)
+                       r"\bit is (definitely|certainly)\b|\bconfirmed infection\b", re.IGNORECASE)
 # Guardrail 8: never output doses. Matches amounts with a unit and dose wording.
 DOSING = re.compile(r"\b\d+(?:\.\d+)?\s*(?:mg|mcg|µg|ml|iu|tablets?|capsules?|pills?|drops?)\b"
-                    r"|\bdos(?:e|es|age|ing)\b", re.I)
+                    r"|\bdos(?:e|es|age|ing)\b", re.IGNORECASE)
 GROUND_MAX = 140
 
 

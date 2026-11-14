@@ -1,10 +1,13 @@
 ---
 tags: [home, moc]
 status: decided
-updated: 2026-11-13
+updated: 2026-11-14
 ---
-# 🚀 TETHER — Home (Mapa de contenido)
+# 🚀 LIGHTMINUTE — Home (Mapa de contenido)
 > *Tu línea base, aunque la Tierra esté fuera de alcance.* Proyecto para **NASA Space Apps 2026** · 14–15 nov.
+
+## Auditoría vigente
+[[Auditoria integral LIGHTMINUTE]] · [[ADR-005 Identidad y fuente de verdad]] · [[ADR-006 Interfaz nativa y modelo humano 3D]]
 
 ## Empieza aquí
 1. [[Tesis y diferenciadores]] — por qué ganamos
@@ -19,6 +22,8 @@ updated: 2026-11-13
 [[Alcance MoSCoW]] · [[Mapa indicador-riesgo]] · [[Escenarios demo]] · [[Decision Card spec]] · [[Personas]]
 
 ## Arquitectura
+[[ADR-007 Anatomia y flujos de referencia]] · Anatomía y cobertura funcional de la referencia.
+
 [[Arquitectura general]] · [[ADR-001 Motor decide LLM explica]] · [[ADR-002 N-of-1 conjugado]] · [[ADR-003 Cache-stuffing de la KB]] · [[ADR-004 Stack]] · [[Retraso de comunicaciones]] · [[Seguridad y etica]]
 
 ## Ejecución

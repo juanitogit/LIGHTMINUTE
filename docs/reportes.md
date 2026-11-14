@@ -1,4 +1,6 @@
-# Reporte de pruebas del aplicativo TETHER
+> **Informe histórico superado por la [auditoría integral LIGHTMINUTE](ui-audit.md).** La suite completa, E2E y lint ya se ejecutaron y pasan; se conserva este resultado anterior como historial.
+
+# Reporte de pruebas del aplicativo LIGHTMINUTE
 
 **Fecha de ejecución:** 2026-11-14  
 **Entorno:** `.venv` local con dependencias Python de desarrollo y dependencias npm instaladas mediante `make setup`.  

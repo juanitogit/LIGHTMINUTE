@@ -114,9 +114,8 @@ def test_provider_none_makes_zero_network_calls():
 
 def test_missing_key_falls_back_to_template_without_network():
     client = FakeClient(raises=AssertionError("network call without a key"))
-    with env(LLM_PROVIDER="deepseek", DEEPSEEK_API_KEY=None):
-        with env(DEEPSEEK_API_KEY=""):
-            out = card_service.get_card("cmo_fever", "A", 15)
+    with env(LLM_PROVIDER="deepseek", DEEPSEEK_API_KEY=None), env(DEEPSEEK_API_KEY=""):
+        out = card_service.get_card("cmo_fever", "A", 15)
     assert out["card_source"] == "template"
     assert out["provider"] != "deepseek" or out["card_source"] == "template"
     assert client.calls == []

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CrewPills } from "../components/CrewPills";
+import { CrewSelector } from "../components/CrewSelector";
 import { GroundMessage } from "../components/GroundMessage";
 import { Icon } from "../components/Icon";
 import { Chip, LevelBadge, Panel } from "../components/primitives";
@@ -79,7 +79,7 @@ export function Act({
           </div>
         </div>
         <div className="viewhead__tools">
-          <CrewPills crewIds={crewIds} crew={crewId} onCrew={onCrew} />
+          <CrewSelector crewIds={crewIds} crew={crewId} onCrew={onCrew} />
           {role ? <span className="chip chip--quiet">{role}</span> : null}
         </div>
       </header>
@@ -144,7 +144,7 @@ export function Act({
 
         <aside className="act__side">
           <Panel title="Message to ground" labelledBy="ground-title">
-            <GroundMessage message={card.ground_message} routing={routing} />
+            <GroundMessage key={keyPrefix} message={card.ground_message} routing={routing} />
           </Panel>
 
           <Panel title="Keep monitoring" labelledBy="monitor-title">
@@ -172,7 +172,7 @@ export function Act({
             </p>
           </Panel>
 
-          <ProtocolRunner protocolId={protocolId} />
+          <ProtocolRunner key={keyPrefix} protocolId={protocolId} crewId={crewId} />
         </aside>
       </div>
 

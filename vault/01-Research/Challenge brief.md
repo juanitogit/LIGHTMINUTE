@@ -19,3 +19,5 @@ sources: [spaceappschallenge.org/2026, science.nasa.gov]
 - Sáb 14 – Dom 15 nov 2026; equipos de hasta 5; presencial/virtual; 500+ eventos locales. NASA lo ancla en objetivos Luna/Marte; menciona "monitoreo de indicadores fisiológicos y conductuales en viajes largos".
 - ⚠️ La página oficial del reto (recursos, enlaces) **no pude abrirla**: léela mañana a primera hora → [[Lecturas pendientes y verificar]].
 Ver [[Criterios de jueceo]].
+
+Relacionado: [[00-Home]].

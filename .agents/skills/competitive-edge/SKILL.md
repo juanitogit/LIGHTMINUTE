@@ -1,6 +1,6 @@
 ---
 name: competitive-edge
-description: How TETHER positions itself against other NASA Space Apps 2026 astronaut-health projects (AURORA, Crew Health Monitor, VITA, others) - which ideas we reimplemented, where we are stronger, which claims we may and may NOT make, and the exact demo beats that expose the gaps. Use when writing the pitch, README, video, Q&A answers, comparison tables, or deciding whether to build a feature "because they have it".
+description: How LIGHTMINUTE positions itself against other NASA Space Apps 2026 astronaut-health projects (AURORA, Crew Health Monitor, VITA, others) - which ideas we reimplemented, where we are stronger, which claims we may and may NOT make, and the exact demo beats that expose the gaps. Use when writing the pitch, README, video, Q&A answers, comparison tables, or deciding whether to build a feature "because they have it".
 ---
 # Competitive edge (ideas studied, code never copied)
 

@@ -1,4 +1,4 @@
-export function CrewPills({
+export function CrewSelector({
   crewIds,
   crew,
   onCrew,
@@ -10,12 +10,12 @@ export function CrewPills({
   label?: string;
 }) {
   return (
-    <div className="crew-pills" role="group" aria-label={label}>
+    <div className="crew-selector" role="group" aria-label={label}>
       {crewIds.map((id) => (
         <button
           key={id}
           type="button"
-          className={`crew-pill ${crew === id ? "is-active" : ""}`}
+          className={`crew-choice ${crew === id ? "is-active" : ""}`}
           aria-pressed={crew === id}
           onClick={() => onCrew(id)}
         >

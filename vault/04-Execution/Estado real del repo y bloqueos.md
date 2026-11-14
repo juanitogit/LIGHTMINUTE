@@ -8,6 +8,15 @@ sources: [revisión local del repo 2026-11-14, docs/validation.md, apps/crew-tab
 > Revisión archivo por archivo de `project/` y de esta bóveda. No es el estado deseado: es lo que existe hoy, comprobado. Reemplaza al [[Board]] del 13-nov como fuente de verdad.
 > Contexto de producto: [[Tesis y diferenciadores]] · [[Alcance MoSCoW]] · [[Arquitectura general]] · [[Criterios de jueceo]]
 
+## Estado vigente — auditoría LIGHTMINUTE (2026-11-14)
+
+El motor, API, tablet, consola, protocolos, snapshot NOAA y validación están implementados.
+La revisión completa, sus comandos y limitaciones están en [[Auditoria integral LIGHTMINUTE]].
+El `alpha` ya está corregido en el motor. La nueva interfaz usa la imagen oficial sin redibujarla.
+La siguiente sección conserva el historial previo a la integración; **no es el estado actual**.
+
+## Historial de integración (superado)
+
 ## Resumen en una frase
 El **motor y la evidencia científica están construidos y probados**; falta toda la capa de producto (pipeline, API, UI, consola, protocolos) y la capa de entrega (model/data card, pitch, LICENSE).
 
@@ -15,24 +24,24 @@ El **motor y la evidencia científica están construidos y probados**; falta tod
 
 | Pieza | Ruta | Nota / prueba |
 |---|---|---|
-| Baseline N-of-1 (NIG + Student-t + olvido) | [nof1.py](../../project/services/engine/tether_engine/bayes/nof1.py) | [[ADR-002 N-of-1 conjugado]] · [test_nof1.py](../../project/services/engine/tests/test_nof1.py) |
-| Score de síndrome + CUSUM | [syndrome.py](../../project/services/engine/tether_engine/bayes/syndrome.py) | [[Resultados de validacion]] · [test_syndrome.py](../../project/services/engine/tests/test_syndrome.py) |
-| Atribución de tripulación (individual vs compartido) | [attribution.py](../../project/services/engine/tether_engine/crew/attribution.py) | [test_crew_ground_space.py](../../project/services/engine/tests/test_crew_ground_space.py) |
-| Retraso y enrutamiento "a bordo primero" | [delay.py](../../project/services/engine/tether_engine/ground/delay.py) | [[Retraso de comunicaciones]] |
-| Escala S NOAA + presupuesto de dosis | [space_weather.py](../../project/services/engine/tether_engine/hazards/space_weather.py) | [[Fuentes de datos]] |
-| Auditoría con hash chain | [audit.py](../../project/services/engine/tether_engine/audit.py) | [[Seguridad y etica]] |
-| Tres lentes + patrones con nombre | [lenses.py](../../project/services/engine/tether_engine/lenses.py) | [[Demo killer - lentes en desacuerdo]] |
-| Umbrales que rechazan lo no etiquetado | [thresholds.py](../../project/services/engine/tether_engine/protocols/thresholds.py) · [thresholds.json](../../project/kb/thresholds.json) | [[Mapa indicador-riesgo]] |
-| Plantilla determinista de Decision Card | [templates.py](../../project/services/engine/tether_engine/protocols/templates.py) | [[Decision Card spec]] |
-| Verificador del LLM | [verifier.py](../../project/services/engine/tether_engine/llm/verifier.py) | [[ADR-001 Motor decide LLM explica]] · [test_verifier.py](../../project/services/engine/tests/test_verifier.py) |
-| Cliente DeepSeek (cache-stuffing, effort) | [deepseek_client.py](../../project/services/engine/tether_engine/llm/deepseek_client.py) | [[ADR-003 Cache-stuffing de la KB]] · [[DeepSeek V4.1 Flash - guia]] |
-| Simulador mínimo determinista | [mini.py](../../project/services/engine/tether_engine/simulate/mini.py) | skill `synthetic-crew-simulator` |
-| Benchmark comparativo A/B/B2/C | [run_all.py](../../project/ml/validation/run_all.py) · [results.json](../../project/ml/validation/results.json) | [validation.md](../../project/docs/validation.md) · [[Resultados de validacion]] |
-| Salida real del motor, 24 días × 4 tripulantes | [demo-data.json](../../project/apps/crew-tablet/public/demo-data.json) | contrato: [DEMO_DATA_CONTRACT.md](../../project/docs/DEMO_DATA_CONTRACT.md) |
-| Pantalla estrella del demo (autónoma) | [three-lens.html](../../project/apps/crew-tablet/prototype/three-lens.html) | [[Demo killer - lentes en desacuerdo]] |
-| KB citada + esquema y prompt de la tarjeta | [evidence.yaml](../../project/kb/evidence.yaml) · [syndromes.json](../../project/kb/syndromes.json) · [schema](../../project/llm/schemas/decision_card.schema.json) · [prompt](../../project/llm/prompts/decision_card.system.md) | [[Decision Card spec]] |
-| Orquestación de 7 agentes | [OWNERS.json](../../project/agents/OWNERS.json) · [PLAN](../../project/agents/PLAN.md) · [prompts](../../project/agents/prompts/) | [[Plan 48h]] |
-| 12 skills del agente | [.agents/skills](../../project/.agents/skills/) | [[Indice de skills]] |
+| Baseline N-of-1 (NIG + Student-t + olvido) | [nof1.py](../../services/engine/tether_engine/bayes/nof1.py) | [[ADR-002 N-of-1 conjugado]] · [test_nof1.py](../../services/engine/tests/test_nof1.py) |
+| Score de síndrome + CUSUM | [syndrome.py](../../services/engine/tether_engine/bayes/syndrome.py) | [[Resultados de validacion]] · [test_syndrome.py](../../services/engine/tests/test_syndrome.py) |
+| Atribución de tripulación (individual vs compartido) | [attribution.py](../../services/engine/tether_engine/crew/attribution.py) | [test_crew_ground_space.py](../../services/engine/tests/test_crew_ground_space.py) |
+| Retraso y enrutamiento "a bordo primero" | [delay.py](../../services/engine/tether_engine/ground/delay.py) | [[Retraso de comunicaciones]] |
+| Escala S NOAA + presupuesto de dosis | [space_weather.py](../../services/engine/tether_engine/hazards/space_weather.py) | [[Fuentes de datos]] |
+| Auditoría con hash chain | [audit.py](../../services/engine/tether_engine/audit.py) | [[Seguridad y etica]] |
+| Tres lentes + patrones con nombre | [lenses.py](../../services/engine/tether_engine/lenses.py) | [[Demo killer - lentes en desacuerdo]] |
+| Umbrales que rechazan lo no etiquetado | [thresholds.py](../../services/engine/tether_engine/protocols/thresholds.py) · [thresholds.json](../../kb/thresholds.json) | [[Mapa indicador-riesgo]] |
+| Plantilla determinista de Decision Card | [templates.py](../../services/engine/tether_engine/protocols/templates.py) | [[Decision Card spec]] |
+| Verificador del LLM | [verifier.py](../../services/engine/tether_engine/llm/verifier.py) | [[ADR-001 Motor decide LLM explica]] · [test_verifier.py](../../services/engine/tests/test_verifier.py) |
+| Cliente DeepSeek (cache-stuffing, effort) | [deepseek_client.py](../../services/engine/tether_engine/llm/deepseek_client.py) | [[ADR-003 Cache-stuffing de la KB]] · [[DeepSeek V4.1 Flash - guia]] |
+| Simulador mínimo determinista | [mini.py](../../services/engine/tether_engine/simulate/mini.py) | skill `synthetic-crew-simulator` |
+| Benchmark comparativo A/B/B2/C | [run_all.py](../../ml/validation/run_all.py) · [results.json](../../ml/validation/results.json) | [validation.md](../../docs/validation.md) · [[Resultados de validacion]] |
+| Salida real del motor, 24 días × 4 tripulantes | [demo-data.json](../../apps/crew-tablet/public/demo-data.json) | contrato: [DEMO_DATA_CONTRACT.md](../../docs/DEMO_DATA_CONTRACT.md) |
+| Pantalla estrella del demo (autónoma) | [three-lens.html](../../apps/crew-tablet/prototype/three-lens.html) | [[Demo killer - lentes en desacuerdo]] |
+| KB citada + esquema y prompt de la tarjeta | [evidence.yaml](../../kb/evidence.yaml) · [syndromes.json](../../kb/syndromes.json) · [schema](../../llm/schemas/decision_card.schema.json) · [prompt](../../llm/prompts/decision_card.system.md) | [[Decision Card spec]] |
+| Orquestación de 7 agentes | [OWNERS.json](../../agents/OWNERS.json) · [PLAN](../../agents/PLAN.md) · [prompts](../../agents/prompts/) | [[Plan 48h]] |
+| 12 skills del agente | [.agents/skills](../../.agents/skills/) | [[Indice de skills]] |
 
 ### Demo killer: confirmado con los datos reales
 Extraído de `demo-data.json` (tripulante A, semilla 0): días 8–14 `info` y `concordant_normal`; **día 15** salta a `act` con síndrome 2.34; **día 16** FC **68.50** → Tierra `normal`, personal `unusual_high`, patrón **`hidden_in_range`**, síndrome **4.30** (línea 2.33). El día 17 baja a `info` y el 18 vuelve a `act`: el relato del pitch debe decir "señal sostenida con fluctuación", no "monótona".
@@ -44,20 +53,20 @@ Extraído de `demo-data.json` (tripulante A, semilla 0): días 8–14 `info` y `
 | Falta | Dueño | Dónde iría |
 |---|---|---|
 | `run_scenario(name, seed, days)` | A1 | `services/engine/tether_engine/pipeline.py` |
-| 3 escenarios (`cmo_fever`, `sep_sleep_loss`, `co2_creep`) + variantes leves + `labels.json` | A1 | [simulate/](../../project/services/engine/tether_engine/simulate/) · [data/synthetic/](../../project/data/synthetic/) |
+| 3 escenarios (`cmo_fever`, `sep_sleep_loss`, `co2_creep`) + variantes leves + `labels.json` | A1 | [simulate/](../../services/engine/tether_engine/simulate/) · [data/synthetic/](../../data/synthetic/) |
 | QC de huecos y artefactos | A1 | `services/engine/tether_engine/qc/` |
-| API FastAPI (`/api/health`, `/api/scenario`, `/api/card`, `/api/llm-stats`) | A2 | [api/](../../project/services/engine/tether_engine/api/) |
+| API FastAPI (`/api/health`, `/api/scenario`, `/api/card`, `/api/llm-stats`) | A2 | [api/](../../services/engine/tether_engine/api/) |
 | Servicio de tarjetas con reintento y fallback + red-team | A2 | `tether_engine/llm/card_service.py` |
-| UI real de la tablet (Glance → Why → Act) | A3 | [apps/crew-tablet/](../../project/apps/crew-tablet/) — sin `src/`, sin `package.json` |
-| Consola de tierra con retraso | A4 | [ground-console/](../../project/apps/ground-console/) |
+| UI real de la tablet (Glance → Why → Act) | A3 | [apps/crew-tablet/](../../apps/crew-tablet/) — sin `src/`, sin `package.json` |
+| Consola de tierra con retraso | A4 | [ground-console/](../../apps/ground-console/) |
 | Protocol runner + 3 protocolos | A4 | `packages/protocol-runner/` · `kb/protocols/` |
-| Snapshots NOAA/OSDR + data card + model card | A5 | [data/snapshots/](../../project/data/snapshots/) · `docs/data-card.md` · `docs/model-card.md` |
-| Validación ampliada (huecos, calibración, circadianos, proxy real) | A5 | [validation.md](../../project/docs/validation.md) |
-| README de entrega, pitch, video, Q&A, ATTRIBUTIONS, SUBMISSION | A6 | [README.md](../../project/README.md) · `pitch/` |
+| Snapshots NOAA/OSDR + data card + model card | A5 | [data/snapshots/](../../data/snapshots/) · `docs/data-card.md` · `docs/model-card.md` |
+| Validación ampliada (huecos, calibración, circadianos, proxy real) | A5 | [validation.md](../../docs/validation.md) |
+| README de entrega, pitch, video, Q&A, ATTRIBUTIONS, SUBMISSION | A6 | [README.md](../../README.md) · `pitch/` |
 | CI, Docker, LICENSE, runbook, e2e | A7 | `.github/` · `docs/demo-runbook.md` |
 
-> Ojo: [FOLDER_STRUCTURE.md](../../project/docs/FOLDER_STRUCTURE.md) describe carpetas (`apps/crew-tablet/src/...`, `features/*`, `ml/notebooks`) que **aún no existen**. Es el plano, no el inventario.
-> Los `ALL_PROMPTS.md` de la raíz de la bóveda y de `project/agents/` son copias; la fuente es [agents/prompts](../../project/agents/prompts/).
+> Ojo: [FOLDER_STRUCTURE.md](../../docs/FOLDER_STRUCTURE.md) describe carpetas (`apps/crew-tablet/src/...`, `features/*`, `ml/notebooks`) que **aún no existen**. Es el plano, no el inventario.
+> Los `ALL_PROMPTS.md` de la raíz de la bóveda y de `project/agents/` son copias; la fuente es [agents/prompts](../../agents/prompts/).
 
 ## 3. Bloqueos del entorno en esta máquina
 
@@ -65,7 +74,7 @@ Extraído de `demo-data.json` (tripulante A, semilla 0): días 8–14 `info` y `
 |---|---|---|
 | ~~Python sin dependencias~~ **resuelto (14-nov)** | venv en `project/.venv` con numpy 2.5.4 y scipy 1.18.1 | `scripts/run_tests.py` → **23/23**; benchmark reproducible |
 | Sin repo git | `git init` nunca se ejecutó | `setup_worktrees.sh`, `merge_agents.sh` y `check_ownership.py A3 agent/a3` no pueden funcionar |
-| Sin `.env` ni clave | solo [.env.example](../../project/.env.example) | el producto debe funcionar con `LLM_PROVIDER=none` (plantillas); el badge `llm` no se podrá demostrar sin clave |
+| Sin `.env` ni clave | solo [.env.example](../../.env.example) | el producto debe funcionar con `LLM_PROVIDER=none` (plantillas); el badge `llm` no se podrá demostrar sin clave |
 | Sin dependencias de la tablet | no hay `package.json` en `apps/crew-tablet` | Node 24 / npm 11 sí están: se puede montar Vite + React |
 
 Comando de verificación cuando se resuelva el entorno:

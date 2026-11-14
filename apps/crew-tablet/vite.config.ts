@@ -16,13 +16,13 @@ const uiKitPath = resolve(here, "../../packages/ui-kit");
  * Exposing it through a virtual module keeps `npm run build` green whether or
  * not the file exists, and lets Act feature-detect it at runtime.
  */
-const VIRTUAL_ID = "virtual:tether-protocol-runner";
+const VIRTUAL_ID = "virtual:lightminute-protocol-runner";
 const RESOLVED_ID = "\0" + VIRTUAL_ID;
-const PROTOCOLS_ID = "virtual:tether-protocols";
+const PROTOCOLS_ID = "virtual:lightminute-protocols";
 const RESOLVED_PROTOCOLS_ID = "\0" + PROTOCOLS_ID;
-const PROTOCOL_CSS_ID = "virtual:tether-protocol-css";
+const PROTOCOL_CSS_ID = "virtual:lightminute-protocol-css";
 const RESOLVED_PROTOCOL_CSS_ID = "\0" + PROTOCOL_CSS_ID;
-const THRESHOLDS_ID = "virtual:tether-thresholds";
+const THRESHOLDS_ID = "virtual:lightminute-thresholds";
 const RESOLVED_THRESHOLDS_ID = "\0" + THRESHOLDS_ID;
 
 /**
@@ -75,7 +75,7 @@ function readProtocolStyles(): string {
 
 function protocolRunnerPlugin() {
   return {
-    name: "tether-protocol-runner",
+    name: "lightminute-protocol-runner",
     resolveId(id: string) {
       if (id === VIRTUAL_ID) return RESOLVED_ID;
       if (id === PROTOCOLS_ID) return RESOLVED_PROTOCOLS_ID;

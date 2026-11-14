@@ -13,8 +13,10 @@ The predictive for the next value is Student-t: honest tails with few
 observations -- the small-N setting NASA HRP posed in its Artemis II challenge.
 """
 from __future__ import annotations
-from dataclasses import dataclass
+
 import math
+from dataclasses import dataclass
+
 from scipy import stats
 
 

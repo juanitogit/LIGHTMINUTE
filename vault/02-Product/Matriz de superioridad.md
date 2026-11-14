@@ -4,7 +4,7 @@ status: draft
 updated: 2026-11-13
 ---
 # Matriz de superioridad (según lo visible en sus README)
-| Capacidad | Rivales | TETHER | Prueba |
+| Capacidad | Rivales | LIGHTMINUTE | Prueba |
 |---|---|---|---|
 | Umbrales con fuente etiquetada | CHM sí | sí (el cargador **rechaza** sin etiqueta) | `protocols/thresholds.py` |
 | Reglas Tierra vs espacio | CHM sí | + **lente personal** con incertidumbre | `lenses.py` |
@@ -18,3 +18,5 @@ updated: 2026-11-13
 | LLM | sin LLM / reformulación | LLM explica con verificador + fallback | `llm/verifier.py` |
 | Validación comparativa con límites | no visible | sí, honesta | `ml/validation/run_all.py` |
 **Dónde aún perdemos:** presentación 3D/pulido visual (CHM), cifrado/offline completo (AURORA). Compensar con relato + demo clara ([[Demo killer - lentes en desacuerdo]]).
+
+Relacionado: [[00-Home]].

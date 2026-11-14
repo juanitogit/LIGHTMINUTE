@@ -1,6 +1,7 @@
 """Tiny deterministic crew simulator used by the validation harness.
 Everything it produces is SYNTHETIC. Ground truth never reaches the engine."""
 from __future__ import annotations
+
 import random
 
 # between-person (mean, sd), within-person sd, syndrome sign

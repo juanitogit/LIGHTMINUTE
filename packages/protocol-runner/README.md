@@ -1,6 +1,6 @@
 # protocol-runner
 
-Framework-free, timed protocol walkthrough for TETHER. One step per screen, >=64px
+Framework-free, timed protocol walkthrough for LIGHTMINUTE. One step per screen, >=64px
 targets, keyboard + screen reader, per-step timer, "can't do this" branch, undo, and
 a visible `demo-wording` badge on every step that has no published source.
 

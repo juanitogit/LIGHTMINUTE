@@ -1,6 +1,6 @@
 ---
 name: decision-card-contract
-description: The strict contract for TETHER "Decision Cards" - the JSON the LLM produces from engine output, the prompt rules, the verifier, and the deterministic template fallback. Use whenever you edit prompts, schemas, alert wording, the LLM client, the verifier, or UI that renders alerts/recommendations. Trigger on "alert text", "recommendation", "explain this reading", "what should the astronaut do".
+description: The strict contract for LIGHTMINUTE "Decision Cards" - the JSON the LLM produces from engine output, the prompt rules, the verifier, and the deterministic template fallback. Use whenever you edit prompts, schemas, alert wording, the LLM client, the verifier, or UI that renders alerts/recommendations. Trigger on "alert text", "recommendation", "explain this reading", "what should the astronaut do".
 ---
 # Decision Card contract
 

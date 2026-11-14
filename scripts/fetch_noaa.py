@@ -54,7 +54,7 @@ def _iso(t: dt.datetime) -> str:
 
 
 def fetch(url: str, timeout: float) -> bytes:
-    req = Request(url, headers={"User-Agent": "TETHER-space-apps/1.0 (snapshot script)"})
+    req = Request(url, headers={"User-Agent": "LIGHTMINUTE-space-apps/1.0 (snapshot script)"})
     with urlopen(req, timeout=timeout) as r:  # noqa: S310 - fixed https URL
         return r.read()
 

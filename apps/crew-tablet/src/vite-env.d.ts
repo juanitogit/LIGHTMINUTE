@@ -9,7 +9,7 @@ interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
-declare module "virtual:tether-protocols" {
+declare module "virtual:lightminute-protocols" {
   interface ProtocolDoc {
     id?: string;
     title?: string;
@@ -20,7 +20,7 @@ declare module "virtual:tether-protocols" {
   export const protocols: Record<string, ProtocolDoc>;
 }
 
-declare module "virtual:tether-thresholds" {
+declare module "virtual:lightminute-thresholds" {
   interface EarthRule {
     low?: number | null;
     high?: number | null;
@@ -41,12 +41,12 @@ declare module "virtual:tether-thresholds" {
   export const thresholds: Record<string, ThresholdEntry>;
 }
 
-declare module "virtual:tether-protocol-css" {
+declare module "virtual:lightminute-protocol-css" {
   const css: string;
   export default css;
 }
 
-declare module "virtual:tether-protocol-runner" {
+declare module "virtual:lightminute-protocol-runner" {
   type MountFn = (
     el: HTMLElement,
     opts: { protocolId: string; onStep?: (step: unknown) => void; onDone?: () => void },

@@ -37,3 +37,19 @@ aggregate results are published. Attribution: data courtesy of the MMASH authors
 ## Not used
 NASA-STD-3001 reference ranges and career dose limits, NASA DONKI, OSDR RadLab, OSD-569 blood-count
 ranges, and any third-party 3D anatomy model. Nothing from these is quoted, so nothing is claimed.
+
+
+## Human body model
+
+The locally hosted `apps/crew-tablet/public/assets/models/human.glb` is the pre-existing
+**Male base mesh — 3D Person, Rigged A-pose**, published by Innerscene, adapted from MakeHuman CC0 assets.
+Source and license: https://www.innerscene.com/tools/library/3d-parts/male-base-mesh-3d-person-rigged-a-pose-380e6d89
+— **CC0-1.0**, https://creativecommons.org/publicdomain/zero/1.0/.
+Original GLB preserved; runtime replaces materials with neutral display shading. No anatomical
+or clinical accuracy is claimed. Landmarks illustrate engine lens verdicts, not measured anatomy.
+The source, final download URL, size and SHA-256 are recorded in `public/assets/models/manifest.json`.
+The asset is served locally; the app does not contact the model publisher at runtime.
+
+## Anatomical reference datasets
+
+Male: BodyParts3D, © The Database Center for Life Science, CC BY 4.0. Female: HRA 3D Reference Organs (Visible Human female), HuBMAP Consortium, CC BY 4.0. Web-simplified meshes obtained from https://github.com/AdityaK0804/Crew-Health-Monitor/tree/main/public/anatomy ; upstream left neck vein mirrors the right. Our renderer/materials are independently authored. Original assets, digests and source commit: `apps/crew-tablet/public/assets/anatomy/provenance.json`. License: https://creativecommons.org/licenses/by/4.0/. No endorsement is implied.

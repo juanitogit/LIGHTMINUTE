@@ -1,8 +1,8 @@
 ---
 name: tether-product-brief
-description: Core context for the TETHER astronaut health-monitoring project (NASA Space Apps 2026). Load this FIRST whenever you plan features, prioritize scope, write README/pitch text, or are unsure what the product is for. Use it any time someone asks "should we build X?", "what's in the MVP?", or "how do we differ from other teams?", even if they do not mention TETHER by name.
+description: Core context for the LIGHTMINUTE astronaut health-monitoring project (NASA Space Apps 2026). Load this FIRST whenever you plan features, prioritize scope, write README/pitch text, or are unsure what the product is for. Use it any time someone asks "should we build X?", "what's in the MVP?", or "how do we differ from other teams?", even if they do not mention LIGHTMINUTE by name.
 ---
-# TETHER — product brief
+# LIGHTMINUTE — product brief
 
 **Challenge (verbatim intent):** build health-monitoring software that gathers health indicators and lets astronauts *evaluate and act* on their own health on long missions (radiation, isolation, altered gravity, closed environment -> immune, bone, cardiovascular, behavioral risks).
 
@@ -28,3 +28,11 @@ description: Core context for the TETHER astronaut health-monitoring project (NA
 
 ## v2 additions (from competitor study)
 Differentiators now include: Three-Lens verdict (`three-lens-verdict`), syndrome early warning, crew-level attribution, delay-aware routing, hash-chained audit, comparative validation with limitations. Positioning and forbidden claims: `competitive-edge`. Protocol flow: `protocol-runner`.
+
+
+## Owner design revision 2026-11-14
+
+The owner explicitly requested no cards or pills and a pre-existing 3D human instead of the 2D silhouette.
+Use Apple HIG content hierarchy, flat lists and inline status labels. A local CC0 GLB is now an adopted
+visualization; it produces no health data. See vault/03-Architecture/ADR-006 Interfaz nativa y modelo humano 3D.md.
+This owner request supersedes the former avoidance of a 3D body in the visual MVP.

@@ -1,6 +1,6 @@
 # ground-console
 
-Static flight-surgeon view for TETHER. No build step, no dependencies, no external
+Static flight-surgeon view for LIGHTMINUTE. No build step, no dependencies, no external
 network calls. Synthetic data only; not a medical device.
 
 ## Open it
@@ -23,7 +23,7 @@ Tried in order, first success wins:
 2. `../../apps/crew-tablet/public/data/scenario-<name>.json`
 3. `../../apps/crew-tablet/public/demo-data.json` (engine export)
 4. `data/sample-scenario.json` (fixture)
-5. `globalThis.__TETHER_SAMPLE__` (same fixture, for `file://`)
+5. `globalThis.__LIGHTMINUTE_SAMPLE__` (same fixture, for `file://`)
 6. the “Load JSON” file picker
 
 The source line always names what is being shown, and the SYNTHETIC badge never hides.

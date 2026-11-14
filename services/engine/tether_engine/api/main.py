@@ -1,4 +1,4 @@
-"""FastAPI surface for TETHER (A2).
+"""FastAPI surface for LIGHTMINUTE (A2).
 
 Front ends must fall back to the static JSON in `apps/crew-tablet/public/`
 when this API is unreachable - every response here is reproducible from it.
@@ -11,15 +11,27 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from ..llm.card_service import DEFAULT_EFFORT, FAST_EFFORT, get_card, key_present, provider_name
-from ..llm.case_data import SCENARIO_NAMES, ScenarioNotFound, list_scenarios, load_scenario
+from ..llm.card_service import (
+    DEFAULT_EFFORT,
+    FAST_EFFORT,
+    get_card,
+    key_present,
+    provider_name,
+)
+from ..llm.case_data import (
+    SCENARIO_NAMES,
+    ScenarioNotFound,
+    list_scenarios,
+    load_scenario,
+)
 from ..llm.deepseek_client import MODEL
 from ..llm.stats import snapshot
+from .mission_link import router as mission_link_router
 
 VERSION = "0.1.0"
 
 app = FastAPI(
-    title="TETHER API",
+    title="LIGHTMINUTE API",
     version=VERSION,
     description=(
         "Health decision support for crews beyond Earth. Synthetic data only; "
@@ -47,7 +59,7 @@ class CardRequest(BaseModel):
 
 @app.get("/")
 def root() -> dict:
-    return {"service": "tether-api", "version": VERSION, "docs": "/docs", "synthetic": True,
+    return {"service": "lightminute-api", "version": VERSION, "docs": "/docs", "synthetic": True,
             "not_a_medical_device": True}
 
 
@@ -56,7 +68,7 @@ def health() -> dict:
     """Liveness + which explanation tier is active. Never returns the key itself."""
     return {
         "status": "ok",
-        "service": "tether-api",
+        "service": "lightminute-api",
         "version": VERSION,
         "llm_provider": provider_name(),
         "llm_key_present": key_present(),
@@ -100,3 +112,5 @@ def card(body: CardRequest, fast: int = Query(0, ge=0, le=1)) -> dict:
 @app.get("/api/llm-stats")
 def llm_stats() -> dict:
     return {**snapshot(), "llm_provider": provider_name(), "llm_key_present": key_present()}
+
+app.include_router(mission_link_router)

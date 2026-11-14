@@ -1,4 +1,4 @@
-# AGENTS.md — TETHER (NASA Space Apps 2026)
+# AGENTS.md — LIGHTMINUTE (NASA Space Apps 2026)
 
 Read `.agents/skills/tether-product-brief/SKILL.md` first. Skills in `.agents/skills/` load on demand.
 

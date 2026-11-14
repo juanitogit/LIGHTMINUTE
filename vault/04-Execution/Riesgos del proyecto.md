@@ -13,3 +13,5 @@ updated: 2026-11-13
 | Demasiado parecido a otros | foco en N-of-1, validación y Decision Cards |
 | Percepción de proveedor del LLM | LLM opcional/intercambiable; datos sintéticos |
 | Cansancio | dormir; turnos |
+
+Relacionado: [[00-Home]].

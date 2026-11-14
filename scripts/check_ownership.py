@@ -13,12 +13,12 @@ def owners_of(path):
 
 
 def all_files():
-    out = []
-    for r, ds, fs in os.walk(ROOT):
-        ds[:] = [d for d in ds if d not in (".git", "__pycache__", "node_modules", ".dsh", ".claude")]
-        for f in fs:
-            out.append(os.path.relpath(os.path.join(r, f), ROOT).replace(os.sep, "/"))
-    return sorted(out)
+    # Git's exclusions keep builds, local settings and dependencies out of ownership.
+    out = subprocess.check_output(
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+        cwd=ROOT, text=True,
+    )
+    return sorted(set(filter(None, out.split("\0"))))
 
 
 def check_overlaps():

@@ -1,0 +1,12 @@
+{
+  "source_repository": "https://github.com/AdityaK0804/Crew-Health-Monitor",
+  "source_commit": "9ac47bf4c1ebfc3f4f731341635790bdf36fc45f",
+  "license": "CC-BY-4.0",
+  "male": "BodyParts3D \u00a9 The Database Center for Life Science",
+  "female": "HRA 3D Reference Organs, HuBMAP Consortium",
+  "changes": "Original anatomical data retained. Viewer implementation and materials authored independently for LIGHTMINUTE. Simplification and mirrored left neck vein were performed upstream.",
+  "files": {
+    "anatomy.json": "0f0ff8ec8a3bbd63f4fb312535d4f0cf06dcb9d7c2c0781bc622a6e07fad3ada",
+    "anatomy.bin": "8079e0f71d05ec470e1b444606b60e1d4cc3955b6031020755b0ac79decb31dd"
+  }
+}

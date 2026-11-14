@@ -40,6 +40,15 @@ def test_template_card_passes_verifier():
     assert verify_card(template_card(facts), engine_facts=facts, kb_ids={"HRP-RISKS-OVERVIEW"}) == []
 
 
+def test_routine_template_does_not_report_a_coordinated_shift_to_ground():
+    from tether_engine.protocols.templates import template_card
+    facts = {"crew": "B", "level": "info", "numbers": {"hr_now": 67.0, "hr_lo": 60.0, "hr_hi": 74.0, "z_dir": 0.1}}
+    card = template_card(facts)
+    assert "coordinated shift" not in card["ground_message"]
+    assert "routine" in card["ground_message"].lower()
+    assert verify_card(card, engine_facts=facts, kb_ids={"HRP-RISKS-OVERVIEW"}) == []
+
+
 def test_negated_diagnosis_wording_is_allowed():
     c = good(); c["why_it_matters"] = "This is a pattern worth checking, not a diagnosis."
     assert verify_card(c, engine_facts=FACTS, kb_ids=KB) == []

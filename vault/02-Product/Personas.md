@@ -8,3 +8,5 @@ updated: 2026-11-13
 - **Ingeniera de vuelo** — cansada, guantes, poca luz; necesita Glance en 2 s.
 - **Cirujano de vuelo en Tierra** — recibe resúmenes con retraso; quiere tendencias y confianza, no ruido.
 - **Juez NASA** — busca validez científica, honestidad y relevancia HRP.
+
+Relacionado: [[00-Home]].

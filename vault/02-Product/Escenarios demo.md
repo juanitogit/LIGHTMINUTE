@@ -9,3 +9,5 @@ updated: 2026-11-13
 3. **`cmo_fever`** — el **médico de a bordo** hace patrón febril → cualquier tripulante ejecuta el protocolo; mensaje a tierra tolerante al retraso. *El "aha" del pitch.*
 4. (extra) `post_eva_cv`.
 Cada uno con variante **leve** y `labels.json` separado (el motor nunca lo lee). Ver skill `synthetic-crew-simulator` y [[Mapa indicador-riesgo]].
+
+Relacionado: [[00-Home]].

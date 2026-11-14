@@ -4,6 +4,7 @@ status: 'verified' (needs an http source) | 'demo-parameter' | 'earth-standard'.
 Anything unlabelled is rejected, so nothing unconfirmed can be shown as fact.
 """
 from __future__ import annotations
+
 import json
 from dataclasses import dataclass
 
@@ -40,7 +41,9 @@ def _rule(d):
 
 def load_thresholds(path: str) -> dict[str, Threshold]:
     out = {}
-    for r in json.load(open(path)):
+    with open(path, encoding="utf-8") as source:
+        rows = json.load(source)
+    for r in rows:
         for k in ("hrp_risk", "hazard"):          # no orphan indicators
             if not r.get(k):
                 raise ValueError(f"{r['indicator']}: missing {k}")

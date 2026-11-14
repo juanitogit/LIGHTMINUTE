@@ -47,7 +47,9 @@
   }
  ],
  "mmash_minute_hr": {
-  "skipped": "data/snapshots/MMASH.zip not present"
+  "legacy": 0.216,
+  "fixed": 0.934,
+  "minutes": 29937
  },
  "fix": "alpha <- alpha0 + (alpha - alpha0)*lam + 0.5 (applied 2026-11-14)",
  "note": "Coverage of the 95% predictive interval; flat series are N(60,2). 'legacy' is the old undiscounted-alpha update, kept to reproduce the defect."

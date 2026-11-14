@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-export const VIEWS = ["glance", "why", "act", "radiation", "validation"] as const;
+export const VIEWS = ["glance", "why", "act", "radiation", "validation", "today", "trends", "handbook", "signals", "earth"] as const;
 export type View = (typeof VIEWS)[number];
 
 export interface HashState {

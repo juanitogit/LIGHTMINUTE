@@ -1,6 +1,6 @@
 ---
 name: clinical-safety-guardrails
-description: Safety, ethics and honesty rules for TETHER - not a medical device, no diagnosis, synthetic-data policy, uncertainty display, escalation wording, privacy/consent tiers, AI-use disclosure. Use before shipping any copy, alert, recommendation, demo script, README or LLM prompt, and whenever someone asks to "make it sound more clinical/certain" or to use real health data.
+description: Safety, ethics and honesty rules for LIGHTMINUTE - not a medical device, no diagnosis, synthetic-data policy, uncertainty display, escalation wording, privacy/consent tiers, AI-use disclosure. Use before shipping any copy, alert, recommendation, demo script, README or LLM prompt, and whenever someone asks to "make it sound more clinical/certain" or to use real health data.
 ---
 # Clinical safety & honesty
 

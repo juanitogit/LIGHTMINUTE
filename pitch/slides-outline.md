@@ -8,7 +8,7 @@ Title: *Mars is 20 light-minutes away.*
 - With four people, the population average does not exist.
 - A dashboard is not a decision.
 
-## 2 — What TETHER does
+## 2 — What LIGHTMINUTE does
 Title: *Your body's baseline, even when Earth is out of reach.*
 - Learn the person (N-of-1), not the population.
 - Read coordinated shifts, not single spikes.

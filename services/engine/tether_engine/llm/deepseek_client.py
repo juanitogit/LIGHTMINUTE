@@ -11,7 +11,9 @@ Facts taken from api-docs.deepseek.com (checked 2026-11-13):
 UNVERIFIED here (check the JSON-output guide): response_format json_object.
 """
 from __future__ import annotations
-import os, json
+
+import json
+import os
 
 MODEL = os.environ.get("DEEPSEEK_MODEL", "deepseek-flash")
 
@@ -27,16 +29,16 @@ def make_client():
 def ask_json(client, *, system_prefix: str, case_payload: dict,
              effort: str = "high", thinking: bool = True, max_tokens: int = 4000) -> dict:
     """One grounded call. `system_prefix` = rules + full KB (cache-friendly)."""
-    kwargs = dict(
-        model=MODEL,
-        messages=[
+    kwargs = {
+        "model": MODEL,
+        "messages": [
             {"role": "system", "content": system_prefix},
             {"role": "user", "content": json.dumps(case_payload, ensure_ascii=False, sort_keys=True)},
         ],
-        response_format={"type": "json_object"},
-        max_tokens=max_tokens,
-        extra_body={"thinking": {"type": "enabled" if thinking else "disabled"}},
-    )
+        "response_format": {"type": "json_object"},
+        "max_tokens": max_tokens,
+        "extra_body": {"thinking": {"type": "enabled" if thinking else "disabled"}},
+    }
     if thinking:
         kwargs["reasoning_effort"] = effort      # low | high | max
     resp = client.chat.completions.create(**kwargs)
