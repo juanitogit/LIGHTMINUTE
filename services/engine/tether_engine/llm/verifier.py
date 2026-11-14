@@ -2,40 +2,87 @@
 
 The engine owns every number and the escalation level. The LLM may only
 explain. A card is rejected (and replaced by the template fallback) if it
-invents a citation, changes a number, lowers urgency or diagnoses.
+invents a citation, changes a number, lowers urgency, diagnoses, prescribes,
+grows fields outside the frozen schema or overruns the ground-message budget.
+
+Every rejection reason is fed back to the model once before we give up.
 """
 from __future__ import annotations
+
 import re
 
 LEVELS = ["info", "watch", "act", "escalate"]
 REQUIRED = {"headline", "what_changed", "why_it_matters", "confidence",
             "do_now", "monitor", "escalate_if", "ground_message", "citations", "level"}
-DIAGNOSIS = re.compile(r"\byou have\b|(?<!not a )(?<!no )\bdiagnos(is|ed)\b|\bit is (definitely|certainly)\b", re.I)
+ALLOWED_FIELDS = REQUIRED                       # llm/schemas/decision_card.schema.json
+DIAGNOSIS = re.compile(r"\byou have\b|(?<!not a )(?<!no )\bdiagnos(is|ed)\b|"
+                       r"\bit is (definitely|certainly)\b|\bconfirmed infection\b", re.I)
+# Guardrail 8: never output doses. Matches amounts with a unit and dose wording.
+DOSING = re.compile(r"\b\d+(?:\.\d+)?\s*(?:mg|mcg|µg|ml|iu|tablets?|capsules?|pills?|drops?)\b"
+                    r"|\bdos(?:e|es|age|ing)\b", re.I)
+GROUND_MAX = 140
+
+
+def _formats(value: float) -> set[str]:
+    """Every honest way the engine number may legitimately appear in prose."""
+    try:
+        as_float = float(value)
+    except (TypeError, ValueError):
+        return {str(value)}
+    out = {f"{as_float:.1f}", f"{as_float:.2f}",
+           f"{as_float:.2f}".rstrip("0").rstrip("."),
+           f"{as_float:.1f}".rstrip("0").rstrip("."), str(as_float)}
+    if as_float.is_integer():
+        out.add(str(int(as_float)))
+    return out
+
+
+def _text_of(value) -> str:
+    if isinstance(value, (list, tuple)):
+        return " ".join(_text_of(v) for v in value)
+    if isinstance(value, dict):
+        return " ".join(_text_of(v) for v in value.values())
+    return str(value)
 
 
 def verify_card(card: dict, *, engine_facts: dict, kb_ids: set[str]) -> list[str]:
     errs: list[str] = []
+    if not isinstance(card, dict):
+        return ["response is not a JSON object"]
     missing = REQUIRED - card.keys()
     if missing:
         return [f"missing fields: {sorted(missing)}"]
+    extra = set(card.keys()) - ALLOWED_FIELDS
+    if extra:
+        errs.append(f"unknown fields: {sorted(extra)}")
     if card["level"] not in LEVELS:
         errs.append("bad level")
     elif LEVELS.index(card["level"]) < LEVELS.index(engine_facts["level"]):
         errs.append("LLM lowered urgency below engine level")      # never allowed
-    bad = [c for c in card["citations"] if c not in kb_ids]
-    if bad:
-        errs.append(f"unknown citations: {bad}")
-    if not card["citations"]:
+    citations = card["citations"]
+    if not isinstance(citations, list) or not citations:
         errs.append("no citations")
+    else:
+        bad = [c for c in citations if c not in kb_ids]
+        if bad:
+            errs.append(f"unknown citations: {bad}")
     text = " ".join(str(card[k]) for k in ("headline", "what_changed", "why_it_matters"))
     if DIAGNOSIS.search(text):
         errs.append("diagnostic language")
+    if DOSING.search(_text_of(card)):
+        errs.append("medication dose language")
     # every number in what_changed must appear in the engine facts (as rounded strings)
-    allowed = {f"{v:.1f}".rstrip("0").rstrip(".") if isinstance(v, float) else str(v)
-               for v in engine_facts["numbers"].values()}
-    for num in re.findall(r"\d+(?:\.\d+)?", card["what_changed"]):
+    allowed: set[str] = set()
+    for value in engine_facts["numbers"].values():
+        allowed |= _formats(value)
+    for num in re.findall(r"\d+(?:\.\d+)?", str(card["what_changed"])):
         if num not in allowed:
             errs.append(f"number {num} not in engine facts")
-    if not (1 <= len(card["do_now"]) <= 5):
+    do_now = card["do_now"]
+    if not isinstance(do_now, list) or not (1 <= len(do_now) <= 5):
         errs.append("do_now must have 1-5 steps")
+    elif not all(isinstance(step, str) for step in do_now):
+        errs.append("do_now must be a list of strings")
+    if len(str(card["ground_message"])) > GROUND_MAX:
+        errs.append(f"ground_message too long (max {GROUND_MAX})")
     return errs

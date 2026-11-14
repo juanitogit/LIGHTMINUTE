@@ -24,4 +24,12 @@
   claim: Re-measure an abnormal single reading after rest before acting (reduces artifact-driven alarms). Local TETHER protocol, not a NASA procedure.
   source: tether-internal
   status: unverified
+- id: HRP-IMMUNE-SPACEFLIGHT-STRESSORS
+  claim: Radiation, microgravity, poor sleep and other spaceflight stressors can alter astronauts' immune systems, and such stressors may trigger allergic reactions or reactivate dormant viruses (e.g. the ones behind cold sores and shingles).
+  source: https://www.nasa.gov/reference/risk-of-altered-immune-system-responses
+  status: verified
+- id: HRP-VIRAL-REACTIVATION-SUBCLINICAL
+  claim: Latent herpesvirus reactivation during spaceflight is typically subclinical; four of the eight known human herpesviruses have been detected in crew during flight, and in NASA's review only six astronauts with reactivation developed symptoms, all minor.
+  source: https://www.nasa.gov/humans-in-space/nasa-investigates-how-dormant-viruses-behave-during-spaceflight
+  status: verified
 # TODO (verify before use): NASA-STD-3001 Vol.1/2 ranges, career radiation limit (600 mSv per AURORA repo; confirm in NASA-STD-3001), CO2 exposure limits, symptom escalation SOPs.

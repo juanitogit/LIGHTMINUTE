@@ -12,12 +12,14 @@ UNVERIFIED here (check the JSON-output guide): response_format json_object.
 """
 from __future__ import annotations
 import os, json
-from openai import OpenAI
 
 MODEL = os.environ.get("DEEPSEEK_MODEL", "deepseek-flash")
 
 
-def make_client() -> OpenAI:
+def make_client():
+    """Built lazily so `LLM_PROVIDER=none` needs no openai import and no key."""
+    from openai import OpenAI
+
     return OpenAI(api_key=os.environ["DEEPSEEK_API_KEY"],
                   base_url=os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com"))
 
