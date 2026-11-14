@@ -10,6 +10,9 @@ from __future__ import annotations
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+import psycopg
+
+from .database import DatabaseNotConfigured, check_connection
 
 from ..llm.card_service import (
     DEFAULT_EFFORT,
@@ -85,6 +88,20 @@ def health() -> dict:
 @app.get("/api/scenarios")
 def scenarios() -> dict:
     return {"synthetic": True, "scenarios": list_scenarios()}
+
+
+@app.get("/api/database/health", tags=["Database"])
+def database_health() -> dict:
+    """Readiness only: never return connection parameters or raw driver errors."""
+    try:
+        connected = check_connection()
+    except DatabaseNotConfigured:
+        raise HTTPException(status_code=503, detail="Database is not configured") from None
+    except psycopg.Error:
+        raise HTTPException(status_code=503, detail="Database connection unavailable") from None
+    if not connected:
+        raise HTTPException(status_code=503, detail="Database connection unavailable")
+    return {"status": "ok", "provider": "neon", "connected": True}
 
 
 @app.get("/api/scenario/{name}")
