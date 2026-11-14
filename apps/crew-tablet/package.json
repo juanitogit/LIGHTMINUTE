@@ -1,0 +1,26 @@
+{
+  "name": "@tether/crew-tablet",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "TETHER crew tablet: Glance -> Why -> Act. Synthetic data only; not a medical device.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --pretty false",
+    "test:e2e": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.2"
+  }
+}
