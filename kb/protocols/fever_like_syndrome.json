@@ -1,0 +1,20 @@
+{
+  "id": "fever_like_syndrome",
+  "title": "Fever-like pattern check",
+  "trigger_patterns": [
+    "the engine flags the strain_infection_like syndrome (kb/syndromes.json)",
+    "engine level is watch or higher and temperature plus resting heart rate moved together",
+    "the Decision Card says the pattern is worth checking"
+  ],
+  "steps": [
+    {"text": "Stop your current task and sit down. Ask a crew mate to stay nearby.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Re-measure heart rate and temperature with the same device you used this morning.", "source_status": "demo-wording", "source": "kb/evidence.yaml#SOP-RECHECK-ABNORMAL (status: unverified)"},
+    {"text": "Write both readings and the time into the health log.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Ask a crew mate to check your skin colour, your breathing and how alert you seem.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Drink some water if you have not drunk in the last hour.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "If the card level is act or escalate, open the onboard medical protocol for fever and follow it.", "source_status": "demo-wording", "source": "onboard medical protocol - no drug doses are shown in TETHER"},
+    {"text": "Send the card's ground_message to Earth. Your screen shows the current light delay.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Repeat both measurements in 60 minutes and compare with your own normal band.", "source_status": "demo-wording", "source": "kb/evidence.yaml#SOP-RECHECK-ABNORMAL (status: unverified)"},
+    {"text": "Escalate now if: confusion, trouble breathing, fainting, or a second crew member shows the same pattern.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"}
+  ]
+}

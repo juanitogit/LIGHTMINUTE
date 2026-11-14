@@ -1,0 +1,236 @@
+/* TETHER Protocol Runner - calm mission-control instrument, high contrast.
+   Targets >= 64px, one primary action per step, no auto-playing animation. */
+
+.tr {
+  --tr-bg: #0b0f14;
+  --tr-panel: #121821;
+  --tr-line: #273140;
+  --tr-ink: #eef3f8;
+  --tr-muted: #9fb0c3;
+  --tr-accent: #6fd3c7;
+  --tr-warn: #f0b657;
+  --tr-radius: 14px;
+  box-sizing: border-box;
+  max-width: 720px;
+  padding: 20px;
+  background: var(--tr-bg);
+  color: var(--tr-ink);
+  border: 1px solid var(--tr-line);
+  border-radius: var(--tr-radius);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.tr *,
+.tr *::before,
+.tr *::after {
+  box-sizing: border-box;
+}
+
+.tr__head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.tr__title {
+  margin: 0;
+  font-size: 1.35rem;
+  letter-spacing: 0.01em;
+}
+
+.tr__counters {
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  color: var(--tr-muted);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9rem;
+}
+
+.tr__clock--total {
+  color: var(--tr-muted);
+  opacity: 0.8;
+}
+
+.tr__progress {
+  position: relative;
+  height: 6px;
+  margin: 14px 0 18px;
+  background: #1b2431;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.tr__progress-fill {
+  height: 100%;
+  width: 0;
+  background: var(--tr-accent);
+  transition: width 220ms ease;
+}
+
+.tr__card {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  background: var(--tr-panel);
+  border: 1px solid var(--tr-line);
+  border-radius: var(--tr-radius);
+}
+
+.tr__step {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.35;
+  font-weight: 600;
+  min-height: 3.6em;
+}
+
+.tr__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  font-size: 0.82rem;
+}
+
+.tr__badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.tr__badge[data-kind="demo-wording"] {
+  color: var(--tr-warn);
+  background: rgba(240, 182, 87, 0.12);
+}
+
+.tr__badge[data-kind="published"] {
+  color: var(--tr-accent);
+  background: rgba(111, 211, 199, 0.12);
+}
+
+.tr__source {
+  color: var(--tr-muted);
+}
+
+.tr__actions {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr auto;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.tr__btn {
+  min-height: 64px;
+  min-width: 64px;
+  padding: 0 20px;
+  border-radius: 12px;
+  border: 1px solid var(--tr-line);
+  background: #1b2431;
+  color: var(--tr-ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.tr__btn--primary {
+  background: var(--tr-accent);
+  border-color: var(--tr-accent);
+  color: #06201d;
+}
+
+.tr__btn--ghost {
+  background: transparent;
+  color: var(--tr-muted);
+}
+
+.tr__btn:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+
+.tr__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.tr__btn:focus-visible,
+.tr__choices .tr__btn:focus-visible {
+  outline: 3px solid #ffd479;
+  outline-offset: 3px;
+}
+
+.tr__panel {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid var(--tr-warn);
+  border-radius: var(--tr-radius);
+  background: rgba(240, 182, 87, 0.08);
+}
+
+.tr__panel-title {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+}
+
+.tr__choices {
+  display: grid;
+  gap: 8px;
+}
+
+.tr__status {
+  min-height: 1.4em;
+  margin: 12px 0 0;
+  color: var(--tr-accent);
+  font-size: 0.9rem;
+}
+
+.tr__summary {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid var(--tr-line);
+  border-radius: var(--tr-radius);
+  background: var(--tr-panel);
+}
+
+.tr__summary-title {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+}
+
+.tr__summary-line {
+  margin: 0 0 12px;
+  color: var(--tr-muted);
+}
+
+.tr__hint {
+  margin: 14px 0 0;
+  color: var(--tr-muted);
+  font-size: 0.78rem;
+}
+
+@media (max-width: 560px) {
+  .tr__actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .tr__btn--ghost {
+    grid-column: 1 / -1;
+  }
+
+  .tr__step {
+    font-size: 1.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tr__progress-fill {
+    transition: none;
+  }
+}

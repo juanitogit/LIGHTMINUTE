@@ -1,0 +1,19 @@
+{
+  "id": "co2_headache_cluster",
+  "title": "Cabin CO2 headache cluster",
+  "trigger_patterns": [
+    "two or more crew report headache or dizziness on the same day",
+    "the habitat CO2 reading shown on the console is trending up",
+    "engine level is watch or higher alongside headache reports"
+  ],
+  "steps": [
+    {"text": "Move to the module with the lowest cabin CO2 reading shown on the habitat display.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Note the CO2 value, the module name and the time.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Ask every crew member whether they have a headache, dizziness or nausea right now.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Stop exercise and strenuous tasks until the reading falls.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Tell the crew medical officer and log the reading in the health log.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "If the headache continues, open the onboard medical protocol for headache and follow it.", "source_status": "demo-wording", "source": "onboard medical protocol - no drug doses are shown in TETHER"},
+    {"text": "Send a short summary to Earth: CO2 value, module, and how many crew are affected.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Escalate now if: confusion, vomiting, fainting, or the habitat CO2 alarm sounds.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"}
+  ]
+}

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TETHER — protocol runner demo (synthetic)</title>
+<link rel="stylesheet" href="style.css" />
+<style>
+  :root { color-scheme: dark; }
+  body {
+    margin: 0;
+    padding: 24px;
+    background: #070a0e;
+    color: #eef3f8;
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 720px; margin: 0 auto; display: grid; gap: 20px; }
+  .page-head h1 { margin: 0 0 6px; font-size: 1.5rem; }
+  .page-head p { margin: 0; color: #9fb0c3; font-size: 0.9rem; }
+  .pill {
+    display: inline-block; margin-left: 8px; padding: 2px 10px; border-radius: 999px;
+    border: 1px solid #f0b657; color: #f0b657; font-size: 0.68rem;
+    letter-spacing: 0.08em; text-transform: uppercase; vertical-align: middle;
+  }
+  .log { background: #121821; border: 1px solid #273140; border-radius: 14px; padding: 16px; }
+  .log h2 { margin: 0 0 10px; font-size: 1rem; color: #9fb0c3; }
+  .log ol { margin: 0; padding-left: 20px; font-variant-numeric: tabular-nums; font-size: 0.9rem; }
+  .log li { margin: 4px 0; }
+  .log .note { margin: 12px 0 0; color: #6f7f92; font-size: 0.78rem; }
+  code { background: #1b2431; padding: 1px 5px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<main>
+  <header class="page-head">
+    <h1>Protocol runner <span class="pill">synthetic demo</span></h1>
+    <p>Timed, one step per screen. Every step without a published source carries a
+      <strong>demo wording</strong> badge. Not a medical device.</p>
+  </header>
+
+  <div id="runner" aria-label="Protocol runner"></div>
+
+  <section class="log" aria-labelledby="log-title">
+    <h2 id="log-title">Host audit log — <code>onStep</code> / <code>onDone</code></h2>
+    <ol id="log"></ol>
+    <p class="note">This page opens from <code>file://</code>, so the protocol JSON is inlined
+      below (a copy of <code>kb/protocols/fever_like_syndrome.json</code>). Over http the runner
+      fetches the real file instead.</p>
+  </section>
+</main>
+
+<script type="application/json" id="fever-protocol">
+{
+  "id": "fever_like_syndrome",
+  "title": "Fever-like pattern check",
+  "trigger_patterns": [
+    "the engine flags the strain_infection_like syndrome (kb/syndromes.json)",
+    "engine level is watch or higher and temperature plus resting heart rate moved together",
+    "the Decision Card says the pattern is worth checking"
+  ],
+  "steps": [
+    {"text": "Stop your current task and sit down. Ask a crew mate to stay nearby.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Re-measure heart rate and temperature with the same device you used this morning.", "source_status": "demo-wording", "source": "kb/evidence.yaml#SOP-RECHECK-ABNORMAL (status: unverified)"},
+    {"text": "Write both readings and the time into the health log.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Ask a crew mate to check your skin colour, your breathing and how alert you seem.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Drink some water if you have not drunk in the last hour.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "If the card level is act or escalate, open the onboard medical protocol for fever and follow it.", "source_status": "demo-wording", "source": "onboard medical protocol - no drug doses are shown in TETHER"},
+    {"text": "Send the card's ground_message to Earth. Your screen shows the current light delay.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Repeat both measurements in 60 minutes and compare with your own normal band.", "source_status": "demo-wording", "source": "kb/evidence.yaml#SOP-RECHECK-ABNORMAL (status: unverified)"},
+    {"text": "Escalate now if: confusion, trouble breathing, fainting, or a second crew member shows the same pattern.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"}
+  ]
+}
+</script>
+
+<script src="runner.js"></script>
+<script>
+  /* Classic scripts so this page works from file://, where module imports are blocked.
+     ES module consumers use `import { mountProtocolRunner } from "./index.js"`. */
+  const mountProtocolRunner = globalThis.TetherProtocolRunner.mountProtocolRunner;
+  const list = document.querySelector("#log");
+  const protocol = JSON.parse(document.querySelector("#fever-protocol").textContent);
+
+  function row(text) {
+    const li = document.createElement("li");
+    li.textContent = text;
+    list.append(li);
+  }
+
+  mountProtocolRunner(document.querySelector("#runner"), {
+    protocol,
+    onStep: (payload) => {
+      row(`${new Date(payload.tsMs).toLocaleTimeString()} · step ${payload.stepIndex + 1} · ${payload.status}`);
+      console.log("onStep", payload);
+    },
+    onDone: (summary) => {
+      const cannot = summary.steps.filter((s) => s.status === "cannot").length;
+      row(`finished · completed=${summary.completed} · ${cannot} not possible · ${Math.round(summary.totalMs / 1000)}s`);
+      console.log("onDone", summary);
+    },
+  });
+</script>
+</body>
+</html>
