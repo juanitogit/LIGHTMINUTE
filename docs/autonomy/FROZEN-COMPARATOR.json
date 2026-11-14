@@ -1,0 +1,78 @@
+{
+  "threshold": 0.9649999999999999,
+  "operator": ">",
+  "tuning_engine_false_act_days": 25,
+  "tuning_population_false_act_days": 25,
+  "tuning_observed_unaffected_crew_days": 4040,
+  "tuning_seeds": [
+    1000,
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008,
+    1009
+  ],
+  "report_seeds": [
+    2000,
+    2001,
+    2002,
+    2003,
+    2004,
+    2005,
+    2006,
+    2007,
+    2008,
+    2009,
+    2010,
+    2011,
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026,
+    2027,
+    2028,
+    2029
+  ],
+  "references": {
+    "rest_hr": {
+      "low": 60,
+      "high": 100,
+      "status": "earth-standard",
+      "source": "standard adult resting range"
+    },
+    "temp_c": {
+      "low": 36.1,
+      "high": 37.5,
+      "status": "earth-standard",
+      "source": "standard adult oral range (approx.)"
+    },
+    "sleep_h": {
+      "low": 7.0,
+      "high": 9.0,
+      "status": "earth-standard",
+      "source": "adult sleep recommendation (approx.)"
+    }
+  },
+  "excluded_references": {
+    "pvt_ms": "no Earth reference",
+    "co2_ppm": "one-sided rule has no range width; demo-parameter",
+    "headache_score": "one-sided rule has no range width; demo-parameter"
+  },
+  "frozen_at": "2026-11-14T20:44:54.059908+00:00",
+  "source_revision": "a4cb4ccd6188d9e068e63ac8a9e26fe9658b48f3"
+}
