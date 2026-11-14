@@ -9,6 +9,7 @@ import { FALLBACK_SCENARIOS, loadHealth, loadScenarioIndex } from "./lib/api";
 import { fmtDay, titleFromName } from "./lib/format";
 import type { ApiHealth, DecisionCard, ScenarioSummary } from "./lib/types";
 import { Act } from "./views/Act";
+import { CheckIn } from "./views/CheckIn";
 import { Glance } from "./views/Glance";
 import { Radiation } from "./views/Radiation";
 import { Validation } from "./views/Validation";
@@ -20,6 +21,7 @@ const VIEW_LABELS: { id: View; label: string }[] = [
   { id: "act", label: "Act" },
   { id: "radiation", label: "Radiation" },
   { id: "validation", label: "Validation" },
+  { id: "checkin", label: "Check-in" },
 ];
 
 const FALLBACK_CREW = ["A", "B", "C", "D"];
@@ -365,6 +367,8 @@ export function App() {
             {state.view === "validation" ? <Validation /> : null}
           </>
         ) : null}
+
+        {state.view === "checkin" ? <CheckIn /> : null}
       </main>
 
       <footer className="statusbar">

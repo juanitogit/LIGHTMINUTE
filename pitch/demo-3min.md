@@ -1,11 +1,11 @@
 # 3-minute live demo
 
-Everything below runs offline. No API, no key, no network. Rehearse twice; time yourself.
+The embedded three-lens prototype needs no API, key or network. Other screens require their own rehearsal; follow `docs/demo-runbook.md`. Rehearse twice and time yourself.
 
 ## 0:00–0:20 — Frame the problem
 Say: the crew medical officer is the patient, Mars is 3–22 light-minutes away, and with four
-people there is no meaningful average.
-On screen: the three-lens page at day 10, all normal.
+people a population range can miss a personal change.
+On screen: the three-lens page at day 10, Earth and personal lenses normal; the space rule unavailable.
 
 ## 0:20–1:00 — Glance → Why
 1. Slider to day 14: still `info`, all patterns `concordant_normal`.

@@ -76,10 +76,17 @@ export function EmptyState({
   );
 }
 
-export function DataNotice({ compact = false }: { compact?: boolean }) {
+export function DataNotice({
+  compact = false,
+  label = "SYNTHETIC DATA",
+}: {
+  compact?: boolean;
+  /** What exactly is synthetic: the crew simulation, never the public snapshot. */
+  label?: string;
+}) {
   return (
     <div className={`data-notice ${compact ? "data-notice--compact" : ""}`.trim()}>
-      <Chip tone="warn">SYNTHETIC DATA</Chip>
+      <Chip tone="warn">{label}</Chip>
       <Chip tone="quiet">not a medical device</Chip>
     </div>
   );

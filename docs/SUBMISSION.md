@@ -1,34 +1,53 @@
 # Submission checklist
 
-Status as of 2026-11-14. ✅ done · ⚠️ pending · ❓ must confirm on the event site.
+Current local review: 2026-11-14. Implemented files and external delivery are separate.
+The owner must authorize any push. Do not change visibility, deploy or submit as a
+side effect of local checks. Current execution evidence belongs in
+[the closing report](CHECKLIST-IMPLEMENTACION-2026-11-14.md).
 
-| Item | Status | Where / what is owed |
+| Item | State | Evidence / remaining action |
 |---|---|---|
-| Official challenge selected (not "Create Your Own") | ✅ | *Create Health Monitoring Software for Astronauts on Space Missions* |
-| Public repository | ⚠️ **blocker** | exists at <https://github.com/juanitogit/NASA-SPACE-APPS-2026> but is **private**: an anonymous request to `api.github.com/repos/juanitogit/NASA-SPACE-APPS-2026` returns 404. Space Apps needs a public repo — Settings → General → Danger zone → Change visibility → Public, then re-check in a private browser window |
-| LICENSE file | ⚠️ | Apache-2.0 declared in README; the `LICENSE` file itself is A7's to add |
-| README, setup in ≤5 commands | ✅ | `README.md` |
-| Project description for the page | ✅ | `pitch/project-description.md` |
-| 60-second video | ⚠️ | script ready: `pitch/video-script-60s.md`; recording + upload owed |
-| Live URL or video link | ⚠️ | the demo is a local HTML file; if no hosting, the video is the deliverable |
-| Screenshots (6 hero states) | ⚠️ | the tablet app now builds; capture Glance/Why/Act/radiation/validation from it (and the prototype as fallback) |
-| Data card | ✅ | `docs/data-card.md` (sources, licenses, labels, blocked sources) |
-| Model card | ✅ | `docs/model-card.md` (method, metrics, defects, failure modes) |
-| Validation page / report | ✅ | `docs/validation.md` + `apps/crew-tablet/public/data/validation.json` |
-| AI-use disclosure | ✅ | README + project description |
-| NASA/NOAA credits | ✅ | `ATTRIBUTIONS.md` |
-| Limitations section | ✅ | README, project description, model card |
-| Team names and roles | ⚠️ | fill in before submitting |
-| Offline demo fallback rehearsed | ✅ | `pitch/demo-3min.md` (no network needed) |
-| Engine tests and tablet build on the merged tree | ✅ | 76/76 tests, `npm run build` OK (2026-11-14) |
-| Judging guide + Terms read (2026 text) | ❓ | confirm eligibility, AI disclosure and repo-public rules for this edition |
-| Local submission cutoff confirmed | ❓ | the vault still lists it as unconfirmed |
-| Submitted ≥3 h before cutoff | ⚠️ | plan the freeze 4 h out, video 3 h out |
-| Repo readable without login | ❌ | same blocker as above: verify with `curl -s -o /dev/null -w '%{http_code}' https://api.github.com/repos/juanitogit/NASA-SPACE-APPS-2026` → must be 200, not 404 |
+| Event | Confirmed by owner | Space Apps Challenge Neiva 2026; official page, eligibility and terms still require external confirmation |
+| Repository access | To verify | [Repository](https://github.com/juanitogit/NASA-SPACE-APPS-2026); historical notes say private, current anonymous access not certified here |
+| LICENSE | Present | Apache-2.0 text in `LICENSE` |
+| Setup and local demo | Documented | `README.md`, `docs/demo-runbook.md`; record executed rehearsal results separately |
+| Project description and pitch | Drafts present | `pitch/`; factual/wording review required before recording |
+| Video and public link | Local drafts prepared; approval/upload pending | `pitch/demo-assets/tether-demo-30s.mp4` and extended 60s version; confirm applicable format before submitting |
+| Screenshots | See closing report | Do not equate draft mockups with captured app states |
+| Model/data cards and benchmark | Present | `docs/model-card.md`, `docs/data-card.md`, `docs/validation.md`; synthetic recall is not clinical accuracy |
+| AI disclosure, attribution and limits | Present | README, project description, ATTRIBUTIONS |
+| Team names and roles | Supplied by owner | Listed below; spelling and roles preserved |
+| Current tests and build | See closing report | Local commands and results, not historical 76/77 counts |
+| Remote CI | To verify before delivery | Workflow exists; a historical green run does not certify the local final diff |
+| Offline rehearsal | See closing report | Embedded prototype, API-off fallback and network-off reload are distinct checks |
+| Cutoff | Supplied by owner | 2026-11-15 23:59 America/Bogota (UTC−5); not independently verified |
+| Actual submission | Pending | Planned freeze 19:59 and submission 20:59 on November 15; preserve final URL/receipt |
 
-## Do not submit claiming
-- clinical validation or diagnostic accuracy;
-- that OSDR/Inspiration4 data was used (it was cited, not downloaded);
-- that the app shell, API, ground console or protocol runner were clicked through on stage — they exist and build, but the demo owner must rehearse them;
-- that the known forgetting-factor defect is fixed in the shared engine (a verified patch exists
-  in `ml/diagnostics/`, but A1 owns the file).
+Do not claim diagnosis, clinical validation, NASA endorsement, OSDR/Inspiration4
+use, verified space-adapted thresholds or tested live provider access without the
+corresponding evidence. All shipped space rules are null. The alpha forgetting
+bug **is fixed in the shared engine** and has a regression test; it is not a
+remaining submission task. Real public MMASH is a coverage proxy from 22 adults.
+
+## Evento y equipo
+
+**Evento:** Space Apps Challenge Neiva 2026. **Cierre:** 15 de noviembre de 2026, 23:59, America/Bogota (UTC−5). Datos confirmados por el usuario; no se presentan como verificación externa de las bases.
+
+Plan previo al cierre: congelación el 15 de noviembre a las **19:59** y envío previsto a las **20:59**, en la misma zona horaria. Son hitos planificados, no acciones completadas. El propietario conserva la autorización exclusiva del push.
+
+| Integrante | Rol |
+|---|---|
+| Abel Orlando Ramírez Amaya | Backend & Tester |
+| Pablo Trujillo Artunduaga | Backend & Tester |
+| Juan Sebastián Tafurth Cortes | DevOps & Documentación |
+| Simón Santiago Puentes Peña | Documentación & Base de Datos |
+| Juan Esteban Bustos Chilatra | Frontend & Backend & Chatbot |
+| José David Correa Núñez | Frontend & DevOps & CI/CD |
+
+## Explanation policy
+
+The LLM must preserve `level` and `confidence` exactly and copy `what_changed`, `do_now`,
+`monitor`, `escalate_if` and `ground_message` verbatim from the deterministic
+template. It may vary the headline and explanation (`why_it_matters`) without
+numbers, subject to verification. Wording filters are defense in depth, not a
+semantic clinical guarantee. The product remains a nonclinical prototype.

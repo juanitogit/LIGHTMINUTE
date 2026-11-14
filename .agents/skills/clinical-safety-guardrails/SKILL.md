@@ -7,7 +7,7 @@ description: Safety, ethics and honesty rules for TETHER - not a medical device,
 1. **Not a medical device.** Say so on first screen, README, pitch. Decision support for *trained* crew following mission protocols, not diagnosis.
 2. **No diagnosis language** in UI or LLM output ("you have", "definitely"). Use "pattern consistent with", "worth checking".
 3. **Uncertainty is a feature.** Show credible intervals and confidence; never hide low-n.
-4. **Escalation is conservative.** Engine may raise urgency freely; LLM may never lower it; ambiguity => higher level + "re-measure".
+4. **Escalation is conservative.** Only deterministic engine rules set urgency. The LLM must preserve the engine level exactly; neither increases nor decreases are allowed. Any conservative escalation must be an engine decision, not a model rewrite.
 5. **Synthetic only.** No real personal health data in repo, prompts, logs or demos. Public OSDR data stays labelled proxy/real-public.
 6. **Privacy by design (pitch-able):** crew-owned data; consent tiers for what goes to ground (vitals summary / symptoms / behavioral free-text). Behavioral free-text never leaves the device by default.
 7. **Fail safe.** LLM down, sensor missing, or verifier rejects -> template card + visible "limited data" state. Never a blank screen, never a silent failure.

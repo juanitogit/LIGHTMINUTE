@@ -5,7 +5,7 @@ One idea per slide, one number per slide, no paragraph text.
 ## 1 — The problem
 Title: *Mars is 20 light-minutes away.*
 - The crew doctor is the patient.
-- With four people, the population average does not exist.
+- Population ranges can hide individual changes in a heterogeneous crew.
 - A dashboard is not a decision.
 
 ## 2 — What TETHER does

@@ -66,6 +66,12 @@ function fmtReply(seconds) {
 
 /* ------------------------------------------------------------------ loading */
 
+function matchesScenario(doc, name) {
+  return typeof name === "string" && name.length > 0 && doc && doc.synthetic === true && Array.isArray(doc.days) && doc.days.length &&
+    (doc.scenario || doc.name) === name &&
+    (!doc.scenario || doc.scenario === name) && (!doc.name || doc.name === name);
+}
+
 async function loadScenario(name) {
   const candidates = [
     `data/scenario-${name}.json`,
@@ -78,7 +84,7 @@ async function loadScenario(name) {
       const res = await fetch(url, { cache: "no-store" });
       if (!res.ok) continue;
       const doc = await res.json();
-      if (doc && Array.isArray(doc.days) && doc.days.length) {
+      if (matchesScenario(doc, name)) {
         return { doc, source: url.startsWith("../../apps") ? `${url} (engine export)` : url };
       }
     } catch {
@@ -86,7 +92,7 @@ async function loadScenario(name) {
     }
   }
   const fixture = globalThis.__TETHER_SAMPLE__;
-  if (fixture && Array.isArray(fixture.days) && fixture.days.length) {
+  if (matchesScenario(fixture, name)) {
     return { doc: fixture, source: "data/sample-scenario.js (file:// fixture)" };
   }
   throw new Error("No scenario data. Serve the repo over http, or use “Load JSON”.");
@@ -245,25 +251,29 @@ function auditTimestamp(day, index) {
 }
 
 async function rebuildAudit(dayEntry) {
-  state.audit = [];
-  state.view = [];
+  const generation = state.auditGeneration = (state.auditGeneration || 0) + 1;
+  const chain = [];
   const items = queueItems(dayEntry);
   for (let i = 0; i < items.length; i += 1) {
     const { crewId, entry } = items[i];
-    const record = await appendEntry(state.audit, {
+    const record = await appendEntry(chain, {
       event: "card_routed",
       ts: auditTimestamp(dayEntry.day, i),
       payload: { crew: crewId, level: entry.level, priority: entry.routing.priority, day: dayEntry.day },
     });
-    state.audit.push(record);
+    chain.push(record);
   }
+  if (generation !== state.auditGeneration) return;
+  state.audit = chain;
   state.view = state.audit.map((e) => ({ ...e }));
   await refreshAudit();
 }
 
 async function refreshAudit() {
-  const result = await verifyChain(state.view);
-  renderChainRows($("audit-body"), state.view, result.firstBadIndex);
+  const view = state.view;
+  const result = await verifyChain(view);
+  if (view !== state.view || !state.doc) return;
+  renderChainRows($("audit-body"), view, result.firstBadIndex);
   $("audit-status").textContent = result.ok
     ? `chain intact · ${state.view.length} entries`
     : `first broken entry: #${result.firstBadIndex} (${result.reason})`;
@@ -273,10 +283,11 @@ async function refreshAudit() {
 /* ------------------------------------------------------------------ render */
 
 function currentDay() {
-  return state.doc.days[state.dayIndex];
+  return state.doc?.days[state.dayIndex];
 }
 
 function render() {
+  if (!state.doc) return;
   const dayEntry = currentDay();
   const upto = state.dayIndex;
 
@@ -313,11 +324,12 @@ async function boot() {
   });
   $("profile").addEventListener("change", (event) => {
     state.profile = event.target.value;
-    renderDelay();
+    if (state.doc) renderDelay();
   });
   ["consent-vitals", "consent-symptoms", "consent-behavioral"].forEach((id) =>
     $(id).addEventListener("change", () => {
       const dayEntry = currentDay();
+      if (!dayEntry) return;
       $("queue").innerHTML = queueItems(dayEntry)
         .map(({ crewId, entry }) => queueCard(crewId, entry, consent()))
         .join("");
@@ -331,15 +343,17 @@ async function boot() {
     if (!file) return;
     try {
       const doc = JSON.parse(await file.text());
-      if (!doc.days?.length) throw new Error("JSON has no days[]");
-      applyScenario(doc, `file: ${file.name}`, doc.name || state.name);
+      const name = doc.scenario || doc.name;
+      if (!matchesScenario(doc, name)) throw new Error("Expected a named synthetic scenario with days[]");
+      applyScenario(doc, `file: ${file.name}`, name);
     } catch (err) {
       $("source-line").textContent = `Could not read that file: ${err.message}`;
     }
   });
   $("audit-tamper").addEventListener("click", () => {
-    if (state.view.length < 2) return;
-    state.view[1] = { ...state.view[1], payload: { ...state.view[1].payload, level: "info" } };
+    if (!state.doc || state.view.length === 0) return;
+    const index = Math.min(1, state.view.length - 1);
+    state.view[index] = { ...state.view[index], payload: { ...state.view[index].payload, demoTampered: true } };
     refreshAudit();
   });
   $("audit-recheck").addEventListener("click", refreshAudit);
@@ -351,12 +365,21 @@ async function setScenario(name) {
   state.name = name;
   try {
     const { doc, source } = await loadScenario(name);
+    if (name !== state.name) return;
     applyScenario(doc, source, name);
   } catch (err) {
+    if (name !== state.name) return;
+    state.doc = null;
+    state.auditGeneration = (state.auditGeneration || 0) + 1;
+    state.view = [];
     $("source-line").textContent = err.message;
     $("source-line").classList.add("is-degraded");
     $("crew-list").innerHTML = "";
     $("queue").innerHTML = "";
+    $("attribution-line").textContent = "";
+    $("queue-note").textContent = "No matching scenario loaded.";
+    $("audit-body").innerHTML = "";
+    $("audit-status").textContent = "No scenario loaded.";
   }
 }
 

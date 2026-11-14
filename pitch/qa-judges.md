@@ -14,9 +14,8 @@ snapshot (public domain, checksummed) used for space-weather context, and MMASH 
 (22 healthy adults) used as a proxy to test interval honesty. No astronaut health data.
 
 **3. Why N-of-1 instead of population thresholds?**
-With four crew members the population average is not meaningful. NASA HRP's own Artemis II
-Data Methodology Challenge rewarded small-sample, individual-level Bayesian methods for exactly
-this reason. We also show where it matters: in a heterogeneous crew, a population rule recalls
+A population range can miss an individual change. Small-sample, individual-level methods
+motivate our Bayesian design; that does not imply NASA endorsement or validation of our engine. We also show where it matters: in a heterogeneous crew, a population rule recalls
 27% of strong changes while personal methods hold at 89–100%.
 
 **4. But doesn't N-of-1 need weeks of data?**
@@ -68,7 +67,7 @@ provider swap is a config change, and the product does not depend on it.
 
 **13. How do you stop the LLM from inventing things?**
 A deterministic verifier: unknown citations rejected, every number must exist in the engine
-facts, urgency may not be lowered, diagnostic phrasing rejected. On rejection we retry once
+facts, urgency must equal the engine level exactly, diagnostic phrasing rejected. On rejection we retry once
 with the error list, then use the template. Each failure becomes a test.
 
 **14. What fails today?**

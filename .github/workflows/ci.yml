@@ -34,7 +34,7 @@ jobs:
       - name: Unit tests (dependency-free runner)
         run: python scripts/run_tests.py
 
-      - name: Adversarial suite (30 cases, offline)
+      - name: Adversarial suite (39 cases, offline)
         env:
           PYTHONPATH: services/engine
         run: python -m tether_engine.llm.redteam
@@ -78,6 +78,16 @@ jobs:
       - name: Typecheck and build
         working-directory: apps/crew-tablet
         run: npm run build
+
+      - name: Static contract smoke
+        working-directory: apps/crew-tablet
+        run: npm run test:e2e
+
+      - name: Browser interaction regressions (installed Chrome)
+        working-directory: apps/crew-tablet
+        run: |
+          npx playwright install --with-deps chrome
+          npm run test:e2e:browser
 
       - name: Ground console audit chain matches the Python vectors
         run: node apps/ground-console/src/audit.test.mjs

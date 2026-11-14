@@ -1,15 +1,18 @@
-.PHONY: setup test dev validate lint skills
+.PHONY: setup test dev validate lint skills check
+PYTHON ?= python
 setup:
-	cd services/engine && pip install -e ".[dev]"
-	cd apps/crew-tablet && npm ci || true
+	$(PYTHON) -m pip install -e "services/engine[dev]"
+	cd apps/crew-tablet && npm ci
 test:
-	python scripts/run_tests.py
+	$(PYTHON) scripts/run_tests.py
 dev:
 	cd services/engine && uvicorn tether_engine.api.main:app --reload --port 8000 &
 	cd apps/crew-tablet && npm run dev
 validate:
-	python ml/validation/run_all.py
+	$(PYTHON) ml/validation/run_all.py
 lint:
 	cd services/engine && ruff check .
 skills:
 	bash scripts/link-skills.sh
+check:
+	PYTHON="$(PYTHON)" bash scripts/check_all.sh

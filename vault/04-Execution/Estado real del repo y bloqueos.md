@@ -4,6 +4,8 @@ status: verified
 updated: 2026-11-14
 sources: [revisión local del repo 2026-11-14, docs/validation.md, apps/crew-tablet/public/demo-data.json]
 ---
+> **Registro histórico / plan superado.** Consultar [[Board]] y [[Checklist de implementacion 2026-11-14]] para el estado vigente. Se conserva el texto siguiente para trazabilidad; sus faltantes y conteos corresponden a etapas anteriores.
+
 # Estado real del repo y bloqueos (verificado 14-nov)
 > Revisión archivo por archivo de `project/` y de esta bóveda. No es el estado deseado: es lo que existe hoy, comprobado. Reemplaza al [[Board]] del 13-nov como fuente de verdad.
 > Contexto de producto: [[Tesis y diferenciadores]] · [[Alcance MoSCoW]] · [[Arquitectura general]] · [[Criterios de jueceo]]

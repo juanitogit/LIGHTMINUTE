@@ -11,6 +11,7 @@ service see exactly the same numbers. Data is SYNTHETIC by contract.
 from __future__ import annotations
 
 import json
+import logging
 from functools import lru_cache
 from pathlib import Path
 
@@ -44,48 +45,69 @@ def _read_json(path: Path) -> dict | None:
         return None
 
 
-def _try_engine(name: str, seed: int, days: int) -> dict | None:
-    """A1's pipeline, if it is importable and actually returns a scenario."""
-    try:  # local import: the module may not exist yet while A1 is building it
-        from ..pipeline import run_scenario  # type: ignore[attr-defined]
-    except Exception:
-        return None
-    try:
-        try:
-            doc = run_scenario(name, seed=seed, days=days)
-        except TypeError:  # older signature without kwargs
-            doc = run_scenario(name)
-    except Exception:
-        return None
-    return doc if isinstance(doc, dict) and doc.get("days") else None
-
-
 @lru_cache(maxsize=32)
+def _try_engine(name: str, seed: int, days: int) -> dict:
+    """Cache successful engine output only; raised errors are never cached."""
+    from ..pipeline import run_scenario
+    doc = run_scenario(name, seed=seed, days=days)
+    if not isinstance(doc, dict) or not doc.get("days"):
+        raise ValueError("empty engine scenario")
+    return doc
+
+
 def _load(name: str, seed: int, days: int) -> dict:
-    doc = _try_engine(name, seed, days)
+    engine_error = None
+    try:
+        doc = _try_engine(name, seed, days)
+        if doc is None:
+            raise ValueError("empty engine scenario")
+    except Exception as exc:
+        # Do not include exception messages: providers or filesystem failures can
+        # contain secrets. The class and source are enough to diagnose degradation.
+        engine_error = type(exc).__name__
+        logging.getLogger(__name__).warning("Scenario engine unavailable (%s)", engine_error)
+        doc = None
     source = "engine"
     if doc is None:
-        doc, source = _read_json(data_dir() / f"scenario-{name}.json"), "scenario-file"
-    if doc is None:
-        if name not in SCENARIO_NAMES:
-            raise ScenarioNotFound(f"unknown scenario: {name}")
-        doc, source = _read_json(public_dir() / "demo-data.json"), "demo-data"
-    if doc is None:
-        raise ScenarioNotFound(f"no data source available for {name}")
+        for path, candidate_source in (
+            (data_dir() / f"scenario-{name}.json", "scenario-file"),
+            (public_dir() / "demo-data.json", "demo-data"),
+        ):
+            candidate = _read_json(path)
+            if _matching_scenario(candidate, name):
+                doc, source = candidate, candidate_source
+                break
+    if not _matching_scenario(doc, name):
+        raise ScenarioNotFound(f"no matching data source available for {name}")
     out = dict(doc)
     out.setdefault("synthetic", True)
     out["name"] = name
     out["source"] = source
-    out["degraded"] = source == "demo-data"
+    out["degraded"] = source != "engine"
+    out["engine_error"] = engine_error
+    out["requested_parameters"] = {"seed": seed, "days": days}
+    out["effective_parameters"] = {
+        "seed": doc.get("seed"), "days": len(doc.get("days") or []),
+        "variant": doc.get("variant")}
     out.setdefault("indicators", list(INDICATORS))
     return out
+
+
+def _matching_scenario(doc, name: str) -> bool:
+    """A syntactically valid JSON file is not necessarily a scenario bundle."""
+    return (isinstance(doc, dict) and doc.get("scenario", doc.get("name")) == name
+            and isinstance(doc.get("days"), list) and bool(doc["days"])
+            and all(isinstance(day, dict) for day in doc["days"]))
 
 
 def load_scenario(name: str, seed: int = 0, days: int = 24) -> dict:
     """Normalised scenario document: {name, source, synthetic, indicators, days[]}."""
     if not isinstance(name, str) or not name.strip():
         raise ScenarioNotFound("missing scenario name")
-    return _load(name.strip(), int(seed), int(days))
+    name = name.strip()
+    if name not in SCENARIO_NAMES:
+        raise ScenarioNotFound(f"unknown scenario: {name}")
+    return _load(name, int(seed), int(days))
 
 
 def find_day(doc: dict, day: int) -> dict:
@@ -125,10 +147,6 @@ def _band(entry: dict) -> dict:
     hr = ind.get("rest_hr") or {}
     if hr.get("value") is not None:
         return hr
-    for name in INDICATORS:  # tolerate scenario files without rest_hr
-        cand = ind.get(name) or {}
-        if cand.get("value") is not None and cand.get("ci95"):
-            return cand
     return {}
 
 
@@ -160,7 +178,8 @@ def engine_facts(entry: dict, crew: str, day: int) -> dict:
     level = entry.get("level")
     if level not in LEVELS:
         level = "info"
-    n_seen = band.get("n_seen")
+    confidence_inputs = entry.get("confidence_inputs") or {}
+    n_seen = confidence_inputs.get("n_seen", band.get("n_seen"))
     n_seen = int(n_seen) if isinstance(n_seen, (int, float)) else 0
     confidence = entry.get("confidence") or ("low" if n_seen < 7 else "moderate")
 
@@ -180,5 +199,8 @@ def engine_facts(entry: dict, crew: str, day: int) -> dict:
         },
         "syndrome_z": entry.get("syndrome_z"),
         "learning": bool(entry.get("learning", n_seen < 7)),
-        "confidence_inputs": {"n_seen": n_seen, "df": max(n_seen - 1, 0)},
+        # Old static exports have no df. Unknown is preferable to fabricating
+        # n-1: this model's predictive df is 2*alpha with forgetting.
+        "confidence_inputs": {"n_seen": n_seen, "df": confidence_inputs.get("df")},
+        "attribution": entry.get("attribution") or {},
     }

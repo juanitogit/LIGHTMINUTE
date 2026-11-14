@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
-import { Bullets, DataTable, RawDetails, Tiles } from "../components/DataView";
-import { DataNotice, EmptyState, Panel } from "../components/primitives";
+import { RawDetails, Tiles } from "../components/DataView";
+import { Chip, DataNotice, EmptyState, Panel } from "../components/primitives";
 import { loadLlmStats, loadValidation } from "../lib/api";
 import { formatValue } from "../lib/inspect";
-import { isRecord, pickRecord, primitiveEntries, recordArrays, stringItems } from "../lib/inspect";
+import {
+  methodIds,
+  parseValidation,
+  pct,
+  type ValidationReport,
+  type ValidationScenario,
+} from "../lib/validation";
 
 const STAT_LABELS: Record<string, string> = {
   calls: "LLM calls",
@@ -46,18 +52,108 @@ function formatStat(key: string, value: unknown): string {
   return formatValue(value);
 }
 
-type Phase = "loading" | "ready";
+/** A rate, never a percentage: 0.103 false alarms per crew-week. */
+const rate = (value: number | undefined) => (value === undefined ? "—" : value.toFixed(3));
+
+function MethodsTable({ scenario }: { scenario: ValidationScenario }) {
+  return (
+    <div className="table-wrap">
+      <table className="data-table">
+        <caption>
+          {scenario.title}
+          {scenario.multiplier !== undefined
+            ? ` · between-person SD ×${scenario.multiplier}`
+            : ""}{" "}
+          · recall by signal strength, equal false-alarm budget
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Method</th>
+            <th scope="col">False alarms</th>
+            <th scope="col">Mild</th>
+            <th scope="col">Moderate</th>
+            <th scope="col">Strong</th>
+            <th scope="col">Delay (moderate)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {scenario.methods.map((method) => (
+            <tr key={method.id}>
+              <th scope="row" className="data-table__rowhead">
+                {method.name}
+              </th>
+              <td>{method.faPerWeek === undefined ? "—" : `${rate(method.faPerWeek)} / crew-week`}</td>
+              <td>{pct(method.recall.mild)}</td>
+              <td>{pct(method.recall.moderate)}</td>
+              <td>{pct(method.recall.strong)}</td>
+              <td>{method.delayDays === undefined ? "—" : `${method.delayDays.toFixed(1)} d`}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="muted small">
+        False alarms are a <b>rate per crew-week</b> (0.103 ≈ one false alarm every ten
+        crew-weeks), not a percentage. Recall columns are percentages.
+      </p>
+    </div>
+  );
+}
+
+function RecallTable({
+  caption,
+  rowLabel,
+  rows,
+  format = "pct",
+}: {
+  caption: string;
+  rowLabel: string;
+  rows: { key: string; cells: Record<string, number> }[];
+  format?: "pct" | "rate";
+}) {
+  const show = format === "pct" ? pct : rate;
+  const ids = Array.from(new Set(rows.flatMap((row) => Object.keys(row.cells))));
+  if (rows.length === 0 || ids.length === 0) return null;
+  return (
+    <div className="table-wrap">
+      <table className="data-table">
+        <caption>{caption}</caption>
+        <thead>
+          <tr>
+            <th scope="col">{rowLabel}</th>
+            {ids.map((id) => (
+              <th key={id} scope="col">
+                {id}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.key}>
+              <th scope="row" className="data-table__rowhead">
+                {row.key}
+              </th>
+              {ids.map((id) => (
+                <td key={id}>{show(row.cells[id])}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 export function Validation() {
-  const [phase, setPhase] = useState<Phase>("loading");
-  const [validation, setValidation] = useState<unknown>(null);
+  const [phase, setPhase] = useState<"loading" | "ready">("loading");
+  const [report, setReport] = useState<ValidationReport | null>(null);
   const [stats, setStats] = useState<Record<string, unknown> | null>(null);
 
   useEffect(() => {
     let alive = true;
-    Promise.all([loadValidation(), loadLlmStats()]).then(([validationDoc, llmStats]) => {
+    Promise.all([loadValidation(), loadLlmStats()]).then(([doc, llmStats]) => {
       if (!alive) return;
-      setValidation(validationDoc);
+      setReport(parseValidation(doc));
       setStats(llmStats);
       setPhase("ready");
     });
@@ -66,16 +162,28 @@ export function Validation() {
     };
   }, []);
 
-  const doc = isRecord(validation) ? validation : null;
-  const summary = doc ? (pickRecord(doc.summary) ?? pickRecord(doc.metrics) ?? pickRecord(doc.headline)) : null;
-  const tables = doc ? recordArrays(doc) : [];
-  const notes = doc ? stringItems(doc.notes ?? doc.limitations ?? doc.caveats) : [];
   const statEntries = stats
-    ? STAT_ORDER.filter((key) => key in stats).map((key) => [
-        STAT_LABELS[key] ?? key,
-        formatStat(key, stats[key]),
-      ] as [string, string])
+    ? STAT_ORDER.filter((key) => key in stats).map(
+        (key) => [STAT_LABELS[key] ?? key, formatStat(key, stats[key])] as [string, string],
+      )
     : [];
+
+  const design = report?.design;
+  const designTiles: [string, string][] = design
+    ? [
+        ["False-alarm budget", `${design.budgetPerWeek?.toFixed(3) ?? "—"} / crew-week`],
+        ["Tuning seeds", formatValue(design.tuningSeeds)],
+        ["Report seeds", formatValue(design.reportSeeds)],
+        ["Experiment seeds", formatValue(design.experimentSeeds)],
+        ["Simulated days", formatValue(design.days)],
+        ["Onset day", formatValue(design.onsetDay)],
+        ["Warm-up days", formatValue(design.warmupDays)],
+        ["Detection horizon", `${formatValue(design.horizonDays)} days`],
+        ["Effect unit", design.effectUnit ?? "—"],
+      ]
+    : [];
+
+  const ids = report ? methodIds(report) : [];
 
   return (
     <div className="view">
@@ -84,15 +192,17 @@ export function Validation() {
           <p className="micro">Evidence · validation</p>
           <h1>Validation &amp; live system stats</h1>
           <p className="viewhead__sub">
-            What we measured, what we did not, and how the explanation layer is behaving.
+            Synthetic crews, equal false-alarm budget, tuning and report seeds disjoint.
           </p>
         </div>
-        <DataNotice />
+        <DataNotice label="SYNTHETIC CREW" />
       </header>
 
       {phase === "loading" ? (
         <Panel>
-          <p className="muted" role="status">Loading validation results…</p>
+          <p className="muted" role="status">
+            Loading validation results…
+          </p>
         </Panel>
       ) : null}
 
@@ -125,45 +235,144 @@ export function Validation() {
             )}
           </Panel>
 
-          {!doc ? (
+          {!report ? (
             <Panel title="Benchmark" labelledBy="bench-title">
               <EmptyState title="Benchmark results not published yet">
                 <p>
-                  This page reads <code>public/data/validation.json</code> (validation workstream).
-                  Until it lands, no result is claimed here.
+                  This page reads <code>public/data/validation.json</code>. Until it lands, no
+                  result is claimed here.
                 </p>
               </EmptyState>
             </Panel>
           ) : (
             <>
-              {summary ? (
-                <Panel title="Headline results" labelledBy="summary-title">
-                  <Tiles entries={primitiveEntries(summary, 9)} />
-                </Panel>
-              ) : null}
+              <p className="chips">
+                <Chip tone={report.synthetic ? "warn" : "quiet"}>
+                  {report.synthetic ? "SYNTHETIC CREWS" : "no synthetic flag"}
+                </Chip>
+                {report.label ? <Chip tone="quiet">{report.label}</Chip> : null}
+                {report.generatedBy ? <Chip tone="quiet">{report.generatedBy}</Chip> : null}
+                <Chip tone="quiet">not a clinical trial</Chip>
+              </p>
 
-              {tables.map((table) => (
-                <Panel key={table.key} title={table.key.replace(/_/g, " ")} labelledBy={`val-${table.key}`}>
-                  <DataTable rows={table.rows} caption={table.key} />
+              <Panel title="Design" labelledBy="design-title">
+                <Tiles entries={designTiles} />
+                <p className="muted small">
+                  Every method is compared at the same false-alarm budget: a method is not allowed
+                  to look better by alerting more often.
+                </p>
+              </Panel>
+
+              {report.scenarios.map((scenario) => (
+                <Panel
+                  key={scenario.id}
+                  title={`Methods · ${scenario.title}`}
+                  aside={<span className="mono small">{scenario.methods.length} methods</span>}
+                  labelledBy={`scenario-${scenario.id}`}
+                >
+                  <MethodsTable scenario={scenario} />
                 </Panel>
               ))}
 
-              {notes.length > 0 ? (
+              {report.calibration ? (
+                <Panel title="Interval calibration" labelledBy="calibration-title">
+                  <Tiles
+                    entries={[
+                      ["Nominal coverage", pct(report.calibration.nominal)],
+                      ["Overall coverage", pct(report.calibration.overall)],
+                      ["Intervals measured", formatValue(report.calibration.n)],
+                    ]}
+                  />
+                  <div className="table-wrap">
+                    <table className="data-table">
+                      <caption>Coverage of the 95% interval, by indicator</caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">Indicator</th>
+                          <th scope="col">Coverage</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {report.calibration.byIndicator.map((row) => (
+                          <tr key={row.indicator}>
+                            <th scope="row" className="data-table__rowhead">
+                              {row.indicator}
+                            </th>
+                            <td>{pct(row.coverage)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </Panel>
+              ) : null}
+
+              {report.missingData.length > 0 ? (
+                <Panel title="Missing data" labelledBy="missing-title">
+                  <RecallTable
+                    caption="Recall for a moderate deviation when readings are missing"
+                    rowLabel="Missing"
+                    rows={report.missingData.map((row) => ({
+                      key: pct(row.missingFraction),
+                      cells: row.recall,
+                    }))}
+                  />
+                  <RecallTable
+                    caption="False alarms per crew-week under the same missingness (rate, not %)"
+                    rowLabel="Missing"
+                    format="rate"
+                    rows={report.missingData.map((row) => ({
+                      key: pct(row.missingFraction),
+                      cells: row.faPerWeek,
+                    }))}
+                  />
+                  <p className="muted small">
+                    The first table is recall (%); the second is false alarms per crew-week
+                    (count, not a percentage).
+                  </p>
+                </Panel>
+              ) : null}
+
+              {report.baselineLength.length > 0 ? (
+                <Panel title="Baseline length" labelledBy="baseline-title">
+                  <RecallTable
+                    caption="Recall for a moderate deviation against personal history length"
+                    rowLabel="Baseline"
+                    rows={report.baselineLength.map((row) => ({
+                      key: `${row.days} d`,
+                      cells: row.recall,
+                    }))}
+                  />
+                  <p className="muted small">
+                    Short histories are the weak case: the personal lens degrades before the
+                    population one.
+                  </p>
+                </Panel>
+              ) : null}
+
+              {report.limitations.length > 0 ? (
                 <Panel title="Limitations" labelledBy="limits-title">
-                  <Bullets items={notes} tone="warn" />
+                  <ul className="plain-list plain-list--warn">
+                    {report.limitations.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                  {report.note ? <p className="muted small">{report.note}</p> : null}
                 </Panel>
               ) : null}
 
               <Panel title="What this does not claim" labelledBy="claims-title">
                 <ul className="plain-list">
                   <li>Not a clinical trial and not a medical device.</li>
-                  <li>Synthetic crew data; public proxies are labelled where used.</li>
+                  <li>
+                    Synthetic crews only — {ids.length} methods compared, no human participants.
+                  </li>
                   <li>
                     Comparative numbers are reported with their limitations, not as promised
                     accuracy.
                   </li>
                 </ul>
-                <RawDetails data={validation} />
+                <RawDetails data={report} />
               </Panel>
             </>
           )}

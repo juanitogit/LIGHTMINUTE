@@ -13,7 +13,9 @@ flowchart LR
   V -->|ok| C[Decision Card]
   V -->|rechazo| T[Plantilla]
   P --> T --> C
-  C --> U[Tablet PWA] 
+  C --> U[Tablet React]
   C --> S[Store-and-forward + retraso] --> G[Consola de tierra]
 ```
 Detalle y contratos: `docs/ARCHITECTURE.md` del repo. Decisiones: [[ADR-001 Motor decide LLM explica]] · [[ADR-002 N-of-1 conjugado]] · [[ADR-003 Cache-stuffing de la KB]] · [[ADR-004 Stack]].
+
+**Alcance actual:** entradas de tripulación sintéticas, proxy público MMASH separado, NOAA por snapshot; store-and-forward y consentimiento son previews. No se acredita persistencia productiva ni aval clínico. Ver [[Board]].

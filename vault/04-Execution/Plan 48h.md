@@ -3,6 +3,8 @@ tags: [exec]
 status: decided
 updated: 2026-11-13
 ---
+> **Registro histórico / plan superado.** Consultar [[Board]] y [[Checklist de implementacion 2026-11-14]] para el estado vigente. Se conserva el texto siguiente para trazabilidad; sus faltantes y conteos corresponden a etapas anteriores.
+
 # Plan 48 h (ajusta al cierre de tu evento local — confírmalo)
 ## Hoy (vie 13) — preparación (≈2–3 h)
 - [ ] Registrarse, elegir evento, confirmar **hora de cierre de entrega** y leer la página oficial del reto + recursos

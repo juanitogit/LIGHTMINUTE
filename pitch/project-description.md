@@ -33,7 +33,7 @@ is not enough; the crew needs a recommendation they can act on, with its uncerta
 5. **Three-lens verdict** — Earth rule, space-adapted rule and the personal baseline, with the
    disagreement named (`hidden_in_range`, `expected_for_you`, …).
 6. **Decision Card** — a deterministic engine sets the level and every number. The LLM only
-   writes; a verifier rejects invented numbers, fake citations, lowered urgency and diagnostic
+   writes; a verifier rejects invented numbers, fake citations, any changed urgency and diagnostic
    language, and falls back to a template. Unplug the LLM and the product still works.
 7. **Ground link** — routing aware of light delay, consent tiers per data type, and a
    hash-chained audit log of what was seen and done.
@@ -85,5 +85,26 @@ DeepSeek V4.1 Flash and coding agents assisted with implementation, analysis and
 team reviewed and owns all modelling decisions, thresholds, claims and text. The product's LLM
 is optional, replaceable, and constrained by a deterministic verifier.
 
-## Team roles
-- Science & engine · simulation & validation · LLM & knowledge base · UI/UX · pitch, docs & demo.
+## Evento y equipo
+
+**Evento:** Space Apps Challenge Neiva 2026. **Cierre:** 15 de noviembre de 2026, 23:59, America/Bogota (UTC−5). Datos confirmados por el usuario; no se presentan como verificación externa de las bases.
+
+Plan previo al cierre: congelación el 15 de noviembre a las **19:59** y envío previsto a las **20:59**, en la misma zona horaria. Son hitos planificados, no acciones completadas. El propietario conserva la autorización exclusiva del push.
+
+| Integrante | Rol |
+|---|---|
+| Abel Orlando Ramírez Amaya | Backend & Tester |
+| Pablo Trujillo Artunduaga | Backend & Tester |
+| Juan Sebastián Tafurth Cortes | DevOps & Documentación |
+| Simón Santiago Puentes Peña | Documentación & Base de Datos |
+| Juan Esteban Bustos Chilatra | Frontend & Backend & Chatbot |
+| José David Correa Núñez | Frontend & DevOps & CI/CD |
+
+
+## Explanation policy
+
+The LLM must preserve `level` and `confidence` exactly and copy `what_changed`, `do_now`,
+`monitor`, `escalate_if` and `ground_message` verbatim from the deterministic
+template. It may vary the headline and explanation (`why_it_matters`) without
+numbers, subject to verification. Wording filters are defense in depth, not a
+semantic clinical guarantee. The product remains a nonclinical prototype.

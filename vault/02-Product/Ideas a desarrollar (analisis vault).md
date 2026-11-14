@@ -3,6 +3,8 @@ tags: [product, backlog]
 status: draft
 updated: 2026-11-14
 ---
+> **Registro histórico / plan superado.** Consultar [[Board]] y [[Checklist de implementacion 2026-11-14]] para el estado vigente. Se conserva el texto siguiente para trazabilidad; sus faltantes y conteos corresponden a etapas anteriores.
+
 # Ideas a desarrollar (análisis del vault)
 
 > Derivado de leer la bóveda completa + estado real del repo (2026-11-14).
