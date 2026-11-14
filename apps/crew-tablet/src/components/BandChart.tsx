@@ -1,4 +1,5 @@
 import { useId, useMemo } from "react";
+import { earthRangeText, type EarthRuleView } from "../lib/earth";
 import { fmt } from "../lib/format";
 import type { IndicatorMeta } from "../lib/meta";
 import type { Reading } from "../lib/types";
@@ -36,12 +37,12 @@ export function BandChart({
   points,
   selectedDay,
   meta,
-  earthRange,
+  earth,
 }: {
   points: BandPoint[];
   selectedDay: number;
   meta: IndicatorMeta;
-  earthRange?: [number, number] | undefined;
+  earth?: EarthRuleView | null;
 }) {
   const gradientId = useId().replace(/:/g, "");
 
@@ -56,7 +57,10 @@ export function BandChart({
       const band = p.reading.ci95;
       if (band && band.length === 2) values.push(band[0], band[1]);
     }
-    if (earthRange) values.push(earthRange[0], earthRange[1]);
+    if (earth) {
+      if (earth.low !== null) values.push(earth.low);
+      if (earth.high !== null) values.push(earth.high);
+    }
     const range = paddedRange(values);
 
     const plotW = W - PAD.left - PAD.right;
@@ -105,7 +109,7 @@ export function BandChart({
       baseline,
       indexOfSelected,
     };
-  }, [points, selectedDay, earthRange]);
+  }, [points, selectedDay, earth]);
 
   const { usable, range, y, bandPolygon, valueLine, selected, selectedX, baseline } = chart;
   const decimals = meta.decimals;
@@ -161,30 +165,36 @@ export function BandChart({
           );
         })}
 
-        {earthRange ? (
+        {earth ? (
           <g>
-            <rect
-              x={PAD.left}
-              y={y(Math.max(earthRange[0], earthRange[1]))}
-              width={W - PAD.left - PAD.right}
-              height={Math.abs(
-                y(Math.min(earthRange[0], earthRange[1])) -
-                  y(Math.max(earthRange[0], earthRange[1])),
-              )}
-              className="earth-band"
-            />
-            {[earthRange[0], earthRange[1]].map((value) => (
-              <line
-                key={value}
-                x1={PAD.left}
-                x2={W - PAD.right}
-                y1={y(value)}
-                y2={y(value)}
-                className="earth-line"
+            {earth.low !== null && earth.high !== null ? (
+              <rect
+                x={PAD.left}
+                y={y(Math.max(earth.low, earth.high))}
+                width={W - PAD.left - PAD.right}
+                height={Math.abs(y(Math.min(earth.low, earth.high)) - y(Math.max(earth.low, earth.high)))}
+                className="earth-band"
               />
-            ))}
-            <text x={PAD.left + 6} y={y(earthRange[1]) - 5} className="earth-text">
-              Earth {fmt(earthRange[0], decimals)}–{fmt(earthRange[1], decimals)} {meta.unit}
+            ) : null}
+            {[earth.low, earth.high].map((value) =>
+              value !== null ? (
+                <line
+                  key={value}
+                  x1={PAD.left}
+                  x2={W - PAD.right}
+                  y1={y(value)}
+                  y2={y(value)}
+                  className="earth-line"
+                />
+              ) : null,
+            )}
+            <text
+              x={PAD.left + 6}
+              y={y(earth.high ?? earth.low ?? range.max) - 5}
+              className="earth-text"
+            >
+              Earth {earthRangeText(earth, meta.unit, decimals)}
+              {earth.status === "demo-parameter" ? " · demo" : ""}
             </text>
           </g>
         ) : null}
@@ -233,10 +243,12 @@ export function BandChart({
         {typeof baseline === "number" ? (
           <span><span className="swatch swatch--dash" /> baseline</span>
         ) : null}
-        {earthRange ? (
-          <span><span className="swatch swatch--earth" /> Earth range</span>
+        {earth ? (
+          <span>
+            <span className="swatch swatch--earth" /> Earth rule · {earth.status}
+          </span>
         ) : (
-          <span className="muted">Earth range not exposed in this dataset — verdict only.</span>
+          <span className="muted">No Earth range for this indicator — personal lens only.</span>
         )}
       </figcaption>
     </figure>

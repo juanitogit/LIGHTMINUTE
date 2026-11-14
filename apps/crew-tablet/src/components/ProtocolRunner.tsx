@@ -42,6 +42,7 @@ export function ProtocolRunner({ protocolId }: { protocolId?: string | undefined
   const [note, setNote] = useState("");
 
   const entries = Object.entries(protocols);
+  const triggers = (selected ? protocols[selected]?.trigger_patterns : undefined) ?? [];
 
   useEffect(() => {
     if (protocolId) setSelected(protocolId);
@@ -131,12 +132,23 @@ export function ProtocolRunner({ protocolId }: { protocolId?: string | undefined
         </span>
       </label>
 
+      {triggers.length > 0 ? (
+        <details className="protocol-triggers">
+          <summary>When this protocol applies</summary>
+          <ul className="plain-list">
+            {triggers.map((trigger) => (
+              <li key={trigger}>{trigger}</li>
+            ))}
+          </ul>
+        </details>
+      ) : null}
+
       <div ref={hostRef} className="protocol-host" hidden={!selected} />
 
       {!selected ? (
         <p className="muted small" style={{ marginTop: 8 }}>
           The decision card is complete on its own. Open a protocol only when the card calls for
-          one.
+          one; the scenario does not label a default protocol.
         </p>
       ) : null}
 

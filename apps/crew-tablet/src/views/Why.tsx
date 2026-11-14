@@ -3,6 +3,7 @@ import { CrewPills } from "../components/CrewPills";
 import { Icon } from "../components/Icon";
 import { LevelBadge, Panel } from "../components/primitives";
 import { SyndromeStrip, SYNDROME_ALERT_Z } from "../components/SyndromeStrip";
+import { earthIsDemoParameter, earthRangeText, earthRule } from "../lib/earth";
 import { fmt, fmtRange, humanise, unitLabel } from "../lib/format";
 import {
   crewRoles,
@@ -14,15 +15,9 @@ import {
   PERSONAL_LABEL,
   SPACE_LABEL,
 } from "../lib/meta";
-import type { LoadedScenario, Reading } from "../lib/types";
+import type { LoadedScenario } from "../lib/types";
 
 const WINDOW = 14;
-
-function earthRangeOf(reading: Reading | undefined): [number, number] | undefined {
-  const range = reading?.earth_range;
-  if (range && range.length === 2 && range.every((v) => Number.isFinite(v))) return range;
-  return undefined;
-}
 
 export function Why({
   scenario,
@@ -63,7 +58,8 @@ export function Why({
 
   const pattern = reading?.lens?.pattern ?? "";
   const disagrees = DISAGREEMENT_PATTERNS.has(pattern);
-  const earthRange = earthRangeOf(reading);
+  const earth = earthRule(indicator, reading);
+  const earthDemo = earthIsDemoParameter(earth);
 
   const indicators =
     scenario.doc.indicators && scenario.doc.indicators.length > 0
@@ -135,12 +131,7 @@ export function Why({
               aside={<span className="mono small">last {windowDays.length} days</span>}
               labelledBy="band-title"
             >
-              <BandChart
-                points={points}
-                selectedDay={dayNumber}
-                meta={meta}
-                earthRange={earthRange}
-              />
+              <BandChart points={points} selectedDay={dayNumber} meta={meta} earth={earth} />
             </Panel>
 
             <Panel
@@ -155,10 +146,21 @@ export function Why({
               <div className="lens">
                 <p className="micro">Lens 1 · Earth rule</p>
                 <p className="lens__value">{EARTH_LABEL[reading.lens?.earth ?? ""] ?? "No rule"}</p>
-                <p className="lens__note">
-                  {earthRange
-                    ? `${fmtRange(earthRange, meta.decimals)} ${meta.unit} population range`
-                    : "Verdict from the engine. This export does not include the range value."}
+                <p className="lens__note" title={earth?.source}>
+                  {earth ? (
+                    <>
+                      {earthRangeText(earth, unitLabel(meta.unit), meta.decimals).replace(
+                        /^./,
+                        (c) => c.toUpperCase(),
+                      )}
+                      {" · "}
+                      <span className={earthDemo ? "earth-status earth-status--demo" : "earth-status"}>
+                        {earthDemo ? "demo parameter" : earth.status}
+                      </span>
+                    </>
+                  ) : (
+                    "No cited Earth range for this indicator — judge it on your own baseline."
+                  )}
                 </p>
               </div>
               <div className="lens">

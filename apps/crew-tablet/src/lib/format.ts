@@ -9,6 +9,11 @@ export function fmt(value: number | null | undefined, decimals = 1): string {
   return value.toFixed(decimals);
 }
 
+/** Cited rule bounds (60, 5000) read best as written; keep decimals only when real. */
+export function fmtRule(value: number, decimals = 1): string {
+  return Number.isInteger(value) ? String(value) : fmt(value, decimals);
+}
+
 export function fmtSigned(value: number | null | undefined, decimals = 1): string {
   if (typeof value !== "number" || !Number.isFinite(value)) return "—";
   const sign = value > 0 ? "+" : "";

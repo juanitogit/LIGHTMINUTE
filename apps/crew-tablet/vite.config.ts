@@ -8,6 +8,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const protocolRunnerPath = resolve(here, "../../packages/protocol-runner/index.js");
 const protocolStylesPath = resolve(here, "../../packages/protocol-runner/style.css");
 const protocolsDir = resolve(here, "../../kb/protocols");
+const thresholdsPath = resolve(here, "../../kb/thresholds.json");
 const uiKitPath = resolve(here, "../../packages/ui-kit");
 
 /**
@@ -21,6 +22,30 @@ const PROTOCOLS_ID = "virtual:tether-protocols";
 const RESOLVED_PROTOCOLS_ID = "\0" + PROTOCOLS_ID;
 const PROTOCOL_CSS_ID = "virtual:tether-protocol-css";
 const RESOLVED_PROTOCOL_CSS_ID = "\0" + PROTOCOL_CSS_ID;
+const THRESHOLDS_ID = "virtual:tether-thresholds";
+const RESOLVED_THRESHOLDS_ID = "\0" + THRESHOLDS_ID;
+
+/**
+ * The cited Earth rules live in A1's kb/thresholds.json, which is not served to
+ * the app. Inline them so the Why chart can draw the Earth line without copying
+ * numbers into the UI. Missing file -> empty map, never a build failure.
+ */
+function readThresholds(): Record<string, unknown> {
+  try {
+    const raw = JSON.parse(readFileSync(thresholdsPath, "utf8")) as unknown;
+    if (!Array.isArray(raw)) return {};
+    const out: Record<string, unknown> = {};
+    for (const entry of raw) {
+      if (entry && typeof entry === "object" && "indicator" in entry) {
+        const indicator = (entry as { indicator?: unknown }).indicator;
+        if (typeof indicator === "string") out[indicator] = entry;
+      }
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
 
 /** Protocols are inlined so the runner works offline and from a static build. */
 function readProtocols(): Record<string, unknown> {
@@ -55,6 +80,7 @@ function protocolRunnerPlugin() {
       if (id === VIRTUAL_ID) return RESOLVED_ID;
       if (id === PROTOCOLS_ID) return RESOLVED_PROTOCOLS_ID;
       if (id === PROTOCOL_CSS_ID) return RESOLVED_PROTOCOL_CSS_ID;
+      if (id === THRESHOLDS_ID) return RESOLVED_THRESHOLDS_ID;
       return null;
     },
     load(id: string) {
@@ -63,6 +89,9 @@ function protocolRunnerPlugin() {
       }
       if (id === RESOLVED_PROTOCOL_CSS_ID) {
         return `const css = ${JSON.stringify(readProtocolStyles())};\nexport default css;\n`;
+      }
+      if (id === RESOLVED_THRESHOLDS_ID) {
+        return `export const thresholds = ${JSON.stringify(readThresholds())};\n`;
       }
       if (id !== RESOLVED_ID) return null;
       if (!existsSync(protocolRunnerPath)) {

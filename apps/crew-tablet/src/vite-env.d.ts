@@ -13,10 +13,32 @@ declare module "virtual:tether-protocols" {
   interface ProtocolDoc {
     id?: string;
     title?: string;
+    trigger_patterns?: string[];
     steps?: unknown[];
   }
 
   export const protocols: Record<string, ProtocolDoc>;
+}
+
+declare module "virtual:tether-thresholds" {
+  interface EarthRule {
+    low?: number | null;
+    high?: number | null;
+    status?: string;
+    source?: string;
+  }
+
+  interface ThresholdEntry {
+    indicator: string;
+    unit?: string;
+    hrp_risk?: string;
+    hazard?: string;
+    earth?: EarthRule | null;
+    space?: EarthRule | null;
+    note?: string;
+  }
+
+  export const thresholds: Record<string, ThresholdEntry>;
 }
 
 declare module "virtual:tether-protocol-css" {

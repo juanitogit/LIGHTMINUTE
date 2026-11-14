@@ -1204,6 +1204,14 @@ html[data-theme="light"] .region-glow {
   line-height: 1.45;
 }
 
+.earth-status {
+  color: var(--ok);
+}
+
+.earth-status--demo {
+  color: var(--watch);
+}
+
 .big-number {
   font-family: var(--font-mono);
   font-size: 38px;
@@ -1723,6 +1731,19 @@ html[data-theme="light"] .region-glow {
 
 .protocol-host {
   border-radius: 10px;
+  margin-top: 10px;
+}
+
+.protocol-triggers {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.protocol-triggers summary {
+  cursor: pointer;
+  color: var(--ink-2);
+  margin-bottom: 4px;
 }
 
 /* ---------------------------------------------------------------- generic data */
