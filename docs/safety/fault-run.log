@@ -24,7 +24,7 @@ FAIL FI-23 Mission context matches scenario
 PASS FI-24 Engine outage is explicitly labelled static
 FAIL FI-25 Static fallback must not rename another scenario
 ----------------------------------------
-Exception occurred during processing of request from ('127.0.0.1', 51508)
+Exception occurred during processing of request from ('127.0.0.1', 60783)
 Traceback (most recent call last):
   File "C:\Python314\Lib\socketserver.py", line 697, in process_request_thread
     self.finish_request(request, client_address)
@@ -44,7 +44,7 @@ Traceback (most recent call last):
   File "C:\Python314\Lib\http\server.py", line 484, in handle_one_request
     method()
     ~~~~~~^^
-  File "C:\Users\abel1\Desktop\tether-kit\tether-kit\project\tests\fault_injection\run.py", line 370, in do_GET
+  File "C:\Users\abel1\Desktop\tether-kit\tether-kit\project\tests\fault_injection\run.py", line 369, in do_GET
     else: super().do_GET()
           ~~~~~~~~~~~~~~^^
   File "C:\Python314\Lib\http\server.py", line 739, in do_GET

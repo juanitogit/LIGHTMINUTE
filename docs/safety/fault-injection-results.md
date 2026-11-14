@@ -1,6 +1,6 @@
 # Real-interface fault injection
 
-Run UTC: 2026-11-14T20:37:12.601634+00:00. Revision: `2fea48ff4d349de96980a39301e269818d731245`.
+Run UTC: 2026-11-14T20:46:15.103442+00:00. Revision: `a4cb4ccd6188d9e068e63ac8a9e26fe9658b48f3`.
 Command: `.venv/Scripts/python.exe tests/fault_injection/run.py`. Raw evidence: `docs/safety/fault-injection-results.json`.
 Result: **18/27 assertions passed**. Failures are safety findings, not engine fixes.
 
@@ -31,7 +31,7 @@ Result: **18/27 assertions passed**. Failures are safety findings, not engine fi
 | FI-23 Mission context matches scenario | `mismatched_mission_context` | FAIL | "Moon scenario received context {'phase': 'mars_transit', 'delay_minutes': 11, 'synthetic': True, 'not_a_medical_device': True}" |
 | FI-24 Engine outage is explicitly labelled static | `engine_outage` | PASS | {"source": "scenario-file", "synthetic": true} |
 | FI-25 Static fallback must not rename another scenario | `wrong_static_fallback` | FAIL | "Requested co2_creep; effective scenario=cmo_fever; advertised name=co2_creep; source=demo-data" |
-| FI-26 Stale space weather stays visibly archived | `stale_weather_archived` | PASS | {"injected_retrieval": "2000-01-01T00:00:00Z", "label": "Archived snapshot Â· not live", "limit": "No automatic maximum-age rejection; label only"} |
+| FI-26 Stale space weather stays visibly archived | `stale_weather_archived` | PASS | {"injected_retrieval": "2000-01-01T00:00:00Z", "label": "Archived snapshot · not live", "limit": "No automatic maximum-age rejection; label only"} |
 | FI-27 API outage shows local synthetic mode | `static_mode_label` | PASS | {"api_status": 503, "label": "Local simulation", "synthetic_label": true} |
 
 ## Limits

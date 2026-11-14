@@ -1,7 +1,6 @@
 """Run real-interface safety assertions; failures are evidence, not expected-pass tests."""
 from __future__ import annotations
 import copy
-import importlib.util
 import json
 import os
 from pathlib import Path
@@ -374,7 +373,7 @@ def browser_cases():
     server = ThreadingHTTPServer(("127.0.0.1", 0), partial(Handler, directory=str(ROOT / "apps/crew-tablet/dist")))
     Thread(target=server.serve_forever, daemon=True).start()
     try:
-        process = subprocess.run(["node", str(ROOT / "tests/fault_injection/browser.mjs"), f"http://127.0.0.1:{server.server_port}"], cwd=ROOT, capture_output=True, text=True, timeout=90)
+        process = subprocess.run(["node", str(ROOT / "tests/fault_injection/browser.mjs"), f"http://127.0.0.1:{server.server_port}"], cwd=ROOT, capture_output=True, encoding="utf-8", timeout=90)
         if process.returncode:
             RESULTS.append(dict(id="FI-26/27", title="Weather/static UI", component="tablet UI", severity="high", test="browser_cases", evidence="tests/fault_injection/browser.mjs", status="ERROR", observation=process.stderr[-4000:]))
         else:
