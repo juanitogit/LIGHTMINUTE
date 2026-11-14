@@ -37,6 +37,8 @@ def main() -> None:
 
     fixture = {
         "synthetic": True,
+        "scenario": doc["scenario"],
+        "delay_profile": doc.get("delay_profile"),
         "note": "Synthetic fixture copied from apps/crew-tablet/public/demo-data.json. Not a medical device.",
         "indicators": doc.get("indicators", []),
         "days": days,

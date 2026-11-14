@@ -7,12 +7,12 @@
 [![Data](https://img.shields.io/badge/data-synthetic%20%2B%20labelled%20proxy-yellow?style=flat-square)](#data-and-labels)
 [![Medical device](https://img.shields.io/badge/medical%20device-no-critical?style=flat-square)](#safety-and-limits)
 [![Python](https://img.shields.io/badge/python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)](#stack)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.128-009688?style=flat-square&logo=fastapi&logoColor=white)](#stack)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.162-009688?style=flat-square&logo=fastapi&logoColor=white)](#stack)
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](#stack)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9%20strict-3178C6?style=flat-square&logo=typescript&logoColor=white)](#stack)
 [![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)](#stack)
 [![LLM](https://img.shields.io/badge/LLM-DeepSeek%20V4.1%20Flash%20(optional)-4D6BFE?style=flat-square)](#stack)
-[![Tests](https://img.shields.io/badge/python%20tests-76%20passing-brightgreen?style=flat-square)](#tests)
+[![Checks](https://img.shields.io/badge/checks-see%20local%20report-blue?style=flat-square)](docs/CHECKLIST-IMPLEMENTACION-2026-11-14.md)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue?style=flat-square)](#license)
 
 Health-monitoring and decision-support software for astronauts on long missions:
@@ -29,7 +29,7 @@ crew gets cited **Decision Cards** that still work when the model, the link, or 
 ## What it does
 
 1. **Learns each astronaut's own normal** (per-person Bayesian N-of-1) instead of comparing
-   them to a population average — with n=4, the average does not exist.
+   them only to population ranges, which can hide changes in a heterogeneous crew.
 2. **Adds hazard context** (space weather, cabin environment) without letting it raise an
    alarm on its own.
 3. **Reads coordinated shifts**, not just single spikes: several weak signals moving
@@ -39,8 +39,9 @@ crew gets cited **Decision Cards** that still work when the model, the link, or 
 
 ### What makes it different
 
-- **Three lenses side by side** — Earth rule, space-adapted rule, and *your own baseline* —
-  with a named pattern when they disagree. At mission day 16 the demo crew member's resting
+- **Three lenses side by side** — Earth rule, space-rule availability, and *your own baseline* —
+  with a named pattern when they disagree. All shipped space rules are currently null;
+  that lens reports unavailable rather than inventing adapted ranges. At mission day 16 the demo crew member's resting
   HR of 68.5 bpm is *normal* for the population and *unusual for him* (`hidden_in_range`):
   a fixed range stays silent exactly when it matters.
 - **Syndrome early warning** with a crew-level view: shared exposure vs individual finding.
@@ -48,7 +49,7 @@ crew gets cited **Decision Cards** that still work when the model, the link, or 
   invented citations, invented numbers, diagnosis wording and doses. With
   `LLM_PROVIDER=none` the product still works, with zero network calls.
 - **Validated honestly, including where it loses** — and we publish a defect we found in our
-  own model on real data (see [Open defect](#open-defect-read-this-before-quoting-numbers)).
+  own model on real data (see [Fixed defect](#the-defect-we-found-and-fixed-read-this-before-quoting-numbers)).
 
 ### The 90-second demo
 
@@ -62,50 +63,34 @@ behind it is real engine output.
 
 ## Status: what works, what is partial, what is missing
 
-Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not built.
-"Verified by" names the command or check that was actually run on this tree.
+Implementation and verification are distinct. The current local closing report is
+[`docs/CHECKLIST-IMPLEMENTACION-2026-11-14.md`](docs/CHECKLIST-IMPLEMENTACION-2026-11-14.md);
+the ongoing state index is [`vault/04-Execution/Board.md`](vault/04-Execution/Board.md).
+Counts in historical handoffs refer to their original trees, not necessarily this one.
 
-### ✅ Working
-
-| Area | What works | Verified by |
+| Area | Implemented | Check / material limit |
 |---|---|---|
-| **N-of-1 engine** | Per-person conjugate Bayesian baseline (NIG + Student-t), winsorised robust updates, two-sided CUSUM, directional **syndrome** score, three-lens verdicts, crew attribution with 2-day persistence, QC that drops impossible readings before any update | `python scripts/run_tests.py` → **77/77** (nof1, syndrome, lenses, crew/ground/space, pipeline, simulate, qc, verifier, api, llm) |
-| **Scenarios** | 3 scripted scenarios × `strong`/`mild`, 24 days, 4 crew with roles (CMO/CDR/MS1/MS2), 6 indicators (`rest_hr`, `temp_c`, `sleep_h`, `pvt_ms`, `co2_ppm`, `headache_score`), sensor dropouts, hazards, deterministic by `(name, variant, seed, days)` | `python scripts/export_demo_json.py --all`; `apps/crew-tablet/public/data/scenario-*.json` + `scenario-index.json` |
-| **API** | `GET /api/health`, `GET /api/scenarios`, `GET /api/scenario/{name}`, `POST /api/card`, `GET /api/llm-stats`; scenarios come from `pipeline.run_scenario` when importable, else the static JSON; CORS restricted to localhost | uvicorn smoke: `/api/scenario/cmo_fever` → `source: engine`, 24 days, 6 indicators; `POST /api/card` day 15 crew A → `level: act`, `card_source: template` |
-| **Decision Cards** | One byte-stable system prefix (rules + whole KB + thresholds/syndromes with their status) so DeepSeek disk caching hits; verify → one retry with the error list → deterministic template fallback | `test_llm`: rejection→fallback, retry feeds errors back, prefix bytes identical across calls, injection stays in the *user* message, `LLM_PROVIDER=none` → zero network |
-| **Verifier** | Frozen field set, KB-only citations, numbers checked against engine facts, urgency may only rise, no diagnosis wording, no dose language, 140-char ground message | `test_verifier` + **30/30** adversarial cards rejected (`python -m tether_engine.llm.redteam`) |
-| **Crew tablet** | React app: **Glance → Why → Act**; crew strip, body map, personal 95 % band charts for all 6 indicators, Earth rule with its cited status, three-lens cards, syndrome strip, checklist, ground message with budget and reply countdown, protocol runner mounted, dark/light, presentation mode, URL hash state | `npm run build` green (293 kB JS / 92 kB gzip); A3 ran it in a browser with the API **on and off** |
-| **Protocol runner** | `mountProtocolRunner(el, {protocolId, onStep, onDone})`; one step per screen, ≥64 px targets, per-step timer, "can't do this" branch (skip / crew mate / escalate), undo, `→ ← C`, ARIA progressbar + live regions, `demo wording` badge with source | Mounted in the tablet and in `packages/protocol-runner/demo.html` (9-step run, undo, cannot-branch exercised) |
-| **Protocols** | 3 dose-free protocols (`fever_like_syndrome`, `co2_headache_cluster`, `post_eva_orthostatic`); every unsourced step marked `demo-wording`; steps point at the onboard medical protocol | `kb/protocols/*.json`, badge visible in both mounts |
-| **Ground console** | Static, no build: crew levels, sparklines against the personal band, delayed message queue from `ground_message` + `routing`, consent tiers (behavioural off by default), ISS/Moon/Mars light-delay timeline, tamper-evident chain viewer | Browser: 4 crew cards, 16 sparklines, day-15 queue, "symptoms withheld", tamper flagged at entry #1 |
-| **Audit chain** | SHA-256 hash chain, same canonical JSON as the Python engine, viewer names the first tampered entry | JS ↔ Python vectors identical, **8/8** (`node apps/ground-console/src/audit.test.mjs`) |
-| **Real NOAA snapshot** | `scripts/fetch_noaa.py` writes an immutable snapshot + manifest (url, retrieved_at, sha256, rows, license) and derives `public/data/radiation.json`; `ingest.verify_snapshot()` checks sha256 and row count | Real run 2026-11-14T14:38:16Z, 2 288 rows, S-scale 0 (quiet Sun) |
-| **Validation harness** | Four detectors at an equal false-alarm budget, plus interval calibration, missing-reading robustness and baseline-length sensitivity | `python ml/validation/run_all.py` → `docs/validation.md`, `ml/validation/results.json`, `public/data/validation.json` (~2.5 min) |
-| **CI** | GitHub Actions on every push to `main`: engine job (77 tests, 30 red-team cases, API smoke with no key) and frontend job (`npm ci` + build, audit vectors, syntax checks) | run 43613134201: both jobs green |
+| Engine and scenarios | N-of-1, robust updates, CUSUM, directional syndrome, crew attribution, QC; 3 scenarios × strong/mild, 4 crew, 6 indicators | `python scripts/run_tests.py`; full benchmark is separate |
+| API and cards | Scenario/card endpoints; optional provider, verifier, retry and template fallback | Test with `LLM_PROVIDER=none`; see closing report for current results |
+| Crew tablet | Glance → Why → Act, Radiation, Validation and protocol runner | `npm run build`; interaction and offline claims require their own checks |
+| Ground and protocols | Static console, delay/consent previews, three dose-free protocols, hash-chain viewer | Eight JS audit vectors; previews are not durable signed uploads |
+| Public data | Checksummed NOAA snapshot, MMASH proxy and manifests | MMASH checks interval coverage, not event detection; no OSDR download is claimed |
+| Evidence and tooling | Model/data cards, validation harness, CI workflow, ownership guard and Windows runbook | CI configuration exists; current remote status must be checked independently |
 
-### 🟡 Partial — usable, but read the limit
+The no-server prototype embeds its data. The React tablet can use static scenario
+JSON when the API is unavailable. This alone does **not** establish installable
+PWA behavior or a successful reload without network; see the closing report for
+what was actually exercised. All shipped space-adapted threshold rules are unavailable.
 
-| Area | Limit |
-|---|---|
-| **LLM path** | **No live DeepSeek call has ever been executed** (no key in the build environment). Request shape, `response_format: json_object`, effort tiers and cache-hit accounting are implemented but unverified against the real API. Everything is covered by a fake client; templates are always the fallback. |
-| **Real-data evidence** | MMASH proxy (22 healthy adults, per-minute HR) tests **interval honesty, not detection**: no labelled events, so no recall or delay can be claimed from it. OSDR / Inspiration4 was attempted and the endpoints returned 404 during the event — documented in the data card, nothing quoted. |
-| **Mild scenarios** | Deliberately weak: `cmo_fever` mild reaches `act` only on some seeds, `sep_sleep_loss` mild mostly stays `watch`. Do not present mild as "detected". |
-| **Radiation panel** | The real NOAA panel is published *after* the tablet's last verification pass; the panel has a tolerant renderer and honest empty states, but the A5 → A3 integration has not been re-checked on one screen. The window is one day, one satellite, and the Sun was quiet (S0) — no storm in the panel, by facts, not by bug. |
-| **Validation panels** | `validation.json` is now published; same caveat — the tablet renders whatever fields exist and was last verified with the file absent. |
-| **Earth rule in Why** | Read from `kb/thresholds.json` at build time (with its own `earth-standard` / `demo-parameter` status and source), not exported per reading. `pvt_ms` has no cited Earth rule and says so. |
-| **Protocol suggestion** | No scenario names a `protocol_id`, so the panel starts at "No protocol" and the crew picks — nothing is auto-invented. |
-| **Consent** | Tiers are UI + preview only: there is no signed store-and-forward upload path. |
-| **Template wording** | The template `ground_message` says "coordinated shift in HR/temp/sleep/PVT" even on `info` cards where nothing moved. Text is the engine's, verbatim. |
-| **`file://`** | The console and the runner demo are built for double-click (classic scripts, inline fixture), but only the http path was clicked. Open both once before demoing. |
+Pending external evidence includes a live provider call, expert review of thresholds
+and protocols, official event requirements, repository access without login and
+submission links. The event, cutoff and team below were supplied by the owner. Historical notes describe the
+repository as private; its current visibility is not certified by this document.
+No push, visibility change, deployment or submission is authorized by these notes.
+The owner controls the final push.
 
-### ⛔ Missing
-
-- **Repository is private.** Space Apps requires a public repo, so visibility has to be changed before submission.
-- Submission assets: screenshots, the 60-second video and the team/roles section.
-- `.github/workflows/ci.yml` runs the tests and the tablet build on every push to `main` and on PRs, it ran green on both jobs on 14-nov (run 43613134201) but never on a public repo, and the ownership map (`scripts/check_ownership.py --overlaps`) still needs `vault/` registered in `agents/OWNERS.json`.
-- OSDR / Inspiration4 data (blocked by 404s), and any prospective validation on real crew data.
-- Vision / voice input endpoints, DeepSeek web-search use, auth, database, multi-crew sessions — all deliberately out of scope for the prototype.
-- Expert clinical review of thresholds and protocol steps, and regulatory classification work.
+Use [`docs/demo-runbook.md`](docs/demo-runbook.md) for installation, local rehearsal
+and fallback checks, and [`docs/SUBMISSION.md`](docs/SUBMISSION.md) for delivery items.
 
 ### The defect we found and fixed (read this before quoting numbers)
 
@@ -129,7 +114,7 @@ reproducible. Full write-up: [`docs/model-card.md`](docs/model-card.md).
 | Layer | Technology | Why |
 |---|---|---|
 | **Engine** | Python 3.11+, `numpy`, `scipy` | Conjugate Bayesian updates with Student-t predictives, CUSUM, directional fusion. No ML framework: at n=4 you need explainability, not parameters. |
-| **API** | FastAPI 0.128, uvicorn, Pydantic 2 | Five endpoints, typed bodies, automatic OpenAPI, template cards with `LLM_PROVIDER=none`. |
+| **API** | FastAPI 0.162 (local), uvicorn, Pydantic 2 | Five endpoints, typed bodies, automatic OpenAPI, template cards with `LLM_PROVIDER=none`. |
 | **LLM** | DeepSeek **V4.1 Flash** (`deepseek-flash`, OpenAI-compatible) — optional | 1M context + disk caching means the whole cited KB is cache-stuffed in the system prefix: no vector DB, no RAG infra; case data goes last. Effort `high` for cards, `low` with `?fast=1`, `max` for red-teaming. |
 | **Crew tablet** | React 19, TypeScript 5.9 (strict), Vite 7 | Typed payloads straight from the data contract; virtual modules inline `kb/protocols` and thresholds at build time. Charts are hand-written SVG — no chart library. |
 | **Protocol runner** | Vanilla ES module + classic-script build | Framework-free as required; embeddable in React *and* openable from `file://` (browsers block module imports there). |
@@ -148,7 +133,7 @@ flowchart LR
   F --> P[Protocol rules\ninfo / watch / act / escalate]
   KB[(kb/evidence.yaml\n+ thresholds + syndromes)] --> L[DeepSeek V4.1 Flash\ncache-stuffed prefix]
   P --> L
-  L --> V{Verifier\nschema · cites · numbers\nno lowered urgency · no doses}
+  L --> V{Verifier\nschema · cites · numbers\nunchanged urgency · no doses}
   V -- accept --> C[Decision Card]
   V -- reject twice --> T[Template card]
   P --> T
@@ -164,7 +149,7 @@ flowchart LR
 
 ```bash
 cp .env.example .env          # optional: DEEPSEEK_API_KEY; LLM_PROVIDER=none works with no key
-python scripts/run_tests.py   # 77/77, no network, no pytest required
+python scripts/run_tests.py   # current counts are recorded in the closing report
 
 # engine + API on :8000
 cd services/engine && uvicorn tether_engine.api.main:app --port 8000
@@ -187,7 +172,6 @@ python -m http.server 8130    # -> http://localhost:8130/apps/ground-console/
 | `DEEPSEEK_API_KEY` | — | required for the LLM path; never returned by the API, logged or committed |
 | `DEEPSEEK_BASE_URL` | `https://api.deepseek.com` | OpenAI-compatible endpoint |
 | `DEEPSEEK_MODEL` | `deepseek-flash` | model id |
-| `MISSION_PROFILE` | `mars` | `iss` \| `moon` \| `mars` — light-delay simulation |
 | `VITE_API_BASE` | empty | optional absolute API origin for the tablet |
 
 ### API
@@ -222,7 +206,7 @@ Each scenario also ships a `mild` variant for honest "we missed it" demos.
 ## Tests
 
 ```bash
-python scripts/run_tests.py                       # 77/77 — engine, pipeline, QC, verifier, API, LLM
+python scripts/run_tests.py                       # engine, pipeline, QC, verifier, API, LLM
 node apps/ground-console/src/audit.test.mjs       # 8/8 — JS hash chain == Python vectors
 PYTHONPATH=services/engine python -m tether_engine.llm.redteam   # 30/30 adversarial cards rejected
 cd apps/crew-tablet && npm run build              # tsc -b && vite build
@@ -267,7 +251,7 @@ OSDR / Inspiration4 was attempted; the endpoints returned 404 and nothing is quo
 
 ## Safety and limits
 
-1. **The engine decides, the LLM explains.** Urgency and numbers come from deterministic code; the model may keep or raise urgency, never lower it.
+1. **The engine decides, the LLM explains.** Urgency and numbers come from deterministic code; the model must preserve the engine urgency exactly; both increases and decreases are rejected.
 2. **A verifier sits between the model and the crew.** Unknown citations, invented numbers, diagnosis wording, doses, extra fields or an over-long ground message are rejected; a rejected card is retried once, then replaced by the template.
 3. **The product works unplugged.** `LLM_PROVIDER=none` produces template cards with zero network calls.
 4. **Everything is labelled.** Synthetic crews say `SYNTHETIC`; thresholds carry `verified` / `earth-standard` / `demo-parameter`; unknown claims say `unverified` instead of guessing.
@@ -295,11 +279,37 @@ vault/                           the team's Obsidian vault (research, ADRs, exec
 handoff/                         per-agent handoff notes
 ```
 
+## Evento y equipo
+
+**Evento:** Space Apps Challenge Neiva 2026. **Cierre:** 15 de noviembre de 2026, 23:59, America/Bogota (UTC−5). Datos confirmados por el usuario; no se presentan como verificación externa de las bases.
+
+Plan previo al cierre: congelación el 15 de noviembre a las **19:59** y envío previsto a las **20:59**, en la misma zona horaria. Son hitos planificados, no acciones completadas. El propietario conserva la autorización exclusiva del push.
+
+| Integrante | Rol |
+|---|---|
+| Abel Orlando Ramírez Amaya | Backend & Tester |
+| Pablo Trujillo Artunduaga | Backend & Tester |
+| Juan Sebastián Tafurth Cortes | DevOps & Documentación |
+| Simón Santiago Puentes Peña | Documentación & Base de Datos |
+| Juan Esteban Bustos Chilatra | Frontend & Backend & Chatbot |
+| José David Correa Núñez | Frontend & DevOps & CI/CD |
+
 ## Use of AI
+
+Local remediation used Codex for orchestration/review, OpenCode CLI for verifier
+hardening and FreeBuff for tablet implementation and browser tests. Their local
+handoffs are under `handoff/`. No live product DeepSeek call was used in verification.
 
 Built with **DeepSeek V4.1 Flash** and coding agents, as disclosed per Space Apps guidance. The
 team reviews and owns every modelling decision, threshold and word that reaches the crew; the
 model is a swappable explanation layer, never a decision maker.
+
+The LLM must preserve `level` and `confidence` exactly and copy `what_changed`, `do_now`,
+`monitor`, `escalate_if` and `ground_message` verbatim from the deterministic
+template. It may vary the headline and explanation (`why_it_matters`) without
+numbers, subject to verification. Wording filters are defense in depth, not a
+semantic clinical guarantee. The product remains a nonclinical prototype.
+
 
 ## License
 

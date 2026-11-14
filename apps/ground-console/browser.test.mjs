@@ -1,0 +1,33 @@
+import assert from 'node:assert/strict';
+import { chromium } from '../crew-tablet/node_modules/playwright/index.mjs';
+const browser = await chromium.launch({channel:'chrome',headless:true});
+try {
+  const page = await browser.newPage({viewport:{width:1280,height:900}});
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.goto(new URL('./index.html',import.meta.url).href);
+  await page.waitForFunction(()=>document.querySelector('#crew-list').children.length===4);
+  await page.locator('#day').fill('15');await page.locator('#day').dispatchEvent('input');
+  await page.waitForFunction(()=>document.querySelector('#queue').children.length>0);
+  await page.waitForFunction(()=>/verified|intact|valid|ok/i.test(document.querySelector('#audit-status').textContent));
+  await page.waitForFunction(()=>document.querySelector('#audit-body').children.length>0);
+  await page.locator('#audit-tamper').click();
+  await page.waitForFunction(()=>/tamper|broken|mismatch/i.test(document.querySelector('#audit-status').textContent));
+  console.log('PASS file console, four crew, day-15 queue and audit tamper');
+  await page.screenshot({path:new URL('../crew-tablet/screenshots/final-ground.png',import.meta.url).pathname.replace(/^\/(C:)/,'$1'),fullPage:true});
+  await page.selectOption('#scenario','co2_creep');
+  await page.getByText('No matching scenario loaded.',{exact:true}).waitFor();
+  await page.locator('#day').fill('16');await page.locator('#day').dispatchEvent('input');
+  assert.equal(await page.locator('#crew-list > *').count(),0);
+  await page.selectOption('#scenario','cmo_fever');
+  await page.waitForFunction(()=>document.querySelector('#crew-list').children.length===4);
+  console.log('PASS file fallback rejects mismatched scenario and recovers');
+  await page.goto(new URL('../../packages/protocol-runner/demo.html',import.meta.url).href);
+  await page.getByRole('button',{name:'Done',exact:true}).waitFor();
+  await page.getByRole('button',{name:'Done',exact:true}).click();
+  await page.getByRole('button',{name:'Undo',exact:true}).click();
+  await page.getByRole('button',{name:"Can't do this",exact:true}).click();
+  await page.getByRole('group',{name:'What is blocking you'}).waitFor();
+  await page.screenshot({path:new URL('../crew-tablet/screenshots/final-protocol.png',import.meta.url).pathname.replace(/^\/(C:)/,'$1'),fullPage:true});
+  assert.deepEqual(errors,[]);
+  console.log('PASS file runner done/undo/cannot branch, no page errors');
+} finally { await browser.close(); }

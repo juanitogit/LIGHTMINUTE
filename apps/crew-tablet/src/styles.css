@@ -2107,3 +2107,243 @@ html[data-theme="light"] .region-glow {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* --- Radiation & validation panels (A5 data views) ------------------------ */
+
+.rad-chart {
+  margin: 0 0 14px;
+}
+
+.rad-chart svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.rad-chart__axis {
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+
+.rad-chart__area {
+  fill: var(--accent-soft);
+  opacity: 0.55;
+}
+
+.rad-chart__line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.rad-chart__peak {
+  fill: var(--accent);
+  stroke: var(--bg);
+  stroke-width: 1.5;
+}
+
+.rad-chart__label {
+  fill: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.02em;
+}
+
+.rad-chart figcaption {
+  margin-top: 8px;
+}
+
+.sstrip {
+  margin-top: 4px;
+}
+
+.sstrip__bar {
+  position: relative;
+  height: 26px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  overflow: hidden;
+  background: var(--surface-2);
+  margin-bottom: 8px;
+}
+
+.sstrip__band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--muted);
+  border-right: 1px solid var(--line);
+  background: var(--surface-3);
+}
+
+.sstrip__band--zero {
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+
+.sstrip__band.is-active {
+  background: var(--watch-soft);
+  color: var(--watch);
+  font-weight: 700;
+}
+
+.sstrip__now {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 3px;
+  margin-left: -1.5px;
+  background: var(--ink);
+  box-shadow: 0 0 0 2px var(--bg);
+}
+
+.provenance {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 18px;
+  margin: 0;
+}
+
+.provenance dt {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.provenance dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.provenance a {
+  color: var(--accent);
+}
+
+.data-table__rowhead {
+  font-family: var(--font-sans) !important;
+  font-weight: 600;
+  color: var(--ink-2);
+  white-space: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 12px;
+}
+
+@media (max-width: 720px) {
+  .provenance {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* --- Local check-in: PVT-B and daily log --------------------------------- */
+
+.pvt {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 128px;
+  margin: 12px 0;
+  border: 1px dashed var(--line-strong);
+  border-radius: 11px;
+  background: var(--surface-2);
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.pvt--stimulus {
+  border-style: solid;
+  background: var(--surface-3);
+}
+
+.pvt__hint {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.pvt__target {
+  width: 104px;
+  height: 104px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.pvt__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+
+.checkin {
+  display: grid;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.checkin__fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.checkin__fieldset legend {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 6px;
+  padding: 0;
+}
+
+.checkin textarea {
+  width: 100%;
+  resize: vertical;
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.check.is-on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+.check input {
+  accent-color: var(--accent);
+}

@@ -76,6 +76,12 @@ function asScenarioDoc(raw: unknown, name: string): ScenarioDoc {
   if (!Array.isArray(doc.days) || doc.days.length === 0) {
     throw new Error(`scenario ${name} has no days`);
   }
+  // Identity check: a fallback file must never answer for a different scenario
+  // (demo-data.json is cmo_fever, so asking for co2_creep with it is a mismatch).
+  const identities = [doc.scenario, doc.name].filter((value) => value !== undefined);
+  if (identities.length === 0 || identities.some((value) => value !== name)) {
+    throw new Error(`scenario identity mismatch: asked ${name}`);
+  }
   const firstDay = doc.days[0];
   const indicators =
     doc.indicators && doc.indicators.length > 0
@@ -186,6 +192,8 @@ export async function loadScenario(name: string): Promise<LoadedScenario> {
     /* Last resort: the scaffold demo file. */
   }
 
+  // Last resort. `asScenarioDoc` re-checks identity, so this throws instead of
+  // rendering cmo_fever under co2_creep's name.
   const raw = await fetchJson<ScenarioDoc>(staticUrl("demo-data.json"), STATIC_TIMEOUT_MS);
   return {
     doc: asScenarioDoc(raw, name),

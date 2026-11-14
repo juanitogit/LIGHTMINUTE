@@ -9,3 +9,5 @@ updated: 2026-11-13
 **COULD** PWA offline · lotes firmados · manos libres ASR/TTS · módulo temperatura central ([[Riesgos HRP de NASA]]).
 **WON'T** diagnóstico real · datos reales de personas · hardware propio · login · app nativa.
 Regla: congelar features **T-4 h** ([[Plan 48h]]).
+
+**Política de datos aclarada (14-nov):** no se ingieren pacientes reales ni datos privados de tripulación. El proxy público desidentificado MMASH se permite para experimentos de cobertura, con fuente/licencia y etiqueta `proxy`; no se presenta como tripulación ni como validación diagnóstica.

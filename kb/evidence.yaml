@@ -33,3 +33,15 @@
   source: https://www.nasa.gov/humans-in-space/nasa-investigates-how-dormant-viruses-behave-during-spaceflight
   status: verified
 # TODO (verify before use): NASA-STD-3001 Vol.1/2 ranges, career radiation limit (600 mSv per AURORA repo; confirm in NASA-STD-3001), CO2 exposure limits, symptom escalation SOPs.
+- id: EARTH-REST-PULSE
+  claim: MedlinePlus lists 60 to 100 beats per minute as a resting pulse reference for the average healthy adult. This is not an astronaut-specific escalation rule.
+  source: https://www.medlineplus.gov/ency/article/002341.htm
+  status: verified
+- id: EARTH-ADULT-SLEEP
+  claim: NHLBI describes 7 to 9 hours as an adult sleep recommendation; more than 9 hours is not necessarily harmful. This is not a mission-specific alarm boundary.
+  source: https://www.nhlbi.nih.gov/health/sleep/how-much-sleep
+  status: verified
+- id: DEMO-TEMP-RANGE
+  claim: TETHER retains 36.1 to 37.5 C as a demonstration band only. An exact source for that range and measurement context has not been verified.
+  source: tether-internal
+  status: unverified

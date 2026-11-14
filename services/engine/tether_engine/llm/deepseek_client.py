@@ -8,7 +8,8 @@ Facts taken from api-docs.deepseek.com (checked 2026-11-13):
    otherwise the API returns HTTP 400 -> always append the full message object.
  - disk context caching: keep the big stable prefix (system prompt + KB) FIRST
    and byte-identical between calls; only the tail (case data) may change.
-UNVERIFIED here (check the JSON-output guide): response_format json_object.
+JSON output format confirmed against the official JSON-output guide on 2026-11-14.
+Live provider execution remains unverified in this project.
 """
 from __future__ import annotations
 import os, json
@@ -21,7 +22,8 @@ def make_client():
     from openai import OpenAI
 
     return OpenAI(api_key=os.environ["DEEPSEEK_API_KEY"],
-                  base_url=os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com"))
+                  base_url=os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
+                  timeout=10.0, max_retries=0)
 
 
 def ask_json(client, *, system_prefix: str, case_payload: dict,

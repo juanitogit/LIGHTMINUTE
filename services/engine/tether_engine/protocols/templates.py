@@ -12,20 +12,35 @@ def syndrome_level(z_dir: float) -> str:
 
 def template_card(facts: dict) -> dict:
     n, lvl = facts["numbers"], facts["level"]
+    learning = facts.get("learning", facts.get("confidence") == "low")
+    hr_available = all(k in n for k in ("hr_now", "hr_lo", "hr_hi"))
+    changed = (f"HR {_f(n['hr_now'])} vs your usual band {_f(n['hr_lo'])} to {_f(n['hr_hi'])}."
+               if hr_available else "Current heart rate unavailable; repeat the measurement.")
+    if "z_dir" in n:
+        changed += f" Combined score {_f(n['z_dir'])}."
     if lvl == "info":
         steps, esc = ["Continue routine measurements"], ["Any new symptom"]
-        head = "Within your normal pattern"
+        head = "Learning your personal pattern" if learning else "No coordinated alert detected"
     else:
-        steps = ["Re-measure heart rate after 5 minutes of rest",
+        steps = ["Repeat available measurements following the onboard protocol",
                  "Log temperature and sleep tonight", "Ask a crew member to check how you look and feel"]
-        esc = ["Score stays above the alert line for 2 more days", "Any new symptom"]
+        esc = ["Follow the onboard protocol if the pattern persists or symptoms worsen", "Any new symptom"]
         head = "Several signals moved together away from your normal"
+    if not hr_available:
+        steps = ["Repeat the missing heart-rate measurement"] + steps[:4]
+    shared = (facts.get("attribution") or {}).get("mode") == "shared"
+    if shared and lvl != "info":
+        head = "A shared crew pattern needs checking"
+        steps = ["Check cabin readings and follow the onboard environmental protocol"] + steps[:4]
     return {
         "level": lvl, "headline": head,
-        "what_changed": f"HR {_f(n['hr_now'])} vs your usual band {_f(n['hr_lo'])} to {_f(n['hr_hi'])}; combined score {_f(n['z_dir'])}.",
+        "what_changed": changed,
         "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
         "confidence": facts.get("confidence", "moderate"),
         "do_now": steps, "monitor": ["Temperature", "Sleep", "Reaction time"], "escalate_if": esc,
-        "ground_message": f"{facts['crew']}: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+        "ground_message": (f"{facts['crew']}: routine monitoring; no coordinated alert detected."
+                           if lvl == "info" else
+                           f"{facts['crew']}: shared crew pattern; checking cabin and repeating measurements."
+                           if shared else f"{facts['crew']}: combined score alert; repeating measurements, will update."),
         "citations": ["HRP-RISKS-OVERVIEW"],
     }

@@ -22,7 +22,7 @@ updated: 2026-11-13
 [[Arquitectura general]] · [[ADR-001 Motor decide LLM explica]] · [[ADR-002 N-of-1 conjugado]] · [[ADR-003 Cache-stuffing de la KB]] · [[ADR-004 Stack]] · [[Retraso de comunicaciones]] · [[Seguridad y etica]]
 
 ## Ejecución
-⚠️ **Estado verificado del repo (14-nov): [[Estado real del repo y bloqueos]]** — qué funciona, qué falta y qué bloquea el entorno.
+**Estado vigente: [[Board]] y [[Checklist de implementacion 2026-11-14]].** [[Estado real del repo y bloqueos]] conserva el historial de etapas anteriores.
 
 [[Plan 48h]] · [[Board]] · [[Guion pitch y video]] · [[Checklist de entrega]] · [[Riesgos del proyecto]] · [[2026-11-13]] · [[2026-11-14]]
 
@@ -34,3 +34,8 @@ updated: 2026-11-13
 
 ## Plantillas
 [[ADR]] · [[Daily]] · [[Decision]] · [[Experimento]]
+
+## Revisión integral más reciente
+[[Auditoria integral y checklist 2026-11-14]] — checklist con evidencia, correcciones prioritarias y límites de verificación.
+
+Identidad y alcance documental: [[ADR-005 TETHER y AstroVital]].

@@ -60,6 +60,12 @@ export interface CrewDay {
   routing: Routing;
   /** Additive optional field: which onboard protocol (A4) applies today. */
   protocol_id?: string;
+  protocol_suggestion?: {
+    protocol_id: string;
+    status: "demo-suggestion";
+    reason: string;
+    note: string;
+  };
 }
 
 export interface Attribution {

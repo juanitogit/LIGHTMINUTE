@@ -15,7 +15,7 @@
 3. **Change detection** — two-sided CUSUM (k=0.5, h=4) for small sustained shifts.
 4. **Syndrome** — directional score `z_dir = s'z / sqrt(s'Ss)` over four indicators with a shrunk covariance learned on healthy days; signs come from `kb/syndromes.json` (labelled `demo-parameter`).
 5. **Crew attribution** — if ≥50% of crew (≥2 people) cross z ≥ 2.33, flag a shared exposure and advise checking cabin environment first.
-6. **Urgency** — a small readable rule table (`info`/`watch`/`act`/`escalate`); the LLM may keep or raise it, never lower it, and every card passes `verify_card`.
+6. **Urgency** — a small readable rule table (`info`/`watch`/`act`/`escalate`); the LLM must preserve it exactly; either an increase or decrease is rejected, and every card passes `verify_card`.
 7. **Context** — mission profile (ISS 0 s / Moon 1.3 s / Mars 3–22 min one-way) changes routing, not the numbers.
 
 ## Validation summary
@@ -76,10 +76,18 @@ Prospective validation on real crew data with labelled events, clinical review o
 
 ## Reproduce
 ```bash
-python scripts/run_tests.py                  # 77 tests
+python scripts/run_tests.py                  # current result: see closing report
 python ml/validation/run_all.py              # tables above -> docs/validation.md
 python scripts/fetch_noaa.py                 # real space-weather snapshot + panel
 python scripts/fetch_mmash.py && python ml/proxy/mmash.py
 python ml/diagnostics/forgetting_drift.py    # defect 2, measured
 python ml/sensitivity/circadian.py           # 24 h term, defect separated out
 ```
+
+## Explanation policy after local review
+
+The LLM must preserve `level` and `confidence` exactly and copy `what_changed`, `do_now`,
+`monitor`, `escalate_if` and `ground_message` verbatim from the deterministic
+template. It may vary the headline and explanation (`why_it_matters`) without
+numbers, subject to verification. Wording filters are defense in depth, not a
+semantic clinical guarantee. The product remains a nonclinical prototype.

@@ -14,6 +14,17 @@ def test_kb_thresholds_load_and_are_labelled():
     assert th["rest_hr"].earth.status == "earth-standard" and th["pvt_ms"].earth is None
 
 
+def test_earth_references_are_traceable_and_temperature_is_demo():
+    th = load_thresholds(KB)
+    assert "https://www.medlineplus.gov/ency/article/002341.htm" in th["rest_hr"].earth.source
+    assert "EARTH-REST-PULSE" in th["rest_hr"].earth.source
+    assert "https://www.nhlbi.nih.gov/health/sleep/how-much-sleep" in th["sleep_h"].earth.source
+    assert "EARTH-ADULT-SLEEP" in th["sleep_h"].earth.source
+    # Keep existing simulation values, but never call the approximate range a standard.
+    assert th["temp_c"].earth.status == "demo-parameter"
+    assert all(item.space is None for item in th.values())
+
+
 def test_unlabelled_or_unsourced_thresholds_are_rejected():
     bad = [{"indicator": "x", "unit": "u", "hrp_risk": "r", "hazard": "h",
             "earth": {"low": 1, "high": 2, "status": "verified", "source": "trust me"}}]

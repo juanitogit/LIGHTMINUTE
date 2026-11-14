@@ -7,7 +7,7 @@ description: The strict contract for TETHER "Decision Cards" - the JSON the LLM 
 Pipeline: `engine facts` -> (LLM explain | template) -> `verify_card()` -> UI. Code: `tether_engine/llm/`. Schema: `llm/schemas/decision_card.schema.json`. Prompt: `llm/prompts/decision_card.system.md`.
 
 ## Fields (all required)
-`level` (info|watch|act|escalate — set by ENGINE, LLM may only keep or raise), `headline`, `what_changed` (numbers only from engine facts), `why_it_matters`, `confidence` (low|moderate|high, from df/n_seen), `do_now` (1–5 imperative steps, each doable on board), `monitor`, `escalate_if` (explicit triggers), `ground_message` (<= 140 chars, delay-tolerant), `citations` (KB ids only).
+`level` (info|watch|act|escalate — set by ENGINE, LLM must preserve exactly; neither raise nor lower), `headline`, `what_changed` (numbers only from engine facts), `why_it_matters`, `confidence` (low|moderate|high, from df/n_seen), `do_now` (1–5 imperative steps, each doable on board), `monitor`, `escalate_if` (explicit triggers), `ground_message` (<= 140 chars, delay-tolerant), `citations` (KB ids only).
 
 ## Rules
 1. No diagnosis ("you have X"). Say "pattern consistent with / worth checking".

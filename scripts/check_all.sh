@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 cd "$(dirname "$0")/.."
-python3 scripts/run_tests.py | tail -1
-python3 scripts/check_ownership.py --overlaps
-python3 ml/validation/run_all.py >/dev/null 2>&1 && echo "validation ok" || echo "validation FAILED"
+PYTHON="${PYTHON:-python3}"
+"$PYTHON" scripts/run_tests.py
+"$PYTHON" scripts/check_ownership.py --overlaps
+"$PYTHON" ml/validation/run_all.py
+echo "All Python, ownership and validation checks passed."

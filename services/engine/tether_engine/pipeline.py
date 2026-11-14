@@ -20,6 +20,7 @@ from .bayes import BaselineModel, SyndromeScore
 from .crew.attribution import PersistentAttribution
 from .ground.delay import PROFILES, triage_routing
 from .lenses import three_lens
+from .llm.case_data import engine_facts
 from .protocols.templates import syndrome_level, template_card
 from .protocols.thresholds import load_thresholds
 from .qc.basic import clean_readings, log_drops
@@ -43,11 +44,30 @@ def syndrome_signs(kb_dir: Path = KB_DIR, syndrome_id: str = SYNDROME_ID) -> dic
     return spec[syndrome_id]["signs"]
 
 
-def _prior_hr_facts() -> dict:
-    mean, sd = prior_stats("rest_hr")
-    return {"value": round(mean, 2), "baseline": round(mean, 2),
-            "ci95": [round(mean - 1.96 * sd, 2), round(mean + 1.96 * sd, 2)],
-            "z": 0.0, "n_seen": 0, "prior": True}
+def protocol_suggestion(entry: dict) -> dict | None:
+    """Demo navigation aid from observed patterns, never a medical prescription.
+
+    No scenario labels, future readings or new clinical thresholds are used.
+    Post-EVA symptoms are not measured by this stream, so that protocol remains
+    manual. The crew must confirm applicability against the onboard protocol.
+    """
+    if entry.get("level") not in ("watch", "act", "escalate"):
+        return None
+    ind = entry.get("indicators") or {}
+    shared = (entry.get("attribution") or {}).get("mode") == "shared"
+    co2_up = ind.get("co2_ppm", {}).get("z", 0) > 0
+    headache = ind.get("headache_score", {}).get("value", 0) > 0
+    if shared and co2_up and headache:
+        protocol_id = "co2_headache_cluster"
+        reason = "Shared pattern with above-baseline cabin CO2 and reported headache."
+    elif (ind.get("rest_hr", {}).get("z", 0) > 0
+          and ind.get("temp_c", {}).get("z", 0) > 0):
+        protocol_id = "fever_like_syndrome"
+        reason = "Alert with upward heart-rate and temperature deviations."
+    else:
+        return None
+    return {"protocol_id": protocol_id, "status": "demo-suggestion",
+            "reason": reason, "note": "Confirm applicability using the onboard protocol; not a prescription."}
 
 
 def run_scenario(name: str, seed: int = 0, days: int = DEFAULT_DAYS,
@@ -62,7 +82,6 @@ def run_scenario(name: str, seed: int = 0, days: int = DEFAULT_DAYS,
         cid: {n: BaselineModel(*prior_stats(n)) for n in INDICATORS} for cid in sc["crew"]
     }
     syndromes = {cid: SyndromeScore([signs[s] for s in signs]) for cid in sc["crew"]}
-    last_hr: dict[str, dict] = {}
     attribution = PersistentAttribution(required_days=2)
 
     out_days = []
@@ -79,6 +98,7 @@ def run_scenario(name: str, seed: int = 0, days: int = DEFAULT_DAYS,
             total += len(cday.get("indicators") or {})
 
             ind: dict[str, dict] = {}
+            hr_df = None
             for n in INDICATORS:
                 if n not in cleaned:
                     continue
@@ -97,6 +117,8 @@ def run_scenario(name: str, seed: int = 0, days: int = DEFAULT_DAYS,
                     "hazard": th[n].hazard,
                     "unit": th[n].unit,
                 }
+                if n == "rest_hr":
+                    hr_df = float(sur["df"])
                 model.robust_update(cleaned[n])           # winsorized: no self-learning
 
             # A missing indicator contributes no evidence (z = 0), it does not
@@ -104,30 +126,30 @@ def run_scenario(name: str, seed: int = 0, days: int = DEFAULT_DAYS,
             zvec = [ind[s]["z"] if s in ind else 0.0 for s in signs]
             sy = syndromes[cid].score(zvec)
             syndromes[cid].observe(zvec)
-            mature = ind.get("rest_hr", {}).get("n_seen", 0) >= MIN_DAYS_FOR_PERSONAL
+            n_seen = ind.get("rest_hr", {}).get("n_seen", models[cid]["rest_hr"].n_seen)
+            mature = n_seen >= MIN_DAYS_FOR_PERSONAL
             level = syndrome_level(sy["z_dir"]) if mature else "info"
             if mature:
                 zdirs[cid] = sy["z_dir"]
 
-            hr = ind.get("rest_hr")
-            if hr is not None:
-                last_hr[cid] = hr
-            hr = hr or last_hr.get(cid) or _prior_hr_facts()
-            facts = {
-                "crew": cid, "level": level,
-                "confidence": "low" if not mature else "moderate",
-                "numbers": {"hr_now": hr["value"], "hr_lo": hr["ci95"][0],
-                            "hr_hi": hr["ci95"][1], "z_dir": round(float(sy["z_dir"]), 1)},
-            }
             crew_out[cid] = {
                 "level": level,
                 "syndrome_z": round(float(sy["z_dir"]), 2),
                 "learning": not mature,
                 "indicators": ind,
-                "card": template_card(facts),
+                "confidence": "low" if not mature else "moderate",
+                "confidence_inputs": {"n_seen": n_seen, "df": hr_df},
                 "card_source": "template",
-                "routing": triage_routing(level, one_way_s),
+                "routing": {**triage_routing(level, one_way_s), "one_way_s": one_way_s},
             }
+
+        crew_attribution = attribution.step(zdirs)
+        for cid, entry in crew_out.items():
+            entry["attribution"] = crew_attribution
+            entry["card"] = template_card(engine_facts(entry, cid, day["day"]))
+            suggestion = protocol_suggestion(entry)
+            if suggestion:
+                entry["protocol_suggestion"] = suggestion
 
         out_days.append({
             "day": day["day"],
@@ -135,7 +157,7 @@ def run_scenario(name: str, seed: int = 0, days: int = DEFAULT_DAYS,
             "hazards": day["hazards"],
             "qc": {"dropped": dropped, "total": total},
             "crew": crew_out,
-            "attribution": attribution.step(zdirs),
+            "attribution": crew_attribution,
         })
 
     return {

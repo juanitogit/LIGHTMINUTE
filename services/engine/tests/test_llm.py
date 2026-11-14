@@ -5,6 +5,7 @@ from contextlib import contextmanager
 
 from tether_engine.llm import card_service, stats
 from tether_engine.llm.case_data import engine_facts, find_crew, load_scenario
+from tether_engine.protocols.templates import template_card
 from tether_engine.llm.kb import kb_ids, render_system_prefix
 
 DEMO = load_scenario("cmo_fever")
@@ -72,18 +73,17 @@ class FakeClient:
 
 
 def good_card() -> dict:
-    n = FACTS["numbers"]
+    tmpl = template_card(FACTS)
     return {
         "level": FACTS["level"],
         "headline": "Heart rate, temperature and sleep moved together",
-        "what_changed": f"HR {n['hr_now']} vs your usual band {n['hr_lo']} to {n['hr_hi']}; "
-                        f"combined score {n['z_dir']}.",
+        "what_changed": tmpl["what_changed"],
         "why_it_matters": "A coordinated shift is worth checking early; not a diagnosis.",
         "confidence": FACTS.get("confidence", "moderate"),
-        "do_now": ["Re-measure heart rate after five minutes of rest"],
-        "monitor": ["Temperature", "Sleep"],
-        "escalate_if": ["New symptom appears"],
-        "ground_message": "HR and sleep shifted together; rechecking, will update.",
+        "do_now": list(tmpl["do_now"]),
+        "monitor": list(tmpl["monitor"]),
+        "escalate_if": list(tmpl["escalate_if"]),
+        "ground_message": tmpl["ground_message"],
         "citations": ["HRP-RISKS-OVERVIEW"],
     }
 

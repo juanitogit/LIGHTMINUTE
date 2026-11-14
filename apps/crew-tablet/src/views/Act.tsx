@@ -172,6 +172,14 @@ export function Act({
             </p>
           </Panel>
 
+          {member?.protocol_suggestion?.status === "demo-suggestion" ? (
+            <Panel title="Demo protocol suggestion" labelledBy="protocol-suggestion-title">
+              <p>{member.protocol_suggestion.reason}</p>
+              <p className="muted small">{member.protocol_suggestion.note}</p>
+              <p className="mono small">{member.protocol_suggestion.protocol_id}</p>
+              <p className="small">Confirm applicability, then choose the protocol below. It does not start automatically.</p>
+            </Panel>
+          ) : null}
           <ProtocolRunner protocolId={protocolId} />
         </aside>
       </div>

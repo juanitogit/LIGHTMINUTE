@@ -79,6 +79,16 @@ jobs:
         working-directory: apps/crew-tablet
         run: npm run build
 
+      - name: Static contract smoke
+        working-directory: apps/crew-tablet
+        run: npm run test:e2e
+
+      - name: Browser interaction regressions (installed Chrome)
+        working-directory: apps/crew-tablet
+        run: |
+          npx playwright install --with-deps chrome
+          npm run test:e2e:browser
+
       - name: Ground console audit chain matches the Python vectors
         run: node apps/ground-console/src/audit.test.mjs
 

@@ -1,0 +1,23 @@
+1
+00:00:00,000 --> 00:00:10,000
+TETHER: personal baselines for Earth-independent crews. Synthetic demo.
+
+2
+00:00:10,000 --> 00:00:20,000
+A reading can be inside the Earth range and unusual for this person.
+
+3
+00:00:20,000 --> 00:00:30,000
+The engine fixes numbers, urgency and actions. The LLM is optional.
+
+4
+00:00:30,000 --> 00:00:40,000
+A shared crew pattern prompts checking the cabin context.
+
+5
+00:00:40,000 --> 00:00:50,000
+Real-public NOAA snapshot. Hazard context, not operational dosimetry.
+
+6
+00:00:50,000 --> 00:01:00,000
+Synthetic comparative evidence with published limitations. Not clinical validation.

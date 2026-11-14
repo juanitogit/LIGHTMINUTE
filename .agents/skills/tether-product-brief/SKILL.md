@@ -9,9 +9,9 @@ description: Core context for the TETHER astronaut health-monitoring project (NA
 **One-line thesis:** Don't build another vitals dashboard. Build the *autonomous medical reasoning layer* for Earth-independent crews: personal baselines (N-of-1 Bayesian), hazard-aware context, and cited, uncertainty-honest **Decision Cards** that say what to do now and what to send to Earth.
 
 ## Why this wins (map to judging: Impact, Creativity, Validity, Relevance, Presentation)
-1. **Validity** — engine follows the small-sample N-of-1 Bayesian direction NASA HRP itself just rewarded (Artemis II Data Methodology Challenge). Validated on real public n=4 data + honest model card.
+1. **Validity** — small-sample N-of-1 Bayesian engine, evaluated on synthetic scenarios and public MMASH proxy HR from 22 adults. MMASH tests interval coverage, not event detection. No OSDR/Inspiration4 validation or NASA endorsement is claimed.
 2. **Creativity** — LLM never decides; it explains, grounded in a cited KB, behind a deterministic verifier.
-3. **Relevance** — covers all four named risk families (immune, bone, cardiovascular, behavioral) + radiation + closed-environment (CO2).
+3. **Relevance** — maps its indicators to immune, cardiovascular and behavioral concerns plus radiation/CO2 context. Bone-health framing is a research goal, not an implemented validated detector.
 4. **Impact** — works with comms delay (3–22 min one-way at Mars) and when the crew medical officer is the patient.
 5. **Presentation** — 3 scripted scenarios, 60-second video, one memorable "aha" (see hackathon-pitch-submission).
 
@@ -28,3 +28,6 @@ description: Core context for the TETHER astronaut health-monitoring project (NA
 
 ## v2 additions (from competitor study)
 Differentiators now include: Three-Lens verdict (`three-lens-verdict`), syndrome early warning, crew-level attribution, delay-aware routing, hash-chained audit, comparative validation with limitations. Positioning and forbidden claims: `competitive-edge`. Protocol flow: `protocol-runner`.
+
+## Current status and evidence
+Use `vault/04-Execution/Board.md` and `docs/CHECKLIST-IMPLEMENTACION-2026-11-14.md` for current state. `START-HERE.md` and older logs are historical. All shipped space-adapted threshold rules are null. Static JSON fallback and the embedded prototype are distinct from verified PWA installation/offline reload. AstroVital is a broader draft design; TETHER is the codebase under review (ADR-005). Never push without the owner's explicit order.

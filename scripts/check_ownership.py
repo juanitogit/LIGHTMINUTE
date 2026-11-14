@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Ownership guard for parallel agents.
-  python scripts/check_ownership.py --overlaps            # every repo file has exactly one owner
+  python scripts/check_ownership.py --overlaps            # tracked + non-ignored new files have one owner
   python scripts/check_ownership.py A3 agent/a3 [base]    # branch touched only A3's paths
 Ownership = path prefix match (directories end with '/'; other entries match as prefixes)."""
 import json, os, subprocess, sys
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-OWN = json.load(open(os.path.join(ROOT, "agents", "OWNERS.json")))
+with open(os.path.join(ROOT, "agents", "OWNERS.json"), encoding="utf-8") as handle:
+    OWN = json.load(handle)
 
 
 def owners_of(path):
@@ -13,12 +14,13 @@ def owners_of(path):
 
 
 def all_files():
-    out = []
-    for r, ds, fs in os.walk(ROOT):
-        ds[:] = [d for d in ds if d not in (".git", "__pycache__", "node_modules", ".dsh", ".claude")]
-        for f in fs:
-            out.append(os.path.relpath(os.path.join(r, f), ROOT).replace(os.sep, "/"))
-    return sorted(out)
+    # Let Git apply the same ignore policy developers use. Include new source
+    # files too: checking only tracked paths would miss a new unowned module.
+    output = subprocess.check_output(
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+        cwd=ROOT,
+    )
+    return sorted(set(os.fsdecode(path) for path in output.split(b"\0") if path))
 
 
 def check_overlaps():
@@ -31,7 +33,10 @@ def check_overlaps():
 
 
 def check_branch(agent, branch, base="main"):
-    files = subprocess.check_output(["git", "diff", "--name-only", f"{base}...{branch}"], cwd=ROOT, text=True).split()
+    output = subprocess.check_output(
+        ["git", "diff", "--name-only", "-z", f"{base}...{branch}"], cwd=ROOT,
+    )
+    files = [os.fsdecode(path) for path in output.split(b"\0") if path]
     bad = [f for f in files if agent not in owners_of(f)]
     for f in bad: print(f"VIOLATION {agent} touched {f} (owners: {owners_of(f) or 'none'})")
     print(f"{agent}: {len(files)} files, {len(bad)} violation(s)"); return len(bad)
