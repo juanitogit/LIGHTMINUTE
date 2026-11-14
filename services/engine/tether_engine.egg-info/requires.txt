@@ -1,0 +1,13 @@
+numpy
+scipy
+fastapi
+uvicorn
+pydantic>=2
+httpx
+openai>=1.50
+duckdb
+
+[dev]
+pytest
+ruff
+mypy

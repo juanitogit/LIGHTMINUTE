@@ -1,0 +1,16 @@
+Metadata-Version: 2.4
+Name: tether-engine
+Version: 0.1.0
+Requires-Python: >=3.11
+Requires-Dist: numpy
+Requires-Dist: scipy
+Requires-Dist: fastapi
+Requires-Dist: uvicorn
+Requires-Dist: pydantic>=2
+Requires-Dist: httpx
+Requires-Dist: openai>=1.50
+Requires-Dist: duckdb
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: ruff; extra == "dev"
+Requires-Dist: mypy; extra == "dev"
