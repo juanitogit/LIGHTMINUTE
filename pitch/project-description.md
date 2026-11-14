@@ -1,7 +1,7 @@
 # Project description (Space Apps project page)
 
 ## Summary (short version)
-TETHER is health-monitoring and decision-support software for astronauts on long missions.
+LIGHTMINUTE is health-monitoring and decision-support software for astronauts on long missions.
 Instead of comparing a crew member to a population average, it learns that person's own
 baseline, reads coordinated changes across indicators, and turns them into a short, cited
 **Decision Card**: what changed, how confident we are, what to do on board right now, when to
