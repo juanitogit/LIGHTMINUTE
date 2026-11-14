@@ -16,9 +16,9 @@ real values?**
 
 | Condition | 95% interval coverage | Minutes scored | Nominal |
 |---|---|---|---|
-| One baseline per person, whole day | **21.6%** | 29,937 | 95% |
-| One baseline per (person, hour of day) | 90.4% | 25,137 | 95% |
-| Whole day, after the fix in `ml/diagnostics/forgetting_drift.py` | **93.4%** | 29,937 | 95% |
+| Shipped model, one baseline per person, whole day | **93.4%** | 29,937 | 95% |
+| One baseline per (person, hour of day) | 94.0% | 25,137 | 95% |
+| Same stream, pre-fix update rule (kept in `ml/diagnostics`) | 21.6% | 29,937 | 95% |
 
 Night (01–05 h) minus afternoon (13–17 h) median HR: **−24 bpm** (range across users −4.8 to −36).
 
@@ -31,10 +31,11 @@ wrong, and `ml/diagnostics/forgetting_drift.py` shows why:
   hundred updates the Student-t collapses into a very narrow Gaussian.
 - A *flat* synthetic series reproduces the collapse exactly (100% coverage at 23 updates,
   83% at 200, 56% at 500, 16% at 2000), so the rhythm is not the cause.
-- Discounting `alpha` like the other two statistics restores 93.4% coverage on MMASH and
-  95% at 2000 updates in the synthetic stream.
-- The hourly variant looked healthy (90.4%) mainly because each hour bucket holds only
-  ~21 updates — it resets the drift, it does not diagnose it.
+- Discounting `alpha` like the other two statistics fixes it: the engine ships that rule
+  now, and the same script measures **93.4%** on MMASH and **95%** at 2000 updates.
+- The hourly variant looked healthy even before the fix (90.4%) mainly because each hour
+  bucket holds only ~21 updates — it resets the drift, it does not diagnose it. It reads
+  94.0% with the fix.
 
 ## Still true, and still design-relevant
 Real HR moves ~24 bpm between night and afternoon. Any single band that spans both must

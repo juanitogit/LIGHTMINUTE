@@ -30,10 +30,11 @@ writes prose and can never change a number or lower the level. The product is co
 
 ## 2:20–2:50 — Validity
 Open `docs/validation.md` (still image is fine, do not scroll live):
-- 70% vs 18% mild recall at the same false-alarm budget.
-- Heterogeneous crew: population rule 27% on strong effects, personal methods 88–100%.
+- 71% vs 18% mild recall at the same false-alarm budget.
+- Heterogeneous crew: population rule 27% on strong effects, personal methods 89–100%.
 - Then the honest bit: "on real wearable data our interval covered 21.6% of minutes. We found
-  the defect in our own model, verified a fix at 93.4%, and we show it here."
+  the defect in our own model, fixed it in the engine, re-ran everything: 93.4%, and every
+  table on screen is from the fixed build."
 
 ## 2:50–3:00 — Close
 "Three lenses, coordinated-shift warning, cited cards, and a validation page that admits what

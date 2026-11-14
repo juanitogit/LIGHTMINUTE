@@ -17,10 +17,10 @@ snapshot (public domain, checksummed) used for space-weather context, and MMASH 
 With four crew members the population average is not meaningful. NASA HRP's own Artemis II
 Data Methodology Challenge rewarded small-sample, individual-level Bayesian methods for exactly
 this reason. We also show where it matters: in a heterogeneous crew, a population rule recalls
-27% of strong changes while personal methods hold at 88–100%.
+27% of strong changes while personal methods hold at 89–100%.
 
 **4. But doesn't N-of-1 need weeks of data?**
-It needs some. With 3/7/14 days of personal history our syndrome score recalls 74/82/94% of a
+It needs some. With 3/7/14 days of personal history our syndrome score recalls 79/84/93% of a
 moderate change. Below 7 observations the UI shows `learning` and refuses to claim a personal
 verdict — that is a designed state, not an edge case.
 
@@ -41,19 +41,20 @@ It buys power in that direction and is blind in others; CUSUM and the z-score re
 direction-agnostic. Every table states this.
 
 **8. How do you know your 95% intervals mean anything?**
-We measured it: 94% pooled coverage on healthy synthetic days (n=11,040), and we measured it
-again on real wearable data where it failed — 21.6%. That failure is on the slide.
+We measured it: 95% pooled coverage on healthy synthetic days (n=11,040), and we measured it
+again on real wearable data where it failed — 21.6%. That failure is on the slide, with the fix.
 
 **9. What was the 21.6% about?**
 Our own defect: the forgetting factor discounted the mean and variance statistics but not the
 degrees of freedom, so after a few hundred updates the interval collapsed. We found it with a
-real dataset, reproduced it on flat synthetic data, verified a fix (93.4% on the same data,
-95% at 2,000 updates) and shipped the diagnostic. It is not merged into the shared engine yet.
+real dataset, reproduced it on flat synthetic data, then fixed it in the engine: `alpha` is now
+discounted too, which pins df around 52 instead of letting it grow. Re-measured: 93.4% on the
+same real data, 95% at 2,000 updates, and a regression test fails if it ever collapses again.
 
 **10. So is your validation invalid?**
 No, but its scope is stated. The reported tables use daily updates (~23 per crew member), where
-coverage is 94–100%. The defect bites at high update counts, i.e. minute-level streaming, which
-we do not claim to support today.
+coverage is 95–100%. The defect bit at high update counts, i.e. minute-level streaming; it is
+fixed, and every table quoted here was regenerated after the fix.
 
 **11. What happens if the LLM is down, or the vehicle has no link?**
 Nothing breaks. The engine sets every number and level, cards fall back to deterministic
@@ -71,8 +72,8 @@ facts, urgency may not be lowered, diagnostic phrasing rejected. On rejection we
 with the error list, then use the template. Each failure becomes a test.
 
 **14. What fails today?**
-Minute-level streaming (defect above). Whole-sensor failures, which silently remove an
-indicator's evidence. Behavioural indicators, which we label low-confidence. And the verifier
+Minute-level streaming used to be the weak spot (defect above, fixed and re-measured).
+Whole-sensor failures still silently remove an indicator's evidence. Behavioural indicators, which we label low-confidence. And the verifier
 can false-reject a legitimate card, which is the safe direction but hides the LLM's work.
 
 **15. How do you handle the crew medical officer being the patient?**
@@ -127,9 +128,9 @@ and a flight surgeon reviewing every card. Public n=4 proxies (OSDR) are the nex
 we cite that dataset but did not download it during the event.
 
 **26. What is the single thing you would fix next?**
-The forgetting-factor defect, then a circadian term with a context-aware baseline. Our real-data
-run says the second matters less than the first, which is exactly why we measured instead of
-assuming.
+The forgetting-factor defect — done, measured before and after. Next is a circadian term with a
+context-aware baseline: our real-data run says it matters far less than the defect did, which is
+exactly why we measured instead of assuming.
 
 **27. Why should this win?**
 Because the claim is checkable. Every number on screen comes from a script in the repository,

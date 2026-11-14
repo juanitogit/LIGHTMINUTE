@@ -29,7 +29,14 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 sys.path.insert(0, os.path.join(ROOT, "services", "engine"))
 
+sys.path.insert(0, os.path.join(ROOT, "ml", "diagnostics"))
+
+from forgetting_drift import LegacyUndiscountedBaseline  # noqa: E402
 from tether_engine.bayes import BaselineModel  # noqa: E402
+
+# The shipped model, and the pre-fix update rule kept in ml/diagnostics so the
+# "before/after" pair stays reproducible from this script alone.
+LEGACY = LegacyUndiscountedBaseline
 
 ARCHIVE = os.path.join(ROOT, "data", "snapshots", "MMASH.zip")
 WARM = 20          # observations skipped before scoring, so learning is not scored
@@ -67,9 +74,9 @@ def minute_hr(z: zipfile.ZipFile, user: str) -> list[tuple[int, str, float, floa
     return series
 
 
-def coverage_global(series) -> tuple[int, int]:
+def coverage_global(series, model_cls=BaselineModel) -> tuple[int, int]:
     """(covered minutes, scored minutes) for one baseline per person."""
-    m = BaselineModel(*PRIOR)
+    m = model_cls(*PRIOR)
     cov = n = 0
     for i, (_, _, hr, _) in enumerate(series):
         sur = m.surprise(hr)             # judged before it joins its own baseline
@@ -119,12 +126,16 @@ def main() -> int:
     z = zipfile.ZipFile(ARCHIVE)
     per_user, diffs = [], []
     tot_cov_g = tot_n_g = tot_cov_h = tot_n_h = 0
+    tot_cov_l = tot_n_l = 0
     for u in users(z):
         series = minute_hr(z, u)
         if len(series) < WARM + 30:
             continue
         cov_g, n_g = coverage_global(series)
+        cov_l, n_l = coverage_global(series, LEGACY)
         cov_h, n_h = coverage_hourly(series)
+        tot_cov_l += cov_l
+        tot_n_l += n_l
         diff, _ = night_vs_afternoon(series)
         if diff is not None:
             diffs.append(diff)
@@ -137,6 +148,7 @@ def main() -> int:
             "minutes": len(series),
             "mean_hr": round(statistics.fmean(s[2] for s in series), 1),
             "coverage_global": round(cov_g / n_g, 3) if n_g else None,
+            "coverage_global_before_fix": round(cov_l / n_l, 3) if n_l else None,
             "n_global": n_g,
             "coverage_hourly": round(cov_h / n_h, 3) if n_h else None,
             "n_hourly": n_h,
@@ -159,6 +171,7 @@ def main() -> int:
         "minutes_scored": {"global": tot_n_g, "hourly": tot_n_h},
         "coverage_95": {
             "global": round(tot_cov_g / tot_n_g, 3) if tot_n_g else None,
+            "global_before_fix": round(tot_cov_l / tot_n_l, 3) if tot_n_l else None,
             "hourly": round(tot_cov_h / tot_n_h, 3) if tot_n_h else None,
             "nominal": 0.95,
         },
@@ -177,6 +190,7 @@ def main() -> int:
     print(f"users: {len(per_user)} | minutes scored: global={tot_n_g} hourly={tot_n_h}")
     print(f"95% interval coverage  global={payload['coverage_95']['global']:.1%}  "
           f"hourly={payload['coverage_95']['hourly']:.1%}  (nominal 95.0%)")
+    print(f"  whole-day, pre-fix update rule: {payload['coverage_95']['global_before_fix']:.1%}")
     print(f"night - afternoon median HR: {payload['night_minus_afternoon_median_bpm']} bpm "
           f"(the model has no circadian term)")
     print("\n| user | minutes | mean HR | coverage global | coverage hourly | night-aft (bpm) |")

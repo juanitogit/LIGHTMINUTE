@@ -43,3 +43,24 @@ def test_cusum_catches_small_sustained_shift():
     for _ in range(10):                        # ...but ten in a row are not
         alarm = c.step(m.surprise(62.5)["z"])["alarm"] or alarm
     assert alarm == "up"
+
+
+def test_interval_stays_honest_after_many_updates():
+    """Regression for the undiscounted-alpha defect: coverage must not collapse.
+
+    Before the fix df grew without bound and the 95% interval covered ~16% of a
+    flat healthy stream after 2000 updates (and 21.6% of real MMASH minutes).
+    See ml/diagnostics/forgetting_drift.py.
+    """
+    rnd = random.Random(11)
+    m = BaselineModel(prior_mean=70.0, prior_sd=14.0)
+    covered = n = 0
+    for i in range(1200):
+        x = rnd.gauss(60.0, 2.0)
+        lo, hi = m.surprise(x)["ci95"]
+        if i >= 20:
+            covered += int(lo <= x <= hi)
+            n += 1
+        m.robust_update(x)
+    assert covered / n >= 0.88            # nominal 95%; the defect gave ~0.20
+    assert m.predictive()[2] < 80         # df must stop growing

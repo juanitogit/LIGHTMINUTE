@@ -1,15 +1,18 @@
 ---
 tags: [exec]
-status: draft
-updated: 2026-11-13
+status: verified
+updated: 2026-11-14
 ---
 # Checklist de entrega
-- [x] Reto oficial correcto (no "Create Your Own") · [ ] Repo público + LICENSE · [x] README ≤5 comandos
+- [x] Reto oficial correcto (no "Create Your Own") · [x] Repo en GitHub + `LICENSE` Apache-2.0 · [x] README ≤5 comandos
 - [ ] URL en vivo o video · [ ] Capturas · [x] Data card · [x] Model card · [x] Validación
 - [x] Declaración de uso de IA · [x] Citas a datos NASA/NOAA · [x] Limitaciones · [ ] Equipo y roles
+- [ ] Repo **público** (requisito de Space Apps; hoy es privado) · [x] CI (tests + build en cada push)
 - [ ] Probado en ventana privada · [x] Plan B offline del demo · [ ] Enviado con ≥3 h de margen
 
-> Entregables de A5/A6 listos el 14-nov: `docs/{validation,model-card,data-card,SUBMISSION}.md`,
-> `pitch/*`, `ATTRIBUTIONS.md`, `README.md`. Detalle de estado por ítem: `project/docs/SUBMISSION.md`.
-> Pendientes reales: repo git, LICENSE, capturas, video y roles.
+> Pendientes reales: visibilidad del repo, LICENSE ya resuelto, capturas, video y roles.
+> Ítem de honestidad cerrado: el defecto `alpha` del factor de olvido se parcheó el 14-nov en
+> `bayes/nof1.py` (descuento hacia `alpha0`), con test de regresión y todas las cifras regeneradas.
+> Ver [[Estado real del repo y bloqueos]].
+> Detalle por ítem: `project/docs/SUBMISSION.md`.
 Ver [[Guion pitch y video]].

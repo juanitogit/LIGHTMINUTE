@@ -56,14 +56,15 @@ no real astronaut health data anywhere in this project.
 
 ## Validation (and where it loses)
 At an equal false-alarm budget of about 0.1 per crew-week, on 500 simulated crew members per
-effect size: the syndrome score detects a mild coordinated change 70% of the time versus 18%
+effect size: the syndrome score detects a mild coordinated change 71% of the time versus 18%
 for a population threshold, and 96% versus 38% for a moderate change. In a heterogeneous crew
-the population rule collapses to 27% on strong effects while the personal methods hold at 88–100%.
-Our 95% intervals cover 94% of healthy days. Missing readings degrade recall from 94% to 74%.
+the population rule collapses to 27% on strong effects while the personal methods hold at 89–100%.
+Our 95% intervals cover 95% of healthy days. Missing readings degrade recall from 93% to 76%.
 
 The honest part: on real wearable data our interval covered only **21.6%** of minutes. We traced
-it to a forgetting-factor defect in our own model, verified a fix that restores **93.4%**, and
-published the diagnostic instead of hiding it. It also showed us that single-indicator N-of-1 is
+it to a forgetting-factor defect in our own model, fixed it in the engine, re-ran every
+experiment and published the diagnostic: the shipped model covers **93.4%** of those minutes and
+95% at 2,000 updates instead of 16%. It also showed us that single-indicator N-of-1 is
 *not* dramatically better than a population rule in a homogeneous crew — the gains come from the
 syndrome score, CUSUM and heterogeneity, and that is what we claim.
 
@@ -75,8 +76,9 @@ officer is the patient, and someone else has to run the protocol.
 ## Limitations
 Not a medical device, no diagnosis, no medication doses, synthetic data only, no clinical
 validation. The syndrome score uses a clinical direction as a prior and is blind to other
-directions. Behavioural indicators are exploratory. One known engine defect limits minute-level
-streaming use (daily cadence is unaffected). See `docs/model-card.md` and `docs/data-card.md`.
+directions. Behavioural indicators are exploratory. The forgetting-factor defect we found on real data is fixed
+and guarded by a regression test: minute-level streaming was its weak spot and no longer is a
+known-failing path, though it is still not clinically validated. See `docs/model-card.md` and `docs/data-card.md`.
 
 ## AI use disclosure
 DeepSeek V4.1 Flash and coding agents assisted with implementation, analysis and drafting. The

@@ -3,7 +3,7 @@
  "threshold_z": 3.09,
  "per_indicator": {
   "rest_hr": {
-   "current": {
+   "legacy": {
     "flat_global": {
      "coverage_95": 0.528,
      "alarms_per_week": 47.64,
@@ -20,7 +20,7 @@
      "n": 23040
     }
    },
-   "alpha_discounted": {
+   "fixed": {
     "flat_global": {
      "coverage_95": 0.948,
      "alarms_per_week": 0.53,
@@ -39,7 +39,7 @@
    }
   },
   "temp_c": {
-   "current": {
+   "legacy": {
     "flat_global": {
      "coverage_95": 0.646,
      "alarms_per_week": 35.89,
@@ -56,7 +56,7 @@
      "n": 23040
     }
    },
-   "alpha_discounted": {
+   "fixed": {
     "flat_global": {
      "coverage_95": 0.973,
      "alarms_per_week": 0.2,
@@ -75,7 +75,7 @@
    }
   },
   "pvt_ms": {
-   "current": {
+   "legacy": {
     "flat_global": {
      "coverage_95": 0.519,
      "alarms_per_week": 48.38,
@@ -92,7 +92,7 @@
      "n": 23040
     }
    },
-   "alpha_discounted": {
+   "fixed": {
     "flat_global": {
      "coverage_95": 0.944,
      "alarms_per_week": 0.58,

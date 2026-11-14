@@ -3,53 +3,52 @@
  "flat_series": [
   {
    "updates": 23,
-   "current": {
+   "legacy": {
     "coverage_95": 1.0,
     "df_after": 25.5
    },
-   "alpha_discounted": {
+   "fixed": {
     "coverage_95": 1.0,
     "df_after": 21.1
    }
   },
   {
    "updates": 200,
-   "current": {
+   "legacy": {
     "coverage_95": 0.83,
     "df_after": 202.5
    },
-   "alpha_discounted": {
+   "fixed": {
     "coverage_95": 0.969,
     "df_after": 51.6
    }
   },
   {
    "updates": 500,
-   "current": {
+   "legacy": {
     "coverage_95": 0.564,
     "df_after": 502.5
    },
-   "alpha_discounted": {
+   "fixed": {
     "coverage_95": 0.954,
     "df_after": 52.5
    }
   },
   {
    "updates": 2000,
-   "current": {
+   "legacy": {
     "coverage_95": 0.16,
     "df_after": 2002.5
    },
-   "alpha_discounted": {
+   "fixed": {
     "coverage_95": 0.948,
     "df_after": 52.5
    }
   }
  ],
  "mmash_minute_hr": {
-  "current": 0.216,
-  "alpha_discounted": 0.934,
-  "minutes": 29937
+  "skipped": "data/snapshots/MMASH.zip not present"
  },
- "note": "Coverage of the 95% predictive interval; flat series are N(60,2)."
+ "fix": "alpha <- alpha0 + (alpha - alpha0)*lam + 0.5 (applied 2026-11-14)",
+ "note": "Coverage of the 95% predictive interval; flat series are N(60,2). 'legacy' is the old undiscounted-alpha update, kept to reproduce the defect."
 }
