@@ -169,7 +169,11 @@ try {
   assert.match(await page.locator("main").innerText(), /REAL-PUBLIC DATA/);
   assert.match(await page.locator("main").innerText(), /2026-11-14T14:38:16Z/);
   assert.equal(await page.locator(".flux-chart svg").count(), 1);
-  await capture("04-space-weather"); record("NOAA historical snapshot, real-public label, timestamp and flux plot");
+  await page.locator(".donki-panel").waitFor();
+  assert.match(await page.locator(".donki-panel").innerText(), /NASA DONKI/);
+  assert.match(await page.locator(".donki-panel").innerText(), /not individual dose/);
+  assert.match(await page.locator(".donki-panel").innerText(), /real-public/);
+  await capture("04-space-weather"); record("NOAA historical snapshot + NASA DONKI events, real-public labels, timestamps and flux plot");
 
   await goto("validation"); await page.locator(".benchmark-row").first().waitFor();
   assert.equal(await page.locator(".benchmark-row").count(), 8);

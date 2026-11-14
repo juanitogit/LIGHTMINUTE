@@ -5,6 +5,15 @@ copied; the three-lens layout and protocol ideas were studied in public READMEs 
 
 ## Data
 
+**NASA DONKI — Space Weather Database Of Notifications, Knowledge, Information (CCMC)**
+<https://ccmc.gsfc.nasa.gov/DONKI/api/> · reference <https://ccmc.gsfc.nasa.gov/tools/DONKI/>
+NASA open data. Snapshots for SEP, FLR, CME and GST cover 2026-08-16..2026-11-14 UTC and are
+recorded in `data/snapshots/manifest.json` with endpoint (no key), retrieval time, sha256, row
+count and license note. The endpoint is keyless; no api.nasa.gov key is required or sent.
+Used as `real-public` space-weather context in the radiation panel. Event classes, times and
+links are reproduced as published; no dose or S-scale is inferred from them. NASA does not
+endorse this project.
+
 **NOAA SWPC — GOES primary integral protons (1-day JSON)**
 <https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json>
 U.S. Government work, public domain. Snapshot 2026-11-14T14:38:16Z, sha256 `e0c6563d…`,
@@ -35,8 +44,9 @@ aggregate results are published. Attribution: data courtesy of the MMASH authors
 - Python, numpy, scipy — runtime for the engine and the validation harness.
 
 ## Not used
-NASA-STD-3001 reference ranges and career dose limits, NASA DONKI, OSDR RadLab, OSD-569 blood-count
-ranges, and any third-party 3D anatomy model. Nothing from these is quoted, so nothing is claimed.
+NASA-STD-3001 reference ranges and career dose limits, OSDR RadLab, OSD-569 blood-count
+ranges, and any third-party 3D anatomy model beyond the CC-licensed assets listed below.
+Nothing from these is quoted, so nothing is claimed.
 
 
 ## Human body model

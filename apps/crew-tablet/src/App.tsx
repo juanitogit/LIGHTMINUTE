@@ -22,7 +22,7 @@ const VIEW_LABELS: { id: View; label: string; detail: string; icon: IconName }[]
   { id: "glance", label: "Overview", detail: "Glance", icon: "overview" },
   { id: "why", label: "Personal baseline", detail: "Why", icon: "pulse" },
   { id: "act", label: "Actions", detail: "Act", icon: "check" },
-  { id: "radiation", label: "Space weather", detail: "NOAA", icon: "orbit" },
+  { id: "radiation", label: "Space weather", detail: "NASA + NOAA", icon: "orbit" },
   { id: "today", label: "Today & check-in", detail: "Today", icon: "check" },
   { id: "signals", label: "Signal library", detail: "Signals", icon: "pulse" },
   { id: "trends", label: "Mission trends", detail: "Trends", icon: "chart" },
