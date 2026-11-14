@@ -70,11 +70,32 @@ async function fetchJson<T>(
   }
 }
 
-function asScenarioDoc(raw: unknown, name: string): ScenarioDoc {
+function asScenarioDoc(raw: unknown, name: string, requireIdentity = false): ScenarioDoc {
   if (!raw || typeof raw !== "object") throw new Error("scenario payload is not an object");
   const doc = raw as ScenarioDoc;
   if (!Array.isArray(doc.days) || doc.days.length === 0) {
     throw new Error(`scenario ${name} has no days`);
+  }
+  // Identity check: a fallback file must never answer for a different scenario
+  // (demo-data.json is cmo_fever, so asking for co2_creep with it is a mismatch).
+  const scenarioField = typeof doc.scenario === "string" ? doc.scenario : undefined;
+  const nameField = (doc as { name?: unknown }).name;
+  const declaredName = typeof nameField === "string" ? nameField : undefined;
+  // `scenario` and `name` disagreeing means the payload was edited or spliced.
+  if (scenarioField && declaredName && scenarioField !== declaredName) {
+    throw new Error(
+      `scenario identity conflict: scenario=${scenarioField}, name=${declaredName}`,
+    );
+  }
+  const declared = scenarioField ?? declaredName;
+  const hasIdentity = typeof declared === "string" && declared.length > 0;
+  if (hasIdentity && declared !== name) {
+    throw new Error(`scenario identity mismatch: asked ${name}, got ${declared}`);
+  }
+  // A static file is addressed by scenario name, so a payload without identity
+  // cannot be proven to belong to it: reject rather than trust it.
+  if (!hasIdentity && requireIdentity) {
+    throw new Error(`scenario identity missing: asked ${name}`);
   }
   const firstDay = doc.days[0];
   const indicators =
@@ -177,7 +198,7 @@ export async function loadScenario(name: string): Promise<LoadedScenario> {
       STATIC_TIMEOUT_MS,
     );
     return {
-      doc: asScenarioDoc(raw, name),
+      doc: asScenarioDoc(raw, name, true),
       origin: "scenario-file",
       degraded: false,
       originLabel: "static scenario file",
@@ -188,7 +209,7 @@ export async function loadScenario(name: string): Promise<LoadedScenario> {
 
   const raw = await fetchJson<ScenarioDoc>(staticUrl("demo-data.json"), STATIC_TIMEOUT_MS);
   return {
-    doc: asScenarioDoc(raw, name),
+    doc: asScenarioDoc(raw, name, true),
     origin: "demo-data",
     degraded: true,
     originLabel: "demo-data.json · static fallback",

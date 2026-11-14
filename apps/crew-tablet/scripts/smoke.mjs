@@ -3,6 +3,7 @@ import { chromium, expect } from "@playwright/test";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import { readFile, mkdir, writeFile, rm } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, extname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -10,6 +11,9 @@ import { spawn } from "node:child_process";
 
 const app = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const repo = resolve(app, "../..");
+// Prefer the repository virtualenv so the engine check runs without a global install.
+const venvPython = resolve(repo, ".venv/Scripts/python.exe");
+const python = process.env.PYTHON ?? (existsSync(venvPython) ? venvPython : "python");
 const output = resolve(repo, "docs/qa");
 const screenshots = resolve(repo, "docs/screenshots");
 const missionDatabase=resolve(tmpdir(),`lightminute-e2e-${process.pid}.sqlite`);
@@ -45,7 +49,8 @@ const server = createServer(async (req, res) => {
 });
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const base = `http://127.0.0.1:${server.address().port}`;
-const browser = await chromium.launch({headless:true});
+// Use the Chrome installed on this machine instead of downloading a browser.
+const browser = await chromium.launch({channel:"chrome", headless:true});
 let api;
 const record = (name, detail = "passed") => {results.push({name, detail});console.log("PASS", name);};
 const context = await browser.newContext({ viewport:{width:1440,height:1000}, reducedMotion:"reduce" });
@@ -165,14 +170,15 @@ try {
   await expect(page.locator("main")).toContainText("No connected data source");
   record("Three-signal trend limit, grounded offline handbook and explicit missing signal sources");
 
-  await goto("radiation"); await page.locator(".flux-chart").waitFor();
-  assert.match(await page.locator("main").innerText(), /REAL-PUBLIC DATA/);
-  assert.match(await page.locator("main").innerText(), /2026-11-14T14:38:16Z/);
-  assert.equal(await page.locator(".flux-chart svg").count(), 1);
+  await goto("radiation"); await page.locator(".rad-chart").waitFor();
+  assert.match(await page.locator("main").innerText(), /real-public/);
+  assert.match(await page.locator("main").innerText(), /14 Nov 2026 14:38 UTC/);
+  assert.equal(await page.locator(".rad-chart svg").count(), 1);
+  assert.equal(await page.locator(".rad-chart__line").count(), 1);
   await capture("04-space-weather"); record("NOAA historical snapshot, real-public label, timestamp and flux plot");
 
-  await goto("validation"); await page.locator(".benchmark-row").first().waitFor();
-  assert.equal(await page.locator(".benchmark-row").count(), 8);
+  await goto("validation"); await page.locator("table.data-table").first().waitFor();
+  assert.equal(await page.locator("table.data-table:has(th:text-is('False alarms')) tbody tr").count(), 8);
   await capture("05-evidence"); record("Both benchmark cohorts, all four methods and published calibration");
 
   for (const scenario of ["cmo_fever","sep_sleep_loss","co2_creep"]) {
@@ -187,9 +193,9 @@ try {
 
   for (const width of [375,768,1024,1440]) {
     await page.setViewportSize({width,height:900});
-    for (const view of ["glance","why","act","radiation","validation","today","trends","handbook","signals","earth"]) {
+    for (const view of ["glance","why","act","radiation","validation","checkin","today","trends","handbook","signals","earth"]) {
       await goto(view);
-      await page.locator(view === "radiation" ? ".flux-chart" : view === "validation" ? ".benchmark-row" : view === "glance" ? ".signal-row" : view === "act" ? ".checklist" : view === "why" ? ".lenses" : ".view h1").first().waitFor();
+      await page.locator(view === "radiation" ? ".rad-chart" : view === "validation" ? "table.data-table" : view === "glance" ? ".signal-row" : view === "act" ? ".checklist" : view === "why" ? ".lenses" : ".view h1").first().waitFor();
       assert(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth + 1),`Horizontal overflow: ${width}px ${view}`);
       const framed = await page.locator("main .panel, main .tile, main .lens, .inline-label, .status-label").evaluateAll(elements=>elements.filter(el=>{
         const s=getComputedStyle(el);
@@ -235,7 +241,7 @@ try {
   record("Double-click ground console and protocol demo using file://");
 
   if (process.env.LIGHTMINUTE_SKIP_API !== "1") {
-  api = spawn(process.env.PYTHON ?? "python",["-m","uvicorn","tether_engine.api.main:app","--host","127.0.0.1","--port","18081"],{cwd:repo,env:{...process.env,PYTHONPATH:resolve(repo,"services/engine"),LLM_PROVIDER:"none",LIGHTMINUTE_MISSION_DB:missionDatabase},windowsHide:true,stdio:"ignore"});
+  api = spawn(python,["-m","uvicorn","tether_engine.api.main:app","--host","127.0.0.1","--port","18081"],{cwd:repo,env:{...process.env,PYTHONPATH:resolve(repo,"services/engine"),LLM_PROVIDER:"none",LIGHTMINUTE_MISSION_DB:missionDatabase},windowsHide:true,stdio:"ignore"});
   for (let i=0;i<100;i++) {try {if((await fetch("http://127.0.0.1:18081/api/health")).ok)break;}catch{} await new Promise(r=>setTimeout(r,100));}
   apiOnline = true;
   const onlineContext = await browser.newContext({viewport:{width:1440,height:1000}});

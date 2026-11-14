@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { CrewSelector } from "./components/CrewSelector";
 import { Brand } from "./components/Brand";
+import { GoogleAccount } from "./components/GoogleAccount";
 import { Icon, type IconName } from "./components/Icon";
 import { Chip, DataNotice, EmptyState, Panel } from "./components/primitives";
 import { ScenarioBar } from "./components/ScenarioBar";
@@ -13,6 +14,7 @@ import { Act } from "./views/Act";
 import { Glance } from "./views/Glance";
 import { Radiation } from "./views/Radiation";
 import { Validation } from "./views/Validation";
+import { CheckIn } from "./views/CheckIn";
 import { MissionWorkspace } from "./views/MissionWorkspace";
 import { SignalLibrary } from "./views/SignalLibrary";
 import { EarthLink } from "./views/EarthLink";
@@ -29,6 +31,7 @@ const VIEW_LABELS: { id: View; label: string; detail: string; icon: IconName }[]
   { id: "handbook", label: "Onboard handbook", detail: "Ask", icon: "info" },
   { id: "earth", label: "Earth link", detail: "Earth", icon: "earth" },
   { id: "validation", label: "Evidence & validation", detail: "Data", icon: "chart" },
+  { id: "checkin", label: "PVT & daily log", detail: "Local", icon: "watch" },
 ];
 
 const FALLBACK_CREW = ["A", "B", "C", "D"];
@@ -237,6 +240,7 @@ export function App() {
           <div className="topbar__breadcrumb"><span className="mobile-brand">LIGHTMINUTE</span><span>Crew health</span><span aria-hidden="true">/</span><b>{VIEW_LABELS.find((v) => v.id === state.view)?.label}</b></div>
 
           <div className="topbar__tools">
+            <GoogleAccount />
             <span className={`engine-badge ${health ? "is-online" : ""}`}><span className="status__dot" />{health ? "Engine connected" : health === undefined ? "Connecting…" : "Local simulation"}</span>
             <button
               type="button"
@@ -386,6 +390,9 @@ export function App() {
             {state.view === "validation" ? <Validation /> : null}
           </>
         ) : null}
+
+        {/* Local-only tools: they must work even when no scenario loads. */}
+        {state.view === "checkin" ? <CheckIn /> : null}
       </main>
 
       <footer className="statusbar">
