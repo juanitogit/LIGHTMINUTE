@@ -87,6 +87,14 @@ jobs:
         working-directory: apps/crew-tablet
         run: npm run build
 
+      # Regression guard: a UI refactor once replaced index.html and lost the
+      # Search Console tag, which silently breaks site verification.
+      - name: Build keeps the SEO head and sitemap
+        run: |
+          grep -q 'google-site-verification' apps/crew-tablet/dist/index.html
+          test -f apps/crew-tablet/dist/sitemap.xml
+          test -f apps/crew-tablet/dist/robots.txt
+
       - name: Install Chromium for browser integration checks
         working-directory: apps/crew-tablet
         run: npx playwright install --with-deps chromium
