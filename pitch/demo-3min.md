@@ -37,7 +37,7 @@ Open `docs/validation.md` (still image is fine, do not scroll live):
 
 ## 2:50–3:00 — Close
 "Three lenses, coordinated-shift warning, cited cards, and a validation page that admits what
-it does not know. Repo is public; thanks."
+it does not know. The repo link is on the submission page; thanks."
 
 ## Failure drills
 | Problem | Do this |

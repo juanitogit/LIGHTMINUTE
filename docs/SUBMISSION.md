@@ -5,7 +5,7 @@ Status as of 2026-11-14. ✅ done · ⚠️ pending · ❓ must confirm on the e
 | Item | Status | Where / what is owed |
 |---|---|---|
 | Official challenge selected (not "Create Your Own") | ✅ | *Create Health Monitoring Software for Astronauts on Space Missions* |
-| Public repository | ✅ | <https://github.com/juanitogit/NASA-SPACE-APPS-2026> |
+| Public repository | ⚠️ **blocker** | exists at <https://github.com/juanitogit/NASA-SPACE-APPS-2026> but is **private**: an anonymous request to `api.github.com/repos/juanitogit/NASA-SPACE-APPS-2026` returns 404. Space Apps needs a public repo — Settings → General → Danger zone → Change visibility → Public, then re-check in a private browser window |
 | LICENSE file | ⚠️ | Apache-2.0 declared in README; the `LICENSE` file itself is A7's to add |
 | README, setup in ≤5 commands | ✅ | `README.md` |
 | Project description for the page | ✅ | `pitch/project-description.md` |
@@ -24,6 +24,7 @@ Status as of 2026-11-14. ✅ done · ⚠️ pending · ❓ must confirm on the e
 | Judging guide + Terms read (2026 text) | ❓ | confirm eligibility, AI disclosure and repo-public rules for this edition |
 | Local submission cutoff confirmed | ❓ | the vault still lists it as unconfirmed |
 | Submitted ≥3 h before cutoff | ⚠️ | plan the freeze 4 h out, video 3 h out |
+| Repo readable without login | ❌ | same blocker as above: verify with `curl -s -o /dev/null -w '%{http_code}' https://api.github.com/repos/juanitogit/NASA-SPACE-APPS-2026` → must be 200, not 404 |
 
 ## Do not submit claiming
 - clinical validation or diagnostic accuracy;

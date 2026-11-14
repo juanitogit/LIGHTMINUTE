@@ -102,5 +102,9 @@ A3 (tablet Glance→Why→Act) y A4 (protocol runner y consola de tierra). Verif
 **Sigue faltando:** el parche de `alpha` en `bayes/nof1.py` (solicitado a A1), `LICENSE`, capturas, video
 y roles del equipo.
 
+**Bloqueo de elegibilidad (14-nov):** el repo `juanitogit/NASA-SPACE-APPS-2026` es **privado** —
+`api.github.com/repos/...` devuelve 404 en anónimo mientras `git` autenticado funciona. Space Apps
+exige repositorio público: hay que cambiar la visibilidad en GitHub antes de enviar.
+
 ## Relacionado
 [[00-Home]] · [[Board]] · [[Plan 48h]] · [[Resultados de validacion]] · [[Matriz de superioridad]] · [[Personas]] · [[Pulido visual - plan]] · [[Seguridad y etica]] · [[Guion pitch y video]] · [[2026-11-13]]
