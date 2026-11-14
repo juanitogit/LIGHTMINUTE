@@ -66,3 +66,18 @@ Capturas: `apps/crew-tablet/screenshots/final-*.png` (glance, why, act, radiatio
 - Las rutas `s_scale` ausente y label contradictorio se ejercitan con fixtures interceptados, no con el archivo publicado.
 - Los RT del PVT son clics automatizados: validez técnica, no medida humana.
 - Sin validación clínica: los porcentajes son de crews sintéticos y la vista muestra sus limitaciones.
+
+## Cierre: merge y push
+
+El primer push fue rechazado porque `origin/main` avanzó 4 commits (DONKI, licencias de modelos de órganos, arreglo del simulador corporal). Se hizo `fetch` + `merge origin/main` (sin rebase, sin reescritura). Conflictos resueltos conservando ambas partes:
+
+- `views/Radiation.tsx`: vista endurecida + `<DonkiPanel>` del remoto en el mismo `stack`.
+- `scripts/smoke.mjs`: checks de eje/timestamp/unidades + asserts de DONKI (`real-public`, `not individual dose`).
+- `docs/seo-deploy.md` y `vault/.../2026-11-14.md`: unión de ambos textos.
+- `docs/screenshots/04-space-weather.png`: captura del remoto, regenerada después por el smoke.
+
+Verificación sobre el árbol fusionado: `typecheck` 0, `build` 0, `test:e2e` 17 grupos, `test:e2e:browser` 13/13.
+
+Estado final: `main` en **2d1c5a9**, idéntico a `origin/main` (`fcd5a7a..2d1c5a9`), árbol limpio. El remoto redirige a `juanitogit/LIGHTMINUTE-NASASPACEAPPS2026`.
+
+Commits de la ronda: `096afa8` (crew-tablet restaurado + E2E), `81773cd` (cred), `93b5d30` (engine), `2b3a285` (docs/handoff) y `2d1c5a9` (merge).
