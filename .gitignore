@@ -1,4 +1,10 @@
 .env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+.wrangler/
+tmp/
 node_modules/
 __pycache__/
 .venv/

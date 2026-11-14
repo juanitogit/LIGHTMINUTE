@@ -29,7 +29,7 @@ jobs:
       - name: Install runtime dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install numpy scipy "fastapi>=0.110" uvicorn "pydantic>=2" httpx "openai>=1.50" ruff
+          python -m pip install numpy scipy "fastapi>=0.110" uvicorn "pydantic>=2" httpx "openai>=1.50" ruff "psycopg[binary]>=3.2,<4" "python-dotenv>=1,<2"
 
       - name: Python lint
         run: ruff check services/engine
@@ -86,6 +86,14 @@ jobs:
       - name: Typecheck and build
         working-directory: apps/crew-tablet
         run: npm run build
+
+      - name: Google OAuth security and session regressions
+        working-directory: apps/crew-tablet
+        run: npm run test:auth
+
+      - name: Compile Cloudflare authentication functions
+        working-directory: apps/crew-tablet
+        run: npx wrangler pages functions build --outdir ../../tmp/cloudflare-auth
 
       # Regression guard: a UI refactor once replaced index.html and lost the
       # Search Console tag, which silently breaks site verification.

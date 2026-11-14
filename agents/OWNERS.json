@@ -39,6 +39,7 @@
       "services/engine/tests/test_verifier.py",
       "services/engine/tests/test_llm",
       "services/engine/tests/test_api",
+      "services/engine/tests/test_database.py",
       "handoff/a2.md",
       "services/engine/tests/test_mission_link.py"
     ]
@@ -63,6 +64,10 @@
       "packages/schemas/",
       "handoff/a3.md",
       "apps/crew-tablet/scripts/",
+      "apps/crew-tablet/functions/",
+      "apps/crew-tablet/server/",
+      "apps/crew-tablet/wrangler.toml",
+      "apps/crew-tablet/public/_routes.json",
       "apps/crew-tablet/public/logo-lightminute.svg"
     ]
   },
@@ -110,7 +115,9 @@
       "docs/Obsidian.md",
       "mockup/",
       "docs/native-design.md",
-      "docs/reference-coverage.md"
+      "docs/reference-coverage.md",
+      "docs/google-oauth.md",
+      "docs/seo-deploy.md"
     ]
   },
   "A7": {

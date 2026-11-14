@@ -35,6 +35,11 @@ npx wrangler pages deploy dist --project-name lightminute --branch main
 CI still guards the tag (`.github/workflows/ci.yml` fails if `google-site-verification`
 is missing from `dist/index.html`).
 
+Google account sign-in is separate from Search Console ownership verification.
+The app now also includes Pages Functions under `functions/api/auth/` and needs
+the two server secrets documented in [google-oauth.md](google-oauth.md). Deploy
+from `apps/crew-tablet` so Wrangler includes these functions alongside `dist/`.
+
 Confirm the tag is really live before clicking Verify in Search Console:
 
 ```powershell
