@@ -13,7 +13,7 @@
 [![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)](#stack)
 [![LLM](https://img.shields.io/badge/LLM-DeepSeek%20V4.1%20Flash%20(optional)-4D6BFE?style=flat-square)](#stack)
 [![Tests](https://img.shields.io/badge/python%20tests-76%20passing-brightgreen?style=flat-square)](#tests)
-[![License](https://img.shields.io/badge/license-Apache--2.0%20(file%20pending)-lightgrey?style=flat-square)](#license)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue?style=flat-square)](#license)
 
 Health-monitoring and decision-support software for astronauts on long missions:
 a deterministic N-of-1 Bayesian engine decides, an LLM explains behind a verifier, and the
@@ -99,9 +99,10 @@ Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not
 
 ### ⛔ Missing
 
-- `LICENSE` file (Apache-2.0 is the intent; the file is not in the repo) — `ATTRIBUTIONS.md` **is** there.
-- CI: no `.github/workflows`; `dist/` is now gitignored, but nothing runs the tests automatically.
-- The **`alpha` fix** in `bayes/nof1.py` (see below) is not applied on `main`.
+- The **`alpha` fix** in `bayes/nof1.py` (see below) is not applied on `main` — the single open code defect.
+- **Repository is private.** Space Apps requires a public repo, so visibility has to be changed before submission.
+- Submission assets: screenshots, the 60-second video and the team/roles section.
+- `.github/workflows/ci.yml` runs the tests and the tablet build on every push to `main` and on PRs, but it has not run on a public repo yet, and the ownership map (`scripts/check_ownership.py --overlaps`) still needs `vault/` registered in `agents/OWNERS.json`.
 - OSDR / Inspiration4 data (blocked by 404s), and any prospective validation on real crew data.
 - Vision / voice input endpoints, DeepSeek web-search use, auth, database, multi-crew sessions — all deliberately out of scope for the prototype.
 - Expert clinical review of thresholds and protocol steps, and regulatory classification work.
@@ -299,4 +300,4 @@ model is a swappable explanation layer, never a decision maker.
 
 ## License
 
-Apache-2.0 — the `LICENSE` file still needs to be added to the repository.
+Apache-2.0 — see [LICENSE](LICENSE).

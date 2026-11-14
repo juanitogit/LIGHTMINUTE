@@ -99,12 +99,31 @@ A3 (tablet Glance→Why→Act) y A4 (protocol runner y consola de tierra). Verif
 **76/76 tests** y `npm run build` correcto; la validación se regeneró contra el simulador de A1 con cifras
 **idénticas** a las publicadas. La bóveda se sincronizó a `vault/` dentro del repo.
 
-**Sigue faltando:** el parche de `alpha` en `bayes/nof1.py` (solicitado a A1), `LICENSE`, capturas, video
-y roles del equipo.
+**Sigue faltando:** el parche de `alpha` en `bayes/nof1.py` (solicitado a A1), capturas, video
+y roles del equipo. `LICENSE` Apache-2.0 y CI ya están; ver [[Board]].
 
 **Bloqueo de elegibilidad (14-nov):** el repo `juanitogit/NASA-SPACE-APPS-2026` es **privado** —
 `api.github.com/repos/...` devuelve 404 en anónimo mientras `git` autenticado funciona. Space Apps
 exige repositorio público: hay que cambiar la visibilidad en GitHub antes de enviar.
+
+## Cierre de entrega (14-nov, sesión final)
+
+- **`LICENSE`** Apache-2.0 (texto canónico, 202 líneas) — el ítem que bloqueaba la entrega.
+- **CI** en `.github/workflows/ci.yml`, dos jobs: `engine` (76 tests + 30 casos de red-team + smoke de
+  la API en modo plantilla, sin red) y `frontend` (`npm ci && npm run build` + vectores de la cadena de
+  auditoría + `node --check` del runner). YAML validado y snippet de API probado en local; todavía no ha
+  corrido en GitHub Actions.
+- **README** reescrito: badges de Space Apps / stack / datos / disclaimer, tabla de stack con el porqué de
+  cada elección, y tres listas explícitas — funciona (con la comprobación que lo demuestra), parcial
+  (sin llamada real a DeepSeek, MMASH es proxy, paneles sin re-verificar) y falta (parche `alpha`, repo
+  público, capturas/video/roles, OSDR).
+- **Vault** dentro del repo (`vault/`), `main` con A1–A6 integrados.
+
+Verificado en esta sesión: **76/76** tests, **30/30** red-team, **8/8** vectores de auditoría JS↔Python,
+`npm run build` verde (293 kB), API sirviendo `source: engine` y `POST /api/card` con `level: act` en el día 15.
+
+Sigue abierto y es lo único que bloquea una entrega honesta: el parche de `alpha` (A1) y la visibilidad
+pública del repo.
 
 ## Relacionado
 [[00-Home]] · [[Board]] · [[Plan 48h]] · [[Resultados de validacion]] · [[Matriz de superioridad]] · [[Personas]] · [[Pulido visual - plan]] · [[Seguridad y etica]] · [[Guion pitch y video]] · [[2026-11-13]]
