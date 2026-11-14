@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TETHER — ground console (synthetic)</title>
+<link rel="stylesheet" href="src/styles.css" />
+</head>
+<body>
+<header class="gc-top">
+  <div class="gc-brand">
+    <strong>TETHER</strong>
+    <span class="gc-brand-sub">Ground console</span>
+  </div>
+  <div class="gc-tags">
+    <span class="tag tag--synthetic">SYNTHETIC DATA</span>
+    <span class="tag">Decision support · not a medical device</span>
+  </div>
+</header>
+
+<section class="gc-bar" aria-label="Scenario controls">
+  <label class="field">
+    <span>Scenario</span>
+    <select id="scenario">
+      <option value="cmo_fever">CMO fever-like pattern</option>
+      <option value="sep_sleep_loss">Sleep loss over a week</option>
+      <option value="co2_creep">Cabin CO₂ creep</option>
+    </select>
+  </label>
+
+  <label class="field field--grow">
+    <span>Mission day <output id="day-out">1</output></span>
+    <input id="day" type="range" min="1" max="1" step="1" value="1" />
+  </label>
+
+  <label class="field">
+    <span>Mission profile</span>
+    <select id="profile">
+      <option value="iss">ISS · 0 s one-way</option>
+      <option value="moon">Moon · 1.3 s one-way</option>
+      <option value="mars" selected>Mars · 3–22 min one-way</option>
+    </select>
+  </label>
+
+  <label class="field field--file">
+    <span>Load JSON</span>
+    <input id="file" type="file" accept="application/json,.json" />
+  </label>
+</section>
+
+<p id="source-line" class="gc-source" role="status">Loading scenario…</p>
+
+<main class="gc-grid">
+  <section class="panel" id="delay-panel" aria-labelledby="delay-title">
+    <h2 id="delay-title">Light-delay timeline</h2>
+    <p class="panel-note" id="delay-note"></p>
+    <div class="delay" id="delay-track">
+      <div class="delay__rail"></div>
+      <div class="delay__span" id="delay-span"></div>
+      <div class="delay__msg" id="delay-msg" title="A message travelling one way"></div>
+      <div class="delay__tick delay__tick--earth"><span>Crew</span></div>
+      <div class="delay__tick delay__tick--end"><span>Earth</span></div>
+    </div>
+    <p class="panel-note" id="delay-caption"></p>
+  </section>
+
+  <section class="panel" id="consent-panel" aria-labelledby="consent-title">
+    <h2 id="consent-title">Consent tiers</h2>
+    <p class="panel-note">What may leave the vehicle. Crew owns the data.</p>
+    <label class="switch"><input type="checkbox" id="consent-vitals" checked /><span>Vitals summary</span></label>
+    <label class="switch"><input type="checkbox" id="consent-symptoms" checked /><span>Symptoms</span></label>
+    <label class="switch"><input type="checkbox" id="consent-behavioral" /><span>Behavioural free text <em>(off by default)</em></span></label>
+  </section>
+
+  <section class="panel panel--wide" id="crew-panel" aria-labelledby="crew-title">
+    <h2 id="crew-title">Crew</h2>
+    <div class="crew" id="crew-list"></div>
+    <p class="panel-note" id="attribution-line"></p>
+  </section>
+
+  <section class="panel panel--wide" id="queue-panel" aria-labelledby="queue-title">
+    <h2 id="queue-title">Message queue to Earth</h2>
+    <p class="panel-note" id="queue-note"></p>
+    <div id="queue"></div>
+  </section>
+
+  <section class="panel panel--wide" id="audit-panel" aria-labelledby="audit-title">
+    <h2 id="audit-title">Audit chain (SHA-256, mirrors the engine)</h2>
+    <p class="panel-note">Every routed card is appended. Tamper with a row to see the
+      first broken link flagged.</p>
+    <div class="audit-actions">
+      <button type="button" id="audit-tamper">Tamper with entry 2</button>
+      <button type="button" id="audit-recheck">Re-verify</button>
+      <output id="audit-status" class="audit-status"></output>
+    </div>
+    <table class="audit">
+      <thead><tr><th>#</th><th>Event</th><th>ts</th><th>hash</th></tr></thead>
+      <tbody id="audit-body"></tbody>
+    </table>
+  </section>
+</main>
+
+<footer class="gc-foot">
+  <p>Synthetic crew, synthetic events. Routing numbers come from the scenario export
+    (Mars profile); the timeline above shows the selected profile. No external network calls.</p>
+</footer>
+
+<!-- Classic scripts, not modules: file:// blocks ES module imports (origin null).
+     The fixture is exposed as a global because file:// cannot fetch() local JSON either. -->
+<script src="src/audit-core.js"></script>
+<script src="data/sample-scenario.js"></script>
+<script src="src/main.js"></script>
+</body>
+</html>

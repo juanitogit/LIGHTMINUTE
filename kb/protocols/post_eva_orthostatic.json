@@ -1,0 +1,20 @@
+{
+  "id": "post_eva_orthostatic",
+  "title": "Post-EVA dizziness on standing",
+  "trigger_patterns": [
+    "engine level is watch or higher within six hours after an EVA",
+    "the crew member reports dizziness or light-headedness on standing after an EVA",
+    "resting heart rate sits above the personal band after an EVA"
+  ],
+  "steps": [
+    {"text": "Sit down as soon as you are out of the suit. Do not stand up straight away.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Ask a crew mate to stay with you for the next 15 minutes.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Measure heart rate and blood pressure lying down, then again after one minute standing.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Log both readings and note whether you felt dizzy.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "If you feel light-headed, sit or lie down again at once and tell your buddy.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Drink and eat according to the EVA recovery checklist.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "If the standing reading stays abnormal, open the onboard medical protocol for orthostatic symptoms.", "source_status": "demo-wording", "source": "onboard medical protocol - no drug doses are shown in TETHER"},
+    {"text": "Send the readings to Earth. A reply may take longer than the symptoms last.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"},
+    {"text": "Escalate now if: fainting, chest pain, vision changes, or a fall.", "source_status": "demo-wording", "source": "TETHER demo wording - not a NASA procedure"}
+  ]
+}
