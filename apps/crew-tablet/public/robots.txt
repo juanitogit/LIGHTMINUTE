@@ -1,0 +1,9 @@
+# https://lightminute.pages.dev/robots.txt
+# The crew tablet is a single-page app at "/". Demo JSON is fetched by the app,
+# not needed by crawlers; keeping it out saves crawl budget.
+User-agent: *
+Allow: /
+Disallow: /data/
+Disallow: /api/
+
+Sitemap: https://lightminute.pages.dev/sitemap.xml
