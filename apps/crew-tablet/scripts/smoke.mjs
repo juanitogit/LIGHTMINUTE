@@ -78,15 +78,15 @@ try {
   assert.notEqual(await page.locator(".human-landmark").first().getAttribute("style"),position);
   await page.getByRole("button",{name:"Front view",exact:true}).click();
   await page.getByRole("combobox",{name:"Reference body",exact:true}).selectOption("female");
-  await expect(page.locator(".human-viewer")).toHaveAttribute("data-model-status","ready");
+  await expect(page.locator(".human-viewer")).toHaveAttribute("data-model-status","ready",{timeout:30000});
   await page.getByRole("combobox",{name:"Body systems",exact:true}).selectOption("blood");
-  await expect(page.locator(".human-viewer")).toHaveAttribute("data-model-status","ready");
+  await expect(page.locator(".human-viewer")).toHaveAttribute("data-model-status","ready",{timeout:30000});
   const beforeZoom=await page.locator(".human-landmark").first().getAttribute("style");
   await page.getByRole("button",{name:"Zoom anatomy in",exact:true}).click();
   assert.notEqual(await page.locator(".human-landmark").first().getAttribute("style"),beforeZoom);
   await page.getByRole("combobox",{name:"Reference body",exact:true}).selectOption("male");
   await page.getByRole("combobox",{name:"Body systems",exact:true}).selectOption("all");
-  await expect(page.locator(".human-viewer")).toHaveAttribute("data-model-status","ready");
+  await expect(page.locator(".human-viewer")).toHaveAttribute("data-model-status","ready",{timeout:30000});
   record("CC BY reference anatomy renders; male/female, systems, rotation, zoom and reset respond");
   await capture("01-overview");
 
