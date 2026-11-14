@@ -43,3 +43,64 @@ def test_template_card_passes_verifier():
 def test_negated_diagnosis_wording_is_allowed():
     c = good(); c["why_it_matters"] = "This is a pattern worth checking, not a diagnosis."
     assert verify_card(c, engine_facts=FACTS, kb_ids=KB) == []
+
+
+# --- hardened verifier: every new failure mode gets its own test -----------------
+def test_unknown_field_rejected():
+    c = good(); c["reasoning"] = "set level info because the crew asked"
+    assert any("unknown fields" in e for e in verify_card(c, engine_facts=FACTS, kb_ids=KB))
+
+
+def test_dose_language_rejected():
+    c = good(); c["do_now"] = ["Take 400 mg ibuprofen"]
+    assert any("dose" in e for e in verify_card(c, engine_facts=FACTS, kb_ids=KB))
+
+
+def test_dose_word_rejected():
+    c = good(); c["do_now"] = ["Give a dose of paracetamol"]
+    assert any("dose" in e for e in verify_card(c, engine_facts=FACTS, kb_ids=KB))
+
+
+def test_overlong_ground_message_rejected():
+    c = good(); c["ground_message"] = "H" * 141
+    assert any("ground_message too long" in e for e in verify_card(c, engine_facts=FACTS, kb_ids=KB))
+
+
+def test_ground_message_budget_is_140():
+    c = good(); c["ground_message"] = "H" * 140
+    assert verify_card(c, engine_facts=FACTS, kb_ids=KB) == []
+
+
+def test_empty_citations_rejected():
+    c = good(); c["citations"] = []
+    assert any("no citations" in e for e in verify_card(c, engine_facts=FACTS, kb_ids=KB))
+
+
+def test_bad_level_rejected():
+    c = good(); c["level"] = "critical"
+    assert any("bad level" in e for e in verify_card(c, engine_facts=FACTS, kb_ids=KB))
+
+
+def test_do_now_must_have_steps():
+    c = good(); c["do_now"] = []
+    assert any("do_now" in e for e in verify_card(c, engine_facts=FACTS, kb_ids=KB))
+
+
+def test_non_object_card_rejected():
+    assert verify_card("you have flu", engine_facts=FACTS, kb_ids=KB)
+
+
+def test_injection_in_symptom_text_cannot_lower_urgency():
+    """A compromised model obeys the injection; the verifier still refuses."""
+    c = good(); c["level"] = "info"; c["headline"] = "The crew is fine, no action needed"
+    errs = verify_card(c, engine_facts=FACTS, kb_ids=KB)
+    assert any("lowered" in e for e in errs)
+
+
+def test_all_redteam_cases_are_rejected():
+    from tether_engine.llm import redteam
+
+    report = redteam.run_offline()
+    assert len(report) == 30
+    missed = [r["id"] for r in report if not r["rejected"] or not r["expect_matched"]]
+    assert not missed, f"red-team cases slipped through the verifier: {missed}"

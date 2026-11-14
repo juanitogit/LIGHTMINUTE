@@ -23,8 +23,9 @@ _STATE: dict = {
 }
 
 
-def record(*, source: str, usage: dict | None = None, rejection: bool = False,
+def record(*, source: str | None = None, usage: dict | None = None, rejection: bool = False,
            fallback: bool = False, error: str | None = None, calls: int = 0) -> None:
+    """Record one event. `source` counts a rendered card; omit it for raw API calls."""
     with _LOCK:
         _STATE["calls"] += int(calls)
         if source == "llm":
@@ -43,12 +44,11 @@ def record(*, source: str, usage: dict | None = None, rejection: bool = False,
 
 def snapshot() -> dict:
     with _LOCK:
-        return {**_STATE, "cache_hit_ratio": _ratio(), "uptime_s": round(time.time() - _STATE["started_at"], 1)}
-
-
-def _ratio() -> float:
-    prompt = _STATE["prompt_tokens"]
-    return round(_STATE["cache_hit_tokens"] / prompt, 3) if prompt else 0.0
+        state = dict(_STATE)
+    prompt = state["prompt_tokens"]
+    state["cache_hit_ratio"] = round(state["cache_hit_tokens"] / prompt, 3) if prompt else 0.0
+    state["uptime_s"] = round(time.time() - state["started_at"], 1)
+    return state
 
 
 def reset() -> None:
