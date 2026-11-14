@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  LIGHTMINUTE crew tablet - static sitemap for https://lightminute.pages.dev/
+  The app is a single-document SPA (no path routes), so only "/" is indexable.
+  Update <lastmod> whenever a user-visible change ships.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://lightminute.pages.dev/</loc>
+    <lastmod>2026-11-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
