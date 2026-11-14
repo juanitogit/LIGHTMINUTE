@@ -63,6 +63,9 @@
       "handoff/a3.md",
       "apps/crew-tablet/screenshots/",
       "apps/crew-tablet/public/logo-lightminute.svg",
+      "apps/crew-tablet/public/_headers",
+      "apps/crew-tablet/public/robots.txt",
+      "apps/crew-tablet/public/sitemap.xml",
       "apps/crew-tablet/tests/"
     ]
   },
@@ -98,6 +101,7 @@
       "docs/CHECKLIST-IMPLEMENTACION-2026-11-14.md",
       "docs/ARCHITECTURE.md",
       "docs/reportes.md",
+      "docs/seo-deploy.md",
       "docs/FOLDER_STRUCTURE.md",
       "docs/SUBMISSION.md",
       "docs/AstroVital_",

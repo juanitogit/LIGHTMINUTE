@@ -6,7 +6,7 @@ sources: [local integration checks, docs/CHECKLIST-IMPLEMENTACION-2026-11-14.md]
 ---
 # TETHER — checklist de implementación y comprobación
 
-> **Actualización de integración, 14 de noviembre:** el propietario autorizó expresamente «haz merge y luego push». Se integra el trabajo revisado con `origin/main` en `41a9da2`, conservando el nombre LIGHTMINUTE y su logo. Las referencias siguientes a HEAD `45188ca` y a ausencia de commit/push describen el cierre anterior a esta autorización. El resultado de publicación se comprueba contra el historial y el remoto; las pruebas locales no equivalen a CI remota.
+> **Actualización de integración, 14 de noviembre:** el propietario autorizó expresamente «haz merge y luego push». Se integra el trabajo revisado con `origin/main` en `41a9da2`, conservando el nombre LIGHTMINUTE y su logo. Tras una pausa solicitada por el propietario se renovó la autorización y se incorporó además `origin/main` en `e6eb427` (SEO, sitemap y robots). Las referencias siguientes a HEAD `45188ca` y a ausencia de commit/push describen el cierre anterior a esta autorización. El resultado de publicación se comprueba contra el historial y el remoto; las pruebas locales no equivalen a CI remota.
 
 Fecha: **14 de noviembre de 2026**. Evento: **Space Apps Challenge Neiva 2026**.
 Repositorio local: `C:\Users\abel1\Desktop\tether-kit\tether-kit\project`.
