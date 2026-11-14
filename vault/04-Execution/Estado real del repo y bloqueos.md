@@ -35,7 +35,7 @@ El **motor y la evidencia científica están construidos y probados**; falta tod
 | 12 skills del agente | [.agents/skills](../../project/.agents/skills/) | [[Indice de skills]] |
 
 ### Demo killer: confirmado con los datos reales
-Extraído de `demo-data.json` (tripulante A, semilla 0): días 8–14 `info` y `concordant_normal`; **día 15** salta a `act` con síndrome 2.66; **día 16** FC **72.59** → Tierra `normal`, personal `unusual_high`, patrón **`hidden_in_range`**, síndrome **3.48** (línea 2.33), atribución `individual`. El día 17 baja a `watch` y el 18 vuelve a `act`: el relato del pitch debe decir "señal sostenida con fluctuación", no "monótona".
+Extraído de `demo-data.json` (tripulante A, semilla 0): días 8–14 `info` y `concordant_normal`; **día 15** salta a `act` con síndrome 2.34; **día 16** FC **68.50** → Tierra `normal`, personal `unusual_high`, patrón **`hidden_in_range`**, síndrome **4.30** (línea 2.33). El día 17 baja a `info` y el 18 vuelve a `act`: el relato del pitch debe decir "señal sostenida con fluctuación", no "monótona".
 
 ## 2. Lo que NO existe todavía
 > ⚠️ **Superado el 14-nov:** A1–A4 ya están en `main` (pipeline, QC, escenarios, API, tablet, runner y consola).

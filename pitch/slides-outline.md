@@ -17,7 +17,7 @@ Title: *Your body's baseline, even when Earth is out of reach.*
 
 ## 3 — The demo moment
 Title: *Normal for the population. Unusual for him.*
-- Screenshot: three lenses at day 16, HR 72.6 bpm, `hidden_in_range`.
+- Screenshot: three lenses at day 16, HR 68.5 bpm, `hidden_in_range`.
 - Screenshot: syndrome score crossing 2.33 while no single indicator does.
 - One line: "a fixed range stays silent exactly when it matters."
 

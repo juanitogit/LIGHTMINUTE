@@ -25,7 +25,7 @@ updated: 2026-11-14
 ## P1 — diferenciadores con más retorno en jueceo
 6. **`cmo_fever` como "aha"**: el médico es el paciente → otro tripulante ejecuta el protocolo + traspaso de rol.
 7. **Lentes en desacuerdo + contrafactual**: toggle "¿qué habría dicho una regla fija?" junto al z personal y el síndrome. Hace visible el argumento sin explicarlo.
-8. **Síndrome antes que indicador**: gráfico que cruza 3.48 mientras ningún indicador solo lo hace (la evidencia real de validación: 70/96/100 vs 22/41/85).
+8. **Síndrome antes que indicador**: gráfico que cruza 4.30 mientras ningún indicador solo lo hace (la evidencia real de validación: 71/96/100 vs 18/38/91).
 9. **Atribución a nivel tripulación**: mismo patrón en 2+ personas → causa ambiental compartida (CO₂) vs individual (infección) → acciones distintas.
 10. **Retraso con consentimiento por niveles**: cola store-and-forward, cuenta regresiva, mensaje ≤140 autosuficiente; texto conductual no sale del dispositivo por defecto.
 11. **Auditoría visible**: cadena de hashes con badge "audit ok" en la consola de tierra.

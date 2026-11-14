@@ -41,7 +41,7 @@ crew gets cited **Decision Cards** that still work when the model, the link, or 
 
 - **Three lenses side by side** — Earth rule, space-adapted rule, and *your own baseline* —
   with a named pattern when they disagree. At mission day 16 the demo crew member's resting
-  HR of 72.6 bpm is *normal* for the population and *unusual for him* (`hidden_in_range`):
+  HR of 68.5 bpm is *normal* for the population and *unusual for him* (`hidden_in_range`):
   a fixed range stays silent exactly when it matters.
 - **Syndrome early warning** with a crew-level view: shared exposure vs individual finding.
 - **The LLM never decides.** Numbers and urgency come from the engine; a verifier rejects
