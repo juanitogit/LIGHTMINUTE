@@ -3,6 +3,11 @@ import type { Mesh, Material, Object3D, SkinnedMesh, Group } from "three";
 import { indicatorMeta, REGION_LABEL, RISK_REGION, type BodyRegion } from "../lib/meta";
 import type { Reading } from "../lib/types";
 import { Icon } from "./Icon";
+// Physiology simulation – isolated mathematical engine (no LLM, no diagnosis)
+import { PhysiologySimulationEngine } from "../physiology/engine";
+import { Physiology3DAdapter } from "../physiology/adapter";
+import type { OrganVisualizationMap } from "../physiology/types";
+import { OrganStatsPanel } from "./OrganStatsPanel";
 
 /** Anatomically scaled anchor coordinates in world space (scaled to 2.8m). */
 const ANCHORS_BY_BUILD: Record<"male" | "female", Record<BodyRegion, [number, number, number]>> = {
@@ -144,6 +149,36 @@ function isOrganAnomalous(organName: string, readings: Record<string, Reading>):
   return false;
 }
 
+/**
+ * Builds a physiological visual map from current sensor readings.
+ * Uses PhysiologySimulationEngine + Physiology3DAdapter.
+ * [DATOS REALES] where measured, [SIMULADO] where modelled.
+ * Never produces diagnosis; engine is deterministic, LLM is not involved.
+ */
+function buildPhysioVisualMap(readings: Record<string, Reading>, missionDay: number): OrganVisualizationMap {
+  try {
+    const sensors: Record<string, { value: number; hrp_risk?: string }> = {};
+    for (const [key, r] of Object.entries(readings)) {
+      sensors[key] = { value: r.value, hrp_risk: r.hrp_risk };
+    }
+
+    const co2Reading = sensors["co2_ppm"]?.value ?? 2200;
+    const engine = new PhysiologySimulationEngine({
+      gLevel: 0.0,          // ISS microgravity
+      cabinCO2_ppm: co2Reading,
+      missionDay,
+      ambientTemp_C: 22.5,
+      exerciseLoad: 0.0,
+      hydrationFactor: 1.0,
+    });
+
+    const physioState = engine.simulateToMissionDay(missionDay, sensors);
+    return Physiology3DAdapter.mapToVisuals(physioState);
+  } catch {
+    // Fallback: return empty map — existing color logic handles rendering
+    return {};
+  }
+}
 type FocusRegion = "full" | "head" | "chest" | "abdomen" | "legs";
 
 const FOCUS_TARGETS: Record<
@@ -171,10 +206,13 @@ export function BodyModel3D({
   readings,
   crewLabel,
   onOpenIndicator,
+  missionDay = 1,
 }: {
   readings: Record<string, Reading>;
   crewLabel: string;
   onOpenIndicator: (key: string) => void;
+  /** Current mission day for the physiological simulation (default: 1) */
+  missionDay?: number;
 }) {
   const mount = useRef<HTMLDivElement>(null);
   const labels = useRef<Partial<Record<BodyRegion, HTMLButtonElement | null>>>({});
@@ -191,8 +229,11 @@ export function BodyModel3D({
   const [system, setSystem] = useState<"all" | "blood" | "neuro" | "organs">("all");
   const [focusRegion, setFocusRegion] = useState<FocusRegion>("full");
   const [status, setStatus] = useState<"loading" | "ready" | "unavailable">("loading");
+  const [selectedOrgan, setSelectedOrgan] = useState<string | null>(null);
 
   // Keep latest references for render callbacks
+  const selectedOrganRef = useRef(selectedOrgan);
+  selectedOrganRef.current = selectedOrgan;
   const buildRef = useRef(build);
   buildRef.current = build;
 
@@ -207,6 +248,16 @@ export function BodyModel3D({
 
   const organMeshesRef = useRef<OrganMeshRecord[]>([]);
 
+  // Physiological visual map derived from deterministic simulation engine.
+  // Recomputes when readings or missionDay change. [SIMULADO] / [DATOS REALES] tagged per organ.
+  const physioVisualMap = useMemo<OrganVisualizationMap>(
+    () => buildPhysioVisualMap(readings, missionDay),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [readings, missionDay]
+  );
+  const physioVisualMapRef = useRef(physioVisualMap);
+  physioVisualMapRef.current = physioVisualMap;
+
   const regions = useMemo(() => {
     const byRegion = new Map<BodyRegion, { key: string; unusual: boolean; learning: boolean }>();
     for (const [key, reading] of Object.entries(readings)) {
@@ -218,6 +269,7 @@ export function BodyModel3D({
       }
     }
     return [...byRegion.entries()];
+
   }, [readings]);
 
   const regionRef = useRef(regions);
@@ -294,21 +346,65 @@ export function BodyModel3D({
         const render = () => {
           if (stopped) return;
 
-          // Update organ colors and emissive highlights based on granular organ status
+          const now = performance.now() / 1000; // seconds
+          const physioMap = physioVisualMapRef.current;
+
+          // Update organ colors, emissive and pulsation scale from physiological model + anomaly sentinel + selection
           for (const item of organMeshesRef.current) {
             const unusual = isOrganAnomalous(item.name, readingsRef.current);
             const surfaceMat = item.mesh.material as import("three").MeshStandardMaterial;
 
-            if (unusual) {
+            // Check if this organ is actively selected by user click
+            const isSelected = Boolean(
+              selectedOrganRef.current &&
+              (item.name.toLowerCase() === selectedOrganRef.current.toLowerCase() ||
+               item.mesh.name.toLowerCase() === selectedOrganRef.current.toLowerCase() ||
+               selectedOrganRef.current.toLowerCase().includes(item.name.toLowerCase()))
+            );
+
+            // Lookup physiological visual attributes for this organ (case-insensitive fuzzy key match)
+            const organKey = item.name.toLowerCase();
+            const physioEntry =
+              physioMap[organKey] ??
+              physioMap[organKey.replace(/\s+/g, "_")] ??
+              Object.entries(physioMap).find(([k]) => organKey.includes(k) || k.includes(organKey))?.[1] ??
+              null;
+
+            if (isSelected) {
+              // Highlight selected organ with cyan accent glow
+              surfaceMat.color.setHex(0x38bdf8);
+              surfaceMat.emissive.setHex(0x0284c7);
+              surfaceMat.emissiveIntensity = 0.55;
+              surfaceMat.roughness = 0.22;
+            } else if (unusual) {
+              // Existing anomaly sentinel has priority (personal baseline unusual reading)
               surfaceMat.color.setHex(0xe28b62);
               surfaceMat.emissive.setHex(0x8f3212);
               surfaceMat.emissiveIntensity = 0.28;
               surfaceMat.roughness = 0.35;
+            } else if (physioEntry && physioEntry.classification !== "reference") {
+              // Apply physiological simulation color [SIMULADO / DATOS REALES]
+              surfaceMat.color.setHex(physioEntry.colorHex);
+              surfaceMat.emissive.setHex(physioEntry.emissiveHex);
+              surfaceMat.emissiveIntensity = physioEntry.emissiveIntensity;
+              surfaceMat.roughness = physioEntry.classification === "mild_strain" ? 0.35 : 0.5;
             } else {
+              // Default tissue palette
               surfaceMat.color.setHex(item.blood ? 0xc96a79 : item.neuro ? 0xb8a4d5 : 0xb5becb);
               surfaceMat.emissive.setHex(0x000000);
               surfaceMat.emissiveIntensity = 0.0;
               surfaceMat.roughness = 0.5;
+            }
+
+            // Apply organ pulsation scale if physiological data provides frequency
+            // Scaled strictly around organ centroid; capped to max +/- 1.8% to prevent exceeding body
+            if (physioEntry && physioEntry.pulsationFrequency_Hz > 0 && physioEntry.pulsationAmplitude > 0) {
+              const phase = Math.sin(2 * Math.PI * physioEntry.pulsationFrequency_Hz * now);
+              const safeAmp = Math.min(0.018, Math.max(0.0, physioEntry.pulsationAmplitude));
+              const scale = 1.0 + safeAmp * phase;
+              item.mesh.scale.setScalar(scale);
+            } else {
+              item.mesh.scale.setScalar(1.0);
             }
           }
 
@@ -369,6 +465,26 @@ export function BodyModel3D({
           render();
         };
         controls.addEventListener("change", onControlsChange);
+
+        // Lightweight pulsation animation loop (~30fps).
+        // Runs only when at least one organ has an active pulsation frequency.
+        // Paused when stopped; resumes on each RAF tick.
+        let lastPulse = 0;
+        const PULSE_INTERVAL_MS = 33; // ~30 fps
+        const pulsationLoop = (ts: number) => {
+          if (stopped) return;
+          requestAnimationFrame(pulsationLoop);
+          // Check if any organ has non-zero pulsation
+          const hasPulsation = Object.values(physioVisualMapRef.current).some(
+            (v) => v.pulsationFrequency_Hz > 0
+          );
+          if (!hasPulsation) return;
+          if (ts - lastPulse >= PULSE_INTERVAL_MS) {
+            lastPulse = ts;
+            render();
+          }
+        };
+        requestAnimationFrame(pulsationLoop);
 
         const onControlsStart = () => {
           animating = false;
@@ -449,6 +565,27 @@ export function BodyModel3D({
           return geometry;
         }
 
+        /**
+         * Creates an organ geometry centered around its anatomical centroid.
+         * The mesh position will be set to this centroid, so scaling or rotation
+         * occurs strictly around the organ's own center and never shifts out of the body.
+         */
+        function createOrganGeometry(data: SurfaceDef) {
+          const geometry = createGeometry(data);
+          const center = new T.Vector3();
+          if (data.center) {
+            center.set(data.center[0], data.center[1], data.center[2]);
+            geometry.translate(-data.center[0], -data.center[1], -data.center[2]);
+          } else {
+            geometry.computeBoundingBox();
+            if (geometry.boundingBox) {
+              geometry.boundingBox.getCenter(center);
+              geometry.translate(-center.x, -center.y, -center.z);
+            }
+          }
+          return { geometry, center };
+        }
+
         // Build models for both male and female so switching is instant without re-fetching
         const bodyGroups: Record<string, Group> = {};
         const bodyOrgans: Record<string, OrganMeshRecord[]> = {};
@@ -478,8 +615,9 @@ export function BodyModel3D({
             const blood = /heart|aorta|vessel|jugular/.test(organ.name);
             const neuro = /brain|eye|spinal|vertebral/.test(organ.name);
 
+            const { geometry, center } = createOrganGeometry(organ);
             const mesh = new T.Mesh(
-              createGeometry(organ),
+              geometry,
               new T.MeshStandardMaterial({
                 color: blood ? 0xc96a79 : neuro ? 0xb8a4d5 : 0xb5becb,
                 roughness: 0.5,
@@ -488,9 +626,42 @@ export function BodyModel3D({
                 emissiveIntensity: 0.0,
               })
             );
+            mesh.position.copy(center);
             mesh.name = organ.name;
             group.add(mesh);
             organList.push({ name: organ.name, mesh, blood, neuro });
+          }
+
+          // If female build, load female-exclusive uterus reference anatomy
+          if (keyName === "female") {
+            try {
+              const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
+              const gltfLoader = new GLTFLoader();
+              const uterusGltf = await gltfLoader.loadAsync(`${import.meta.env.BASE_URL}assets/anatomy/uterus.glb`);
+              if (!stopped && uterusGltf?.scene) {
+                const uterusGroup = uterusGltf.scene;
+                uterusGroup.name = "uterus";
+                // Pelvic cavity position in Visible Human female
+                uterusGroup.position.set(-0.01, 0.82, 0.02);
+                uterusGroup.traverse((child) => {
+                  if ((child as Mesh).isMesh) {
+                    const m = child as Mesh;
+                    m.name = "uterus";
+                    m.material = new T.MeshStandardMaterial({
+                      color: 0xb5becb,
+                      roughness: 0.5,
+                      metalness: 0.08,
+                      emissive: 0x000000,
+                      emissiveIntensity: 0.0,
+                    });
+                    organList.push({ name: "uterus", mesh: m, blood: false, neuro: false });
+                  }
+                });
+                group.add(uterusGroup);
+              }
+            } catch (err) {
+              console.warn("Uterus GLB reference not loaded:", err);
+            }
           }
 
           group.scale.setScalar(2.8 / reference.height);
@@ -501,9 +672,51 @@ export function BodyModel3D({
           bodyOrgans[keyName] = organList;
         }
 
-        // Double-click raycast to focus on specific organ or body point
+        // Raycasting for organ selection and double-click focus
         const raycaster = new T.Raycaster();
         const mouse = new T.Vector2();
+
+        let pointerDownX = 0;
+        let pointerDownY = 0;
+        let pointerDownTime = 0;
+
+        const onPointerDown = (event: PointerEvent) => {
+          pointerDownX = event.clientX;
+          pointerDownY = event.clientY;
+          pointerDownTime = performance.now();
+        };
+
+        const onPointerUp = (event: PointerEvent) => {
+          if (event.button !== 0) return; // Only primary button
+          const dx = event.clientX - pointerDownX;
+          const dy = event.clientY - pointerDownY;
+          const dt = performance.now() - pointerDownTime;
+
+          // Distinguish clean click from camera orbit drag / pan
+          if (dx * dx + dy * dy > 36 || dt > 350) return;
+
+          const rect = renderer.domElement.getBoundingClientRect();
+          mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+          mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+          raycaster.setFromCamera(mouse, camera);
+
+          const currentOrgans = bodyOrgans[buildRef.current] ?? [];
+          const visibleMeshes = currentOrgans.map((o) => o.mesh).filter((m) => m.visible);
+          const intersects = raycaster.intersectObjects(visibleMeshes, false);
+
+          if (intersects.length > 0 && intersects[0]?.object) {
+            const hitMesh = intersects[0].object as Mesh;
+            const hitName = hitMesh.name || "organ";
+            setSelectedOrgan(hitName);
+          } else {
+            // Clicked background or skin -> clear selection
+            setSelectedOrgan(null);
+          }
+          render();
+        };
+
+        renderer.domElement.addEventListener("pointerdown", onPointerDown);
+        renderer.domElement.addEventListener("pointerup", onPointerUp);
 
         const onDblClick = (event: MouseEvent) => {
           const rect = renderer.domElement.getBoundingClientRect();
@@ -530,6 +743,8 @@ export function BodyModel3D({
           themeObserver.disconnect();
           controls.removeEventListener("change", onControlsChange);
           controls.removeEventListener("start", onControlsStart);
+          renderer.domElement.removeEventListener("pointerdown", onPointerDown);
+          renderer.domElement.removeEventListener("pointerup", onPointerUp);
           renderer.domElement.removeEventListener("dblclick", onDblClick);
           controls.dispose();
           disposeObject(scene);
@@ -543,6 +758,17 @@ export function BodyModel3D({
         const updateSceneDisplay = () => {
           const currentBuild = buildRef.current;
           const currentSystem = systemRef.current;
+
+          // If currently selected organ does not exist in new body reference, clear selection
+          if (selectedOrganRef.current) {
+            const activeOrgans = bodyOrgans[currentBuild] ?? [];
+            const exists = activeOrgans.some(
+              (o) => o.name.toLowerCase() === selectedOrganRef.current?.toLowerCase()
+            );
+            if (!exists) {
+              setSelectedOrgan(null);
+            }
+          }
 
           for (const [keyName, group] of Object.entries(bodyGroups)) {
             const isCurrent = keyName === currentBuild;
@@ -695,6 +921,74 @@ export function BodyModel3D({
           : null}
       </div>
 
+      {/* Selected organ detailed physiological & mathematical statistics panel */}
+      {selectedOrgan ? (
+        <OrganStatsPanel
+          organName={selectedOrgan}
+          visualAttrs={
+            physioVisualMap[selectedOrgan.toLowerCase()] ??
+            physioVisualMap[selectedOrgan.toLowerCase().replace(/\s+/g, "_")] ??
+            Object.entries(physioVisualMap).find(([k]) =>
+              selectedOrgan.toLowerCase().includes(k) || k.includes(selectedOrgan.toLowerCase())
+            )?.[1]
+          }
+          build={build}
+          missionDay={missionDay}
+          onClose={() => {
+            setSelectedOrgan(null);
+            control.current?.refresh();
+          }}
+        />
+      ) : null}
+
+      {/* Physiology simulation panel — deterministic model, not diagnosis (shows when region focused and no single organ selected) */}
+      {!selectedOrgan && status === "ready" && focusRegion !== "full" && (() => {
+        // Map focused region to relevant physio entry keys
+        const regionToPhysioKeys: Record<FocusRegion, string[]> = {
+          full: [],
+          head: ["brain", "left eyeball"],
+          chest: ["heart", "lung"],
+          abdomen: ["liver", "kidney_left"],
+          legs: ["vertebral column"],
+        };
+        const keys = regionToPhysioKeys[focusRegion] ?? [];
+        const entries = keys
+          .map((k) => [k, physioVisualMap[k]] as [string, typeof physioVisualMap[string]])
+          .filter(([, v]) => v != null);
+        if (entries.length === 0) return null;
+
+        return (
+          <div className="physio-panel" aria-label="Physiological simulation data for focused region">
+            <p className="physio-panel__header">
+              Physiological simulation · Click any organ in 3D to inspect mathematical ODE details
+            </p>
+            {entries.map(([key, entry]) => (
+              <details key={key} className="physio-panel__organ">
+                <summary className="physio-panel__organ-name">
+                  {key.replace(/_/g, " ")}
+                  {entry.classification === "mild_strain" ? (
+                    <span className="physio-panel__strain"> ⚠ mild strain</span>
+                  ) : null}
+                </summary>
+                <p className="physio-panel__desc">{entry.statusDescription}</p>
+                <ul className="physio-panel__metrics">
+                  {Object.entries(entry.telemetry).map(([tk, tv]) => (
+                    <li key={tk}>
+                      <span className="physio-panel__metric-label">{tv.label}</span>{" "}
+                      <strong>{tv.value.toFixed(1)}</strong> {tv.unit}{" "}
+                      <span className="physio-panel__tag">{tv.tag}</span>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            ))}
+            <p className="physio-panel__disclaimer">
+              Illustrative reference anatomy · not a crew scan · not a medical device.
+            </p>
+          </div>
+        );
+      })()}
+
       <figcaption>
         <div className="human-controls" role="group" aria-label="Rotate 3D model">
           <button
@@ -734,7 +1028,7 @@ export function BodyModel3D({
           </button>
         </div>
         <p className="human-caption">
-          Drag to rotate · Right-click or 2-finger drag to pan · Double-click to focus point.
+          Drag to rotate · Right-click or 2-finger drag to pan · Click any organ to inspect mathematical model · Double-click to focus point.
           <br />
           Landmarks link to your signals · Illustrative reference anatomy.
         </p>

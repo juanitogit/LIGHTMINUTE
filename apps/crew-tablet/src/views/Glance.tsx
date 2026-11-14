@@ -40,7 +40,12 @@ export function Glance({ scenario, dayNumber, crewId, onCrew, onOpenWhy, onOpenA
       <div className="glance__grid">
         <section className="body-column" aria-labelledby="body-title">
           <header className="body-heading"><div><p className="micro">PERSONAL VIEW</p><h2 id="body-title">Crew {crewId} <span>{roles[crewId]}</span></h2></div><LevelBadge level={member.level} /></header>
-          <BodyModel3D readings={member.indicators} crewLabel={`Crew ${crewId}`} onOpenIndicator={onOpenIndicator} />
+          <BodyModel3D
+            readings={member.indicators}
+            crewLabel={`Crew ${crewId}`}
+            onOpenIndicator={onOpenIndicator}
+            missionDay={dayNumber}
+          />
           <p className="body-context"><span className="landmark-key" />Landmarks reflect the personal lens.<br />{member.learning ? "Your baseline is still learning." : "Compared with your own 95% personal band."}</p>
         </section>
         <div className="glance__side">
