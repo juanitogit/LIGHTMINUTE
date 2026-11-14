@@ -11,5 +11,13 @@
   "space":null},
  {"indicator":"pvt_ms","unit":"ms","hrp_risk":"behavioral","hazard":"closed_environment",
   "earth":null,"space":null,
-  "note":"No fixed range: judge only against the person's own baseline."}
+  "note":"No fixed range: judge only against the person's own baseline."},
+ {"indicator":"co2_ppm","unit":"ppm","hrp_risk":"behavioral","hazard":"closed_environment",
+  "earth":{"low":null,"high":5000,"status":"demo-parameter","source":"demo-parameter: demo ceiling only; NASA-STD-3001 cabin CO2 limits are NOT verified here (see docs/#verify)."},
+  "space":null,
+  "note":"Cabin-level hazard: attribution should be shared, not personal. The personal lens compares against the crew's own recent readings."},
+ {"indicator":"headache_score","unit":"0-10","hrp_risk":"behavioral","hazard":"closed_environment",
+  "earth":{"low":null,"high":3,"status":"demo-parameter","source":"demo-parameter: self-reported daily headache (0-10), demo ceiling only."},
+  "space":null,
+  "note":"Self-report and subjective: context for the crew-level verdict, never a diagnosis."}
 ]

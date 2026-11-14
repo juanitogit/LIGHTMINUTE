@@ -1,0 +1,50 @@
+[
+ {
+  "cabin_co2_ppm": 800.0,
+  "day": 12,
+  "s_scale": 1,
+  "solar_flux_pfu": 29.33
+ },
+ {
+  "cabin_co2_ppm": 800.0,
+  "day": 13,
+  "s_scale": 1,
+  "solar_flux_pfu": 54.67
+ },
+ {
+  "cabin_co2_ppm": 800.0,
+  "day": 14,
+  "s_scale": 1,
+  "solar_flux_pfu": 80.0
+ },
+ {
+  "cabin_co2_ppm": 800.0,
+  "day": 15,
+  "s_scale": 1,
+  "solar_flux_pfu": 80.0
+ },
+ {
+  "cabin_co2_ppm": 800.0,
+  "day": 16,
+  "s_scale": 1,
+  "solar_flux_pfu": 80.0
+ },
+ {
+  "cabin_co2_ppm": 800.0,
+  "day": 17,
+  "s_scale": 1,
+  "solar_flux_pfu": 80.0
+ },
+ {
+  "cabin_co2_ppm": 800.0,
+  "day": 18,
+  "s_scale": 1,
+  "solar_flux_pfu": 80.0
+ },
+ {
+  "cabin_co2_ppm": 800.0,
+  "day": 19,
+  "s_scale": 1,
+  "solar_flux_pfu": 80.0
+ }
+]

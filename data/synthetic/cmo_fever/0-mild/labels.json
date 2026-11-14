@@ -1,0 +1,19 @@
+{
+ "affected": [
+  "A"
+ ],
+ "days": 24,
+ "expected_indicators": [
+  "pvt_ms",
+  "rest_hr",
+  "sleep_h",
+  "temp_c"
+ ],
+ "expected_level": "watch",
+ "note": "Synthetic demo labels. Ground truth for validation only; the engine must not read this file.",
+ "onset_day": 15,
+ "scenario": "cmo_fever",
+ "seed": 0,
+ "synthetic": true,
+ "variant": "mild"
+}

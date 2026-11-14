@@ -1,0 +1,19 @@
+{
+ "affected": [
+  "C"
+ ],
+ "days": 24,
+ "expected_indicators": [
+  "pvt_ms",
+  "rest_hr",
+  "sleep_h",
+  "temp_c"
+ ],
+ "expected_level": "act",
+ "note": "Synthetic demo labels. Ground truth for validation only; the engine must not read this file.",
+ "onset_day": 12,
+ "scenario": "sep_sleep_loss",
+ "seed": 0,
+ "synthetic": true,
+ "variant": "strong"
+}

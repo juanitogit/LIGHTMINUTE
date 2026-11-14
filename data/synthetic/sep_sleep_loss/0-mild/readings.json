@@ -1,0 +1,1363 @@
+{
+ "affected": [
+  "C"
+ ],
+ "crew": {
+  "A": {
+   "label": "A - Crew Medical Officer",
+   "role": "CMO"
+  },
+  "B": {
+   "label": "B - Commander",
+   "role": "CDR"
+  },
+  "C": {
+   "label": "C - Mission Specialist 1",
+   "role": "MS1"
+  },
+  "D": {
+   "label": "D - Mission Specialist 2",
+   "role": "MS2"
+  }
+ },
+ "days": [
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 859.79,
+      "headache_score": 0.0,
+      "pvt_ms": 253.64,
+      "rest_hr": 55.19,
+      "sleep_h": 6.67,
+      "temp_c": 36.68
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 806.38,
+      "headache_score": 0.0,
+      "pvt_ms": 302.56,
+      "rest_hr": 56.65,
+      "sleep_h": 5.45,
+      "temp_c": 36.24
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 840.04,
+      "headache_score": 0.44,
+      "pvt_ms": 264.72,
+      "rest_hr": 58.66,
+      "sleep_h": 7.21,
+      "temp_c": 36.31
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 811.51,
+      "headache_score": 0.56,
+      "pvt_ms": 376.33,
+      "rest_hr": 51.52,
+      "sleep_h": 6.54,
+      "temp_c": 36.68
+     }
+    }
+   },
+   "day": 1,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 0,
+    "solar_flux_pfu": 5.97
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 778.76,
+      "headache_score": 0.28,
+      "pvt_ms": 282.73,
+      "rest_hr": 58.88,
+      "sleep_h": 6.75,
+      "temp_c": 36.6
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 819.44,
+      "headache_score": 0.72,
+      "pvt_ms": null,
+      "rest_hr": 48.02,
+      "sleep_h": 5.73,
+      "temp_c": 36.57
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 766.16,
+      "headache_score": 0.22,
+      "pvt_ms": 249.95,
+      "rest_hr": 57.7,
+      "sleep_h": 7.06,
+      "temp_c": 36.43
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 772.08,
+      "headache_score": 0.0,
+      "pvt_ms": 353.96,
+      "rest_hr": 51.9,
+      "sleep_h": 7.89,
+      "temp_c": 36.8
+     }
+    }
+   },
+   "day": 2,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 0,
+    "solar_flux_pfu": 5.43
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 800.29,
+      "headache_score": null,
+      "pvt_ms": 307.76,
+      "rest_hr": 54.82,
+      "sleep_h": 6.48,
+      "temp_c": 36.67
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 874.48,
+      "headache_score": 0.34,
+      "pvt_ms": 310.95,
+      "rest_hr": 53.34,
+      "sleep_h": 5.48,
+      "temp_c": 36.44
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 795.18,
+      "headache_score": 0.7,
+      "pvt_ms": 258.41,
+      "rest_hr": 58.67,
+      "sleep_h": 6.38,
+      "temp_c": 36.22
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 842.96,
+      "headache_score": 0.35,
+      "pvt_ms": 357.25,
+      "rest_hr": 50.52,
+      "sleep_h": 7.65,
+      "temp_c": 36.75
+     }
+    }
+   },
+   "day": 3,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 0,
+    "solar_flux_pfu": 5.69
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 760.14,
+      "headache_score": 0.74,
+      "pvt_ms": 291.93,
+      "rest_hr": 52.77,
+      "sleep_h": 6.95,
+      "temp_c": 36.5
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 779.34,
+      "headache_score": 0.22,
+      "pvt_ms": 299.63,
+      "rest_hr": 54.49,
+      "sleep_h": null,
+      "temp_c": 36.23
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 767.72,
+      "headache_score": 0.24,
+      "pvt_ms": null,
+      "rest_hr": 57.35,
+      "sleep_h": 6.77,
+      "temp_c": 36.45
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 815.21,
+      "headache_score": 0.91,
+      "pvt_ms": 341.6,
+      "rest_hr": 48.8,
+      "sleep_h": 6.46,
+      "temp_c": 36.54
+     }
+    }
+   },
+   "day": 4,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 0,
+    "solar_flux_pfu": 5.13
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 790.25,
+      "headache_score": null,
+      "pvt_ms": 312.05,
+      "rest_hr": 54.16,
+      "sleep_h": 6.74,
+      "temp_c": 36.66
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 779.89,
+      "headache_score": 0.43,
+      "pvt_ms": 267.27,
+      "rest_hr": 47.66,
+      "sleep_h": 5.52,
+      "temp_c": 36.37
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 732.47,
+      "headache_score": 0.0,
+      "pvt_ms": 267.82,
+      "rest_hr": 57.13,
+      "sleep_h": 6.67,
+      "temp_c": 36.35
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 805.34,
+      "headache_score": 0.54,
+      "pvt_ms": 334.52,
+      "rest_hr": 51.51,
+      "sleep_h": 7.77,
+      "temp_c": 36.66
+     }
+    }
+   },
+   "day": 5,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 0,
+    "solar_flux_pfu": 5.86
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 843.81,
+      "headache_score": 0.81,
+      "pvt_ms": 281.85,
+      "rest_hr": 60.14,
+      "sleep_h": 7.77,
+      "temp_c": 36.57
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 803.63,
+      "headache_score": 0.7,
+      "pvt_ms": 321.09,
+      "rest_hr": 48.33,
+      "sleep_h": 5.91,
+      "temp_c": 36.53
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 792.22,
+      "headache_score": 0.8,
+      "pvt_ms": 252.79,
+      "rest_hr": 58.9,
+      "sleep_h": 6.83,
+      "temp_c": 36.2
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 780.13,
+      "headache_score": 0.68,
+      "pvt_ms": 369.9,
+      "rest_hr": 49.72,
+      "sleep_h": 7.38,
+      "temp_c": 36.83
+     }
+    }
+   },
+   "day": 6,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 0,
+    "solar_flux_pfu": 5.96
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 767.01,
+      "headache_score": 0.84,
+      "pvt_ms": 261.25,
+      "rest_hr": 56.45,
+      "sleep_h": 7.81,
+      "temp_c": 36.6
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 718.12,
+      "headache_score": 0.53,
+      "pvt_ms": 323.3,
+      "rest_hr": 52.13,
+      "sleep_h": 5.69,
+      "temp_c": 36.44
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 816.15,
+      "headache_score": 0.15,
+      "pvt_ms": 274.85,
+      "rest_hr": 57.39,
+      "sleep_h": 6.78,
+      "temp_c": 36.1
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 710.53,
+      "headache_score": 0.62,
+      "pvt_ms": 343.33,
+      "rest_hr": 48.8,
+      "sleep_h": 8.25,
+      "temp_c": null
+     }
+    }
+   },
+   "day": 7,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 0,
+    "solar_flux_pfu": 5.18
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 830.74,
+      "headache_score": 0.38,
+      "pvt_ms": 292.0,
+      "rest_hr": 54.57,
+      "sleep_h": 7.19,
+      "temp_c": 36.6
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 834.19,
+      "headache_score": 0.59,
+      "pvt_ms": 290.13,
+      "rest_hr": null,
+      "sleep_h": 5.19,
+      "temp_c": 36.37
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 806.86,
+      "headache_score": 0.0,
+      "pvt_ms": 262.4,
+      "rest_hr": 59.28,
+      "sleep_h": 6.5,
+      "temp_c": 36.3
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 799.64,
+      "headache_score": 0.19,
+      "pvt_ms": 353.43,
+      "rest_hr": 51.72,
+      "sleep_h": 6.53,
+      "temp_c": 36.65
+     }
+    }
+   },
+   "day": 8,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 0,
+    "solar_flux_pfu": 4.02
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 915.71,
+      "headache_score": 0.44,
+      "pvt_ms": 287.11,
+      "rest_hr": 57.97,
+      "sleep_h": 6.31,
+      "temp_c": 36.7
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 821.43,
+      "headache_score": 0.7,
+      "pvt_ms": 294.12,
+      "rest_hr": 49.57,
+      "sleep_h": 5.98,
+      "temp_c": 36.42
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 810.59,
+      "headache_score": 0.12,
+      "pvt_ms": 244.49,
+      "rest_hr": 57.5,
+      "sleep_h": 6.4,
+      "temp_c": 36.29
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 769.18,
+      "headache_score": 0.69,
+      "pvt_ms": 386.35,
+      "rest_hr": 46.35,
+      "sleep_h": 7.75,
+      "temp_c": 36.86
+     }
+    }
+   },
+   "day": 9,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 0,
+    "solar_flux_pfu": 5.44
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 799.46,
+      "headache_score": 0.1,
+      "pvt_ms": 289.81,
+      "rest_hr": 54.39,
+      "sleep_h": 6.66,
+      "temp_c": 36.57
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 774.44,
+      "headache_score": 0.86,
+      "pvt_ms": 278.87,
+      "rest_hr": 51.18,
+      "sleep_h": 5.9,
+      "temp_c": 36.13
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 816.57,
+      "headache_score": 0.03,
+      "pvt_ms": 268.29,
+      "rest_hr": 60.66,
+      "sleep_h": 7.03,
+      "temp_c": 36.41
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 758.03,
+      "headache_score": 0.54,
+      "pvt_ms": 335.82,
+      "rest_hr": 53.03,
+      "sleep_h": 7.56,
+      "temp_c": 36.7
+     }
+    }
+   },
+   "day": 10,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 0,
+    "solar_flux_pfu": 4.34
+   }
+  },
+  {
+   "context": "eva",
+   "crew": {
+    "A": {
+     "context": "eva",
+     "indicators": {
+      "co2_ppm": 816.02,
+      "headache_score": 1.01,
+      "pvt_ms": 274.87,
+      "rest_hr": 58.6,
+      "sleep_h": 6.65,
+      "temp_c": 36.54
+     }
+    },
+    "B": {
+     "context": "eva",
+     "indicators": {
+      "co2_ppm": 839.59,
+      "headache_score": 0.75,
+      "pvt_ms": 316.54,
+      "rest_hr": 46.36,
+      "sleep_h": 5.69,
+      "temp_c": 36.36
+     }
+    },
+    "C": {
+     "context": "eva",
+     "indicators": {
+      "co2_ppm": 775.23,
+      "headache_score": 0.13,
+      "pvt_ms": 265.13,
+      "rest_hr": 56.36,
+      "sleep_h": 6.73,
+      "temp_c": 36.45
+     }
+    },
+    "D": {
+     "context": "eva",
+     "indicators": {
+      "co2_ppm": 827.5,
+      "headache_score": 0.53,
+      "pvt_ms": 345.69,
+      "rest_hr": 46.8,
+      "sleep_h": 8.37,
+      "temp_c": 36.8
+     }
+    }
+   },
+   "day": 11,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 0,
+    "solar_flux_pfu": 5.99
+   }
+  },
+  {
+   "context": "eva",
+   "crew": {
+    "A": {
+     "context": "eva",
+     "indicators": {
+      "co2_ppm": 737.24,
+      "headache_score": 0.27,
+      "pvt_ms": 274.36,
+      "rest_hr": 54.04,
+      "sleep_h": 7.34,
+      "temp_c": 36.86
+     }
+    },
+    "B": {
+     "context": "eva",
+     "indicators": {
+      "co2_ppm": 810.08,
+      "headache_score": 0.61,
+      "pvt_ms": 295.0,
+      "rest_hr": 49.86,
+      "sleep_h": 5.49,
+      "temp_c": 36.12
+     }
+    },
+    "C": {
+     "context": "eva",
+     "indicators": {
+      "co2_ppm": 749.43,
+      "headache_score": 0.68,
+      "pvt_ms": 243.16,
+      "rest_hr": 61.98,
+      "sleep_h": 5.84,
+      "temp_c": 36.42
+     }
+    },
+    "D": {
+     "context": "eva",
+     "indicators": {
+      "co2_ppm": 806.88,
+      "headache_score": 0.32,
+      "pvt_ms": 355.33,
+      "rest_hr": 46.28,
+      "sleep_h": 7.56,
+      "temp_c": 36.61
+     }
+    }
+   },
+   "day": 12,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 1,
+    "solar_flux_pfu": 29.33
+   }
+  },
+  {
+   "context": "sleep_disrupted",
+   "crew": {
+    "A": {
+     "context": "sleep_disrupted",
+     "indicators": {
+      "co2_ppm": 736.81,
+      "headache_score": 0.02,
+      "pvt_ms": 276.18,
+      "rest_hr": 56.19,
+      "sleep_h": 6.54,
+      "temp_c": 36.43
+     }
+    },
+    "B": {
+     "context": "sleep_disrupted",
+     "indicators": {
+      "co2_ppm": 797.98,
+      "headache_score": 0.83,
+      "pvt_ms": 318.35,
+      "rest_hr": 50.52,
+      "sleep_h": 5.86,
+      "temp_c": 36.34
+     }
+    },
+    "C": {
+     "context": "sleep_disrupted",
+     "indicators": {
+      "co2_ppm": 843.54,
+      "headache_score": 0.0,
+      "pvt_ms": 265.59,
+      "rest_hr": 58.03,
+      "sleep_h": null,
+      "temp_c": 36.19
+     }
+    },
+    "D": {
+     "context": "sleep_disrupted",
+     "indicators": {
+      "co2_ppm": 763.1,
+      "headache_score": 0.77,
+      "pvt_ms": 365.12,
+      "rest_hr": 51.83,
+      "sleep_h": 7.49,
+      "temp_c": 36.84
+     }
+    }
+   },
+   "day": 13,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 1,
+    "solar_flux_pfu": 54.67
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 850.44,
+      "headache_score": 1.09,
+      "pvt_ms": 299.47,
+      "rest_hr": 55.41,
+      "sleep_h": 7.39,
+      "temp_c": 36.63
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 785.04,
+      "headache_score": 0.64,
+      "pvt_ms": 297.5,
+      "rest_hr": 48.93,
+      "sleep_h": 5.75,
+      "temp_c": 36.52
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 830.81,
+      "headache_score": 0.02,
+      "pvt_ms": 276.75,
+      "rest_hr": 59.37,
+      "sleep_h": 6.43,
+      "temp_c": 36.33
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 771.33,
+      "headache_score": 0.75,
+      "pvt_ms": 383.57,
+      "rest_hr": 49.1,
+      "sleep_h": 7.76,
+      "temp_c": null
+     }
+    }
+   },
+   "day": 14,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 1,
+    "solar_flux_pfu": 80.0
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 792.64,
+      "headache_score": 0.3,
+      "pvt_ms": 290.09,
+      "rest_hr": 55.28,
+      "sleep_h": 6.99,
+      "temp_c": 36.6
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 843.25,
+      "headache_score": 0.7,
+      "pvt_ms": 293.97,
+      "rest_hr": 52.52,
+      "sleep_h": 5.37,
+      "temp_c": 36.07
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 855.78,
+      "headache_score": 0.04,
+      "pvt_ms": 258.11,
+      "rest_hr": 60.73,
+      "sleep_h": 6.28,
+      "temp_c": 36.33
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 839.58,
+      "headache_score": 0.51,
+      "pvt_ms": 357.28,
+      "rest_hr": 49.31,
+      "sleep_h": 8.08,
+      "temp_c": 36.53
+     }
+    }
+   },
+   "day": 15,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 1,
+    "solar_flux_pfu": 80.0
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 783.39,
+      "headache_score": 0.87,
+      "pvt_ms": 269.58,
+      "rest_hr": 57.94,
+      "sleep_h": 7.2,
+      "temp_c": 36.47
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": null,
+      "headache_score": 0.94,
+      "pvt_ms": 302.15,
+      "rest_hr": 54.71,
+      "sleep_h": 5.48,
+      "temp_c": 36.44
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 867.73,
+      "headache_score": 0.53,
+      "pvt_ms": null,
+      "rest_hr": 60.33,
+      "sleep_h": 5.9,
+      "temp_c": 36.27
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 759.72,
+      "headache_score": 0.57,
+      "pvt_ms": 349.29,
+      "rest_hr": 50.09,
+      "sleep_h": 7.66,
+      "temp_c": 36.75
+     }
+    }
+   },
+   "day": 16,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 1,
+    "solar_flux_pfu": 80.0
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 700.28,
+      "headache_score": 0.49,
+      "pvt_ms": 287.88,
+      "rest_hr": 56.13,
+      "sleep_h": 7.0,
+      "temp_c": 36.34
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 827.65,
+      "headache_score": 0.57,
+      "pvt_ms": 318.32,
+      "rest_hr": 48.52,
+      "sleep_h": 6.15,
+      "temp_c": 36.39
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 795.44,
+      "headache_score": 0.46,
+      "pvt_ms": null,
+      "rest_hr": 58.49,
+      "sleep_h": 5.51,
+      "temp_c": 36.28
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 789.21,
+      "headache_score": 0.33,
+      "pvt_ms": 349.19,
+      "rest_hr": 48.74,
+      "sleep_h": 6.79,
+      "temp_c": 36.65
+     }
+    }
+   },
+   "day": 17,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 1,
+    "solar_flux_pfu": 80.0
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 798.56,
+      "headache_score": 0.66,
+      "pvt_ms": 294.06,
+      "rest_hr": 57.05,
+      "sleep_h": 7.05,
+      "temp_c": 36.67
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": null,
+      "headache_score": 0.85,
+      "pvt_ms": 296.21,
+      "rest_hr": 52.06,
+      "sleep_h": 6.05,
+      "temp_c": 36.35
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 781.44,
+      "headache_score": 0.0,
+      "pvt_ms": null,
+      "rest_hr": 62.41,
+      "sleep_h": 5.5,
+      "temp_c": 36.19
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 861.47,
+      "headache_score": 0.85,
+      "pvt_ms": 353.71,
+      "rest_hr": 48.9,
+      "sleep_h": 8.31,
+      "temp_c": 36.58
+     }
+    }
+   },
+   "day": 18,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 1,
+    "solar_flux_pfu": 80.0
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 817.29,
+      "headache_score": 0.05,
+      "pvt_ms": 263.08,
+      "rest_hr": 58.29,
+      "sleep_h": 8.11,
+      "temp_c": 36.59
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 754.34,
+      "headache_score": 0.0,
+      "pvt_ms": 310.1,
+      "rest_hr": 49.21,
+      "sleep_h": 5.88,
+      "temp_c": 36.33
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 829.57,
+      "headache_score": 0.14,
+      "pvt_ms": 255.83,
+      "rest_hr": 62.02,
+      "sleep_h": 6.29,
+      "temp_c": 36.46
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 763.81,
+      "headache_score": 0.79,
+      "pvt_ms": 361.96,
+      "rest_hr": 49.14,
+      "sleep_h": 7.31,
+      "temp_c": 36.64
+     }
+    }
+   },
+   "day": 19,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 1,
+    "solar_flux_pfu": 80.0
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 805.82,
+      "headache_score": 0.38,
+      "pvt_ms": 312.15,
+      "rest_hr": 54.31,
+      "sleep_h": 6.73,
+      "temp_c": 36.83
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 782.06,
+      "headache_score": 1.06,
+      "pvt_ms": 287.2,
+      "rest_hr": 49.9,
+      "sleep_h": 5.72,
+      "temp_c": 36.48
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 820.89,
+      "headache_score": 0.5,
+      "pvt_ms": 247.43,
+      "rest_hr": 58.68,
+      "sleep_h": 6.4,
+      "temp_c": 36.42
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 849.23,
+      "headache_score": 0.82,
+      "pvt_ms": 362.13,
+      "rest_hr": 49.39,
+      "sleep_h": 7.58,
+      "temp_c": 36.57
+     }
+    }
+   },
+   "day": 20,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 0,
+    "solar_flux_pfu": 5.87
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 877.49,
+      "headache_score": 0.85,
+      "pvt_ms": 262.19,
+      "rest_hr": 55.35,
+      "sleep_h": 6.67,
+      "temp_c": 36.26
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 816.29,
+      "headache_score": 0.0,
+      "pvt_ms": 307.26,
+      "rest_hr": 49.8,
+      "sleep_h": 5.95,
+      "temp_c": 36.44
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 842.99,
+      "headache_score": 0.67,
+      "pvt_ms": 261.98,
+      "rest_hr": 58.98,
+      "sleep_h": 6.4,
+      "temp_c": 36.38
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 734.09,
+      "headache_score": 0.77,
+      "pvt_ms": 372.07,
+      "rest_hr": 49.75,
+      "sleep_h": 7.23,
+      "temp_c": 36.53
+     }
+    }
+   },
+   "day": 21,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 0,
+    "solar_flux_pfu": 4.14
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 771.04,
+      "headache_score": 0.02,
+      "pvt_ms": 250.81,
+      "rest_hr": 57.72,
+      "sleep_h": 6.73,
+      "temp_c": 36.57
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 777.89,
+      "headache_score": 0.0,
+      "pvt_ms": 290.3,
+      "rest_hr": null,
+      "sleep_h": 5.05,
+      "temp_c": 36.36
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 781.91,
+      "headache_score": 0.0,
+      "pvt_ms": 238.59,
+      "rest_hr": 56.57,
+      "sleep_h": 6.52,
+      "temp_c": 36.2
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 805.24,
+      "headache_score": 0.84,
+      "pvt_ms": 372.41,
+      "rest_hr": 48.38,
+      "sleep_h": 8.3,
+      "temp_c": 36.68
+     }
+    }
+   },
+   "day": 22,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 0,
+    "solar_flux_pfu": 5.73
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 745.41,
+      "headache_score": 0.37,
+      "pvt_ms": 272.8,
+      "rest_hr": 53.92,
+      "sleep_h": 7.5,
+      "temp_c": 36.43
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": null,
+      "headache_score": 0.34,
+      "pvt_ms": 298.72,
+      "rest_hr": 49.9,
+      "sleep_h": 5.61,
+      "temp_c": 36.4
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 870.15,
+      "headache_score": 0.64,
+      "pvt_ms": 253.98,
+      "rest_hr": 55.5,
+      "sleep_h": 6.43,
+      "temp_c": 36.02
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 823.85,
+      "headache_score": 0.6,
+      "pvt_ms": 383.43,
+      "rest_hr": 48.73,
+      "sleep_h": 7.27,
+      "temp_c": 36.81
+     }
+    }
+   },
+   "day": 23,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 0,
+    "solar_flux_pfu": 5.37
+   }
+  },
+  {
+   "context": "rest",
+   "crew": {
+    "A": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 780.01,
+      "headache_score": 0.93,
+      "pvt_ms": 271.75,
+      "rest_hr": 53.69,
+      "sleep_h": 7.24,
+      "temp_c": 36.7
+     }
+    },
+    "B": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 815.63,
+      "headache_score": 0.32,
+      "pvt_ms": 294.53,
+      "rest_hr": 49.33,
+      "sleep_h": 5.75,
+      "temp_c": 36.37
+     }
+    },
+    "C": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 815.89,
+      "headache_score": 0.66,
+      "pvt_ms": 242.68,
+      "rest_hr": 57.42,
+      "sleep_h": 6.6,
+      "temp_c": 36.29
+     }
+    },
+    "D": {
+     "context": "rest",
+     "indicators": {
+      "co2_ppm": 848.81,
+      "headache_score": 0.97,
+      "pvt_ms": 333.57,
+      "rest_hr": 45.05,
+      "sleep_h": 6.45,
+      "temp_c": 36.55
+     }
+    }
+   },
+   "day": 24,
+   "hazards": {
+    "cabin_co2_ppm": 800.0,
+    "s_scale": 0,
+    "solar_flux_pfu": 4.91
+   }
+  }
+ ],
+ "days_requested": 24,
+ "delay_profile": "moon",
+ "description": "A solar radiation storm (NOAA S-scale) disrupts the cabin and the schedule from day 12: sleep drops and one crew member's HR and reaction time drift.",
+ "indicators": [
+  "rest_hr",
+  "temp_c",
+  "sleep_h",
+  "pvt_ms",
+  "co2_ppm",
+  "headache_score"
+ ],
+ "name": "sep_sleep_loss",
+ "onset_day": 12,
+ "peak_severity": 1.0,
+ "seed": 0,
+ "synthetic": true,
+ "title": "Solar particle event with sleep loss",
+ "variant": "mild"
+}
