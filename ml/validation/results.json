@@ -1,0 +1,142 @@
+{
+ "1.0": {
+  "thresholds": {
+   "A": 2.8765723096952724,
+   "B": 3.612725045935985,
+   "B2": 9.867269940913058,
+   "C": 2.503888154222345
+  },
+  "fa_per_week": {
+   "A": 0.10286956521739131,
+   "B": 0.10043478260869565,
+   "B2": 0.09921739130434783,
+   "C": 0.10104347826086957
+  },
+  "results": {
+   "mild(0.8 sd)": {
+    "A": {
+     "recall": 0.182,
+     "median_delay_days": 4.0
+    },
+    "B": {
+     "recall": 0.22,
+     "median_delay_days": 4.0
+    },
+    "B2": {
+     "recall": 0.18,
+     "median_delay_days": 5.0
+    },
+    "C": {
+     "recall": 0.704,
+     "median_delay_days": 3.0
+    }
+   },
+   "moderate(1.6 sd)": {
+    "A": {
+     "recall": 0.38,
+     "median_delay_days": 3.0
+    },
+    "B": {
+     "recall": 0.412,
+     "median_delay_days": 3.0
+    },
+    "B2": {
+     "recall": 0.716,
+     "median_delay_days": 6.0
+    },
+    "C": {
+     "recall": 0.956,
+     "median_delay_days": 2.0
+    }
+   },
+   "strong(3.0 sd)": {
+    "A": {
+     "recall": 0.908,
+     "median_delay_days": 2.0
+    },
+    "B": {
+     "recall": 0.854,
+     "median_delay_days": 2.0
+    },
+    "B2": {
+     "recall": 1.0,
+     "median_delay_days": 3.0
+    },
+    "C": {
+     "recall": 1.0,
+     "median_delay_days": 1.0
+    }
+   }
+  }
+ },
+ "2.5": {
+  "thresholds": {
+   "A": 2.776241443913258,
+   "B": 2.8906882530528093,
+   "B2": 9.672986590389195,
+   "C": 2.205143917686707
+  },
+  "fa_per_week": {
+   "A": 0.14365217391304347,
+   "B": 0.10408695652173913,
+   "B2": 0.15217391304347827,
+   "C": 0.10043478260869565
+  },
+  "results": {
+   "mild(0.8 sd)": {
+    "A": {
+     "recall": 0.086,
+     "median_delay_days": 2.0
+    },
+    "B": {
+     "recall": 0.262,
+     "median_delay_days": 4.0
+    },
+    "B2": {
+     "recall": 0.094,
+     "median_delay_days": 5.0
+    },
+    "C": {
+     "recall": 0.664,
+     "median_delay_days": 3.0
+    }
+   },
+   "moderate(1.6 sd)": {
+    "A": {
+     "recall": 0.126,
+     "median_delay_days": 3.0
+    },
+    "B": {
+     "recall": 0.496,
+     "median_delay_days": 3.0
+    },
+    "B2": {
+     "recall": 0.396,
+     "median_delay_days": 6.0
+    },
+    "C": {
+     "recall": 0.934,
+     "median_delay_days": 2.0
+    }
+   },
+   "strong(3.0 sd)": {
+    "A": {
+     "recall": 0.266,
+     "median_delay_days": 3.0
+    },
+    "B": {
+     "recall": 0.88,
+     "median_delay_days": 2.0
+    },
+    "B2": {
+     "recall": 0.978,
+     "median_delay_days": 4.0
+    },
+    "C": {
+     "recall": 0.998,
+     "median_delay_days": 1.0
+    }
+   }
+  }
+ }
+}

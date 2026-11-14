@@ -1,0 +1,15 @@
+[
+ {"indicator":"rest_hr","unit":"bpm","hrp_risk":"cardiovascular","hazard":"altered_gravity",
+  "earth":{"low":60,"high":100,"status":"earth-standard","source":"standard adult resting range"},
+  "space":null},
+ {"indicator":"temp_c","unit":"C","hrp_risk":"immune","hazard":"altered_gravity",
+  "earth":{"low":36.1,"high":37.5,"status":"earth-standard","source":"standard adult oral range (approx.)"},
+  "space":null,
+  "note":"NASA HRP is studying microgravity/exercise core-temperature behaviour; fill space lens from a verified source."},
+ {"indicator":"sleep_h","unit":"h","hrp_risk":"behavioral","hazard":"isolation",
+  "earth":{"low":7.0,"high":9.0,"status":"earth-standard","source":"adult sleep recommendation (approx.)"},
+  "space":null},
+ {"indicator":"pvt_ms","unit":"ms","hrp_risk":"behavioral","hazard":"closed_environment",
+  "earth":null,"space":null,
+  "note":"No fixed range: judge only against the person's own baseline."}
+]

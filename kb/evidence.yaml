@@ -1,0 +1,27 @@
+# Cited knowledge base. The LLM may only cite ids defined here. status: verified | unverified
+# Add entries ONLY with a real source you opened. `claim` is plain language, no doses.
+- id: HRP-RISKS-OVERVIEW
+  claim: NASA HRP ties 30+ health risks to five hazards (radiation, isolation/confinement, distance from Earth, altered gravity, hostile/closed environments); effects differ for LEO, Moon, Mars.
+  source: https://www.nasa.gov/hrp/risks
+  status: verified
+- id: HRP-RED-RISKS
+  claim: Highest-priority ("red") Mars risks - radiation effects (cancer, cardiovascular, cognitive), SANS, behavioral health/performance decrements, inadequate food and nutrition.
+  source: https://pmc.ncbi.nlm.nih.gov/articles/PMC7645687
+  status: verified
+- id: HRP-CORE-TEMP-RFI
+  claim: NASA HRP sought input (deadline 2026-10-14) on practical 24-hour core body temperature monitoring; evidence suggests temperature may run higher in microgravity and rise faster during exercise.
+  source: https://www.nasa.gov/help-nasa-find-practical-ways-to-monitor-astronaut-body-temperature-in-low-earth-orbit/
+  status: verified
+- id: HRP-ARTEMIS2-METHODS
+  claim: HRP's Artemis II Data Methodology Challenge rewarded small-sample, individual-level (Bayesian/N-of-1/empirical-Bayes) methods for 4-person crews.
+  source: https://www.nasa.gov/hrp/winners-of-nasa-hrps-artemis-ii-data-methodology-challenge/
+  status: verified
+- id: OSDR-I4-ACCESS
+  claim: Inspiration4 (4 civilians) omics/clinical data are in NASA OSDR with programmatic access; processed data public, raw genetic data access-controlled.
+  source: https://doi.org/10.1038/s41526-024-00393-5
+  status: verified
+- id: SOP-RECHECK-ABNORMAL
+  claim: Re-measure an abnormal single reading after rest before acting (reduces artifact-driven alarms). Local TETHER protocol, not a NASA procedure.
+  source: tether-internal
+  status: unverified
+# TODO (verify before use): NASA-STD-3001 Vol.1/2 ranges, career radiation limit (600 mSv per AURORA repo; confirm in NASA-STD-3001), CO2 exposure limits, symptom escalation SOPs.

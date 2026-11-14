@@ -1,0 +1,4 @@
+{"strain_infection_like": {
+   "signs": {"rest_hr": 1, "temp_c": 1, "sleep_h": -1, "pvt_ms": 1},
+   "status": "demo-parameter",
+   "note": "Clinical-prior direction: HR up, temp up, sleep down, reaction time up. Replace/cite from verified sources."}}

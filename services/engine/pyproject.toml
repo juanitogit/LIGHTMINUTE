@@ -1,0 +1,12 @@
+[project]
+name = "tether-engine"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["numpy", "scipy", "fastapi", "uvicorn", "pydantic>=2", "httpx", "openai>=1.50", "duckdb"]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff", "mypy"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
