@@ -22,10 +22,15 @@ updated: 2026-11-13
 [[Arquitectura general]] · [[ADR-001 Motor decide LLM explica]] · [[ADR-002 N-of-1 conjugado]] · [[ADR-003 Cache-stuffing de la KB]] · [[ADR-004 Stack]] · [[Retraso de comunicaciones]] · [[Seguridad y etica]]
 
 ## Ejecución
-[[Plan 48h]] · [[Board]] · [[Guion pitch y video]] · [[Checklist de entrega]] · [[Riesgos del proyecto]] · [[2026-11-13]]
+⚠️ **Estado verificado del repo (14-nov): [[Estado real del repo y bloqueos]]** — qué funciona, qué falta y qué bloquea el entorno.
+
+[[Plan 48h]] · [[Board]] · [[Guion pitch y video]] · [[Checklist de entrega]] · [[Riesgos del proyecto]] · [[2026-11-13]] · [[2026-11-14]]
 
 ## Ventaja competitiva (v2)
 [[Competidores - desglose y ataque]] · [[Matriz de superioridad]] · [[Ideas adoptadas (reimplementadas)]] · [[Demo killer - lentes en desacuerdo]] · [[Resultados de validacion]] · [[Pulido visual - plan]]
 
 ## Skills del agente
 [[Indice de skills]]
+
+## Plantillas
+[[ADR]] · [[Daily]] · [[Decision]] · [[Experimento]]

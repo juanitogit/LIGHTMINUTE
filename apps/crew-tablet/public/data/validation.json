@@ -1,0 +1,217 @@
+{
+ "synthetic": true,
+ "label": "synthetic",
+ "generated_by": "ml/validation/run_all.py",
+ "design": {
+  "false_alarm_budget_per_crew_week": 0.105,
+  "tuning_seeds": 400,
+  "report_seeds": 500,
+  "experiment_seeds": 120,
+  "days": 30,
+  "onset_day": 14,
+  "warmup_days": 7,
+  "detection_horizon_days": 10,
+  "effect_unit": "within-person sd"
+ },
+ "scenarios": [
+  {
+   "id": "homogeneous",
+   "title": "Homogeneous crew",
+   "between_person_sd_multiplier": 1.0,
+   "methods": [
+    {
+     "id": "A",
+     "name": "A  Population threshold",
+     "fa_per_week": 0.103,
+     "recall": {
+      "mild": 0.182,
+      "moderate": 0.38,
+      "strong": 0.908
+     },
+     "median_delay_moderate_days": 3.0
+    },
+    {
+     "id": "B",
+     "name": "B  N-of-1 z-score",
+     "fa_per_week": 0.1,
+     "recall": {
+      "mild": 0.22,
+      "moderate": 0.412,
+      "strong": 0.854
+     },
+     "median_delay_moderate_days": 3.0
+    },
+    {
+     "id": "B2",
+     "name": "B2 N-of-1 CUSUM",
+     "fa_per_week": 0.099,
+     "recall": {
+      "mild": 0.18,
+      "moderate": 0.716,
+      "strong": 1.0
+     },
+     "median_delay_moderate_days": 6.0
+    },
+    {
+     "id": "C",
+     "name": "C  N-of-1 syndrome (directional)",
+     "fa_per_week": 0.101,
+     "recall": {
+      "mild": 0.704,
+      "moderate": 0.956,
+      "strong": 1.0
+     },
+     "median_delay_moderate_days": 2.0
+    }
+   ]
+  },
+  {
+   "id": "heterogeneous",
+   "title": "Heterogeneous crew (between-person sd x2.5)",
+   "between_person_sd_multiplier": 2.5,
+   "methods": [
+    {
+     "id": "A",
+     "name": "A  Population threshold",
+     "fa_per_week": 0.144,
+     "recall": {
+      "mild": 0.086,
+      "moderate": 0.126,
+      "strong": 0.266
+     },
+     "median_delay_moderate_days": 3.0
+    },
+    {
+     "id": "B",
+     "name": "B  N-of-1 z-score",
+     "fa_per_week": 0.104,
+     "recall": {
+      "mild": 0.262,
+      "moderate": 0.496,
+      "strong": 0.88
+     },
+     "median_delay_moderate_days": 3.0
+    },
+    {
+     "id": "B2",
+     "name": "B2 N-of-1 CUSUM",
+     "fa_per_week": 0.152,
+     "recall": {
+      "mild": 0.094,
+      "moderate": 0.396,
+      "strong": 0.978
+     },
+     "median_delay_moderate_days": 6.0
+    },
+    {
+     "id": "C",
+     "name": "C  N-of-1 syndrome (directional)",
+     "fa_per_week": 0.1,
+     "recall": {
+      "mild": 0.664,
+      "moderate": 0.934,
+      "strong": 0.998
+     },
+     "median_delay_moderate_days": 2.0
+    }
+   ]
+  }
+ ],
+ "calibration": {
+  "nominal": 0.95,
+  "overall_coverage": 0.937,
+  "n": 11040,
+  "by_indicator": {
+   "rest_hr": 0.97,
+   "temp_c": 0.936,
+   "sleep_h": 0.916,
+   "pvt_ms": 0.926
+  }
+ },
+ "missing_data": [
+  {
+   "missing_fraction": 0.0,
+   "recall_moderate": {
+    "A": 0.442,
+    "B": 0.375,
+    "B2": 0.75,
+    "C": 0.942
+   },
+   "fa_per_week": {
+    "A": 0.107,
+    "B": 0.119,
+    "B2": 0.081,
+    "C": 0.089
+   }
+  },
+  {
+   "missing_fraction": 0.2,
+   "recall_moderate": {
+    "A": 0.417,
+    "B": 0.367,
+    "B2": 0.483,
+    "C": 0.842
+   },
+   "fa_per_week": {
+    "A": 0.089,
+    "B": 0.091,
+    "B2": 0.043,
+    "C": 0.03
+   }
+  },
+  {
+   "missing_fraction": 0.4,
+   "recall_moderate": {
+    "A": 0.358,
+    "B": 0.342,
+    "B2": 0.308,
+    "C": 0.742
+   },
+   "fa_per_week": {
+    "A": 0.068,
+    "B": 0.068,
+    "B2": 0.018,
+    "C": 0.023
+   }
+  }
+ ],
+ "baseline_length": [
+  {
+   "baseline_days": 3,
+   "recall_moderate": {
+    "A": 0.525,
+    "B": 0.375,
+    "B2": 0.45,
+    "C": 0.742
+   }
+  },
+  {
+   "baseline_days": 7,
+   "recall_moderate": {
+    "A": 0.475,
+    "B": 0.317,
+    "B2": 0.592,
+    "C": 0.825
+   }
+  },
+  {
+   "baseline_days": 14,
+   "recall_moderate": {
+    "A": 0.442,
+    "B": 0.375,
+    "B2": 0.75,
+    "C": 0.942
+   }
+  }
+ ],
+ "limitations": [
+  "Synthetic data from our own simulator; effect applied in the syndrome direction.",
+  "Method C knows the syndrome direction (a clinical prior); it is blind to other directions. B/B2 are direction-agnostic.",
+  "Gaussian noise, independent indicators, 4 indicators, no circadian/exercise context. Real data will be harder.",
+  "Single-indicator N-of-1 (B) is NOT dramatically better than a population rule when crews are homogeneous; the gains come from CUSUM, the syndrome score and heterogeneity.",
+  "Missing readings are imputed as a neutral z=0 for the syndrome score, and its covariance is learned only on complete healthy days; a real dropout pattern (whole sensors failing for days) is harsher than random drops.",
+  "Robustness cells use 120 report seeds, so their percentages carry wide intervals; treat differences under ~10 points as unresolved.",
+  "NOT clinical validation. Next: run unchanged on Inspiration4 / MMASH proxies and report what fails."
+ ],
+ "note": "Synthetic crews only. Not a medical device, not clinical validation."
+}

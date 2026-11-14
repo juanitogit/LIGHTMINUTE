@@ -1,0 +1,25 @@
+[
+ {
+  "source": "NOAA SWPC GOES primary integral protons (1-day JSON)",
+  "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json",
+  "retrieved_at": "2026-11-14T14:38:16Z",
+  "sha256": "e0c6563d5e4abdf4e1ed9d21b586b7b2a1b749d5f3e6522ce55916d027d80b76",
+  "rows_raw": 2288,
+  "rows_used": 286,
+  "channel": ">=10 MeV",
+  "satellite": 18,
+  "license": "Public domain (U.S. Government work; NOAA SWPC open data)",
+  "snapshot": "data/snapshots/goes-protons-20261114T143816Z.json",
+  "mode": "real"
+ },
+ {
+  "source": "MMASH - Multilevel Monitoring of Activity and Sleep in Healthy people (PhysioNet 1.0.0)",
+  "url": "https://physionet.org/files/mmash/1.0.0/MMASH.zip",
+  "sha256": "ef91ee1b36b5849a6366b1918de82686ab278915d33c7f62133f07f741f70726",
+  "bytes": 24649620,
+  "license": "ODC Open Database License (ODbL) v1.0 - attribution required; see https://physionet.org/content/mmash/1.0.0/",
+  "snapshot": "data/snapshots/MMASH.zip",
+  "mode": "real",
+  "note": "Public, de-identified healthy volunteers. Used as a PROXY, never as astronaut data."
+ }
+]

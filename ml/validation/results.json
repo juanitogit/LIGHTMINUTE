@@ -138,5 +138,112 @@
     }
    }
   }
- }
+ },
+ "calibration": {
+  "overall_coverage": 0.9369565217391305,
+  "n": 11040,
+  "by_indicator": {
+   "rest_hr": {
+    "coverage": 0.9702898550724638,
+    "n": 2760
+   },
+   "temp_c": {
+    "coverage": 0.9355072463768116,
+    "n": 2760
+   },
+   "sleep_h": {
+    "coverage": 0.9155797101449276,
+    "n": 2760
+   },
+   "pvt_ms": {
+    "coverage": 0.9264492753623188,
+    "n": 2760
+   }
+  }
+ },
+ "missing_data": [
+  {
+   "missing_fraction": 0.0,
+   "recall_moderate": {
+    "A": 0.44166666666666665,
+    "B": 0.375,
+    "B2": 0.75,
+    "C": 0.9416666666666667
+   },
+   "fa_per_week": {
+    "A": 0.10652173913043478,
+    "B": 0.11920289855072463,
+    "B2": 0.08115942028985507,
+    "C": 0.08876811594202899
+   }
+  },
+  {
+   "missing_fraction": 0.2,
+   "recall_moderate": {
+    "A": 0.4166666666666667,
+    "B": 0.36666666666666664,
+    "B2": 0.48333333333333334,
+    "C": 0.8416666666666667
+   },
+   "fa_per_week": {
+    "A": 0.08876811594202899,
+    "B": 0.09130434782608696,
+    "B2": 0.043115942028985506,
+    "C": 0.030434782608695653
+   }
+  },
+  {
+   "missing_fraction": 0.4,
+   "recall_moderate": {
+    "A": 0.35833333333333334,
+    "B": 0.3416666666666667,
+    "B2": 0.30833333333333335,
+    "C": 0.7416666666666667
+   },
+   "fa_per_week": {
+    "A": 0.06847826086956521,
+    "B": 0.06847826086956521,
+    "B2": 0.017753623188405798,
+    "C": 0.02282608695652174
+   }
+  }
+ ],
+ "baseline_length": [
+  {
+   "baseline_days": 3,
+   "recall_moderate": {
+    "A": 0.525,
+    "B": 0.375,
+    "B2": 0.45,
+    "C": 0.7416666666666667
+   }
+  },
+  {
+   "baseline_days": 7,
+   "recall_moderate": {
+    "A": 0.475,
+    "B": 0.31666666666666665,
+    "B2": 0.5916666666666667,
+    "C": 0.825
+   }
+  },
+  {
+   "baseline_days": 14,
+   "recall_moderate": {
+    "A": 0.44166666666666665,
+    "B": 0.375,
+    "B2": 0.75,
+    "C": 0.9416666666666667
+   }
+  }
+ ],
+ "limitations": [
+  "Synthetic data from our own simulator; effect applied in the syndrome direction.",
+  "Method C knows the syndrome direction (a clinical prior); it is blind to other directions. B/B2 are direction-agnostic.",
+  "Gaussian noise, independent indicators, 4 indicators, no circadian/exercise context. Real data will be harder.",
+  "Single-indicator N-of-1 (B) is NOT dramatically better than a population rule when crews are homogeneous; the gains come from CUSUM, the syndrome score and heterogeneity.",
+  "Missing readings are imputed as a neutral z=0 for the syndrome score, and its covariance is learned only on complete healthy days; a real dropout pattern (whole sensors failing for days) is harsher than random drops.",
+  "Robustness cells use 120 report seeds, so their percentages carry wide intervals; treat differences under ~10 points as unresolved.",
+  "NOT clinical validation. Next: run unchanged on Inspiration4 / MMASH proxies and report what fails."
+ ]
 }

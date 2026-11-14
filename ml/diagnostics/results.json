@@ -1,0 +1,55 @@
+{
+ "nominal_coverage": 0.95,
+ "flat_series": [
+  {
+   "updates": 23,
+   "current": {
+    "coverage_95": 1.0,
+    "df_after": 25.5
+   },
+   "alpha_discounted": {
+    "coverage_95": 1.0,
+    "df_after": 21.1
+   }
+  },
+  {
+   "updates": 200,
+   "current": {
+    "coverage_95": 0.83,
+    "df_after": 202.5
+   },
+   "alpha_discounted": {
+    "coverage_95": 0.969,
+    "df_after": 51.6
+   }
+  },
+  {
+   "updates": 500,
+   "current": {
+    "coverage_95": 0.564,
+    "df_after": 502.5
+   },
+   "alpha_discounted": {
+    "coverage_95": 0.954,
+    "df_after": 52.5
+   }
+  },
+  {
+   "updates": 2000,
+   "current": {
+    "coverage_95": 0.16,
+    "df_after": 2002.5
+   },
+   "alpha_discounted": {
+    "coverage_95": 0.948,
+    "df_after": 52.5
+   }
+  }
+ ],
+ "mmash_minute_hr": {
+  "current": 0.216,
+  "alpha_discounted": 0.934,
+  "minutes": 29937
+ },
+ "note": "Coverage of the 95% predictive interval; flat series are N(60,2)."
+}

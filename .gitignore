@@ -6,3 +6,6 @@ __pycache__/
 .claude/
 data/raw/
 *.parquet
+dist/
+# 24 MB public archive: reproducible via scripts/fetch_mmash.py + sha256 in manifest.json
+data/snapshots/MMASH.zip

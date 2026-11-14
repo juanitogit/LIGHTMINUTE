@@ -1,0 +1,115 @@
+{
+ "seeds": 60,
+ "threshold_z": 3.09,
+ "per_indicator": {
+  "rest_hr": {
+   "current": {
+    "flat_global": {
+     "coverage_95": 0.528,
+     "alarms_per_week": 47.64,
+     "n": 28440
+    },
+    "circ_global": {
+     "coverage_95": 0.487,
+     "alarms_per_week": 44.27,
+     "n": 28440
+    },
+    "circ_hourly": {
+     "coverage_95": 0.993,
+     "alarms_per_week": 0.03,
+     "n": 23040
+    }
+   },
+   "alpha_discounted": {
+    "flat_global": {
+     "coverage_95": 0.948,
+     "alarms_per_week": 0.53,
+     "n": 28440
+    },
+    "circ_global": {
+     "coverage_95": 0.991,
+     "alarms_per_week": 0.0,
+     "n": 28440
+    },
+    "circ_hourly": {
+     "coverage_95": 0.996,
+     "alarms_per_week": 0.01,
+     "n": 23040
+    }
+   }
+  },
+  "temp_c": {
+   "current": {
+    "flat_global": {
+     "coverage_95": 0.646,
+     "alarms_per_week": 35.89,
+     "n": 28440
+    },
+    "circ_global": {
+     "coverage_95": 0.589,
+     "alarms_per_week": 39.74,
+     "n": 28440
+    },
+    "circ_hourly": {
+     "coverage_95": 1.0,
+     "alarms_per_week": 0.0,
+     "n": 23040
+    }
+   },
+   "alpha_discounted": {
+    "flat_global": {
+     "coverage_95": 0.973,
+     "alarms_per_week": 0.2,
+     "n": 28440
+    },
+    "circ_global": {
+     "coverage_95": 0.98,
+     "alarms_per_week": 0.03,
+     "n": 28440
+    },
+    "circ_hourly": {
+     "coverage_95": 1.0,
+     "alarms_per_week": 0.0,
+     "n": 23040
+    }
+   }
+  },
+  "pvt_ms": {
+   "current": {
+    "flat_global": {
+     "coverage_95": 0.519,
+     "alarms_per_week": 48.38,
+     "n": 28440
+    },
+    "circ_global": {
+     "coverage_95": 0.512,
+     "alarms_per_week": 46.38,
+     "n": 28440
+    },
+    "circ_hourly": {
+     "coverage_95": 0.901,
+     "alarms_per_week": 3.54,
+     "n": 23040
+    }
+   },
+   "alpha_discounted": {
+    "flat_global": {
+     "coverage_95": 0.944,
+     "alarms_per_week": 0.58,
+     "n": 28440
+    },
+    "circ_global": {
+     "coverage_95": 0.958,
+     "alarms_per_week": 0.15,
+     "n": 28440
+    },
+    "circ_hourly": {
+     "coverage_95": 0.916,
+     "alarms_per_week": 2.86,
+     "n": 23040
+    }
+   }
+  }
+ },
+ "note": "Same streams and seeds across variants; the only differences are the 24 h term (flat vs circ) and the context split (global vs hourly). Alarms are counted at |z| > 3.09, a threshold that is calibrated only when the model is."
+}

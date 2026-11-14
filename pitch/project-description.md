@@ -1,0 +1,87 @@
+# Project description (Space Apps project page)
+
+## Summary (short version)
+TETHER is health-monitoring and decision-support software for astronauts on long missions.
+Instead of comparing a crew member to a population average, it learns that person's own
+baseline, reads coordinated changes across indicators, and turns them into a short, cited
+**Decision Card**: what changed, how confident we are, what to do on board right now, when to
+escalate, and what to send to Earth when the answer will take twenty minutes to arrive.
+It runs without a network and without an LLM.
+
+**Prototype, synthetic crew data. Not a medical device.**
+
+## The problem
+The challenge brief is explicit: long missions expose crews to radiation, isolation, altered
+gravity and a closed environment, and astronauts carry much of the responsibility for noticing
+their own changes. On Mars, the crew is the first responder by physics, not by choice: one-way
+light time is 3–22 minutes. Two things follow. First, "normal" cannot mean "average of the
+population" — a four-person crew is four individuals, and population rules mis-fire on the
+athlete and stay silent on the person who is drifting. Second, a dashboard that shows numbers
+is not enough; the crew needs a recommendation they can act on, with its uncertainty attached.
+
+## How it works
+1. **Ingest and QC** — vital signs, wearable signals, cabin environment, space weather and
+   manual check-ins; dropouts are dropped and logged, never imputed silently.
+2. **Per-person baseline (N-of-1)** — a Normal-Inverse-Gamma conjugate model per indicator with
+   a weak population prior, a forgetting factor, and a Student-t predictive interval. Every
+   reading is scored *before* it updates the baseline, so a value never judges itself.
+3. **Change detection** — CUSUM for small sustained shifts, plus a directional syndrome score
+   that combines several weak movements (heart rate up, temperature up, sleep down, reaction
+   time slower) into one interpretable number.
+4. **Crew attribution** — if several crew members shift in the same window, the system says
+   "check the cabin first" instead of blaming a person.
+5. **Three-lens verdict** — Earth rule, space-adapted rule and the personal baseline, with the
+   disagreement named (`hidden_in_range`, `expected_for_you`, …).
+6. **Decision Card** — a deterministic engine sets the level and every number. The LLM only
+   writes; a verifier rejects invented numbers, fake citations, lowered urgency and diagnostic
+   language, and falls back to a template. Unplug the LLM and the product still works.
+7. **Ground link** — routing aware of light delay, consent tiers per data type, and a
+   hash-chained audit log of what was seen and done.
+
+## What NASA data and resources are used
+- **NOAA SWPC GOES** integral proton flux — a real, checksummed snapshot (2026-11-14) drives the
+  space-weather context and the radiation panel; the NOAA S-scale is applied to the ≥10 MeV channel.
+- **NASA HRP** risk framing, the HRP core-temperature RFI and the HRP *Artemis II Data
+  Methodology Challenge* results inform the small-sample, individual-level method.
+- **PhysioNet MMASH** (22 healthy adults, wearable HR) is used as a *proxy* to test whether our
+  confidence intervals are honest on real noise.
+- **NASA OSDR / Inspiration4** is cited as the reason n=4 methods matter; the dataset was **not**
+  downloaded during the event (the API endpoints we tried returned 404), and no number from it
+  is quoted.
+
+## What is synthetic
+All crew members, all scenarios, and every recall, delay and calibration figure come from our
+own simulator. MMASH is real public data but is labelled `proxy`; NOAA is `real-public`. There is
+no real astronaut health data anywhere in this project.
+
+## Validation (and where it loses)
+At an equal false-alarm budget of about 0.1 per crew-week, on 500 simulated crew members per
+effect size: the syndrome score detects a mild coordinated change 70% of the time versus 18%
+for a population threshold, and 96% versus 38% for a moderate change. In a heterogeneous crew
+the population rule collapses to 27% on strong effects while the personal methods hold at 88–100%.
+Our 95% intervals cover 94% of healthy days. Missing readings degrade recall from 94% to 74%.
+
+The honest part: on real wearable data our interval covered only **21.6%** of minutes. We traced
+it to a forgetting-factor defect in our own model, verified a fix that restores **93.4%**, and
+published the diagnostic instead of hiding it. It also showed us that single-indicator N-of-1 is
+*not* dramatically better than a population rule in a homogeneous crew — the gains come from the
+syndrome score, CUSUM and heterogeneity, and that is what we claim.
+
+## Impact
+A crew that can recognise a change, understand how sure the system is, and act before Earth
+replies. The scenario we designed the product around is the uncomfortable one: the crew medical
+officer is the patient, and someone else has to run the protocol.
+
+## Limitations
+Not a medical device, no diagnosis, no medication doses, synthetic data only, no clinical
+validation. The syndrome score uses a clinical direction as a prior and is blind to other
+directions. Behavioural indicators are exploratory. One known engine defect limits minute-level
+streaming use (daily cadence is unaffected). See `docs/model-card.md` and `docs/data-card.md`.
+
+## AI use disclosure
+DeepSeek V4.1 Flash and coding agents assisted with implementation, analysis and drafting. The
+team reviewed and owns all modelling decisions, thresholds, claims and text. The product's LLM
+is optional, replaceable, and constrained by a deterministic verifier.
+
+## Team roles
+- Science & engine · simulation & validation · LLM & knowledge base · UI/UX · pitch, docs & demo.
