@@ -1,0 +1,102 @@
+[
+  {
+    "id": "mmash-page",
+    "url": "https://physionet.org/content/mmash/1.0.0/",
+    "accessed_at": "2026-11-14T20:44:38.245417+00:00",
+    "status": 200,
+    "bytes": 66970,
+    "sha256": "a8807ab1f734905111e6d7fdbad82f3e60e9d0688463d9cb1705c5b47bc319d9",
+    "content_type": "text/html; charset=utf-8",
+    "cache": "cache\\mmash-page.bin"
+  },
+  {
+    "id": "mmash-license",
+    "url": "https://physionet.org/files/mmash/1.0.0/LICENSE.txt",
+    "accessed_at": "2026-11-14T20:44:39.403190+00:00",
+    "status": 200,
+    "bytes": 25815,
+    "sha256": "bcdfcd4f31c790e30fb645dc36414907172405897adff329ad379eed85d12017",
+    "content_type": "binary/octet-stream",
+    "cache": "cache\\mmash-license.bin"
+  },
+  {
+    "id": "mmash-sha256",
+    "url": "https://physionet.org/files/mmash/1.0.0/SHA256SUMS.txt",
+    "accessed_at": "2026-11-14T20:44:40.472150+00:00",
+    "status": 200,
+    "bytes": 152,
+    "sha256": "c3f6fe21da756b8e6548f3f2c72762298e29398016f9e35206826c6c7430b8cd",
+    "content_type": "text/plain; charset=utf-8",
+    "cache": "cache\\mmash-sha256.bin"
+  },
+  {
+    "id": "osdr-api-docs",
+    "url": "https://visualization.osdr.nasa.gov/biodata/api/",
+    "accessed_at": "2026-11-14T20:44:41.007001+00:00",
+    "status": 200,
+    "bytes": 93768,
+    "sha256": "51d9424b2038003e164e700b885db93008d0023be6fc0dc36d3f38cef593c72c",
+    "content_type": "text/html",
+    "cache": "cache\\osdr-api-docs.bin"
+  },
+  {
+    "id": "osdr-575-v2",
+    "url": "https://visualization.osdr.nasa.gov/biodata/api/v2/dataset/OSD-575/?format=json",
+    "accessed_at": "2026-11-14T20:44:42.253728+00:00",
+    "status": 200,
+    "bytes": 9464,
+    "sha256": "1b48ae38ac31d37929d5dbcc922794929af002023bbf432de16737fb5d3f3dab",
+    "content_type": "application/json",
+    "cache": "cache\\osdr-575-v2.bin"
+  },
+  {
+    "id": "osdr-575-files-v2",
+    "url": "https://visualization.osdr.nasa.gov/biodata/api/v2/dataset/OSD-575/files/?format=json",
+    "accessed_at": "2026-11-14T20:44:43.238509+00:00",
+    "status": 200,
+    "bytes": 3149,
+    "sha256": "ea18e722762c2ab3470f00bf213486f535e101527965e7b2105ad4bef499d1aa",
+    "content_type": "application/json",
+    "cache": "cache\\osdr-575-files-v2.bin"
+  },
+  {
+    "id": "osdr-575-files-legacy",
+    "url": "https://osdr.nasa.gov/osdr/data/osd/files/575",
+    "accessed_at": "2026-11-14T20:44:44.203388+00:00",
+    "status": 200,
+    "bytes": 4144,
+    "sha256": "4c2430cfcbcd979125761984815ba8d9c8fb7899330eba02cb90bd48d5b19c00",
+    "content_type": "application/json",
+    "cache": "cache\\osdr-575-files-legacy.bin"
+  },
+  {
+    "id": "osdr-575-meta-legacy",
+    "url": "https://osdr.nasa.gov/osdr/data/osd/meta/575",
+    "accessed_at": "2026-11-14T20:44:44.789944+00:00",
+    "status": 200,
+    "bytes": 493765,
+    "sha256": "645a0c6693a96cfee62f3af4bc7b4e55365d0eaa8d8756d1d606b2f78f83058c",
+    "content_type": "application/json",
+    "cache": "cache\\osdr-575-meta-legacy.bin"
+  },
+  {
+    "id": "osdr-569-v2",
+    "url": "https://visualization.osdr.nasa.gov/biodata/api/v2/dataset/OSD-569/?format=json",
+    "accessed_at": "2026-11-14T20:44:46.399770+00:00",
+    "status": 200,
+    "bytes": 17069,
+    "sha256": "c56f692919262e26e1d533973e17549d6a7bd64491cbde8c682767ab5bb9b4fb",
+    "content_type": "application/json",
+    "cache": "cache\\osdr-569-v2.bin"
+  },
+  {
+    "id": "osdr-575-cmp",
+    "url": "https://osdr.nasa.gov/geode-py/ws/studies/OSD-575/download?source=datamanager&file=LSDS-8_Comprehensive_Metabolic_Panel_CMP_TRANSFORMED.csv",
+    "accessed_at": "2026-11-14T20:45:48.625016+00:00",
+    "status": 200,
+    "bytes": 8506,
+    "sha256": "5eb1e7f025dd8443a9e70111e62bc32afae3432753024489c5c013e401d709d9",
+    "content_type": "text/csv",
+    "cache": "cache\\osdr-575-cmp.bin"
+  }
+]

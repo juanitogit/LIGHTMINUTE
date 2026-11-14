@@ -1,0 +1,12 @@
+test_bad_columns_timestamps_duplicates_and_numbers (__main__.AdapterContract.test_bad_columns_timestamps_duplicates_and_numbers) ... ok
+test_constant_single_subject_and_finite_json (__main__.AdapterContract.test_constant_single_subject_and_finite_json) ... ok
+test_forty_percent_missing_does_not_update_models (__main__.AdapterContract.test_forty_percent_missing_does_not_update_models) ... ok
+test_golden_predictions_match_direct_engine_calls (__main__.AdapterContract.test_golden_predictions_match_direct_engine_calls) ... ok
+test_insufficient_observations_and_labels (__main__.AdapterContract.test_insufficient_observations_and_labels) ... ok
+test_reports_escape_html_and_are_deterministic (__main__.AdapterContract.test_reports_escape_html_and_are_deterministic) ... ok
+test_sort_subject_isolation_and_no_future_training (__main__.AdapterContract.test_sort_subject_isolation_and_no_future_training) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.646s
+
+OK
