@@ -2,10 +2,12 @@
 """Sensitivity: what a 24 h term does to intervals and alarms — with the
 forgetting defect of `nof1.py` separated out.
 
-Because `ml/diagnostics/forgetting_drift.py` showed that the current model loses
-calibration as updates accumulate (alpha is not discounted), a circadian
-experiment run only on the current model would attribute that defect to the
-rhythm. So every condition is measured twice: `current` and `alpha_discounted`.
+`ml/diagnostics/forgetting_drift.py` showed that the pre-fix model lost
+calibration as updates accumulate (alpha was not discounted), so a circadian
+experiment run only on that model would attribute the defect to the rhythm.
+Every condition is therefore measured twice: `legacy` (the old undiscounted
+update rule, kept in forgetting_drift.py) and `fixed` (nof1.BaselineModel as it
+ships since 2026-11-14).
 
 Conditions (same streams, same seeds):
   flat            no daily term
@@ -28,7 +30,7 @@ sys.path.insert(0, os.path.join(ROOT, "services", "engine"))
 sys.path.insert(0, os.path.join(ROOT, "ml", "diagnostics"))
 
 from tether_engine.bayes import BaselineModel  # noqa: E402
-from forgetting_drift import DiscountedAlphaBaseline  # noqa: E402
+from forgetting_drift import LegacyUndiscountedBaseline  # noqa: E402
 
 DAYS, HOURS = 21, 24
 SAMPLES = DAYS * HOURS
@@ -39,7 +41,7 @@ INDICATORS = {
     "temp_c": {"mean": 36.6, "sd": 0.15, "amp": 0.30},
     "pvt_ms": {"mean": 280.0, "sd": 15.0, "amp": 25.0},
 }
-VARIANTS = {"current": BaselineModel, "alpha_discounted": DiscountedAlphaBaseline}
+VARIANTS = {"legacy": LegacyUndiscountedBaseline, "fixed": BaselineModel}
 
 
 def series(name: str, seed: int, *, circadian: bool) -> list[float]:

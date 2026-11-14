@@ -33,21 +33,21 @@
     {
      "id": "B",
      "name": "B  N-of-1 z-score",
-     "fa_per_week": 0.1,
+     "fa_per_week": 0.091,
      "recall": {
-      "mild": 0.22,
-      "moderate": 0.412,
-      "strong": 0.854
+      "mild": 0.202,
+      "moderate": 0.388,
+      "strong": 0.842
      },
-     "median_delay_moderate_days": 3.0
+     "median_delay_moderate_days": 2.0
     },
     {
      "id": "B2",
      "name": "B2 N-of-1 CUSUM",
-     "fa_per_week": 0.099,
+     "fa_per_week": 0.086,
      "recall": {
-      "mild": 0.18,
-      "moderate": 0.716,
+      "mild": 0.13,
+      "moderate": 0.596,
       "strong": 1.0
      },
      "median_delay_moderate_days": 6.0
@@ -55,9 +55,9 @@
     {
      "id": "C",
      "name": "C  N-of-1 syndrome (directional)",
-     "fa_per_week": 0.101,
+     "fa_per_week": 0.102,
      "recall": {
-      "mild": 0.704,
+      "mild": 0.71,
       "moderate": 0.956,
       "strong": 1.0
      },
@@ -84,33 +84,33 @@
     {
      "id": "B",
      "name": "B  N-of-1 z-score",
-     "fa_per_week": 0.104,
+     "fa_per_week": 0.106,
      "recall": {
-      "mild": 0.262,
-      "moderate": 0.496,
-      "strong": 0.88
+      "mild": 0.266,
+      "moderate": 0.512,
+      "strong": 0.888
      },
      "median_delay_moderate_days": 3.0
     },
     {
      "id": "B2",
      "name": "B2 N-of-1 CUSUM",
-     "fa_per_week": 0.152,
+     "fa_per_week": 0.157,
      "recall": {
-      "mild": 0.094,
-      "moderate": 0.396,
-      "strong": 0.978
+      "mild": 0.082,
+      "moderate": 0.302,
+      "strong": 0.96
      },
      "median_delay_moderate_days": 6.0
     },
     {
      "id": "C",
      "name": "C  N-of-1 syndrome (directional)",
-     "fa_per_week": 0.1,
+     "fa_per_week": 0.098,
      "recall": {
-      "mild": 0.664,
+      "mild": 0.66,
       "moderate": 0.934,
-      "strong": 0.998
+      "strong": 1.0
      },
      "median_delay_moderate_days": 2.0
     }
@@ -119,13 +119,13 @@
  ],
  "calibration": {
   "nominal": 0.95,
-  "overall_coverage": 0.937,
+  "overall_coverage": 0.955,
   "n": 11040,
   "by_indicator": {
-   "rest_hr": 0.97,
-   "temp_c": 0.936,
-   "sleep_h": 0.916,
-   "pvt_ms": 0.926
+   "rest_hr": 0.98,
+   "temp_c": 0.953,
+   "sleep_h": 0.937,
+   "pvt_ms": 0.949
   }
  },
  "missing_data": [
@@ -133,14 +133,14 @@
    "missing_fraction": 0.0,
    "recall_moderate": {
     "A": 0.442,
-    "B": 0.375,
-    "B2": 0.75,
-    "C": 0.942
+    "B": 0.333,
+    "B2": 0.608,
+    "C": 0.933
    },
    "fa_per_week": {
     "A": 0.107,
-    "B": 0.119,
-    "B2": 0.081,
+    "B": 0.109,
+    "B2": 0.061,
     "C": 0.089
    }
   },
@@ -148,30 +148,30 @@
    "missing_fraction": 0.2,
    "recall_moderate": {
     "A": 0.417,
-    "B": 0.367,
-    "B2": 0.483,
+    "B": 0.383,
+    "B2": 0.45,
     "C": 0.842
    },
    "fa_per_week": {
     "A": 0.089,
-    "B": 0.091,
-    "B2": 0.043,
-    "C": 0.03
+    "B": 0.099,
+    "B2": 0.041,
+    "C": 0.038
    }
   },
   {
    "missing_fraction": 0.4,
    "recall_moderate": {
     "A": 0.358,
-    "B": 0.342,
-    "B2": 0.308,
-    "C": 0.742
+    "B": 0.367,
+    "B2": 0.292,
+    "C": 0.758
    },
    "fa_per_week": {
     "A": 0.068,
-    "B": 0.068,
-    "B2": 0.018,
-    "C": 0.023
+    "B": 0.099,
+    "B2": 0.013,
+    "C": 0.028
    }
   }
  ],
@@ -180,27 +180,27 @@
    "baseline_days": 3,
    "recall_moderate": {
     "A": 0.525,
-    "B": 0.375,
+    "B": 0.45,
     "B2": 0.45,
-    "C": 0.742
+    "C": 0.792
    }
   },
   {
    "baseline_days": 7,
    "recall_moderate": {
     "A": 0.475,
-    "B": 0.317,
-    "B2": 0.592,
-    "C": 0.825
+    "B": 0.358,
+    "B2": 0.55,
+    "C": 0.842
    }
   },
   {
    "baseline_days": 14,
    "recall_moderate": {
     "A": 0.442,
-    "B": 0.375,
-    "B2": 0.75,
-    "C": 0.942
+    "B": 0.333,
+    "B2": 0.608,
+    "C": 0.933
    }
   }
  ],

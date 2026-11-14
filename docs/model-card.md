@@ -24,23 +24,24 @@ Equal false-alarm budget (~0.1/crew-week), tuning and report seeds disjoint, 500
 
 | Condition | Population rule | N-of-1 z | N-of-1 CUSUM | N-of-1 syndrome |
 |---|---|---|---|---|
-| Homogeneous crew, mild effect recall | 18% | 22% | 18% | **70%** |
-| Homogeneous crew, moderate | 38% | 41% | 72% | **96%** |
-| Heterogeneous crew, strong | 27% | 88% | 98% | **100%** |
-| Median delay, moderate effect | 3 d | 3 d | 6 d | **2 d** |
+| Homogeneous crew, mild effect recall | 18% | 20% | 13% | **71%** |
+| Homogeneous crew, moderate | 38% | 39% | 60% | **96%** |
+| Heterogeneous crew, strong | 27% | 89% | 96% | **100%** |
+| Median delay, moderate effect | 3 d | 2 d | 6 d | **2 d** |
 
 Additional checks in the same report:
-- **Interval calibration** on healthy synthetic days: pooled **94%** coverage of the nominal 95% band (rest HR 97%, temperature 94%, sleep 92%, PVT 93%, n=11,040).
-- **Missing readings** (random drops before the engine sees them): syndrome recall on a moderate effect falls 94% → 84% → 74% at 0/20/40% missing. CUSUM is the most fragile (75% → 31%): a cumulative sum that loses readings loses its evidence.
-- **Baseline length at onset** (3/7/14 days of personal history): syndrome 74% → 82% → 94%. Short histories are usable but visibly weaker, which is why the UI shows `learning` below 7 observations.
+- **Interval calibration** on healthy synthetic days: pooled **95%** coverage of the nominal 95% band (rest HR 98%, temperature 95%, sleep 94%, PVT 95%, n=11,040). Measured after the `alpha` fix; before it the pooled figure was 94%.
+- **Missing readings** (random drops before the engine sees them): syndrome recall on a moderate effect falls 93% → 84% → 76% at 0/20/40% missing. CUSUM is the most fragile (61% → 45% → 29%): a cumulative sum that loses readings loses its evidence.
+- **Baseline length at onset** (3/7/14 days of personal history): syndrome 79% → 84% → 93%. Short histories are usable but visibly weaker, which is why the UI shows `learning` below 7 observations.
 
 ## Real-data proxy (MMASH, 22 healthy adults, per-minute HR)
 Run: `python ml/proxy/mmash.py` · report: `ml/proxy/README.md`.
 
 | Condition | 95% coverage (nominal 95%) |
 |---|---|
-| One baseline per person over the whole day | 21.6% |
-| After the forgetting fix below | 93.4% |
+| Shipped model, one baseline per person over the whole day | **93.4%** |
+| Same stream with the pre-fix update rule (kept in `ml/diagnostics`) | 21.6% |
+| One baseline per (person, hour of day) | 94.0% |
 | Night − afternoon median HR | −24 bpm |
 
 This dataset has no labelled events, so it supports **no** recall or delay claim.
@@ -49,14 +50,18 @@ This dataset has no labelled events, so it supports **no** recall or delay claim
 1. **Over-weighted variance prior (fixed).** With `prior_n=3` on the variance, a wide
    population sd made the model lazy (estimated scale 3.95 vs 2.0 true). Fixed by
    separating `prior_var_n=0.5`; guarded by `tests/test_nof1.py`.
-2. **Forgetting factor not applied to `alpha` (open, reported).** `update()` discounts
-   `kappa` and `beta` but increments `alpha` without discounting, so `df` grows without
-   bound and the predictive interval collapses. Measured on a flat healthy series:
+2. **Forgetting factor not applied to `alpha` (found, fixed 2026-11-14).** `update()`
+   discounted `kappa` and `beta` but incremented `alpha` without discounting, so `df` grew
+   without bound and the predictive interval collapsed. Measured on a flat healthy series:
    100% coverage at 23 updates, 83% at 200, 56% at 500, **16% at 2000**; on MMASH per-minute
-   HR: **21.6%**. Discounting `alpha` the same way restores 95% / 93.4% respectively
-   (`ml/diagnostics/forgetting_drift.py`, verified locally without editing the shared file).
-   **Impact today:** the daily-cadence results above use ~23 updates and are unaffected;
-   any minute-level streaming use of the engine is unusable until A1 patches it.
+   HR: **21.6%**. The fix discounts `alpha` toward its prior value
+   (`alpha <- alpha0 + (alpha - alpha0)*lam + 0.5`), which puts the fixed point at
+   `alpha0 + 0.5/(1-lam)` — df ≈ 52 instead of unbounded. Re-measured after the fix:
+   **100% / 97% / 95% / 95%** at 23 / 200 / 500 / 2000 updates and **93.4%** on MMASH.
+   `ml/diagnostics/forgetting_drift.py` keeps the old rule as `LegacyUndiscountedBaseline`
+   so the defect stays reproducible, and `tests/test_nof1.py` fails if coverage collapses
+   again. **What this changes:** every table above was regenerated with the fixed model;
+   minute-level streaming is no longer the weak spot it was.
 
 ## Failure modes we know about
 - **Whole-sensor failure** (not random drops): the syndrome imputes a neutral z=0; a sensor down for days silently removes that indicator's evidence.
@@ -71,7 +76,7 @@ Prospective validation on real crew data with labelled events, clinical review o
 
 ## Reproduce
 ```bash
-python scripts/run_tests.py                  # 23 engine/verifier tests
+python scripts/run_tests.py                  # 77 tests
 python ml/validation/run_all.py              # tables above -> docs/validation.md
 python scripts/fetch_noaa.py                 # real space-weather snapshot + panel
 python scripts/fetch_mmash.py && python ml/proxy/mmash.py

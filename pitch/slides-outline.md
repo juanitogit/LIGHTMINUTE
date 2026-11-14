@@ -22,15 +22,15 @@ Title: *Normal for the population. Unusual for him.*
 - One line: "a fixed range stays silent exactly when it matters."
 
 ## 4 — Validation, with the losing column visible
-Title: *70% vs 18% — and where we lose.*
-- Table: 18/38/91 vs 70/96/100 (mild/moderate/strong), equal false-alarm budget.
-- Heterogeneous crew: population 27% strong vs personal 88–100%.
+Title: *71% vs 18% — and where we lose.*
+- Table: 18/38/91 vs 71/96/100 (mild/moderate/strong), equal false-alarm budget.
+- Heterogeneous crew: population 27% strong vs personal 89–100%.
 - Footnote: single-indicator N-of-1 is not better than a population rule in homogeneous crews.
 
 ## 5 — Honesty as a feature
 Title: *Our own model was wrong. We published it.*
-- Real wearable data: 95% interval covered 21.6% of minutes.
-- Cause found (forgetting factor), fix verified: 93.4%.
+- Real wearable data: our 95% interval covered 21.6% of minutes.
+- Cause found (forgetting factor), fixed in the engine and re-measured: 93.4%.
 - Not a medical device · synthetic only · every limitation in the model card.
 
 ## 6 — Relevance and next

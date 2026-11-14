@@ -69,7 +69,7 @@ Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not
 
 | Area | What works | Verified by |
 |---|---|---|
-| **N-of-1 engine** | Per-person conjugate Bayesian baseline (NIG + Student-t), winsorised robust updates, two-sided CUSUM, directional **syndrome** score, three-lens verdicts, crew attribution with 2-day persistence, QC that drops impossible readings before any update | `python scripts/run_tests.py` → **76/76** (nof1, syndrome, lenses, crew/ground/space, pipeline, simulate, qc, verifier, api, llm) |
+| **N-of-1 engine** | Per-person conjugate Bayesian baseline (NIG + Student-t), winsorised robust updates, two-sided CUSUM, directional **syndrome** score, three-lens verdicts, crew attribution with 2-day persistence, QC that drops impossible readings before any update | `python scripts/run_tests.py` → **77/77** (nof1, syndrome, lenses, crew/ground/space, pipeline, simulate, qc, verifier, api, llm) |
 | **Scenarios** | 3 scripted scenarios × `strong`/`mild`, 24 days, 4 crew with roles (CMO/CDR/MS1/MS2), 6 indicators (`rest_hr`, `temp_c`, `sleep_h`, `pvt_ms`, `co2_ppm`, `headache_score`), sensor dropouts, hazards, deterministic by `(name, variant, seed, days)` | `python scripts/export_demo_json.py --all`; `apps/crew-tablet/public/data/scenario-*.json` + `scenario-index.json` |
 | **API** | `GET /api/health`, `GET /api/scenarios`, `GET /api/scenario/{name}`, `POST /api/card`, `GET /api/llm-stats`; scenarios come from `pipeline.run_scenario` when importable, else the static JSON; CORS restricted to localhost | uvicorn smoke: `/api/scenario/cmo_fever` → `source: engine`, 24 days, 6 indicators; `POST /api/card` day 15 crew A → `level: act`, `card_source: template` |
 | **Decision Cards** | One byte-stable system prefix (rules + whole KB + thresholds/syndromes with their status) so DeepSeek disk caching hits; verify → one retry with the error list → deterministic template fallback | `test_llm`: rejection→fallback, retry feeds errors back, prefix bytes identical across calls, injection stays in the *user* message, `LLM_PROVIDER=none` → zero network |
@@ -81,7 +81,7 @@ Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not
 | **Audit chain** | SHA-256 hash chain, same canonical JSON as the Python engine, viewer names the first tampered entry | JS ↔ Python vectors identical, **8/8** (`node apps/ground-console/src/audit.test.mjs`) |
 | **Real NOAA snapshot** | `scripts/fetch_noaa.py` writes an immutable snapshot + manifest (url, retrieved_at, sha256, rows, license) and derives `public/data/radiation.json`; `ingest.verify_snapshot()` checks sha256 and row count | Real run 2026-11-14T14:38:16Z, 2 288 rows, S-scale 0 (quiet Sun) |
 | **Validation harness** | Four detectors at an equal false-alarm budget, plus interval calibration, missing-reading robustness and baseline-length sensitivity | `python ml/validation/run_all.py` → `docs/validation.md`, `ml/validation/results.json`, `public/data/validation.json` (~2.5 min) |
-| **CI** | GitHub Actions on every push to `main`: engine job (76 tests, 30 red-team cases, API smoke with no key) and frontend job (`npm ci` + build, audit vectors, syntax checks) | run 43613134201: both jobs green |
+| **CI** | GitHub Actions on every push to `main`: engine job (77 tests, 30 red-team cases, API smoke with no key) and frontend job (`npm ci` + build, audit vectors, syntax checks) | run 43613134201: both jobs green |
 
 ### 🟡 Partial — usable, but read the limit
 
@@ -100,7 +100,6 @@ Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not
 
 ### ⛔ Missing
 
-- The **`alpha` fix** in `bayes/nof1.py` (see below) is not applied on `main` — the single open code defect.
 - **Repository is private.** Space Apps requires a public repo, so visibility has to be changed before submission.
 - Submission assets: screenshots, the 60-second video and the team/roles section.
 - `.github/workflows/ci.yml` runs the tests and the tablet build on every push to `main` and on PRs, it ran green on both jobs on 14-nov (run 43613134201) but never on a public repo, and the ownership map (`scripts/check_ownership.py --overlaps`) still needs `vault/` registered in `agents/OWNERS.json`.
@@ -108,18 +107,20 @@ Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not
 - Vision / voice input endpoints, DeepSeek web-search use, auth, database, multi-crew sessions — all deliberately out of scope for the prototype.
 - Expert clinical review of thresholds and protocol steps, and regulatory classification work.
 
-### Open defect (read this before quoting numbers)
+### The defect we found and fixed (read this before quoting numbers)
 
-`bayes/nof1.py::update` discounts `kappa` and `beta` with the forgetting factor but **not
-`alpha`**, so `df` grows without bound and the predictive interval collapses. Measured on a
-flat healthy series: 100 % coverage at 23 updates, 83 % at 200, 56 % at 500, **16 % at 2 000**;
-on MMASH per-minute HR: **21.6 %** (nominal 95 %). Discounting `alpha` the same way restores
-95 % / 93.4 % (`ml/diagnostics/forgetting_drift.py`, verified by subclass without touching the
-shared file).
+`bayes/nof1.py::update` discounted `kappa` and `beta` with the forgetting factor but **not
+`alpha`**, so `df` grew without bound and the predictive interval collapsed. Measured on a flat
+healthy series: 100 % coverage at 23 updates, 83 % at 200, 56 % at 500, **16 % at 2 000**; on
+MMASH per-minute HR: **21.6 %** (nominal 95 %).
 
-**Impact today:** the daily-cadence demo and every number in this README use ~23 updates and are
-unaffected. Any **minute-level streaming** use of the engine is unusable until A1 patches it.
-Full write-up: [`docs/model-card.md`](docs/model-card.md).
+It is fixed on `main`: `alpha` is now discounted toward its prior value, which pins `df` around
+52 instead of letting it grow. Re-measured with the shipped model: **100 % / 97 % / 95 % / 95 %**
+at those four stream lengths and **93.4 %** on the real MMASH minutes. Every table in this
+README, in `docs/validation.md` and in the tablet's `validation.json` was regenerated after the
+fix, and `tests/test_nof1.py` now fails if coverage collapses again. The old rule stays as
+`LegacyUndiscountedBaseline` in `ml/diagnostics/forgetting_drift.py`, so the before/after remains
+reproducible. Full write-up: [`docs/model-card.md`](docs/model-card.md).
 
 ---
 
@@ -163,7 +164,7 @@ flowchart LR
 
 ```bash
 cp .env.example .env          # optional: DEEPSEEK_API_KEY; LLM_PROVIDER=none works with no key
-python scripts/run_tests.py   # 76/76, no network, no pytest required
+python scripts/run_tests.py   # 77/77, no network, no pytest required
 
 # engine + API on :8000
 cd services/engine && uvicorn tether_engine.api.main:app --port 8000
@@ -221,7 +222,7 @@ Each scenario also ships a `mild` variant for honest "we missed it" demos.
 ## Tests
 
 ```bash
-python scripts/run_tests.py                       # 76/76 — engine, pipeline, QC, verifier, API, LLM
+python scripts/run_tests.py                       # 77/77 — engine, pipeline, QC, verifier, API, LLM
 node apps/ground-console/src/audit.test.mjs       # 8/8 — JS hash chain == Python vectors
 PYTHONPATH=services/engine python -m tether_engine.llm.redteam   # 30/30 adversarial cards rejected
 cd apps/crew-tablet && npm run build              # tsc -b && vite build
@@ -234,14 +235,14 @@ None of them touch the network: the LLM path is tested with a fake client.
 ## Validation
 
 At an equal false-alarm budget (~0.10 per crew-week, tuning and report seeds disjoint, 500
-synthetic crew per effect size), the directional N-of-1 **syndrome** detector recovers **70 %**
+synthetic crew per effect size), the directional N-of-1 **syndrome** detector recovers **71 %**
 of mild, **96 %** of moderate and **100 %** of strong sustained shifts with a median delay of
 ~2 days — versus 18 % / 38 % / 91 % for a population threshold. On a heterogeneous crew the gap
 widens: 66 % / 93 % / 100 % versus 9 % / 13 % / 27 %.
 
-Additional checks, all synthetic: interval calibration **94 %** pooled coverage of the nominal
-95 % band (n = 11 040 indicator-days); syndrome recall degrades 94 % → 84 % → 74 % with 0/20/40 %
-of readings missing; recall improves 74 % → 82 % → 94 % with 3/7/14 days of personal history.
+Additional checks, all synthetic: interval calibration **95 %** pooled coverage of the nominal
+95 % band (n = 11 040 indicator-days); syndrome recall degrades 93 % → 84 % → 76 % with 0/20/40 %
+of readings missing; recall improves 79 % → 84 % → 93 % with 3/7/14 days of personal history.
 
 Two honest caveats: the syndrome score knows the direction of the clinical prior (it is blind to
 other directions), and single-indicator N-of-1 is *not* meaningfully better than a population
@@ -257,8 +258,9 @@ defect section of [`docs/model-card.md`](docs/model-card.md) before quoting any 
 | **real-public** | NOAA SWPC GOES proton flux (`public/data/radiation.json`, snapshot with sha256) |
 | **proxy** | MMASH 1.0.0 wearable HR, 22 healthy adults (ODbL 1.0, aggregate results only) |
 
-The MMASH run is a coverage test of the same engine code, not a detection result: 21.6 % of
-real minutes fell inside the nominal 95 % band, which is how the `alpha` defect below was found.
+The MMASH run is a coverage test of the same engine code, not a detection result: the shipped
+model covers 93.4 % of real minutes inside the nominal 95 % band, and it covered 21.6 % before
+the `alpha` fix — which is how that defect was found.
 OSDR / Inspiration4 was attempted; the endpoints returned 404 and nothing is quoted from it.
 
 ---

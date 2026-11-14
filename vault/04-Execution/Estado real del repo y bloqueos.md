@@ -85,14 +85,14 @@ bash scripts/check_all.sh             # tests + ownership + validación
 
 ## Actualización 14-nov (A5 + A6)
 **Ya no falta:** snapshots NOAA + panel de radiación, ingestión verificada por sha256, proxy real MMASH,
-benchmark ampliado (calibración 94%, huecos 94→84→74%, baseline 74→82→94%), `docs/model-card.md`,
+benchmark ampliado (calibración 95%, huecos 93→84→76%, baseline 79→84→93%), `docs/model-card.md`,
 `docs/data-card.md`, README de entrega, 5 documentos de pitch, `docs/SUBMISSION.md`, `ATTRIBUTIONS.md`,
 `docs/ARCHITECTURE.md` con estado por capa y `docs/FOLDER_STRUCTURE.md` regenerado.
 
 **Hallazgo importante:** el motor tiene un defecto real en el factor de olvido (`alpha` no se descuenta).
 Cobertura del intervalo 100% → 83% → 56% → 16% al pasar de 23 a 200/500/2000 actualizaciones; en datos
-reales MMASH 21,6%, y 93,4% con el parche verificado. Afecta a uso por minuto, no a la cadencia diaria del
-benchmark. Petición abierta a A1 en `project/handoff/a5.md`. Ver [[2026-11-14]].
+reales MMASH 21,6%, y 93,4% con el parche verificado. Afectaba a uso por minuto, no a la cadencia diaria del
+benchmark. **Parcheado el 14-nov**: `alpha` se descuenta en `nof1.py`, la medición posterior da 100/97/95/95 % (23/200/500/2000) y 93,4 % en MMASH, y hay test de regresión. Ver [[2026-11-14]].
 
 **Merge y publicación (14-nov):** `main` ya integra A1 (pipeline, QC, escenarios), A2 (API y card service),
 A3 (tablet Glance→Why→Act) y A4 (protocol runner y consola de tierra). Verificado en el árbol fusionado:

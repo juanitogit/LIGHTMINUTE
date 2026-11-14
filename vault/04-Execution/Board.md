@@ -15,9 +15,9 @@ updated: 2026-11-14
 - [x] **A6** — README de entrega, 5 documentos de pitch, `SUBMISSION.md`, `ATTRIBUTIONS.md`, arquitectura y estructura
 - [x] **Entrega** — repo git en GitHub con `main`, vault versionado en `vault/`, `LICENSE` Apache-2.0, CI en `.github/workflows/ci.yml`
 - [x] README reescrito: badges de Space Apps/stack/datos, tabla de stack con el porqué y estado works/partial/missing
+- [x] **Parche `alpha`** aplicado en `bayes/nof1.py` + test de regresión (`test_interval_stays_honest_after_many_updates`); validación, MMASH, circadiano y todas las cifras publicadas regenerados (77/77 tests)
 
 ## Ahora (bloquea la entrega)
-- [ ] **A1** — parche de `alpha` en `bayes/nof1.py` + test de cobertura a 500+ updates. El parche está verificado en `ml/diagnostics/forgetting_drift.py`; **no aplicarlo sin re-correr `ml/validation/run_all.py`** y actualizar las cifras publicadas.
 - [ ] **Tú** — poner el repo en **público** (Space Apps lo exige; hoy es privado)
 - [ ] **Tú/A6** — capturas, video de 60 s y roles del equipo
 - [ ] **A3** — re-verificar los paneles de validación y radiación con los JSON que publicó A5

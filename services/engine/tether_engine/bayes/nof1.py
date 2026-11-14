@@ -35,6 +35,8 @@ class BaselineModel:
         # small on purpose so a wide population sd does not make the model lazy.
         self.lam, self.min_sd, self.n_seen = lam, min_sd, 0
         alpha = 1.0 + prior_var_n / 2.0
+        # alpha0 is the floor alpha is discounted back toward; see update().
+        self.alpha0 = alpha
         self.post = NIG(mu0=prior_mean, kappa=prior_n, alpha=alpha,
                         beta=(alpha - 1.0) * max(prior_sd, min_sd) ** 2)
 
@@ -58,8 +60,16 @@ class BaselineModel:
         p, lam = self.post, self.lam
         k0, b0 = p.kappa * lam, p.beta * lam            # forget old evidence
         k1 = k0 + 1.0
+        # alpha has to forget too. Undiscounted it grows by 0.5 per update, so
+        # df = 2*alpha grows without bound while the scale keeps shrinking: the
+        # Student-t collapses into a very narrow Gaussian and the 95% interval
+        # stops covering (16% at 2000 updates, 21.6% on MMASH minute HR). See
+        # ml/diagnostics/forgetting_drift.py. Discounting toward alpha0 keeps the
+        # fixed point at alpha0 + 0.5/(1-lam) (df ~ 50 with the defaults), so the
+        # honest tails the model is documented to have survive any stream length.
+        a1 = self.alpha0 + (p.alpha - self.alpha0) * lam + 0.5
         self.post = NIG(mu0=(k0 * p.mu0 + x) / k1, kappa=k1,
-                        alpha=p.alpha + 0.5,
+                        alpha=a1,
                         beta=b0 + 0.5 * k0 * (x - p.mu0) ** 2 / k1)
         self.n_seen += 1
 

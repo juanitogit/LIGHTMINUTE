@@ -10,7 +10,7 @@ updated: 2026-11-13
 | Reglas Tierra vs espacio | CHM sí | + **lente personal** con incertidumbre | `lenses.py` |
 | Baseline personal | AURORA sí | bayesiano con intervalos creíbles | `bayes/nof1.py` |
 | Incertidumbre visible | no visible | sí | banda 95% + confianza |
-| Alerta por señales coordinadas débiles | no visible | **síndrome**: 70% vs 18% recall leve | `docs/validation.md` |
+| Alerta por señales coordinadas débiles | no visible | **síndrome**: 71% vs 18% recall leve | `docs/validation.md` |
 | Tripulación heterogénea | no visible | población cae a 27%, N-of-1 88% | `docs/validation.md` |
 | Atribución compartida vs individual | no visible | sí | `crew/attribution.py` |
 | Retraso de comunicación | CHM sí | + enrutamiento "a bordo primero" | `ground/delay.py` |

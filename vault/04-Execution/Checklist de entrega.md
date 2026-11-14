@@ -11,7 +11,8 @@ updated: 2026-11-14
 - [ ] Probado en ventana privada · [x] Plan B offline del demo · [ ] Enviado con ≥3 h de margen
 
 > Pendientes reales: visibilidad del repo, LICENSE ya resuelto, capturas, video y roles.
-> Ítem de honestidad abierto: el defecto `alpha` del factor de olvido sigue sin parchear en
-> `bayes/nof1.py` (afecta a uso por minuto, no a la demo diaria). Ver [[Estado real del repo y bloqueos]].
+> Ítem de honestidad cerrado: el defecto `alpha` del factor de olvido se parcheó el 14-nov en
+> `bayes/nof1.py` (descuento hacia `alpha0`), con test de regresión y todas las cifras regeneradas.
+> Ver [[Estado real del repo y bloqueos]].
 > Detalle por ítem: `project/docs/SUBMISSION.md`.
 Ver [[Guion pitch y video]].
