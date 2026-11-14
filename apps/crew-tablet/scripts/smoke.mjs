@@ -175,7 +175,12 @@ try {
   assert.match(await page.locator("main").innerText(), /14 Nov 2026 14:38 UTC/);
   assert.equal(await page.locator(".rad-chart svg").count(), 1);
   assert.equal(await page.locator(".rad-chart__line").count(), 1);
-  await capture("04-space-weather"); record("NOAA historical snapshot, real-public label, timestamp and flux plot");
+  await page.locator(".donki-panel").waitFor();
+  const donki = await page.locator(".donki-panel").innerText();
+  assert.match(donki, /NASA DONKI/);
+  assert.match(donki, /real-public/);
+  assert.match(donki, /not individual dose/);
+  await capture("04-space-weather"); record("NOAA historical snapshot + NASA DONKI events, real-public labels, timestamps and flux plot");
 
   await goto("validation"); await page.locator("table.data-table").first().waitFor();
   assert.equal(await page.locator("table.data-table:has(th:text-is('False alarms')) tbody tr").count(), 8);

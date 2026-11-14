@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { RawDetails } from "../components/DataView";
+import { Bullets, RawDetails } from "../components/DataView";
 import { Chip, DataNotice, EmptyState, Panel } from "../components/primitives";
-import { loadRadiation } from "../lib/api";
+import { loadRadiation, loadSpaceWeather } from "../lib/api";
 import {
   formatFlux,
   formatTs,
@@ -9,8 +9,15 @@ import {
   sScaleLabel,
   type RadiationPanel,
 } from "../lib/radiation";
+import {
+  eventDetails,
+  eventLabel,
+  parseSpaceWeather,
+  type SpaceWeather,
+} from "../lib/spaceWeather";
 
 type State = { phase: "loading" | "ready" | "missing"; panel: RadiationPanel | null };
+type SpaceState = { phase: "loading" | "ready" | "missing"; data: SpaceWeather | null };
 
 /** Log-scaled NOAA S-scale strip: thresholds are decades, a linear axis would hide them. */
 const S_BANDS = [
@@ -93,16 +100,13 @@ function FluxChart({ panel }: { panel: RadiationPanel }) {
       </svg>
       <figcaption className="muted small">
         {points.length} published samples · {panel.channel ?? "channel not recorded"} ·{" "}
-        {panel.units ?? "units not recorded"} — plotted by timestamp; no smoothing or imputed samples.
+        {panel.units ?? "units not recorded"} — plotted by timestamp, never smoothed or rescaled.
       </figcaption>
     </figure>
   );
 }
 
 function ScaleStrip({ panel }: { panel: RadiationPanel }) {
-  if (!panel.unitsContracted) {
-    return <p className="muted small">NOAA S-scale overlay unavailable: this panel supports the pfu channel at ≥10 MeV only.</p>;
-  }
   const now = panel.current?.flux;
   return (
     <div className="sstrip">
@@ -150,8 +154,7 @@ function ScaleStrip({ panel }: { panel: RadiationPanel }) {
               panel.unitsContracted ? "pfu" : (panel.units ?? "units?"),
             )}. `}
         S-scale at the latest sample: <b>{sScaleLabel(panel.sScaleNow)}</b>; maximum in this
-        window:{" "}
-        <b>{sScaleLabel(panel.sScaleMax)}</b>.{" "}
+        window: <b>{sScaleLabel(panel.sScaleMax)}</b>.{" "}
         {panel.sScaleNow === undefined
           ? "The snapshot does not record an S level for this sample, so none is inferred from flux."
           : null}{" "}
@@ -162,8 +165,162 @@ function ScaleStrip({ panel }: { panel: RadiationPanel }) {
   );
 }
 
+function DonkiPanel({ phase, data }: { phase: SpaceState["phase"]; data: SpaceWeather | null }) {
+  if (phase === "loading") {
+    return (
+      <Panel className="donki-panel" title="Solar events / NASA DONKI" labelledBy="donki-title">
+        <p className="muted" role="status">
+          Loading the NASA DONKI snapshot…
+        </p>
+      </Panel>
+    );
+  }
+
+  if (!data) {
+    return (
+      <Panel className="donki-panel" title="Solar events / NASA DONKI" labelledBy="donki-title">
+        <EmptyState title="NASA DONKI snapshot unavailable">
+          <p>
+            No solar-event timeline is published. No flare, particle or CME event is estimated.
+          </p>
+        </EmptyState>
+      </Panel>
+    );
+  }
+
+  const successful = data.sources.filter((source) => source.mode === "real");
+  const retrieved = successful
+    .map((source) => source.retrieved_at)
+    .filter((value): value is string => Boolean(value))
+    .sort();
+  const latestRetrieved = retrieved.length > 0 ? retrieved[retrieved.length - 1] : data.generated_at;
+  const latest = data.events.slice(0, 12);
+  const noaa = data.noaa;
+
+  return (
+    <Panel
+      className="donki-panel"
+      title="Solar events / NASA DONKI"
+      labelledBy="donki-title"
+      aside={
+        <>
+          <Chip tone="accent">NASA DONKI</Chip>
+          <Chip tone="quiet">real-public</Chip>
+        </>
+      }
+    >
+      <p className="small muted">
+        {data.window_start ?? "Unknown start"} to {data.window_end ?? "unknown end"} · retrieved{" "}
+        {latestRetrieved ?? "unknown"} · archived snapshot, not live.
+      </p>
+
+      {Object.keys(data.counts).length > 0 ? (
+        <p className="chips">
+          {Object.entries(data.counts).map(([type, value]) => (
+            <Chip key={type} tone="quiet">
+              {type} {value}
+            </Chip>
+          ))}
+        </p>
+      ) : null}
+
+      {latest.length > 0 ? (
+        <ul className="plain-list">
+          {latest.map((event) => {
+            const details = eventDetails(event);
+            return (
+              <li key={event.id}>
+                <strong>{eventLabel(event.type)}</strong> ·{" "}
+                <time dateTime={event.time}>{event.time}</time>
+                {details.length > 0 ? <> · {details.join(" · ")}</> : null}
+                {event.link ? (
+                  <>
+                    {" "}
+                    ·{" "}
+                    <a href={event.link} target="_blank" rel="noreferrer">
+                      DONKI record
+                    </a>
+                  </>
+                ) : null}
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <p className="muted small">
+          No DONKI events were published in this window. This is an empty result, not estimated
+          data.
+        </p>
+      )}
+
+      {data.events.length > latest.length ? (
+        <p className="small muted">
+          Showing {latest.length} of {data.events.length} events; the full timeline is in{" "}
+          <code>space-weather.json</code>.
+        </p>
+      ) : null}
+
+      {data.failures.length > 0 ? (
+        <p className="small">
+          Source failure:{" "}
+          {data.failures.map((failure) => `${failure.type} — ${failure.error}`).join("; ")}. No
+          values were substituted.
+        </p>
+      ) : null}
+
+      {noaa?.status === "ok" && noaa.s_scale_max !== null ? (
+        <p className="small">
+          <Chip tone="accent">NOAA GOES</Chip> S{noaa.s_scale_max} max in the separate NOAA proton
+          window {noaa.window_start ?? "unknown start"} to {noaa.window_end ?? "unknown end"}. Not
+          individual dose.
+        </p>
+      ) : noaa?.status !== "ok" ? (
+        <p className="small muted">
+          NOAA GOES context: no data ({noaa?.reason ?? "snapshot unavailable"}).
+        </p>
+      ) : null}
+
+      <p className="small">
+        <a
+          href={data.doc_url ?? data.reference_url ?? "https://ccmc.gsfc.nasa.gov/DONKI/api/"}
+          target="_blank"
+          rel="noreferrer"
+        >
+          NASA DONKI documentation
+        </a>{" "}
+        · {data.license ?? "NASA open data"}
+      </p>
+
+      <details className="raw">
+        <summary>Snapshot provenance</summary>
+        <ul className="plain-list">
+          {data.sources.map((source) => (
+            <li key={source.id ?? source.type ?? "source"}>
+              {source.type ?? "unknown"}: {source.rows_raw ?? "—"} rows · retrieved{" "}
+              {source.retrieved_at ?? "unknown"} · source {source.mode ?? "unknown"}
+              {source.sha256 ? ` · sha256 ${source.sha256.slice(0, 12)}…` : ""}
+            </li>
+          ))}
+        </ul>
+      </details>
+
+      {data.limitations.length > 0 ? (
+        <details className="raw">
+          <summary>Limitations</summary>
+          <Bullets items={data.limitations} tone="warn" />
+        </details>
+      ) : null}
+
+      <p className="small muted">
+        Solar particle and flare events are space-weather context, not individual dose.
+      </p>
+    </Panel>
+  );
+}
+
 export function Radiation() {
   const [state, setState] = useState<State>({ phase: "loading", panel: null });
+  const [space, setSpace] = useState<SpaceState>({ phase: "loading", data: null });
 
   useEffect(() => {
     let alive = true;
@@ -172,6 +329,22 @@ export function Radiation() {
       const panel = parseRadiation(raw);
       setState({ phase: panel ? "ready" : "missing", panel });
     });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let alive = true;
+    loadSpaceWeather()
+      .then((raw) => {
+        if (!alive) return;
+        const data = raw ? parseSpaceWeather(raw) : null;
+        setSpace({ phase: data ? "ready" : "missing", data });
+      })
+      .catch(() => {
+        if (alive) setSpace({ phase: "missing", data: null });
+      });
     return () => {
       alive = false;
     };
@@ -194,145 +367,149 @@ export function Radiation() {
         <DataNotice label="SYNTHETIC CREW" />
       </header>
 
-      {state.phase === "loading" ? (
-        <Panel>
-          <p className="muted" role="status">
-            Loading the radiation snapshot…
-          </p>
-        </Panel>
-      ) : null}
+      <div className="stack">
+        <DonkiPanel phase={space.phase} data={space.data} />
 
-      {state.phase === "missing" || !panel ? (
-        state.phase === "loading" ? null : (
-          <Panel title="Snapshot not published yet" labelledBy="rad-missing">
-            <EmptyState title="No radiation data available">
-              <p>
-                This panel reads <code>public/data/radiation.json</code>. It has not been published
-                in this build, so TETHER shows nothing rather than estimating a dose.
-              </p>
-            </EmptyState>
+        {state.phase === "loading" ? (
+          <Panel>
+            <p className="muted" role="status">
+              Loading the radiation snapshot…
+            </p>
           </Panel>
-        )
-      ) : (
-        <div className="stack">
-          <p className="chips">
-            <Chip tone={labelTone}>{panel.label}</Chip>
-            <Chip tone="quiet">{panel.channel ?? "channel not recorded"}</Chip>
-            <Chip tone="quiet">GOES-{panel.satellite ?? "?"}</Chip>
-            <Chip tone="quiet">
-              {panel.synthetic ? "synthetic replay" : "public snapshot"}
-            </Chip>
-            {panel.unitsContracted ? null : <Chip tone="warn">units are not pfu</Chip>}
-            {panel.labelConflict ? (
-              <Chip tone="warn" title={panel.labelConflict}>
-                label conflict → unverified
+        ) : null}
+
+        {state.phase === "missing" || !panel ? (
+          state.phase === "loading" ? null : (
+            <Panel title="Snapshot not published yet" labelledBy="rad-missing">
+              <EmptyState title="No radiation data available">
+                <p>
+                  This panel reads <code>public/data/radiation.json</code>. It has not been
+                  published in this build, so TETHER shows nothing rather than estimating a dose.
+                </p>
+              </EmptyState>
+            </Panel>
+          )
+        ) : (
+          <>
+            <p className="chips">
+              <Chip tone={labelTone}>{panel.label}</Chip>
+              <Chip tone="quiet">{panel.channel ?? "channel not recorded"}</Chip>
+              <Chip tone="quiet">GOES-{panel.satellite ?? "?"}</Chip>
+              <Chip tone="quiet">
+                {panel.synthetic ? "synthetic replay" : "public snapshot"}
               </Chip>
-            ) : null}
-          </p>
+              {panel.unitsContracted ? null : <Chip tone="warn">units are not pfu</Chip>}
+              {panel.labelConflict ? (
+                <Chip tone="warn" title={panel.labelConflict}>
+                  label conflict → unverified
+                </Chip>
+              ) : null}
+            </p>
 
-          <Panel title="Now" labelledBy="rad-now">
-            <dl className="tiles tiles--3">
-              <div className="tile">
-                <dt>Current flux</dt>
-                <dd>{panel.current ? formatFlux(panel.current.flux, unit) : "—"}</dd>
-              </div>
-              <div className="tile">
-                <dt>Peak in window</dt>
-                <dd>{panel.peak ? formatFlux(panel.peak.flux, unit) : "—"}</dd>
-              </div>
-              <div className="tile">
-                <dt>S-scale now / max</dt>
-                <dd>
-                  {sScaleLabel(panel.sScaleNow)} / {sScaleLabel(panel.sScaleMax)}
-                </dd>
-              </div>
-              <div className="tile">
-                <dt>Current sample</dt>
-                <dd>{panel.current ? formatTs(panel.current.ts) : "—"}</dd>
-              </div>
-              <div className="tile">
-                <dt>Peak sample</dt>
-                <dd>{panel.peak ? formatTs(panel.peak.ts) : "—"}</dd>
-              </div>
-              <div className="tile">
-                <dt>Units</dt>
-                <dd>{panel.units ?? "—"}</dd>
-              </div>
-            </dl>
-          </Panel>
+            <Panel title="Now" labelledBy="rad-now">
+              <dl className="tiles tiles--3">
+                <div className="tile">
+                  <dt>Current flux</dt>
+                  <dd>{panel.current ? formatFlux(panel.current.flux, unit) : "—"}</dd>
+                </div>
+                <div className="tile">
+                  <dt>Peak in window</dt>
+                  <dd>{panel.peak ? formatFlux(panel.peak.flux, unit) : "—"}</dd>
+                </div>
+                <div className="tile">
+                  <dt>S-scale now / max</dt>
+                  <dd>
+                    {sScaleLabel(panel.sScaleNow)} / {sScaleLabel(panel.sScaleMax)}
+                  </dd>
+                </div>
+                <div className="tile">
+                  <dt>Current sample</dt>
+                  <dd>{panel.current ? formatTs(panel.current.ts) : "—"}</dd>
+                </div>
+                <div className="tile">
+                  <dt>Peak sample</dt>
+                  <dd>{panel.peak ? formatTs(panel.peak.ts) : "—"}</dd>
+                </div>
+                <div className="tile">
+                  <dt>Units</dt>
+                  <dd>{panel.units ?? "—"}</dd>
+                </div>
+              </dl>
+            </Panel>
 
-          <Panel title="Integral proton flux" labelledBy="rad-chart">
-            <FluxChart panel={panel} />
-            <ScaleStrip panel={panel} />
-          </Panel>
+            <Panel title="Integral proton flux" labelledBy="rad-chart">
+              <FluxChart panel={panel} />
+              <ScaleStrip panel={panel} />
+            </Panel>
 
-          <Panel title="Provenance" labelledBy="rad-provenance">
-            <dl className="provenance">
-              <div>
-                <dt>Source</dt>
-                <dd>{panel.source}</dd>
-              </div>
-              <div>
-                <dt>Source URL</dt>
-                <dd>
-                  {panel.sourceUrl ? (
-                    <a href={panel.sourceUrl} target="_blank" rel="noreferrer noopener">
-                      {panel.sourceUrl}
-                    </a>
-                  ) : (
-                    "not recorded"
-                  )}
-                </dd>
-              </div>
-              <div>
-                <dt>Retrieved</dt>
-                <dd>{panel.retrievedAt ? formatTs(panel.retrievedAt) : "not recorded"}</dd>
-              </div>
-              <div>
-                <dt>License</dt>
-                <dd>{panel.license ?? "not recorded"}</dd>
-              </div>
-              <div>
-                <dt>Label</dt>
-                <dd>
-                  {panel.label}
-                  {panel.labelConflict ? (
-                    <>
-                      {" · "}
-                      <span className="small">unverified: {panel.labelConflict}</span>
-                    </>
-                  ) : null}
-                </dd>
-              </div>
-              <div>
-                <dt>Checksum trail</dt>
-                <dd>
-                  <code>data/snapshots/manifest.json</code>
-                </dd>
-              </div>
-            </dl>
-          </Panel>
+            <Panel title="Provenance" labelledBy="rad-provenance">
+              <dl className="provenance">
+                <div>
+                  <dt>Source</dt>
+                  <dd>{panel.source}</dd>
+                </div>
+                <div>
+                  <dt>Source URL</dt>
+                  <dd>
+                    {panel.sourceUrl ? (
+                      <a href={panel.sourceUrl} target="_blank" rel="noreferrer noopener">
+                        {panel.sourceUrl}
+                      </a>
+                    ) : (
+                      "not recorded"
+                    )}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Retrieved</dt>
+                  <dd>{panel.retrievedAt ? formatTs(panel.retrievedAt) : "not recorded"}</dd>
+                </div>
+                <div>
+                  <dt>License</dt>
+                  <dd>{panel.license ?? "not recorded"}</dd>
+                </div>
+                <div>
+                  <dt>Label</dt>
+                  <dd>
+                    {panel.label}
+                    {panel.labelConflict ? (
+                      <>
+                        {" · "}
+                        <span className="small">unverified: {panel.labelConflict}</span>
+                      </>
+                    ) : null}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Checksum trail</dt>
+                  <dd>
+                    <code>data/snapshots/manifest.json</code>
+                  </dd>
+                </div>
+              </dl>
+            </Panel>
 
-          <Panel title="Why this panel exists" labelledBy="rad-why">
-            {panel.why ? <p>{panel.why}</p> : null}
-            <ul className="plain-list plain-list--warn">
-              <li>
-                {panel.note ??
-                  "Context only: space weather modulates wording and priors, it never raises an alert by itself."}
-              </li>
-              <li>
-                No dose limit is hard-coded here, and the panel never changes a crew member&apos;s
-                urgency level.
-              </li>
-              <li>
-                One satellite channel at one instant; a real radiation assessment needs dosimetry
-                and shielding models this tablet does not carry.
-              </li>
-            </ul>
-            <RawDetails data={{ ...panel, points: `${panel.points.length} samples` }} />
-          </Panel>
-        </div>
-      )}
+            <Panel title="Why this panel exists" labelledBy="rad-why">
+              {panel.why ? <p>{panel.why}</p> : null}
+              <ul className="plain-list plain-list--warn">
+                <li>
+                  {panel.note ??
+                    "Context only: space weather modulates wording and priors, it never raises an alert by itself."}
+                </li>
+                <li>
+                  No dose limit is hard-coded here, and the panel never changes a crew member&apos;s
+                  urgency level.
+                </li>
+                <li>
+                  One satellite channel at one instant; a real radiation assessment needs dosimetry
+                  and shielding models this tablet does not carry.
+                </li>
+              </ul>
+              <RawDetails data={{ ...panel, points: `${panel.points.length} samples` }} />
+            </Panel>
+          </>
+        )}
+      </div>
     </div>
   );
 }

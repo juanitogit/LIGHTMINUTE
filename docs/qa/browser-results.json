@@ -1,6 +1,6 @@
 {
   "status": "passed",
-  "executed_at": "2026-11-14T21:37:22.018Z",
+  "executed_at": "2026-11-14T21:45:27.242Z",
   "checks": [
     {
       "name": "Static fallback, six indicators, four crew and LIGHTMINUTE branding",
@@ -35,7 +35,7 @@
       "detail": "passed"
     },
     {
-      "name": "NOAA historical snapshot, real-public label, timestamp and flux plot",
+      "name": "NOAA historical snapshot + NASA DONKI events, real-public labels, timestamps and flux plot",
       "detail": "passed"
     },
     {

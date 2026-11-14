@@ -21,5 +21,101 @@
   "snapshot": "data/snapshots/MMASH.zip",
   "mode": "real",
   "note": "Public, de-identified healthy volunteers. Used as a PROXY, never as astronaut data."
+ },
+ {
+  "id": "nasa-donki-sep",
+  "source": "NASA DONKI SEP events (CCMC M2M_CATALOG)",
+  "type": "SEP",
+  "endpoint": "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/SEP",
+  "request_urls": [
+   "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/SEP?startDate=2026-08-16&endDate=2026-10-14",
+   "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/SEP?startDate=2026-10-15&endDate=2026-11-14"
+  ],
+  "doc_url": "https://ccmc.gsfc.nasa.gov/DONKI/api/",
+  "retrieved_at": "2026-11-14T20:07:29Z",
+  "sha256": "edae8c1539fbd0e003bdfaa95524b69e750719713c2bc402f7c65e70e34617e0",
+  "rows_raw": 11,
+  "license": "NASA open data - CCMC DONKI. NASA does not endorse this project. See https://ccmc.gsfc.nasa.gov/data-policy",
+  "snapshot": "data/snapshots/nasa-donki-sep.json",
+  "mode": "real",
+  "window": {
+   "start": "2026-08-16",
+   "end": "2026-11-14"
+  },
+  "api_key_sent": false,
+  "rate_limit_headers": {},
+  "note": "DONKI is keyless; no api_key parameter is required or sent."
+ },
+ {
+  "id": "nasa-donki-flr",
+  "source": "NASA DONKI FLR events (CCMC M2M_CATALOG)",
+  "type": "FLR",
+  "endpoint": "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR",
+  "request_urls": [
+   "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR?startDate=2026-08-16&endDate=2026-10-14",
+   "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR?startDate=2026-10-15&endDate=2026-11-14"
+  ],
+  "doc_url": "https://ccmc.gsfc.nasa.gov/DONKI/api/",
+  "retrieved_at": "2026-11-14T20:07:33Z",
+  "sha256": "9b54a6af2245c136545aab22fb0cefa8620aaacb18df7708a90ce12e4ff7b7cb",
+  "rows_raw": 55,
+  "license": "NASA open data - CCMC DONKI. NASA does not endorse this project. See https://ccmc.gsfc.nasa.gov/data-policy",
+  "snapshot": "data/snapshots/nasa-donki-flr.json",
+  "mode": "real",
+  "window": {
+   "start": "2026-08-16",
+   "end": "2026-11-14"
+  },
+  "api_key_sent": false,
+  "rate_limit_headers": {},
+  "note": "DONKI is keyless; no api_key parameter is required or sent."
+ },
+ {
+  "id": "nasa-donki-cme",
+  "source": "NASA DONKI CME events (CCMC M2M_CATALOG)",
+  "type": "CME",
+  "endpoint": "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/CME",
+  "request_urls": [
+   "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/CME?startDate=2026-08-16&endDate=2026-10-14",
+   "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/CME?startDate=2026-10-15&endDate=2026-11-14"
+  ],
+  "doc_url": "https://ccmc.gsfc.nasa.gov/DONKI/api/",
+  "retrieved_at": "2026-11-14T20:07:39Z",
+  "sha256": "a7903e21f5139b81eab13ee07591c5eda9b0ad6c7f5e97ff055d49d56f137020",
+  "rows_raw": 322,
+  "license": "NASA open data - CCMC DONKI. NASA does not endorse this project. See https://ccmc.gsfc.nasa.gov/data-policy",
+  "snapshot": "data/snapshots/nasa-donki-cme.json",
+  "mode": "real",
+  "window": {
+   "start": "2026-08-16",
+   "end": "2026-11-14"
+  },
+  "api_key_sent": false,
+  "rate_limit_headers": {},
+  "note": "DONKI is keyless; no api_key parameter is required or sent."
+ },
+ {
+  "id": "nasa-donki-gst",
+  "source": "NASA DONKI GST events (CCMC M2M_CATALOG)",
+  "type": "GST",
+  "endpoint": "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/GST",
+  "request_urls": [
+   "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/GST?startDate=2026-08-16&endDate=2026-10-14",
+   "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/GST?startDate=2026-10-15&endDate=2026-11-14"
+  ],
+  "doc_url": "https://ccmc.gsfc.nasa.gov/DONKI/api/",
+  "retrieved_at": "2026-11-14T20:07:44Z",
+  "sha256": "51b3ce86b117a216cfc78acc24c29ba7d7597116092078168043fe07ddda6fbf",
+  "rows_raw": 3,
+  "license": "NASA open data - CCMC DONKI. NASA does not endorse this project. See https://ccmc.gsfc.nasa.gov/data-policy",
+  "snapshot": "data/snapshots/nasa-donki-gst.json",
+  "mode": "real",
+  "window": {
+   "start": "2026-08-16",
+   "end": "2026-11-14"
+  },
+  "api_key_sent": false,
+  "rate_limit_headers": {},
+  "note": "DONKI is keyless; no api_key parameter is required or sent."
  }
 ]

@@ -1,13 +1,75 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { Mesh, Material, Object3D, SkinnedMesh } from "three";
+import type { Mesh, Material, Object3D, SkinnedMesh, Group } from "three";
 import { indicatorMeta, REGION_LABEL, RISK_REGION, type BodyRegion } from "../lib/meta";
 import type { Reading } from "../lib/types";
 import { Icon } from "./Icon";
 
-const ANCHORS: Record<BodyRegion, [number, number, number]> = {
-  head: [0.1, 2.57, .15], eyes: [-.1, 2.65, .18], chest: [.15, 2.12, .2],
-  abdomen: [-.15, 1.65, .18], legs: [.12, .8, .11],
+/** Anatomically scaled anchor coordinates in world space (scaled to 2.8m). */
+const ANCHORS_BY_BUILD: Record<"male" | "female", Record<BodyRegion, [number, number, number]>> = {
+  male: {
+    head: [0.08, 2.68, 0.16],
+    eyes: [-0.08, 2.60, 0.18],
+    chest: [0.15, 2.12, 0.20],
+    abdomen: [-0.15, 1.75, 0.18],
+    legs: [0.12, 0.82, 0.12],
+  },
+  female: {
+    head: [0.08, 2.67, 0.15],
+    eyes: [-0.08, 2.62, 0.18],
+    chest: [0.15, 2.08, 0.20],
+    abdomen: [-0.14, 1.70, 0.17],
+    legs: [0.11, 0.78, 0.12],
+  },
 };
+
+type SurfaceDef = {
+  name: string;
+  pos: number;
+  verts: number;
+  idx: number;
+  tris: number;
+  nrm?: number;
+  center?: [number, number, number];
+};
+
+type BodyDef = {
+  attribution: string;
+  height: number;
+  skin: SurfaceDef;
+  organs: SurfaceDef[];
+  anchors?: Record<string, [number, number, number]>;
+};
+
+type AnatomyDescription = {
+  bodies: Record<string, BodyDef>;
+};
+
+type OrganMeshRecord = {
+  name: string;
+  mesh: Mesh;
+  blood: boolean;
+  neuro: boolean;
+};
+
+/** Module-level singleton cache so geometry buffers are fetched only once per session. */
+let anatomyPromise: Promise<{ description: AnatomyDescription; bytes: ArrayBuffer }> | null = null;
+
+function loadAnatomyAssets(baseUrl: string) {
+  if (!anatomyPromise) {
+    const base = `${baseUrl}assets/anatomy/`;
+    anatomyPromise = Promise.all([
+      fetch(base + "anatomy.json").then((res) => {
+        if (!res.ok) throw new Error("Missing anatomy.json");
+        return res.json() as Promise<AnatomyDescription>;
+      }),
+      fetch(base + "anatomy.bin").then((res) => {
+        if (!res.ok) throw new Error("Missing anatomy.bin");
+        return res.arrayBuffer();
+      }),
+    ]).then(([description, bytes]) => ({ description, bytes }));
+  }
+  return anatomyPromise;
+}
 
 function disposeObject(object: Object3D) {
   object.traverse((child) => {
@@ -21,43 +83,162 @@ function disposeObject(object: Object3D) {
   });
 }
 
+/** Check whether a specific organ corresponds to an anomalous reading in personal baseline. */
+function isOrganAnomalous(organName: string, readings: Record<string, Reading>): boolean {
+  const norm = organName.toLowerCase();
+
+  for (const [key, reading] of Object.entries(readings)) {
+    const isUnusual = reading.lens.personal === "unusual_high" || reading.lens.personal === "unusual_low";
+    if (!isUnusual) continue;
+
+    // Cardiac specific
+    if (norm.includes("heart")) {
+      if (key === "rest_hr" || reading.hrp_risk === "cardiovascular") return true;
+    }
+    // Eyes / SANS
+    if (norm.includes("eyeball") || norm.includes("eye")) {
+      if (reading.hrp_risk === "vision" || key === "sans" || key === "vision_score") return true;
+    }
+    // Brain / Cognitive / Neurological
+    if (norm.includes("brain")) {
+      if (
+        key === "sleep_h" ||
+        key === "pvt_ms" ||
+        key === "headache_score" ||
+        reading.hrp_risk === "behavioral" ||
+        reading.hrp_risk === "sensorimotor"
+      ) {
+        return true;
+      }
+    }
+    // Lungs / Respiratory / CO2
+    if (norm.includes("lung")) {
+      if (key === "co2_ppm" || reading.hrp_risk === "respiratory" || reading.hrp_risk === "environment") return true;
+    }
+    // Kidneys
+    if (norm.includes("kidney")) {
+      if (reading.hrp_risk === "renal" || key.includes("kidney") || key.includes("hydration")) return true;
+    }
+    // Liver / Immune
+    if (norm.includes("liver")) {
+      if (reading.hrp_risk === "immune" || key.includes("crp") || key.includes("liver")) return true;
+    }
+    // Jugular / Aorta (cephalad fluid shift, vascular strain)
+    if (norm.includes("jugular")) {
+      if (key === "headache_score" || reading.hrp_risk === "cardiovascular") return true;
+    }
+    if (norm.includes("aorta")) {
+      if (reading.hrp_risk === "cardiovascular" && key !== "rest_hr") return true;
+    }
+    // Spine / Musculoskeletal
+    if (norm.includes("spinal") || norm.includes("vertebral")) {
+      if (reading.hrp_risk === "muscular" || reading.hrp_risk === "bone") return true;
+    }
+
+    // Core temperature affects central vital organs (fever / thermal strain)
+    if (key === "temp_c" && (norm.includes("heart") || norm.includes("brain") || norm.includes("liver"))) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+type FocusRegion = "full" | "head" | "chest" | "abdomen" | "legs";
+
+const FOCUS_TARGETS: Record<
+  "male" | "female",
+  Record<FocusRegion, { target: [number, number, number]; distance: number }>
+> = {
+  male: {
+    full: { target: [0, 1.42, 0], distance: 5.1 },
+    head: { target: [0, 2.68, 0], distance: 1.8 },
+    chest: { target: [0, 2.12, 0], distance: 2.1 },
+    abdomen: { target: [0, 1.75, 0], distance: 2.2 },
+    legs: { target: [0, 0.82, 0], distance: 2.5 },
+  },
+  female: {
+    full: { target: [0, 1.42, 0], distance: 5.1 },
+    head: { target: [0, 2.67, 0], distance: 1.8 },
+    chest: { target: [0, 2.08, 0], distance: 2.1 },
+    abdomen: { target: [0, 1.70, 0], distance: 2.2 },
+    legs: { target: [0, 0.78, 0], distance: 2.5 },
+  },
+};
+
 /** Locally hosted CC BY reference anatomy. It never produces health data. */
-export function BodyModel3D({ readings, crewLabel, onOpenIndicator }: {
+export function BodyModel3D({
+  readings,
+  crewLabel,
+  onOpenIndicator,
+}: {
   readings: Record<string, Reading>;
   crewLabel: string;
   onOpenIndicator: (key: string) => void;
 }) {
   const mount = useRef<HTMLDivElement>(null);
   const labels = useRef<Partial<Record<BodyRegion, HTMLButtonElement | null>>>({});
-  const control = useRef<{ turn: (angle: number) => void; zoom: (factor: number) => void; reset: () => void; refresh: () => void } | null>(null);
-  const [build, setBuild] = useState("male");
-  const [system, setSystem] = useState("all");
+  const control = useRef<{
+    turn: (angle: number) => void;
+    zoom: (factor: number) => void;
+    reset: () => void;
+    focusToRegion: (region: FocusRegion) => void;
+    focusToPoint: (coords: [number, number, number], distance?: number) => void;
+    refresh: () => void;
+  } | null>(null);
+
+  const [build, setBuild] = useState<"male" | "female">("male");
+  const [system, setSystem] = useState<"all" | "blood" | "neuro" | "organs">("all");
+  const [focusRegion, setFocusRegion] = useState<FocusRegion>("full");
   const [status, setStatus] = useState<"loading" | "ready" | "unavailable">("loading");
+
+  // Keep latest references for render callbacks
+  const buildRef = useRef(build);
+  buildRef.current = build;
+
+  const systemRef = useRef(system);
+  systemRef.current = system;
+
+  const focusRegionRef = useRef(focusRegion);
+  focusRegionRef.current = focusRegion;
+
+  const readingsRef = useRef(readings);
+  readingsRef.current = readings;
+
+  const organMeshesRef = useRef<OrganMeshRecord[]>([]);
+
   const regions = useMemo(() => {
     const byRegion = new Map<BodyRegion, { key: string; unusual: boolean; learning: boolean }>();
     for (const [key, reading] of Object.entries(readings)) {
       const region = RISK_REGION[reading.hrp_risk];
       if (!region) continue;
       const unusual = ["unusual_high", "unusual_low"].includes(reading.lens.personal);
-      if (!byRegion.has(region) || unusual) byRegion.set(region, { key, unusual, learning: reading.lens.personal === "learning" });
+      if (!byRegion.has(region) || unusual) {
+        byRegion.set(region, { key, unusual, learning: reading.lens.personal === "learning" });
+      }
     }
     return [...byRegion.entries()];
   }, [readings]);
+
   const regionRef = useRef(regions);
   regionRef.current = regions;
 
+  // Single WebGL initialization effect (runs on mount, disposes on unmount)
   useEffect(() => {
     const host = mount.current;
     if (!host) return;
+
     let stopped = false;
     let cleanup = () => {};
-    const abort = new AbortController();
-    async function start() {
+
+    async function init() {
       try {
         const [T, { OrbitControls }] = await Promise.all([
-          import("three"), import("three/examples/jsm/controls/OrbitControls.js"),
+          import("three"),
+          import("three/examples/jsm/controls/OrbitControls.js"),
         ]);
         if (stopped || !host) return;
+
         const renderer = new T.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "low-power" });
         renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
         renderer.outputColorSpace = T.SRGBColorSpace;
@@ -67,141 +248,507 @@ export function BodyModel3D({ readings, crewLabel, onOpenIndicator }: {
         renderer.domElement.className = "human-canvas";
         renderer.domElement.style.touchAction = "pan-y";
         host.prepend(renderer.domElement);
+
         const scene = new T.Scene();
-        const camera = new T.PerspectiveCamera(35, 1, .1, 100);
+        const camera = new T.PerspectiveCamera(35, 1, 0.1, 100);
         camera.position.set(0, 1.45, 5.1);
+
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.target.set(0, 1.42, 0);
         controls.enableZoom = true;
-        controls.minDistance = 2; controls.maxDistance = 8;
-        controls.enablePan = false;
-        controls.enableDamping = false;
-        controls.minPolarAngle = Math.PI / 2;
-        controls.maxPolarAngle = Math.PI / 2;
-        controls.rotateSpeed = .65;
-        renderer.domElement.style.touchAction = "pan-y";
+        controls.minDistance = 0.8;
+        controls.maxDistance = 8.5;
+        controls.enablePan = true;
+        controls.panSpeed = 0.8;
+        controls.screenSpacePanning = true;
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.08;
+        // Permit natural 3D tilt while avoiding flipping upside-down
+        controls.minPolarAngle = Math.PI * 0.28;
+        controls.maxPolarAngle = Math.PI * 0.72;
+        controls.rotateSpeed = 0.65;
+
         scene.add(new T.HemisphereLight(0xffffff, 0x83919d, 2.7));
-        const key = new T.DirectionalLight(0xfff8f2, 3.5); key.position.set(-3, 5, 5); scene.add(key);
-        const rim = new T.DirectionalLight(0xadc8ff, 2); rim.position.set(3, 3, -2); scene.add(rim);
-        const fill = new T.DirectionalLight(0xffffff, .8); fill.position.set(3, 1, 4); scene.add(fill);
-        const material = new T.MeshStandardMaterial({ color: 0xcbd0da, roughness: .47, metalness: .12 });
-        const shadow = new T.Mesh(new T.CircleGeometry(.56, 64), new T.MeshBasicMaterial({ color: 0x172331, transparent: true, opacity: .07, depthWrite: false }));
-        shadow.rotation.x = -Math.PI / 2; shadow.scale.y = .5; shadow.position.y = -.025; scene.add(shadow);
+        const key = new T.DirectionalLight(0xfff8f2, 3.5);
+        key.position.set(-3, 5, 5);
+        scene.add(key);
+        const rim = new T.DirectionalLight(0xadc8ff, 2);
+        rim.position.set(3, 3, -2);
+        scene.add(rim);
+        const fill = new T.DirectionalLight(0xffffff, 0.8);
+        fill.position.set(3, 1, 4);
+        scene.add(fill);
+
+        const material = new T.MeshStandardMaterial({ color: 0xcbd0da, roughness: 0.47, metalness: 0.12 });
+        const shadow = new T.Mesh(
+          new T.CircleGeometry(0.56, 64),
+          new T.MeshBasicMaterial({ color: 0x172331, transparent: true, opacity: 0.07, depthWrite: false })
+        );
+        shadow.rotation.x = -Math.PI / 2;
+        shadow.scale.y = 0.5;
+        shadow.position.y = -0.025;
+        scene.add(shadow);
+
         const projected = new T.Vector3();
-        const organMeshes: {mesh: Mesh; blood: boolean; neuro: boolean}[] = [];
+
         const render = () => {
           if (stopped) return;
-          for (const {mesh,blood,neuro} of organMeshes) {
-            const unusual = regionRef.current.some(([r,v])=>v.unusual&&(r==="chest"&&blood||r==="head"&&neuro||r==="abdomen"&&!blood&&!neuro));
-            const surfaceMaterial = mesh.material as import("three").MeshStandardMaterial;
-            surfaceMaterial.color.setHex(unusual?0xe28b62:blood?0xc96a79:neuro?0xb8a4d5:0xb5becb);
-            surfaceMaterial.emissive.setHex(unusual?0x8f3212:0x000000);
+
+          // Update organ colors and emissive highlights based on granular organ status
+          for (const item of organMeshesRef.current) {
+            const unusual = isOrganAnomalous(item.name, readingsRef.current);
+            const surfaceMat = item.mesh.material as import("three").MeshStandardMaterial;
+
+            if (unusual) {
+              surfaceMat.color.setHex(0xe28b62);
+              surfaceMat.emissive.setHex(0x8f3212);
+              surfaceMat.emissiveIntensity = 0.28;
+              surfaceMat.roughness = 0.35;
+            } else {
+              surfaceMat.color.setHex(item.blood ? 0xc96a79 : item.neuro ? 0xb8a4d5 : 0xb5becb);
+              surfaceMat.emissive.setHex(0x000000);
+              surfaceMat.emissiveIntensity = 0.0;
+              surfaceMat.roughness = 0.5;
+            }
           }
+
           renderer.render(scene, camera);
-          const facingFront = Math.cos(controls.getAzimuthalAngle()) > .15;
+
+          // Position landmark pins using body-specific scaled anchors
+          const facingFront = Math.cos(controls.getAzimuthalAngle()) > 0.12;
+          const currentAnchors = ANCHORS_BY_BUILD[buildRef.current] ?? ANCHORS_BY_BUILD.male;
+
           for (const [region] of regionRef.current) {
             const label = labels.current[region];
             if (!label) continue;
-            projected.set(...ANCHORS[region]).project(camera);
-            label.style.left = `${(projected.x * .5 + .5) * 100}%`;
-            label.style.top = `${(-projected.y * .5 + .5) * 100}%`;
+            const coords = currentAnchors[region] ?? [0, 1.42, 0];
+            projected.set(...coords).project(camera);
+            label.style.left = `${(projected.x * 0.5 + 0.5) * 100}%`;
+            label.style.top = `${(-projected.y * 0.5 + 0.5) * 100}%`;
             label.hidden = !facingFront;
           }
         };
+
+        // Smooth camera transition animation helper
+        let animating = false;
+        const animTarget = new T.Vector3();
+        const animCamPos = new T.Vector3();
+
+        const smoothFocus = (targetCoords: [number, number, number], distance: number) => {
+          animTarget.set(...targetCoords);
+          const currentOffset = camera.position.clone().sub(controls.target);
+          if (currentOffset.lengthSq() < 0.001) currentOffset.set(0, 0, 1);
+          const dir = currentOffset.normalize();
+          animCamPos.copy(animTarget).add(dir.multiplyScalar(distance));
+          animating = true;
+
+          const step = () => {
+            if (!animating || stopped) return;
+            controls.target.lerp(animTarget, 0.12);
+            camera.position.lerp(animCamPos, 0.12);
+            controls.update();
+            render();
+
+            if (
+              controls.target.distanceTo(animTarget) < 0.005 &&
+              camera.position.distanceTo(animCamPos) < 0.005
+            ) {
+              controls.target.copy(animTarget);
+              camera.position.copy(animCamPos);
+              controls.update();
+              render();
+              animating = false;
+            } else {
+              requestAnimationFrame(step);
+            }
+          };
+          requestAnimationFrame(step);
+        };
+
+        const onControlsChange = () => {
+          render();
+        };
+        controls.addEventListener("change", onControlsChange);
+
+        const onControlsStart = () => {
+          animating = false;
+        };
+        controls.addEventListener("start", onControlsStart);
+
         const resize = () => {
-          const width = host.clientWidth, height = host.clientHeight;
+          const width = host.clientWidth;
+          const height = host.clientHeight;
           if (!width || !height || stopped) return;
           camera.aspect = width / height;
-          // Preserve the whole body when the viewer becomes narrow.
-          camera.position.setLength(Math.max(5.3, 3.25 / Math.max(.55, camera.aspect)));
+          camera.position.setLength(Math.max(5.3, 3.25 / Math.max(0.55, camera.aspect)));
           camera.updateProjectionMatrix();
           renderer.setSize(width, height, false);
           render();
         };
-        const observer = new ResizeObserver(resize); observer.observe(host);
-        controls.addEventListener("change", render);
+
+        const observer = new ResizeObserver(resize);
+        observer.observe(host);
+
         const theme = () => {
           material.color.set(document.documentElement.dataset.theme === "dark" ? 0xb8c7db : 0xc5cbd5);
           render();
         };
         const themeObserver = new MutationObserver(theme);
         themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
         control.current = {
-          turn: (angle) => { const offset = camera.position.clone().sub(controls.target); offset.applyAxisAngle(new T.Vector3(0, 1, 0), angle); camera.position.copy(controls.target).add(offset); controls.update(); render(); },
-          zoom: (factor) => { const offset=camera.position.clone().sub(controls.target); offset.setLength(Math.min(8,Math.max(2,offset.length()*factor))); camera.position.copy(controls.target).add(offset); controls.update(); render(); },
-          reset: () => { camera.position.set(0, 1.42, 5.1); controls.update(); resize(); },
+          turn: (angle) => {
+            const offset = camera.position.clone().sub(controls.target);
+            offset.applyAxisAngle(new T.Vector3(0, 1, 0), angle);
+            camera.position.copy(controls.target).add(offset);
+            controls.update();
+            render();
+          },
+          zoom: (factor) => {
+            const offset = camera.position.clone().sub(controls.target);
+            offset.setLength(Math.min(8.5, Math.max(0.8, offset.length() * factor)));
+            camera.position.copy(controls.target).add(offset);
+            controls.update();
+            render();
+          },
+          reset: () => {
+            setFocusRegion("full");
+            smoothFocus([0, 1.42, 0], 5.1);
+          },
+          focusToRegion: (r: FocusRegion) => {
+            const cfg = FOCUS_TARGETS[buildRef.current][r];
+            if (cfg) {
+              smoothFocus(cfg.target, cfg.distance);
+            }
+          },
+          focusToPoint: (coords, distance = 1.8) => {
+            smoothFocus(coords, distance);
+          },
           refresh: render,
         };
-        cleanup = () => {
-          observer.disconnect(); themeObserver.disconnect(); controls.dispose();
-          disposeObject(scene); material.dispose(); renderer.dispose(); renderer.domElement.remove();
-          control.current = null;
-        };
-        const base = `${import.meta.env.BASE_URL}assets/anatomy/`;
-        const [description, bytes] = await Promise.all([
-          fetch(base + "anatomy.json", {signal:abort.signal}).then(r=>{if(!r.ok)throw Error("Missing anatomy");return r.json();}),
-          fetch(base + "anatomy.bin", {signal:abort.signal}).then(r=>{if(!r.ok)throw Error("Missing anatomy");return r.arrayBuffer();}),
-        ]);
+
+        // Fetch anatomy assets once
+        const { description, bytes } = await loadAnatomyAssets(import.meta.env.BASE_URL);
         if (stopped) return;
-        type Surface = {name:string;pos:number;verts:number;idx:number;tris:number;nrm?:number};
-        const reference = description.bodies[build];
-        const model = new T.Group();
-        function surface(data:Surface) {
+
+        function createGeometry(data: SurfaceDef) {
           const geometry = new T.BufferGeometry();
-          geometry.setAttribute("position",new T.Float32BufferAttribute(new Float32Array(bytes,data.pos,data.verts*3),3));
-          geometry.setIndex(new T.BufferAttribute(new Uint32Array(bytes,data.idx,data.tris*3),1));
-          if(data.nrm!==undefined) geometry.setAttribute("normal",new T.Float32BufferAttribute(new Float32Array(bytes,data.nrm,data.verts*3),3));
-          else geometry.computeVertexNormals();
+          geometry.setAttribute(
+            "position",
+            new T.Float32BufferAttribute(new Float32Array(bytes, data.pos, data.verts * 3), 3)
+          );
+          geometry.setIndex(new T.BufferAttribute(new Uint32Array(bytes, data.idx, data.tris * 3), 1));
+          if (data.nrm !== undefined) {
+            geometry.setAttribute(
+              "normal",
+              new T.Float32BufferAttribute(new Float32Array(bytes, data.nrm, data.verts * 3), 3)
+            );
+          } else {
+            geometry.computeVertexNormals();
+          }
           return geometry;
         }
-        const skin = new T.Mesh(surface(reference.skin),new T.MeshPhysicalMaterial({color:0xa4cce2,transparent:true,opacity:.16,roughness:.25,metalness:.08,depthWrite:false,side:T.DoubleSide}));
-        skin.renderOrder=2;model.add(skin);
-        for(const organ of reference.organs as Surface[]) {
-          const blood=/heart|aorta|vessel|jugular/.test(organ.name);
-          const neuro=/brain|eye|spinal|vertebral/.test(organ.name);
-          if(system==="blood"&&!blood || system==="neuro"&&!neuro || system==="organs"&&(blood||neuro)) continue;
-          const unusual = regionRef.current.some(([r,v])=>v.unusual&&(r==="chest"&&blood||r==="head"&&neuro||r==="abdomen"&&!blood&&!neuro));
-          const mesh = new T.Mesh(surface(organ),new T.MeshStandardMaterial({color:unusual?0xe28b62:blood?0xc96a79:neuro?0xb8a4d5:0xb5becb,roughness:.5,metalness:.08,emissive:unusual?0x8f3212:0x000000,emissiveIntensity:.18}));
-          organMeshes.push({mesh,blood,neuro});
-          model.add(mesh);
+
+        // Build models for both male and female so switching is instant without re-fetching
+        const bodyGroups: Record<string, Group> = {};
+        const bodyOrgans: Record<string, OrganMeshRecord[]> = {};
+
+        for (const [keyName, reference] of Object.entries(description.bodies)) {
+          const group = new T.Group();
+          group.name = `body_${keyName}`;
+
+          const skin = new T.Mesh(
+            createGeometry(reference.skin),
+            new T.MeshPhysicalMaterial({
+              color: 0xa4cce2,
+              transparent: true,
+              opacity: 0.16,
+              roughness: 0.25,
+              metalness: 0.08,
+              depthWrite: false,
+              side: T.DoubleSide,
+            })
+          );
+          skin.renderOrder = 2;
+          skin.name = "skin";
+          group.add(skin);
+
+          const organList: OrganMeshRecord[] = [];
+          for (const organ of reference.organs) {
+            const blood = /heart|aorta|vessel|jugular/.test(organ.name);
+            const neuro = /brain|eye|spinal|vertebral/.test(organ.name);
+
+            const mesh = new T.Mesh(
+              createGeometry(organ),
+              new T.MeshStandardMaterial({
+                color: blood ? 0xc96a79 : neuro ? 0xb8a4d5 : 0xb5becb,
+                roughness: 0.5,
+                metalness: 0.08,
+                emissive: 0x000000,
+                emissiveIntensity: 0.0,
+              })
+            );
+            mesh.name = organ.name;
+            group.add(mesh);
+            organList.push({ name: organ.name, mesh, blood, neuro });
+          }
+
+          group.scale.setScalar(2.8 / reference.height);
+          group.visible = false;
+          scene.add(group);
+
+          bodyGroups[keyName] = group;
+          bodyOrgans[keyName] = organList;
         }
-        model.scale.setScalar(2.8/reference.height);
-        scene.add(model); controls.update(); theme(); resize();
+
+        // Double-click raycast to focus on specific organ or body point
+        const raycaster = new T.Raycaster();
+        const mouse = new T.Vector2();
+
+        const onDblClick = (event: MouseEvent) => {
+          const rect = renderer.domElement.getBoundingClientRect();
+          mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+          mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+          raycaster.setFromCamera(mouse, camera);
+
+          const activeGroup = bodyGroups[buildRef.current];
+          if (!activeGroup) return;
+
+          const intersects = raycaster.intersectObjects(activeGroup.children, true);
+          const hit =
+            intersects.find((i) => i.object.visible && (i.object as Mesh).name !== "skin") ||
+            intersects.find((i) => i.object.visible);
+
+          if (hit && hit.point) {
+            smoothFocus([hit.point.x, hit.point.y, hit.point.z], 1.8);
+          }
+        };
+        renderer.domElement.addEventListener("dblclick", onDblClick);
+
+        cleanup = () => {
+          observer.disconnect();
+          themeObserver.disconnect();
+          controls.removeEventListener("change", onControlsChange);
+          controls.removeEventListener("start", onControlsStart);
+          renderer.domElement.removeEventListener("dblclick", onDblClick);
+          controls.dispose();
+          disposeObject(scene);
+          material.dispose();
+          renderer.dispose();
+          renderer.domElement.remove();
+          control.current = null;
+        };
+
+        // Helper to update current body and filter visibility
+        const updateSceneDisplay = () => {
+          const currentBuild = buildRef.current;
+          const currentSystem = systemRef.current;
+
+          for (const [keyName, group] of Object.entries(bodyGroups)) {
+            const isCurrent = keyName === currentBuild;
+            group.visible = isCurrent;
+
+            if (isCurrent) {
+              const organs = bodyOrgans[keyName] ?? [];
+              organMeshesRef.current = organs;
+              for (const item of organs) {
+                const isVisible =
+                  currentSystem === "all"
+                    ? true
+                    : currentSystem === "blood"
+                      ? item.blood
+                      : currentSystem === "neuro"
+                        ? item.neuro
+                        : !item.blood && !item.neuro;
+                item.mesh.visible = isVisible;
+              }
+            }
+          }
+
+          render();
+        };
+
+        // Attach updater to control object so outer React effects can trigger it
+        if (control.current) {
+          control.current.refresh = () => {
+            updateSceneDisplay();
+          };
+        }
+
+        updateSceneDisplay();
+        resize();
+        theme();
         setStatus("ready");
       } catch (error) {
         if (!stopped && !(error instanceof DOMException && error.name === "AbortError")) {
-          cleanup(); setStatus("unavailable");
+          cleanup();
+          setStatus("unavailable");
         }
       }
     }
-    void start();
-    return () => { stopped = true; abort.abort(); cleanup(); };
-  }, [build, system]);
 
-  useEffect(() => { control.current?.refresh(); }, [regions, status]);
+    void init();
 
-  return <figure className="human-viewer" aria-label={`Interactive 3D body view for ${crewLabel}`} data-model-status={status}>
-    <div className="anatomy-tools"><label>Reference body <select value={build} onChange={e=>{setStatus("loading");setBuild(e.target.value);}}><option value="male">Male</option><option value="female">Female</option></select></label><label>Body systems <select value={system} onChange={e=>{setStatus("loading");setSystem(e.target.value);}}><option value="all">All systems</option><option value="blood">Heart and blood</option><option value="neuro">Brain, eyes and spine</option><option value="organs">Organs</option></select></label></div>
-    <div className="human-stage" ref={mount}>
-      {status === "loading" ? <p className="human-loading" role="status">Loading body view…</p> : null}
-      {status === "unavailable" ? <p className="human-loading" role="status">3D view unavailable on this device. All readings remain available in the signal list.</p> : null}
-      {status === "ready" ? regions.map(([region, info]) => <button
-        type="button" key={region} ref={(element) => { labels.current[region] = element; }}
-        className={`human-landmark ${info.unusual ? "is-unusual" : info.learning ? "is-learning" : ""}`}
-        onClick={() => onOpenIndicator(info.key)}
-        aria-label={`${REGION_LABEL[region]}: ${info.unusual ? "unusual for you" : info.learning ? "learning baseline" : "typical for you"}. Open ${indicatorMeta(info.key).label}`}
-      ><span className="human-landmark__dot" /><span className="human-landmark__name">{indicatorMeta(info.key).short}</span></button>) : null}
-    </div>
-    <figcaption>
-      <div className="human-controls" role="group" aria-label="Rotate 3D model">
-        <button type="button" disabled={status !== "ready"} onClick={() => control.current?.turn(-Math.PI / 6)} aria-label="Rotate model left"><Icon name="chevron" size={16} className="rotate-left" /></button>
-        <button type="button" disabled={status !== "ready"} onClick={() => control.current?.reset()}>Front view</button>
-        <button type="button" disabled={status !== "ready"} onClick={() => control.current?.turn(Math.PI / 6)} aria-label="Rotate model right"><Icon name="chevron" size={16} className="rotate-right" /></button>
-        <button type="button" disabled={status !== "ready"} onClick={() => control.current?.zoom(.8)} aria-label="Zoom anatomy in">+</button>
-        <button type="button" disabled={status !== "ready"} onClick={() => control.current?.zoom(1.25)} aria-label="Zoom anatomy out">−</button>
+    return () => {
+      stopped = true;
+      cleanup();
+    };
+  }, []);
+
+  // Update visible system / build without destroying the WebGL context
+  useEffect(() => {
+    if (status === "ready") {
+      control.current?.refresh();
+      // If a region was selected, re-align to that body's coordinates
+      if (focusRegion !== "full") {
+        control.current?.focusToRegion(focusRegion);
+      }
+    }
+  }, [build, system, status]);
+
+  // Update anomaly highlights when readings change
+  useEffect(() => {
+    if (status === "ready") {
+      control.current?.refresh();
+    }
+  }, [readings, status]);
+
+  return (
+    <figure
+      className="human-viewer"
+      aria-label={`Interactive 3D body view for ${crewLabel}`}
+      data-model-status={status}
+    >
+      <div className="anatomy-tools">
+        <label>
+          Reference body{" "}
+          <select
+            value={build}
+            onChange={(e) => setBuild(e.target.value as "male" | "female")}
+          >
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </label>
+        <label>
+          Body systems{" "}
+          <select
+            value={system}
+            onChange={(e) =>
+              setSystem(e.target.value as "all" | "blood" | "neuro" | "organs")
+            }
+          >
+            <option value="all">All systems</option>
+            <option value="blood">Heart and blood</option>
+            <option value="neuro">Brain, eyes and spine</option>
+            <option value="organs">Organs</option>
+          </select>
+        </label>
+        <label>
+          Focus area{" "}
+          <select
+            value={focusRegion}
+            onChange={(e) => {
+              const r = e.target.value as FocusRegion;
+              setFocusRegion(r);
+              control.current?.focusToRegion(r);
+            }}
+          >
+            <option value="full">Whole body</option>
+            <option value="head">Head (Brain & Eyes)</option>
+            <option value="chest">Chest (Heart & Lungs)</option>
+            <option value="abdomen">Abdomen & Viscera</option>
+            <option value="legs">Lower body & Legs</option>
+          </select>
+        </label>
       </div>
-      <p className="human-caption">Drag to rotate. Landmarks link to your signals.<br />Illustrative reference anatomy · not a crew scan.</p>
-      <p className="human-caption">{build === "male" ? "BodyParts3D © The Database Center for Life Science" : "HuBMAP Consortium · HRA Visible Human female"} · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a></p>
-    </figcaption>
-  </figure>;
+
+      <div className="human-stage" ref={mount}>
+        {status === "loading" ? (
+          <p className="human-loading" role="status">
+            Loading body view…
+          </p>
+        ) : null}
+        {status === "unavailable" ? (
+          <p className="human-loading" role="status">
+            3D view unavailable on this device. All readings remain available in the signal list.
+          </p>
+        ) : null}
+        {status === "ready"
+          ? regions.map(([region, info]) => (
+              <button
+                type="button"
+                key={region}
+                ref={(element) => {
+                  labels.current[region] = element;
+                }}
+                className={`human-landmark ${info.unusual ? "is-unusual" : info.learning ? "is-learning" : ""}`}
+                onClick={() => onOpenIndicator(info.key)}
+                aria-label={`${REGION_LABEL[region]}: ${
+                  info.unusual ? "unusual for you" : info.learning ? "learning baseline" : "typical for you"
+                }. Open ${indicatorMeta(info.key).label}`}
+              >
+                <span className="human-landmark__dot" />
+                <span className="human-landmark__name">{indicatorMeta(info.key).short}</span>
+              </button>
+            ))
+          : null}
+      </div>
+
+      <figcaption>
+        <div className="human-controls" role="group" aria-label="Rotate 3D model">
+          <button
+            type="button"
+            disabled={status !== "ready"}
+            onClick={() => control.current?.turn(-Math.PI / 6)}
+            aria-label="Rotate model left"
+          >
+            <Icon name="chevron" size={16} className="rotate-left" />
+          </button>
+          <button type="button" disabled={status !== "ready"} onClick={() => control.current?.reset()}>
+            Front view
+          </button>
+          <button
+            type="button"
+            disabled={status !== "ready"}
+            onClick={() => control.current?.turn(Math.PI / 6)}
+            aria-label="Rotate model right"
+          >
+            <Icon name="chevron" size={16} className="rotate-right" />
+          </button>
+          <button
+            type="button"
+            disabled={status !== "ready"}
+            onClick={() => control.current?.zoom(0.8)}
+            aria-label="Zoom anatomy in"
+          >
+            +
+          </button>
+          <button
+            type="button"
+            disabled={status !== "ready"}
+            onClick={() => control.current?.zoom(1.25)}
+            aria-label="Zoom anatomy out"
+          >
+            −
+          </button>
+        </div>
+        <p className="human-caption">
+          Drag to rotate · Right-click or 2-finger drag to pan · Double-click to focus point.
+          <br />
+          Landmarks link to your signals · Illustrative reference anatomy.
+        </p>
+        <p className="human-caption">
+          {build === "male"
+            ? "BodyParts3D © The Database Center for Life Science"
+            : "HuBMAP Consortium · HRA Visible Human female"}{" "}
+          ·{" "}
+          <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">
+            CC BY 4.0
+          </a>
+        </p>
+      </figcaption>
+    </figure>
+  );
 }
+

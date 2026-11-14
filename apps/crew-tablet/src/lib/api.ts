@@ -244,6 +244,15 @@ export async function loadRadiation(): Promise<unknown | null> {
   }
 }
 
+/** Build-time NASA DONKI snapshot. The browser never calls NASA. */
+export async function loadSpaceWeather(): Promise<unknown | null> {
+  try {
+    return await fetchJson<unknown>(staticUrl("data/space-weather.json"), STATIC_TIMEOUT_MS);
+  } catch {
+    return null;
+  }
+}
+
 export async function loadValidation(): Promise<unknown | null> {
   try {
     return await fetchJson<unknown>(staticUrl("data/validation.json"), STATIC_TIMEOUT_MS);
