@@ -1,0 +1,102 @@
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+
+const here = dirname(fileURLToPath(import.meta.url));
+const protocolRunnerPath = resolve(here, "../../packages/protocol-runner/index.js");
+const protocolStylesPath = resolve(here, "../../packages/protocol-runner/style.css");
+const protocolsDir = resolve(here, "../../kb/protocols");
+const uiKitPath = resolve(here, "../../packages/ui-kit");
+
+/**
+ * A4 owns packages/protocol-runner and may land after this app.
+ * Exposing it through a virtual module keeps `npm run build` green whether or
+ * not the file exists, and lets Act feature-detect it at runtime.
+ */
+const VIRTUAL_ID = "virtual:tether-protocol-runner";
+const RESOLVED_ID = "\0" + VIRTUAL_ID;
+const PROTOCOLS_ID = "virtual:tether-protocols";
+const RESOLVED_PROTOCOLS_ID = "\0" + PROTOCOLS_ID;
+const PROTOCOL_CSS_ID = "virtual:tether-protocol-css";
+const RESOLVED_PROTOCOL_CSS_ID = "\0" + PROTOCOL_CSS_ID;
+
+/** Protocols are inlined so the runner works offline and from a static build. */
+function readProtocols(): Record<string, unknown> {
+  if (!existsSync(protocolsDir)) return {};
+  const out: Record<string, unknown> = {};
+  for (const file of readdirSync(protocolsDir)) {
+    if (!file.endsWith(".json")) continue;
+    try {
+      const raw = JSON.parse(readFileSync(join(protocolsDir, file), "utf8")) as {
+        id?: string;
+      };
+      out[raw.id ?? file.replace(/\.json$/, "")] = raw;
+    } catch {
+      // A malformed protocol must never break the tablet build.
+    }
+  }
+  return out;
+}
+
+function readProtocolStyles(): string {
+  try {
+    return readFileSync(protocolStylesPath, "utf8");
+  } catch {
+    return "";
+  }
+}
+
+function protocolRunnerPlugin() {
+  return {
+    name: "tether-protocol-runner",
+    resolveId(id: string) {
+      if (id === VIRTUAL_ID) return RESOLVED_ID;
+      if (id === PROTOCOLS_ID) return RESOLVED_PROTOCOLS_ID;
+      if (id === PROTOCOL_CSS_ID) return RESOLVED_PROTOCOL_CSS_ID;
+      return null;
+    },
+    load(id: string) {
+      if (id === RESOLVED_PROTOCOLS_ID) {
+        return `export const protocols = ${JSON.stringify(readProtocols())};\n`;
+      }
+      if (id === RESOLVED_PROTOCOL_CSS_ID) {
+        return `const css = ${JSON.stringify(readProtocolStyles())};\nexport default css;\n`;
+      }
+      if (id !== RESOLVED_ID) return null;
+      if (!existsSync(protocolRunnerPath)) {
+        return "export const mountProtocolRunner = null;\nexport default null;\n";
+      }
+      return (
+        'export * from "@protocol-runner";\n' +
+        'import * as runner from "@protocol-runner";\n' +
+        "export default runner;\n"
+      );
+    },
+  };
+}
+
+// The engine API runs on :8000 (uvicorn). Proxying keeps the app same-origin in
+// dev/preview; a static host simply 404s and the app falls back to public JSON.
+const apiProxy = {
+  "/api": { target: "http://127.0.0.1:8000", changeOrigin: true },
+};
+
+export default defineConfig({
+  base: "./",
+  plugins: [react(), protocolRunnerPlugin()],
+  resolve: {
+    alias: {
+      "@ui-kit": uiKitPath,
+      "@protocol-runner": protocolRunnerPath,
+    },
+  },
+  server: {
+    port: 5173,
+    fs: { allow: [resolve(here, "../..")] },
+    proxy: apiProxy,
+  },
+  preview: { port: 4173, proxy: apiProxy },
+  build: { target: "es2022", outDir: "dist", sourcemap: false },
+});
