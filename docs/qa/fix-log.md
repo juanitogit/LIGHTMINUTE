@@ -207,3 +207,119 @@ Result: **0 matches**.
   and the UI says so.
 - **Individual dose:** not computed from DONKI or NOAA. Both panels state that solar
   events are context, not individual dose.
+
+## 9. Cloudflare Pages: 404 on the new snapshot (found and fixed)
+
+The first Git deployment of `517bd9e` reported `success`, but the new JSON was not in
+the published artifact. The live site was serving cached files from an older deployment.
+
+Before the fix:
+
+```text
+https://lightminute.pages.dev/data/space-weather.json -> 404
+https://lightminute.pages.dev/data/radiation.json     -> 200 bytes=24447 cache=HIT age=7208
+https://lightminute.pages.dev/README.md               -> 200 bytes=23557 type=text/markdown
+```
+
+Build log for deployment `81411506` (source `517bd9e`):
+
+```text
+No build command specified. Skipping build step.
+Validating asset output directory
+Uploading... (329/329)
+Success! Uploaded 17 files (312 already uploaded)
+```
+
+The Pages project had an empty `build_config`, so it published the repository root
+(329 tracked files), not the Vite build. The same pattern was present in the previous
+deployment `1a4ede7e` (source `8ce0815`, 320 files). That also made tracked repository
+files publicly reachable while those deployments were canonical (for example
+`/README.md` returned the real markdown). `.env` and `.git` are not tracked, so they
+were not part of the upload. A `git grep` for common key formats found only the
+`.env.example` placeholder `sk-...` and test values, not a real credential.
+
+Fix applied with the logged-in wrangler OAuth token (no new API key):
+
+```text
+PATCH /accounts/5fc0a51f8f4c5716e3076f4bab63bfd5/pages/projects/lightminute
+{
+  "build_config": {
+    "build_command": "npm ci && npm run build",
+    "root_dir": "apps/crew-tablet",
+    "destination_dir": "dist",
+    "build_caching": true
+  }
+}
+HTTP=200
+```
+
+Then the failed deployment was retried:
+
+```text
+POST .../deployments/81411506-e592-449b-8f7c-075268049579/retry
+HTTP=200
+id=a2dfdfbf-c16f-44d8-9dfa-b5a2a776d695
+```
+
+Build log for `a2dfdfbf`:
+
+```text
+> @lightminute/crew-tablet@0.1.0 build
+> tsc -b && vite build
+dist/index.html
+dist/assets/index-C1hLGYG0.js
+✓ built in 3.24s
+Uploading... (26/26)
+Success! Uploaded 2 files (24 already uploaded)
+```
+
+The canonical deployment is now `a2dfdfbf` and the build config is stored on the
+Cloudflare project, not only in a local shell or dashboard session.
+
+## 10. Live verification after the fix
+
+```text
+https://lightminute.pages.dev/data/space-weather.json -> 200 bytes=91121 type=application/json
+status=ok label=real-public events=391
+counts={"SEP":11,"FLR":55,"CME":322,"GST":3}
+window=2026-08-16..2026-11-14
+api_key_sent=false (all four sources)
+```
+
+The live HTML references `assets/index-C1hLGYG0.js` and still contains the Search
+Console tag and canonical URL. Requests for repository paths now return the SPA
+`index.html`, not the source file:
+
+```text
+/.agents/skills/bayesian-n-of-1-engine/SKILL.md -> 200 type=text/html spa=true
+/data/snapshots/manifest.json                   -> 200 type=text/html spa=true
+/docs/ESTADO-REAL-LIGHTMINUTE.md                -> 200 type=text/html spa=true
+```
+
+Live browser check (Playwright, text assertions only):
+
+```text
+CHECKS={"nasa":true,"noaa":true,"realPublic":true,"notIndividualDose":true,"has391":true}
+CONSOLE_ERRORS=[]
+REQUEST_FAILURES=[]
+WEATHER_RESPONSES=["200 https://lightminute.pages.dev/data/space-weather.json"]
+```
+
+Static e2e after the rebuild:
+
+```text
+LIGHTMINUTE_SKIP_API=1 npm run test:e2e
+...
+15 browser integration groups passed. Screenshots: docs/screenshots/
+```
+
+The earlier 17-group run in section 6 included the two API-backed groups; the
+static-only run skips them by design.
+
+## 11. Environment variables
+
+No new Cloudflare environment variable was added. DONKI is keyless and the snapshot
+is committed, so `NASA_API_KEY` is not needed in Cloudflare and was deliberately not
+configured. `VITE_API_BASE` remains unset/empty because the Python API is not
+deployed; the tablet runs in static mode. `LLM_PROVIDER=none` remains the local/API
+default and does not apply to this static Pages project.

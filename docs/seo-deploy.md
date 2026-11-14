@@ -21,8 +21,22 @@ Everything in `public/` is copied verbatim into `dist/` by Vite.
 
 ## Deploy
 
-The project no longer ships a GitHub Pages/Cloudflare workflow (it was removed in
-`ee97540`), so deployment is manual. Cloudflare Pages project: `lightminute`.
+Cloudflare Pages project `lightminute` is connected to `main`, so a push to `main`
+builds and deploys automatically. The project build configuration must be:
+
+| Setting | Value |
+| --- | --- |
+| Root directory | `apps/crew-tablet` |
+| Build command | `npm ci && npm run build` |
+| Build output directory | `dist` |
+
+This was fixed on 2026-11-14 after the project was found with an empty build config:
+it was publishing the repository root instead of `dist/`, so new files such as
+`data/space-weather.json` returned 404 while older files were served from cache. The
+`build_config` now lives on the Pages project; changing it in the dashboard has the
+same effect.
+
+Manual deploy remains a fallback when a Git build is unavailable:
 
 ```powershell
 cd apps/crew-tablet
@@ -35,15 +49,21 @@ npx wrangler pages deploy dist --project-name lightminute --branch main
 CI still guards the tag (`.github/workflows/ci.yml` fails if `google-site-verification`
 is missing from `dist/index.html`).
 
-Confirm the tag is really live before clicking Verify in Search Console:
+Confirm the tag and the NASA snapshot are live before clicking Verify in Search Console:
 
 ```powershell
 (Invoke-WebRequest https://lightminute.pages.dev/ -UseBasicParsing).Content -match 'qHznM4pcKgtis3SqM9c9eMWA-Kg5TRxGNvULQlbQALc'
 (Invoke-WebRequest https://lightminute.pages.dev/sitemap.xml -UseBasicParsing).Headers['Content-Type']  # must be application/xml
+$w = Invoke-RestMethod https://lightminute.pages.dev/data/space-weather.json
+$w.status; $w.label; $w.events.Count  # ok / real-public / 391
 ```
 
-If `sitemap.xml` comes back as `text/html`, Pages is serving the SPA fallback: the deploy
-did not upload `dist/` (stale build or wrong output directory).
+If `sitemap.xml` or `data/space-weather.json` comes back as `text/html`, Pages is
+serving the SPA fallback: check the build configuration above before redeploying.
+
+No `NASA_API_KEY` is needed in Cloudflare. DONKI is keyless and the snapshot is
+committed at build time; `VITE_API_BASE` stays empty because the Python API is not
+deployed.
 
 ## Google Search Console checklist
 
