@@ -1,0 +1,98 @@
+[
+ {
+  "cabin_co2_ppm": 1771.0,
+  "day": 9,
+  "s_scale": 0,
+  "solar_flux_pfu": 5.79
+ },
+ {
+  "cabin_co2_ppm": 2257.0,
+  "day": 10,
+  "s_scale": 0,
+  "solar_flux_pfu": 5.48
+ },
+ {
+  "cabin_co2_ppm": 2743.0,
+  "day": 11,
+  "s_scale": 0,
+  "solar_flux_pfu": 5.12
+ },
+ {
+  "cabin_co2_ppm": 3229.0,
+  "day": 12,
+  "s_scale": 0,
+  "solar_flux_pfu": 5.44
+ },
+ {
+  "cabin_co2_ppm": 3714.0,
+  "day": 13,
+  "s_scale": 0,
+  "solar_flux_pfu": 4.12
+ },
+ {
+  "cabin_co2_ppm": 4200.0,
+  "day": 14,
+  "s_scale": 0,
+  "solar_flux_pfu": 4.25
+ },
+ {
+  "cabin_co2_ppm": 4200.0,
+  "day": 15,
+  "s_scale": 0,
+  "solar_flux_pfu": 4.91
+ },
+ {
+  "cabin_co2_ppm": 4200.0,
+  "day": 16,
+  "s_scale": 0,
+  "solar_flux_pfu": 5.91
+ },
+ {
+  "cabin_co2_ppm": 4200.0,
+  "day": 17,
+  "s_scale": 0,
+  "solar_flux_pfu": 5.93
+ },
+ {
+  "cabin_co2_ppm": 4200.0,
+  "day": 18,
+  "s_scale": 0,
+  "solar_flux_pfu": 5.9
+ },
+ {
+  "cabin_co2_ppm": 4200.0,
+  "day": 19,
+  "s_scale": 0,
+  "solar_flux_pfu": 5.5
+ },
+ {
+  "cabin_co2_ppm": 4200.0,
+  "day": 20,
+  "s_scale": 0,
+  "solar_flux_pfu": 5.92
+ },
+ {
+  "cabin_co2_ppm": 4200.0,
+  "day": 21,
+  "s_scale": 0,
+  "solar_flux_pfu": 5.09
+ },
+ {
+  "cabin_co2_ppm": 4200.0,
+  "day": 22,
+  "s_scale": 0,
+  "solar_flux_pfu": 5.56
+ },
+ {
+  "cabin_co2_ppm": 4200.0,
+  "day": 23,
+  "s_scale": 0,
+  "solar_flux_pfu": 5.29
+ },
+ {
+  "cabin_co2_ppm": 4200.0,
+  "day": 24,
+  "s_scale": 0,
+  "solar_flux_pfu": 5.93
+ }
+]

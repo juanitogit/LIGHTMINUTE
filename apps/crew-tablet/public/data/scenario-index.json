@@ -1,0 +1,124 @@
+{
+ "synthetic": true,
+ "note": "Synthetic data. Not a medical device.",
+ "seed": 0,
+ "scenarios": [
+  {
+   "name": "cmo_fever",
+   "title": "Crew medical officer: fever-like syndrome",
+   "description": "The crew medical officer drifts in heart rate, temperature, sleep and reaction time from day 15. The crew must run the protocol without its medical officer, with a Mars-like delay.",
+   "available": true,
+   "source": "scenario-file",
+   "meta": {
+    "title": "Crew medical officer: fever-like syndrome",
+    "description": "The crew medical officer drifts in heart rate, temperature, sleep and reaction time from day 15. The crew must run the protocol without its medical officer, with a Mars-like delay.",
+    "onset_day": 15,
+    "delay_profile": "mars"
+   },
+   "crew": [
+    "A",
+    "B",
+    "C",
+    "D"
+   ],
+   "crew_roles": {
+    "A": "CMO",
+    "B": "CDR",
+    "C": "MS1",
+    "D": "MS2"
+   },
+   "days": 24,
+   "onset_day": 15,
+   "variant": "strong",
+   "file": "scenario-cmo_fever.json",
+   "mild_file": "scenario-cmo_fever-mild.json",
+   "indicators": [
+    "rest_hr",
+    "temp_c",
+    "sleep_h",
+    "pvt_ms",
+    "co2_ppm",
+    "headache_score"
+   ],
+   "delay_profile": "mars"
+  },
+  {
+   "name": "sep_sleep_loss",
+   "title": "Solar particle event with sleep loss",
+   "description": "A solar radiation storm (NOAA S-scale) disrupts the cabin and the schedule from day 12: sleep drops and one crew member's HR and reaction time drift.",
+   "available": true,
+   "source": "scenario-file",
+   "meta": {
+    "title": "Solar particle event with sleep loss",
+    "description": "A solar radiation storm (NOAA S-scale) disrupts the cabin and the schedule from day 12: sleep drops and one crew member's HR and reaction time drift.",
+    "onset_day": 12,
+    "delay_profile": "moon"
+   },
+   "crew": [
+    "A",
+    "B",
+    "C",
+    "D"
+   ],
+   "crew_roles": {
+    "A": "CMO",
+    "B": "CDR",
+    "C": "MS1",
+    "D": "MS2"
+   },
+   "days": 24,
+   "onset_day": 12,
+   "variant": "strong",
+   "file": "scenario-sep_sleep_loss.json",
+   "mild_file": "scenario-sep_sleep_loss-mild.json",
+   "indicators": [
+    "rest_hr",
+    "temp_c",
+    "sleep_h",
+    "pvt_ms",
+    "co2_ppm",
+    "headache_score"
+   ],
+   "delay_profile": "moon"
+  },
+  {
+   "name": "co2_creep",
+   "title": "Slow cabin CO2 rise",
+   "description": "Cabin CO2 climbs from day 8 and several crew report headaches and slower reaction time. A shared exposure: check the habitat before treating anybody.",
+   "available": true,
+   "source": "scenario-file",
+   "meta": {
+    "title": "Slow cabin CO2 rise",
+    "description": "Cabin CO2 climbs from day 8 and several crew report headaches and slower reaction time. A shared exposure: check the habitat before treating anybody.",
+    "onset_day": 8,
+    "delay_profile": "mars"
+   },
+   "crew": [
+    "A",
+    "B",
+    "C",
+    "D"
+   ],
+   "crew_roles": {
+    "A": "CMO",
+    "B": "CDR",
+    "C": "MS1",
+    "D": "MS2"
+   },
+   "days": 24,
+   "onset_day": 8,
+   "variant": "strong",
+   "file": "scenario-co2_creep.json",
+   "mild_file": "scenario-co2_creep-mild.json",
+   "indicators": [
+    "rest_hr",
+    "temp_c",
+    "sleep_h",
+    "pvt_ms",
+    "co2_ppm",
+    "headache_score"
+   ],
+   "delay_profile": "mars"
+  }
+ ]
+}
