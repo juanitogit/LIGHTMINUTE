@@ -1,0 +1,343 @@
+{
+  "utc": "2026-11-14T20:37:12.601634+00:00",
+  "engine_revision": "2fea48ff4d349de96980a39301e269818d731245",
+  "command": ".venv/Scripts/python.exe tests/fault_injection/run.py",
+  "label": "synthetic",
+  "results": [
+    {
+      "id": "FI-01",
+      "title": "Invented number in facts",
+      "component": "verifier",
+      "severity": "high",
+      "test": "invented_fact",
+      "evidence": "tests/fault_injection/run.py::invented_fact",
+      "status": "PASS",
+      "observation": {
+        "verifier_errors": [
+          "number 999 not in engine facts"
+        ]
+      }
+    },
+    {
+      "id": "FI-02",
+      "title": "Invented number outside facts field",
+      "component": "verifier",
+      "severity": "high",
+      "test": "invented_headline",
+      "evidence": "tests/fault_injection/run.py::invented_headline",
+      "status": "FAIL",
+      "observation": "Verifier accepted malicious headline: Your heart rate is 999 bpm",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 41, in decorator\n    observation = fn()\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 68, in invented_headline\n    return reject(\"headline\", \"Your heart rate is 999 bpm\")\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 57, in reject\n    assert errors, f\"Verifier accepted malicious {field}: {value}\"\n           ^^^^^^\nAssertionError: Verifier accepted malicious headline: Your heart rate is 999 bpm\n"
+    },
+    {
+      "id": "FI-03",
+      "title": "LLM lowers urgency",
+      "component": "verifier",
+      "severity": "critical",
+      "test": "lower_urgency",
+      "evidence": "tests/fault_injection/run.py::lower_urgency",
+      "status": "PASS",
+      "observation": {
+        "verifier_errors": [
+          "LLM lowered urgency below engine level"
+        ]
+      }
+    },
+    {
+      "id": "FI-04",
+      "title": "Nonexistent citation",
+      "component": "verifier",
+      "severity": "high",
+      "test": "fake_citation",
+      "evidence": "tests/fault_injection/run.py::fake_citation",
+      "status": "PASS",
+      "observation": {
+        "verifier_errors": [
+          "unknown citations: ['NASA-DOES-NOT-EXIST']"
+        ]
+      }
+    },
+    {
+      "id": "FI-05",
+      "title": "Prompt injection in free text",
+      "component": "card_service",
+      "severity": "critical",
+      "test": "prompt_injection",
+      "evidence": "tests/fault_injection/run.py::prompt_injection",
+      "status": "PASS",
+      "observation": {
+        "source": "template",
+        "errors": [],
+        "scope": "adversarial provider output, not proof of prompt immunity"
+      }
+    },
+    {
+      "id": "FI-06",
+      "title": "LLM transport unavailable",
+      "component": "card_service",
+      "severity": "high",
+      "test": "llm_unavailable",
+      "evidence": "tests/fault_injection/run.py::llm_unavailable",
+      "status": "PASS",
+      "observation": {
+        "source": "template",
+        "errors": []
+      }
+    },
+    {
+      "id": "FI-07",
+      "title": "LLM client initialization unavailable",
+      "component": "card_service",
+      "severity": "high",
+      "test": "llm_initialization_failure",
+      "evidence": "tests/fault_injection/run.py::llm_initialization_failure",
+      "status": "ERROR",
+      "observation": "RuntimeError: injected initialization failure",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 41, in decorator\n    observation = fn()\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 115, in llm_initialization_failure\n    result = card_service.get_card(\"cmo_fever\", \"A\", 16, scenario_doc=DOC)\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\services\\engine\\tether_engine\\llm\\card_service.py\", line 147, in get_card\n    cl = client if client is not None else make_client()\n                                           ~~~~~~~~~~~^^\n  File \"C:\\Python314\\Lib\\unittest\\mock.py\", line 1175, in __call__\n    return self._mock_call(*args, **kwargs)\n           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\unittest\\mock.py\", line 1179, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\unittest\\mock.py\", line 1234, in _execute_mock_call\n    raise effect\nRuntimeError: injected initialization failure\n"
+    },
+    {
+      "id": "FI-08",
+      "title": "NaN sensor reading",
+      "component": "pipeline/QC",
+      "severity": "high",
+      "test": "nan_sensor",
+      "evidence": "tests/fault_injection/run.py::nan_sensor",
+      "status": "PASS",
+      "observation": {
+        "dropped": 2,
+        "serialized_finite": true
+      }
+    },
+    {
+      "id": "FI-09",
+      "title": "Impossible physiological value",
+      "component": "pipeline/QC",
+      "severity": "high",
+      "test": "impossible_sensor",
+      "evidence": "tests/fault_injection/run.py::impossible_sensor",
+      "status": "PASS",
+      "observation": {
+        "dropped": 2
+      }
+    },
+    {
+      "id": "FI-10",
+      "title": "Dropout must not quote stale HR as current",
+      "component": "pipeline/template",
+      "severity": "high",
+      "test": "missing_hr_freshness",
+      "evidence": "tests/fault_injection/run.py::missing_hr_freshness",
+      "status": "FAIL",
+      "observation": "Missing HR displayed as current: HR 59.9 vs your usual band 55.9 to 66.1; combined score -0.6.",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 41, in decorator\n    observation = fn()\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 153, in missing_hr_freshness\n    assert not changed.startswith(\"HR \") or any(word in changed.lower() for word in [\"missing\", \"stale\", \"previous\", \"unavailable\"]), f\"Missing HR displayed as current: {changed}\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Missing HR displayed as current: HR 59.9 vs your usual band 55.9 to 66.1; combined score -0.6.\n"
+    },
+    {
+      "id": "FI-11",
+      "title": "Stuck-value sensor detection",
+      "component": "pipeline/QC",
+      "severity": "high",
+      "test": "stuck_sensor",
+      "evidence": "tests/fault_injection/run.py::stuck_sensor",
+      "status": "FAIL",
+      "observation": "No stuck-value flag surfaced by the real pipeline",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 41, in decorator\n    observation = fn()\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 164, in stuck_sensor\n    assert \"stuck\" in json.dumps(doc).lower(), \"No stuck-value flag surfaced by the real pipeline\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: No stuck-value flag surfaced by the real pipeline\n"
+    },
+    {
+      "id": "FI-12",
+      "title": "Bound single outlier influence on baseline",
+      "component": "BaselineModel",
+      "severity": "high",
+      "test": "robust_outlier",
+      "evidence": "tests/fault_injection/run.py::robust_outlier",
+      "status": "PASS",
+      "observation": {
+        "robust_baseline": 70.10568798353297,
+        "ordinary_baseline": 76.75325488488119
+      }
+    },
+    {
+      "id": "FI-13",
+      "title": "Prolonged illness must not become an unflagged normal",
+      "component": "BaselineModel",
+      "severity": "high",
+      "test": "prolonged_baseline_contamination",
+      "evidence": "tests/fault_injection/run.py::prolonged_baseline_contamination",
+      "status": "FAIL",
+      "observation": "Sustained injected shift normalized: initial_p=6.735853962835537e-12, final_p=0.6266086272965906, baseline=78.25826070421195",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 41, in decorator\n    observation = fn()\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 185, in prolonged_baseline_contamination\n    assert last[\"p_two_sided\"] < 0.05, f\"Sustained injected shift normalized: initial_p={first['p_two_sided']}, final_p={last['p_two_sided']}, baseline={last['baseline']}\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Sustained injected shift normalized: initial_p=6.735853962835537e-12, final_p=0.6266086272965906, baseline=78.25826070421195\n"
+    },
+    {
+      "id": "FI-14",
+      "title": "Insufficient days retain learning phase",
+      "component": "pipeline",
+      "severity": "high",
+      "test": "learning_phase",
+      "evidence": "tests/fault_injection/run.py::learning_phase",
+      "status": "PASS",
+      "observation": {
+        "learning_entries": 24
+      }
+    },
+    {
+      "id": "FI-15",
+      "title": "Duplicate delivery retry must be idempotent",
+      "component": "mission API",
+      "severity": "high",
+      "test": "duplicate_message",
+      "evidence": "tests/fault_injection/run.py::duplicate_message",
+      "status": "FAIL",
+      "observation": "Retry created a second message instead of deduplicating",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 41, in decorator\n    observation = fn()\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 219, in duplicate_message\n    return mission_test(check)\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 208, in mission_test\n    return check(client, headers, gh, body, clock)\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 217, in check\n    assert first.json()[\"id\"] == second.json()[\"id\"], \"Retry created a second message instead of deduplicating\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Retry created a second message instead of deduplicating\n"
+    },
+    {
+      "id": "FI-16",
+      "title": "Out-of-order arrivals retain separate records",
+      "component": "mission API",
+      "severity": "medium",
+      "test": "reordered_messages",
+      "evidence": "tests/fault_injection/run.py::reordered_messages",
+      "status": "PASS",
+      "observation": {
+        "visible_before": 1,
+        "visible_after": 2,
+        "scope": "no command-order or exactly-once guarantee"
+      }
+    },
+    {
+      "id": "FI-17",
+      "title": "Communication delay hides undelivered messages",
+      "component": "mission API",
+      "severity": "high",
+      "test": "communication_delay",
+      "evidence": "tests/fault_injection/run.py::communication_delay",
+      "status": "PASS",
+      "observation": {
+        "one_way_s": 1320.0
+      }
+    },
+    {
+      "id": "FI-18",
+      "title": "Storage/transport loss is not acknowledged as delivered",
+      "component": "mission API",
+      "severity": "high",
+      "test": "communication_failure",
+      "evidence": "tests/fault_injection/run.py::communication_failure",
+      "status": "PASS",
+      "observation": {
+        "status_code": 500,
+        "scope": "failed server write; client retry/exactly-once not protected"
+      }
+    },
+    {
+      "id": "FI-19",
+      "title": "Structured behavioral consent filter",
+      "component": "mission API",
+      "severity": "critical",
+      "test": "structured_consent",
+      "evidence": "tests/fault_injection/run.py::structured_consent",
+      "status": "PASS",
+      "observation": {
+        "withheld_structured_text": true
+      }
+    },
+    {
+      "id": "FI-20",
+      "title": "Behavioral text hidden inside allowed fields",
+      "component": "mission API",
+      "severity": "critical",
+      "test": "nested_consent_leak",
+      "evidence": "tests/fault_injection/run.py::nested_consent_leak",
+      "status": "FAIL",
+      "observation": "Withheld behavioral sentinel leaked through text/vitals",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 41, in decorator\n    observation = fn()\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 279, in nested_consent_leak\n    return mission_test(check)\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 208, in mission_test\n    return check(client, headers, gh, body, clock)\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 277, in check\n    assert \"WITHHELD-BEHAVIORAL\" not in seen.text, \"Withheld behavioral sentinel leaked through text/vitals\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Withheld behavioral sentinel leaked through text/vitals\n"
+    },
+    {
+      "id": "FI-21",
+      "title": "Audit entry tampering",
+      "component": "AuditLog",
+      "severity": "high",
+      "test": "audit_tampering",
+      "evidence": "tests/fault_injection/run.py::audit_tampering",
+      "status": "PASS",
+      "observation": {
+        "detected_entry": 0,
+        "scope": "tamper evidence only; no authenticated signature"
+      }
+    },
+    {
+      "id": "FI-22",
+      "title": "Unknown mission profile rejected",
+      "component": "mission API",
+      "severity": "high",
+      "test": "wrong_profile",
+      "evidence": "tests/fault_injection/run.py::wrong_profile",
+      "status": "PASS",
+      "observation": {
+        "status_code": 422
+      }
+    },
+    {
+      "id": "FI-23",
+      "title": "Mission context matches scenario",
+      "component": "card_service",
+      "severity": "high",
+      "test": "mismatched_mission_context",
+      "evidence": "tests/fault_injection/run.py::mismatched_mission_context",
+      "status": "FAIL",
+      "observation": "Moon scenario received context {'phase': 'mars_transit', 'delay_minutes': 11, 'synthetic': True, 'not_a_medical_device': True}",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 41, in decorator\n    observation = fn()\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 306, in mismatched_mission_context\n    assert \"mars\" not in json.dumps(context).lower(), f\"Moon scenario received context {context}\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Moon scenario received context {'phase': 'mars_transit', 'delay_minutes': 11, 'synthetic': True, 'not_a_medical_device': True}\n"
+    },
+    {
+      "id": "FI-24",
+      "title": "Engine outage is explicitly labelled static",
+      "component": "scenario API",
+      "severity": "high",
+      "test": "engine_outage",
+      "evidence": "tests/fault_injection/run.py::engine_outage",
+      "status": "PASS",
+      "observation": {
+        "source": "scenario-file",
+        "synthetic": true
+      }
+    },
+    {
+      "id": "FI-25",
+      "title": "Static fallback must not rename another scenario",
+      "component": "scenario API",
+      "severity": "high",
+      "test": "wrong_static_fallback",
+      "evidence": "tests/fault_injection/run.py::wrong_static_fallback",
+      "status": "FAIL",
+      "observation": "Requested co2_creep; effective scenario=cmo_fever; advertised name=co2_creep; source=demo-data",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 41, in decorator\n    observation = fn()\n  File \"C:\\Users\\abel1\\Desktop\\tether-kit\\tether-kit\\project\\tests\\fault_injection\\run.py\", line 334, in wrong_static_fallback\n    assert result.status_code >= 400 or doc.get(\"scenario\") == \"co2_creep\", f\"Requested co2_creep; effective scenario={doc.get('scenario')}; advertised name={doc.get('name')}; source={doc.get('source')}\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Requested co2_creep; effective scenario=cmo_fever; advertised name=co2_creep; source=demo-data\n"
+    },
+    {
+      "id": "FI-26",
+      "title": "Stale space weather stays visibly archived",
+      "component": "Radiation UI",
+      "severity": "high",
+      "status": "PASS",
+      "test": "stale_weather_archived",
+      "evidence": "tests/fault_injection/browser.mjs",
+      "observation": {
+        "injected_retrieval": "2000-01-01T00:00:00Z",
+        "label": "Archived snapshot \u00c2\u00b7 not live",
+        "limit": "No automatic maximum-age rejection; label only"
+      }
+    },
+    {
+      "id": "FI-27",
+      "title": "API outage shows local synthetic mode",
+      "component": "tablet UI",
+      "severity": "high",
+      "status": "PASS",
+      "test": "static_mode_label",
+      "evidence": "tests/fault_injection/browser.mjs",
+      "observation": {
+        "api_status": 503,
+        "label": "Local simulation",
+        "synthetic_label": true
+      }
+    }
+  ]
+}
