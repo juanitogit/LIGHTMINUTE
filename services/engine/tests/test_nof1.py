@@ -90,6 +90,26 @@ def test_healthy_noise_does_not_set_unresolved_change():
     assert m.held_n == 0
 
 
+def test_alternating_departures_do_not_count_as_sustained_shift():
+    """Opposite-direction excursions are not a persistent change in level."""
+    model = BaselineModel(prior_mean=70.0, prior_sd=5.0)
+    for _ in range(20):
+        model.update(70.0)
+    for value in (90.0, 50.0, 90.0):
+        model.robust_update(value)
+    assert model.unresolved_change is False
+
+
+def test_sustained_downward_shift_remains_unresolved():
+    model = BaselineModel(prior_mean=70.0, prior_sd=5.0)
+    for _ in range(20):
+        model.update(70.0)
+    for _ in range(60):
+        model.robust_update(60.0)
+    assert model.unresolved_change is True
+    assert model.surprise(60.0)["p_two_sided"] < 0.05
+
+
 def test_rebaseline_clears_state_and_healthy_readings_update_again():
     m = BaselineModel(70, 5)
     for _ in range(20):

@@ -49,6 +49,7 @@ class BaselineModel:
         self.unresolved_change = False
         self.held_n = 0          # readings not absorbed while unresolved
         self._run = 0            # consecutive departures from the level
+        self._run_direction = 0  # opposite excursions are not a sustained shift
         alpha = 1.0 + prior_var_n / 2.0
         # alpha0 is the floor alpha is discounted back toward; see update().
         self.alpha0 = alpha
@@ -107,7 +108,9 @@ def _robust_update(self, x: float, clip: float = 3.0) -> None:
     if self.unresolved_change:
         self.held_n += 1
         return
-    self._run = self._run + 1 if abs(z) > UNRESOLVED_Z else 0
+    direction = (1 if z > 0 else -1) if abs(z) > UNRESOLVED_Z else 0
+    self._run = (self._run + 1 if direction == self._run_direction else 1) if direction else 0
+    self._run_direction = direction
     if self._run >= UNRESOLVED_RUN:
         self.unresolved_change = True
         self.held_n += 1
@@ -120,6 +123,7 @@ def _rebaseline(self, x: float | None = None) -> None:
     state; nothing does this automatically. If x is given, the level is reset
     to x (spread and evidence count are kept)."""
     self.unresolved_change, self._run, self.held_n = False, 0, 0
+    self._run_direction = 0
     if x is not None:
         p = self.post
         self.post = NIG(mu0=float(x), kappa=p.kappa, alpha=p.alpha, beta=p.beta)
