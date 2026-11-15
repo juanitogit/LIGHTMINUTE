@@ -4,8 +4,8 @@
 ![LIGHTMINUTE official mission identity](apps/crew-tablet/public/assets/lightminute-official.png)
 
 **Live demo:** <https://lightminute.pages.dev> — static build of the crew tablet, with the exported
-scenario JSON as fallback. The Python API and the ground-link queue are **not** deployed on that
-URL; they run locally only.
+scenario JSON as fallback. The Python API and server-backed ground-link queue are **not** deployed
+on that URL. Cloudflare Pages Functions do provide the optional visor assistant and authentication routes.
 
 | Crew overview, day 16 | Decision card | Ground console |
 |---|---|---|
@@ -19,8 +19,9 @@ URL; they run locally only.
   allows **30 s of video or 7 slides**. No video is recorded yet, so judge from the live URL above.
 - **Evidence:** [`docs/validation.md`](docs/validation.md) (synthetic), [`ml/proxy/CADENCE-CHECK.md`](ml/proxy/CADENCE-CHECK.md)
   (real public proxy, exploratory), [`docs/model-card.md`](docs/model-card.md) (the defect we found and fixed).
-- **Limitations:** synthetic crews, no clinical validation, no live LLM call in this repository,
-  no Python API on the public URL — see [Status](#status-what-works-what-is-partial-what-is-missing).
+- **Limitations:** synthetic crews, no clinical validation, and no Python API on the public URL —
+  that URL serves the static build, so its cards are templates — see
+  [Status](#status-what-works-what-is-partial-what-is-missing).
 - **NASA data:** OSD-575 (exploratory, n=4), NOAA SWPC proton flux and NASA DONKI event
   snapshots, all retrieved 2026-11-14; no restricted astronaut records. Credits in
   [`ATTRIBUTIONS.md`](ATTRIBUTIONS.md).
@@ -44,7 +45,7 @@ Current verification: [submission checklist](docs/SUBMISSION.md) · [safety haza
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9%20strict-3178C6?style=flat-square&logo=typescript&logoColor=white)](#stack)
 [![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)](#stack)
 [![LLM](https://img.shields.io/badge/LLM-Groq%20gpt--oss--120b%20(optional)-F55036?style=flat-square)](#stack)
-[![Tests](https://img.shields.io/badge/python%20tests-125%20passed-brightgreen?style=flat-square)](https://github.com/juanitogit/LIGHTMINUTE/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/tests-GitHub%20Actions-blue?style=flat-square)](https://github.com/juanitogit/LIGHTMINUTE/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue?style=flat-square)](#license)
 
 Health-monitoring and decision-support software for astronauts on long missions:
@@ -58,10 +59,38 @@ crew gets cited **Decision Cards** that still work when the model, the link, or 
 
 ---
 
+## Current product and voice assistant
+
+The tablet includes the synthetic crew overview, three-lens trends, action cards, a local check-in,
+NASA clinical-case context, anatomical visualizations, and lunar/Mars visor views. The action
+checklist in Actions persists on this browser and is shared with Today & check-in; check-in notes
+remain local unless a user explicitly saves them. The browser engine can optionally run Python via
+Pyodide after a user starts the download; exported signed scenario data remains available as a fallback.
+
+The visor accepts a typed question or optional browser speech recognition in English or Spanish.
+Select the recognition language, enable the microphone, and check the displayed transcript. The
+response labels the provider and model when the Pages Function reaches Groq; otherwise it is labelled
+as a deterministic local response. Speech playback uses the browser's available voice without a
+neural-model download. Browser speech recognition and some browser voices may use external services;
+support, permission requirements and latency vary. Do not submit real medical information.
+
+The deployed visor endpoint is `POST /api/visor/answer`, implemented as a Cloudflare Pages Function
+using the server-side `GROQ_API_KEY` secret and optional `GROQ_MODEL`. A Vite-only development server
+does not run Pages Functions; configure a local API or use `wrangler pages dev` with `.dev.vars` for
+the Function. Never commit a real key. The visor model is instructed to use its displayed synthetic
+context, but its free-text answers do **not** pass the Decision Card verifier. Confirm them against
+the displayed values; the visor's space-weather and integrity graphics are illustrative. The voice
+assistant currently requires all six standard scenario readings and is unavailable for partial NASA
+cases; the case display itself can still show the readings that are present.
+
+Current deployment and test status: [Cloudflare demo](https://lightminute.pages.dev) ·
+[GitHub Actions](https://github.com/juanitogit/LIGHTMINUTE/actions). Test counts below refer to
+individual historical runs, not a guarantee of the current build.
+
 ## What it does
 
 1. **Learns each astronaut's own normal** (per-person Bayesian N-of-1) instead of comparing
-   them to a population average — with n=4, the average does not exist.
+   them only to a small, potentially unrepresentative population reference.
 2. **Adds hazard context** (space weather, cabin environment) without letting it raise an
    alarm on its own.
 3. **Reads coordinated shifts**, not just single spikes: several weak signals moving
@@ -76,9 +105,9 @@ crew gets cited **Decision Cards** that still work when the model, the link, or 
   HR of 68.5 bpm is *normal* for the population and *unusual for him* (`hidden_in_range`):
   a fixed range stays silent exactly when it matters.
 - **Syndrome early warning** with a crew-level view: shared exposure vs individual finding.
-- **The LLM never decides.** Numbers and urgency come from the engine; a verifier rejects
+- **Decision Card generation separates engine and LLM.** Numbers and urgency come from the engine; a verifier rejects
   invented citations, invented numbers, diagnosis wording and doses. With
-  `LLM_PROVIDER=none` the product still works, with zero network calls.
+  `LLM_PROVIDER=none` the local card service uses templates without calling a model. The visor's separate free-text assistant does not use this verifier.
 - **Validated honestly, including where it loses** — and we publish a defect we found in our
   own model on real data (see [the defect](#the-defect-we-found-and-fixed-read-this-before-quoting-numbers)).
 
@@ -99,13 +128,13 @@ engine output.
 ## Status: what works, what is partial, what is missing
 
 Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not built.
-"Verified by" names the command or check that was actually run on this tree. Current delivery status: [`docs/SUBMISSION.md`](docs/SUBMISSION.md); safety evidence: [`docs/safety/hazard-analysis.md`](docs/safety/hazard-analysis.md).
+"Verified by" records a historical check, not a guarantee for the latest commit; use the linked CI run for current results. Delivery notes: [`docs/SUBMISSION.md`](docs/SUBMISSION.md); safety evidence: [`docs/safety/hazard-analysis.md`](docs/safety/hazard-analysis.md).
 
 ### ✅ Working
 
 | Area | What works | Verified by |
 |---|---|---|
-| **N-of-1 engine** | Per-person conjugate Bayesian baseline (NIG + Student-t), winsorised robust updates, two-sided CUSUM, directional **syndrome** score, three-lens verdicts, crew attribution with 2-day persistence, QC that drops impossible readings before any update | `python scripts/run_tests.py` → **125/125** on 2026-11-15 (nof1, syndrome, lenses, crew/ground/space, pipeline, simulate, qc, verifier, api, llm) |
+| **N-of-1 engine** | Per-person conjugate Bayesian baseline (NIG + Student-t), winsorised robust updates, two-sided CUSUM, directional **syndrome** score, three-lens verdicts, crew attribution with 2-day persistence, QC that drops impossible readings before any update | `python scripts/run_tests.py` (see current CI for the result) (nof1, syndrome, lenses, crew/ground/space, pipeline, simulate, qc, verifier, api, llm) |
 | **Scenarios** | 3 scripted scenarios × `strong`/`mild`, 24 days, 4 crew with roles (CMO/CDR/MS1/MS2), 6 indicators (`rest_hr`, `temp_c`, `sleep_h`, `pvt_ms`, `co2_ppm`, `headache_score`), sensor dropouts, hazards, deterministic by `(name, variant, seed, days)` | `python scripts/export_demo_json.py --all`; `apps/crew-tablet/public/data/scenario-*.json` + `scenario-index.json` |
 | **API** | `GET /api/health`, `GET /api/scenarios`, `GET /api/scenario/{name}`, `POST /api/card`, `GET /api/llm-stats`; scenarios come from `pipeline.run_scenario` when importable, else the static JSON; CORS restricted to localhost | uvicorn smoke: `/api/scenario/cmo_fever` → `source: engine`, 24 days, 6 indicators; `POST /api/card` day 15 crew A → `level: act`, `card_source: template` |
 | **Decision Cards** | One byte-stable system prefix (rules + whole KB + thresholds/syndromes with their status) so provider-side prompt caching can hit; verify → one retry with the error list → deterministic template fallback | `test_llm`: rejection→fallback, retry feeds errors back, prefix bytes identical across calls, injection stays in the *user* message, `LLM_PROVIDER=none` → zero network |
@@ -117,13 +146,13 @@ Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not
 | **Audit chain** | SHA-256 hash chain, same canonical JSON as the Python engine, viewer names the first tampered entry | JS ↔ Python vectors identical, **8/8** (`node apps/ground-console/src/audit.test.mjs`) |
 | **Real NOAA snapshot** | `scripts/fetch_noaa.py` writes an immutable snapshot + manifest (url, retrieved_at, sha256, rows, license) and derives `apps/crew-tablet/public/data/radiation.json`; `ingest.verify_snapshot()` checks sha256 and row count | Real run 2026-11-14T14:38:16Z, 2 288 rows, S-scale 0 (quiet Sun) |
 | **Validation harness** | Four detectors at an equal false-alarm budget, plus interval calibration, missing-reading robustness and baseline-length sensitivity | `python ml/validation/run_all.py` → `docs/validation.md`, `ml/validation/results.json`, `apps/crew-tablet/public/data/validation.json` (~2.5 min) |
-| **CI** | GitHub Actions on every push to `main` and on PRs: lint, the 125-test suite, property-based verifier invariants, snapshot provenance, conformal and researcher contracts, vault and ownership checks, 30 red-team cases, an API smoke test with no key, and the tablet build | [`.github/workflows/ci.yml`](.github/workflows/ci.yml); current status in [Actions](https://github.com/juanitogit/LIGHTMINUTE/actions/workflows/ci.yml) — the run history is the source of truth, not a number in this file |
+| **CI** | GitHub Actions on every push to `main` and on PRs: lint, the engine test suite, property-based verifier invariants, snapshot provenance, conformal and researcher contracts, vault and ownership checks, 30 red-team cases, an API smoke test with no key, and the tablet build | [`.github/workflows/ci.yml`](.github/workflows/ci.yml); current status in [Actions](https://github.com/juanitogit/LIGHTMINUTE/actions/workflows/ci.yml) — the run history is the source of truth, not a number in this file |
 
 ### 🟡 Partial — usable, but read the limit
 
 | Area | Limit |
 |---|---|
-| **LLM path** | Provider is now **Groq** (`openai/gpt-oss-120b`) and a key is configured, but the Groq project has every model **disabled at the project level**, so no live card has been generated yet. `GET /api/health` reports the provider, and `python scripts/check_provider.py` names the exact blocker. Request shape, JSON mode, effort tiers and cache accounting are covered by a fake client; the template is always the fallback. |
+| **LLM path** | The local Python Decision Card API can use Groq or deterministic templates; the public site has no Python API. The visor has a separate hosted Pages Function and its free-text output is not validated by the Decision Card verifier. Provider availability, latency and model access can change. |
 | **Real-data evidence** | MMASH proxy (22 healthy adults, per-minute HR) tests **interval honesty, not detection**: no labelled events, so no recall or delay can be claimed from it. OSDR / Inspiration4 was processed from the unrestricted OSD-575 CMP table (4 participants, 79/287 postflight values outside preflight bands, exploratory only); literature-direction concordance is NOT DONE. |
 | **Mild scenarios** | Deliberately weak: `cmo_fever` mild reaches `act` only on some seeds, `sep_sleep_loss` mild mostly stays `watch`. Do not present mild as "detected". |
 | **Radiation panel** | Verified in the production build: archived NOAA flux plot, `real-public` label, retrieval time and source. One day, one satellite; S0. Flux is not absorbed dose and this is not live telemetry. |
@@ -138,7 +167,7 @@ Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not
 
 - Submission assets: the demo (**≤30 s video or 7 slides**, per the [2026 Project Submission Guide](https://spaceappschallenge.org/resources/)) — no video recorded yet, and `pitch/video-script-60s.md` is still the 60-second cut — plus its public URL and a team/roles section. Screenshots are in `docs/screenshots/`.
 - Prospective validation on real crew data, and literature-direction concordance for OSD-575 (exploratory, n=4, no concordance claimed).
-- Vision / voice input endpoints, provider-side web search, production auth and multi-crew sessions remain outside the prototype scope.
+- Clinical validation, production-grade identity and multi-crew deployment remain outside the prototype scope. Browser voice recognition is optional and may use an external browser service.
 - Expert clinical review of thresholds and protocol steps, and regulatory classification work.
 
 ### The defect we found and fixed (read this before quoting numbers)
@@ -211,7 +240,7 @@ flowchart LR
 ```bash
 cp .env.example .env          # optional: GROQ_API_KEY; LLM_PROVIDER=none works with no key
 python scripts/check_provider.py   # does the configured provider actually answer?
-python scripts/run_tests.py   # 125/125 (2026-11-15), no network, no pytest required
+python scripts/run_tests.py   # engine tests; no network or pytest required
 
 # engine + API on :8000
 cd services/engine && uvicorn tether_engine.api.main:app --port 8000
@@ -253,7 +282,7 @@ curl -s localhost:8000/api/llm-stats
 
 `POST /api/card` returns
 `{card, card_source: "llm"|"template", verifier_errors[], usage{calls,prompt_tokens,completion_tokens,cache_hit_tokens}, provider, effort, attempts, scenario, crew, day, source, synthetic}`.
-Every `card` has passed the verifier, so a front end can render it without trusting the model.
+LLM-generated decision cards pass the project verifier; deterministic template cards are the fallback. This does not constitute clinical validation.
 
 ### Scenarios
 
@@ -261,7 +290,7 @@ Every `card` has passed the verifier, so a front end can render it without trust
 |---|---|---|---|---|
 | `cmo_fever` | day 15 | crew A (the CMO) | Mars | The medical officer is the patient: the crew must run the protocol without them |
 | `sep_sleep_loss` | day 12 | crew C | Moon | Solar particle event + schedule disruption; sleep drops first |
-| `co2_creep` | day 8 | all crew | Mars | Shared exposure: fix the habitat before treating anybody |
+| `co2_creep` | day 8 | all crew | Mars | Shared crew pattern and unusual cabin CO₂; cause remains unknown |
 
 Each scenario also ships a `mild` variant for honest "we missed it" demos.
 
@@ -283,7 +312,7 @@ isolated agent worktrees; and `merge_agents.sh` checks ownership and merges sele
 agent branches. Review the last two before running them because they modify Git state.
 
 ```bash
-python scripts/run_tests.py                       # 125/125 — engine, pipeline, QC, verifier, API, LLM
+python scripts/run_tests.py                       # engine, pipeline, QC, verifier, API, LLM
 node apps/ground-console/src/audit.test.mjs       # 8/8 — JS hash chain == Python vectors
 PYTHONPATH=services/engine python -m tether_engine.llm.redteam   # 30/30 adversarial cards rejected
 cd apps/crew-tablet && npm run build              # tsc -b && vite build
@@ -337,7 +366,7 @@ source, hash and license are in [`ATTRIBUTIONS.md`](ATTRIBUTIONS.md).
 
 1. **The engine decides, the LLM explains.** Urgency and numbers come from deterministic code; the model may keep or raise urgency, never lower it.
 2. **A verifier sits between the model and the crew.** Unknown citations, invented numbers, diagnosis wording, doses, extra fields or an over-long ground message are rejected; a rejected card is retried once, then replaced by the template.
-3. **The product works unplugged.** `LLM_PROVIDER=none` produces template cards with zero network calls.
+3. **The local card path has a no-model option.** `LLM_PROVIDER=none` produces template cards without model calls; browser speech recognition and the hosted visor assistant can require a network.
 4. **Everything is labelled.** Synthetic crews say `SYNTHETIC`; thresholds carry `verified` / `earth-standard` / `demo-parameter`; unknown claims say `unverified` instead of guessing.
 5. **No diagnosis, no doses.** Cards say "pattern worth checking"; medication steps point at the onboard medical protocol.
 6. **Escalation is conservative.** Ambiguity means a higher level plus "re-measure", never a quieter screen.
@@ -383,10 +412,10 @@ AI was used in three separate ways. Evidence for each statement is in
   `Co-Authored-By: Codebuff` trailer. The team reviewed and owns every change.
 - **Optional explanation layer in the product.** The engine computes every number and urgency
   level. A hosted model may only rewrite those facts as a Decision Card, behind a deterministic
-  verifier, with a template fallback. The provider registry currently points at **Groq**
-  (`openai/gpt-oss-120b`, OpenAI-compatible; DeepSeek is a config switch), a key is configured,
-  but **no live card has been generated**: the Groq project has its models disabled, and
-  `python scripts/check_provider.py` names the blocker. The demo and every test run on templates;
+  verifier, with a template fallback. The provider registry points at **Groq**
+  (`openai/gpt-oss-120b`, OpenAI-compatible; DeepSeek is a config switch). The model is enabled
+  and local runs generate live cards that the verifier accepts; the public URL has no Python API,
+  so visitors get the exported scenario and template cards. Every test runs offline, and
   `LLM_PROVIDER=none` makes zero network calls.
 - **Experimental small language model, not integrated.** A LoRA adapter on
   `Qwen/Qwen2.5-0.5B-Instruct` was trained on synthetic cards and evaluated offline. It missed

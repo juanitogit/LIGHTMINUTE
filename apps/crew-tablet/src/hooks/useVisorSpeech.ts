@@ -1,32 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { browserSpeak, detectSpeechLang, neuralClip, stopBrowserSpeech } from "../lib/speech";
+import { browserSpeak, detectSpeechLang, stopBrowserSpeech } from "../lib/speech";
 
 export type SpeechEngine = "neural" | "browser" | null;
 export type SpeechStatus = "idle" | "preparing" | "speaking";
 
 /**
- * Speaks visor text with a local neural model (MMS TTS), chosen by language.
- * The browser voice is only reached when the model cannot load. Always stops
- * cleanly: an unmount, a new utterance or a manual stop releases the audio URL.
+ * Uses the browser voice directly to avoid a model download and inference delay.
  */
 export function useVisorSpeech() {
   const [engine, setEngine] = useState<SpeechEngine>(null);
   const [status, setStatus] = useState<SpeechStatus>("idle");
   const [message, setMessage] = useState("");
-  const audio = useRef<HTMLAudioElement | null>(null);
-  const url = useRef<string | null>(null);
   const alive = useRef(true);
+  const generation = useRef(0);
 
   const release = useCallback(() => {
-    if (audio.current) {
-      audio.current.pause();
-      audio.current.src = "";
-      audio.current = null;
-    }
-    if (url.current) {
-      URL.revokeObjectURL(url.current);
-      url.current = null;
-    }
+    generation.current += 1;
     stopBrowserSpeech();
   }, []);
 
@@ -51,36 +40,16 @@ export function useVisorSpeech() {
       setMessage("");
       const lang = detectSpeechLang(clean);
 
-      setEngine("neural");
-      setStatus("preparing");
-      try {
-        const clip = await neuralClip(clean, lang, (progress) => {
-          if (alive.current) setMessage(progress);
-        });
-        if (!alive.current) {
-          URL.revokeObjectURL(clip.url);
-          return;
-        }
-        url.current = clip.url;
-        const player = new Audio(clip.url);
-        audio.current = player;
-        player.onended = () => alive.current && setStatus("idle");
-        player.onerror = () => alive.current && setMessage("Could not play the generated audio.");
-        setMessage("");
+      const current = generation.current;
+      if (browserSpeak(clean, lang, () => {
+        if (alive.current && generation.current === current) setStatus("idle");
+      })) {
+        setEngine("browser");
         setStatus("speaking");
-        await player.play();
-      } catch {
-        if (!alive.current) return;
-        // The model needs a first-use download; the system voice keeps the
-        // visor usable when it cannot load.
-        if (browserSpeak(clean, lang, () => alive.current && setStatus("idle"))) {
-          setEngine("browser");
-          setStatus("speaking");
-          setMessage("Local voice is unavailable (download or WebAssembly). Browser speech was used instead.");
-        } else {
-          setStatus("idle");
-          setMessage("No voice is available on this device; the text remains visible.");
-        }
+      } else {
+        setEngine(null);
+        setStatus("idle");
+        setMessage("No browser voice is available; the response remains visible.");
       }
     },
     [release],

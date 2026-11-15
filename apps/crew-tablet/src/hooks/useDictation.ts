@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-type RecognitionEvent = { results: ArrayLike<ArrayLike<{ transcript: string }>> };
+type RecognitionEvent = { results: ArrayLike<ArrayLike<{ transcript: string }> & { isFinal?: boolean }> };
 type Recognition = {
   lang: string;
   continuous: boolean;
@@ -18,13 +18,14 @@ type RecognitionConstructor = new () => Recognition;
  * Browser dictation for synthetic demonstration text. One phrase per turn: the
  * engine stops on silence and the caller decides when to listen again.
  */
-export function useDictation(onText: (text: string) => void) {
+export function useDictation(onText: (text: string) => void, language: "en" | "es") {
   const active = useRef<Recognition | null>(null);
   const handler = useRef(onText);
   handler.current = onText;
   const [listening, setListening] = useState(false);
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
+  const [transcript, setTranscript] = useState("");
   const host = window as unknown as {
     SpeechRecognition?: RecognitionConstructor;
     webkitSpeechRecognition?: RecognitionConstructor;
@@ -50,15 +51,18 @@ export function useDictation(onText: (text: string) => void) {
     try {
       const rec = new Speech();
       active.current = rec;
-      rec.lang = (navigator.language || "").toLowerCase().startsWith("es") ? "es-ES" : "en-US";
+      rec.lang = language === "es" ? "es-CO" : "en-US";
       rec.continuous = false;
-      rec.interimResults = false;
+      rec.interimResults = true;
+      let delivered = false;
       rec.onresult = (event) => {
         const text = Array.from(event.results)
           .map((result) => result[0]?.transcript ?? "")
           .join(" ")
           .trim();
-        if (text) handler.current(text);
+        setTranscript(text);
+        const finalText = Array.from(event.results).filter(result => result.isFinal).map(result => result[0]?.transcript ?? "").join(" ").trim();
+        if (finalText && !delivered) { delivered = true; handler.current(finalText); }
       };
       rec.onerror = (event) => {
         setError(event.error);
@@ -69,27 +73,30 @@ export function useDictation(onText: (text: string) => void) {
         );
       };
       rec.onend = () => {
-        setListening(false);
-        active.current = null;
+        if (active.current === rec) {
+          setListening(false);
+          active.current = null;
+        }
       };
       setError("");
       setListening(true);
-      setStatus("Escuchando…");
+      setTranscript("");
+      setStatus("Listening…");
       rec.start();
     } catch {
       setListening(false);
       active.current = null;
       setStatus("Could not start the microphone.");
     }
-  }, [Speech]);
+  }, [Speech, language]);
 
   const stop = useCallback(() => {
     const rec = active.current;
     active.current = null;
     setListening(false);
-    setStatus((current) => (current.startsWith("Escuchando") ? "" : current));
+    setStatus((current) => (current.startsWith("Listening") ? "" : current));
     rec?.stop();
   }, []);
 
-  return { supported: Boolean(Speech), listening, status, error, start, stop };
+  return { supported: Boolean(Speech), listening, status, error, transcript, start, stop };
 }

@@ -63,12 +63,21 @@ const RULES: { test: RegExp; answer: (s: VisorSnapshot) => string }[] = [
  * Used when no LLM is reachable. It answers only questions the page's own
  * fields can answer and never guesses beyond them.
  */
-export function localGroundedAnswer(question: string, s: VisorSnapshot): string {
+export function localGroundedAnswer(question: string, s: VisorSnapshot, language: AssistantLanguage = "en"): string {
+  if (language === "es") {
+    if (/co2|co₂|di[oó]xido|aire|respir/i.test(question)) return `El CO₂ del escenario es ${fmt(s.co2_ppm)} ppm en el día ${s.day}.`;
+    if (/sue[nñ]o|descans|dorm/i.test(question)) return `La tripulación ${s.crew} registra ${fmt(s.sleep_h, 1)} horas de sueño.`;
+    if (/pvt|reacci[oó]n|atenci[oó]n/i.test(question)) return `El tiempo de reacción PVT es ${fmt(s.pvt_ms)} milisegundos.`;
+    if (/temperatura|fiebre|t[eé]rmic/i.test(question)) return `La temperatura mostrada es ${fmt(s.core_temp_c, 1)} grados Celsius.`;
+    if (/pulso|coraz[oó]n|cardi|frecuencia|fc\b/i.test(question)) return `La frecuencia cardíaca mostrada es ${fmt(s.heart_rate_bpm)} latidos por minuto.`;
+    if (/cefalea|dolor|cabeza/i.test(question)) return `La cefalea registrada es ${fmt(s.headache_0_10)} sobre 10.`;
+    return "El asistente de IA no está disponible. No puedo responder esa pregunta con la información local.";
+  }
   const match = RULES.find((rule) => rule.test.test(question));
   if (match) return match.answer(s);
   // Says plainly that the LLM is unreachable instead of dressing a dump of
   // every field as an answer to the question.
-  return `The assistant is unavailable. Values on this page: ${facts(s).join(" ")}`;
+  return "The AI assistant is unavailable. I cannot answer that question from the local page data.";
 }
 
 export interface AssistantReply { answer: string; provider: string; model: string }
@@ -83,7 +92,7 @@ export async function askVisorAssistant(question: string, context: VisorSnapshot
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ question, context, language }),
-    signal: AbortSignal.timeout(25000),
+    signal: AbortSignal.timeout(10000),
   });
   const payload = (await response.json().catch(() => ({}))) as Partial<AssistantReply> & { detail?: string };
   if (!response.ok) throw new Error(typeof payload.detail === "string" ? payload.detail : "The assistant is unavailable.");

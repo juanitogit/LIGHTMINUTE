@@ -123,6 +123,12 @@ jobs:
         working-directory: apps/crew-tablet
         run: npx playwright install --with-deps chromium
 
+      - name: Visor voice and provider regression checks
+        working-directory: apps/crew-tablet
+        run: |
+          npx tsx tests/visor-endpoint-check.ts
+          npx tsx tests/visor-voice-check.ts
+
       - name: Browser integration checks (static build, no external API)
         working-directory: apps/crew-tablet
         env:

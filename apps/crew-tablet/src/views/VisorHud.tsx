@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { LoadedScenario } from "../lib/types";
 import { SurfaceScene, type SurfaceBody } from "./SurfaceScene";
 import { Icon } from "../components/Icon";
@@ -53,6 +53,9 @@ export function VisorHud({
   const [answer, setAnswer] = useState("");
   const [answerSource, setAnswerSource] = useState("");
   const [asking, setAsking] = useState(false);
+  const [voiceLanguage, setVoiceLanguage] = useState<"en" | "es">(() => navigator.language.toLowerCase().startsWith("es") ? "es" : "en");
+  const [typedQuestion, setTypedQuestion] = useState("");
+  const requestId = useRef(0);
   const speech = useVisorSpeech();
 
   // Auto-play through mission days
@@ -82,6 +85,10 @@ export function VisorHud({
     : [ind?.rest_hr?.value, ind?.temp_c?.value, ind?.sleep_h?.value,
         ind?.pvt_ms?.value, ind?.co2_ppm?.value, ind?.headache_score?.value]
         .every(isFiniteNumber);
+  // The assistant snapshot contains all six readings. Never send the fallback
+  // drawing values to the LLM when a case has only partial telemetry.
+  const hasAssistantTelemetry = [ind?.rest_hr?.value, ind?.temp_c?.value, ind?.sleep_h?.value,
+    ind?.pvt_ms?.value, ind?.co2_ppm?.value, ind?.headache_score?.value].every(isFiniteNumber);
 
   // Real readings from scenario or realistic nominal baselines
   const hr = ind?.rest_hr?.value ?? 64.0;
@@ -172,31 +179,36 @@ export function VisorHud({
     headline: member?.card?.headline ?? null,
   }), [body, heading?.title, scenario?.doc?.name, scenario?.doc?.scenario, crewId, dayNumber, maxDay, member?.level, member?.card?.headline, integrityScore, hr, temp, sleep, pvt, co2, headache, sScale, radPfu]);
 
-  async function ask(text: string) {
+  async function ask(text: string, spokenLanguage?: "en" | "es") {
     const clean = text.trim();
-    if (!clean) return;
+    if (!clean || !hasAssistantTelemetry) return;
+    const id = ++requestId.current;
+    const language = spokenLanguage ?? detectSpeechLang(clean);
     dictation.stop();
+    speech.stop();
     setQuestion(clean);
     setAsking(true);
     setAnswer("");
     setAnswerSource("");
     try {
-      const reply = await askVisorAssistant(clean, snapshot, detectSpeechLang(clean));
+      const reply = await askVisorAssistant(clean, snapshot, language);
+      if (id !== requestId.current) return;
       setAnswer(reply.answer);
       setAnswerSource(`Groq · ${reply.model}`);
       void speech.speak(reply.answer);
     } catch (error) {
+      if (id !== requestId.current) return;
       // No key, no network or a rejected request: answer from the page's own fields.
-      const fallback = localGroundedAnswer(clean, snapshot);
+      const fallback = localGroundedAnswer(clean, snapshot, language);
       setAnswer(fallback);
       setAnswerSource(`${error instanceof Error ? error.message : "AI unavailable"} Deterministic response using the values on this page.`);
       void speech.speak(fallback);
     } finally {
-      setAsking(false);
+      if (id === requestId.current) setAsking(false);
     }
   }
 
-  const dictation = useDictation((text) => void ask(text));
+  const dictation = useDictation((text) => void ask(text, voiceLanguage), voiceLanguage);
   const [micOn, setMicOn] = useState(false);
   const micBlocked = dictation.error === "not-allowed" || dictation.error === "service-not-allowed";
 
@@ -204,21 +216,17 @@ export function VisorHud({
   // stays closed while the assistant is thinking or talking, so the visor never
   // hears its own voice.
   useEffect(() => {
-    if (!micOn || !dictation.supported || micBlocked) return;
+    if (!micOn || !dictation.supported || micBlocked || !hasAssistantTelemetry || (dictation.error && dictation.error !== "no-speech")) return;
     if (dictation.listening || asking || speech.status !== "idle") return;
     const id = window.setTimeout(() => dictation.start(), 700);
     return () => window.clearTimeout(id);
-  }, [micOn, dictation.supported, micBlocked, dictation.listening, asking, speech.status, dictation.start]);
-
-  // The microphone is the only control and starts on its own: the visor is
-  // meant to be used without looking at the screen.
-  useEffect(() => {
-    if (dictation.supported) setMicOn(true);
-  }, [dictation.supported]);
+  }, [micOn, dictation.supported, micBlocked, hasAssistantTelemetry, dictation.error, dictation.listening, asking, speech.status, dictation.start]);
 
   function toggleMic() {
     if (micOn) {
       setMicOn(false);
+      requestId.current += 1;
+      setAsking(false);
       dictation.stop();
       speech.stop();
       return;
@@ -728,39 +736,47 @@ export function VisorHud({
         <div className="panel__head">
           <h2 id="visor-voice">Visor voice assistant</h2>
           <span className="small muted">
-            {speech.engine === "neural"
-              ? "Local neural voice · English/Spanish"
-              : speech.engine === "browser"
-                ? "Browser voice (fallback)"
-                : "Automatic English/Spanish"}
+            {speech.engine === "browser" ? "Browser voice" : "English / Spanish"}
           </span>
         </div>
         <p className="small muted">
-          Answers using only values displayed on this page (day, crew member, telemetry and space weather).
-          The assistant explains displayed values without adding a diagnosis or new figures.
+          The assistant is instructed to use the values on this page. AI answers may be inaccurate;
+          check them against the displayed scenario. This is a synthetic demonstration.
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", alignItems: "center" }}>
+          <label className="field">Recognition language
+            <select aria-label="Recognition language" value={voiceLanguage} onChange={(event) => {
+              dictation.stop(); setMicOn(false); setVoiceLanguage(event.target.value as "en" | "es");
+            }}><option value="en">English</option><option value="es">Español</option></select>
+          </label>
           <button
             type="button"
             className={`btn ${micOn ? "btn--primary" : ""}`}
             onClick={toggleMic}
             aria-pressed={micOn}
-            disabled={!dictation.supported}
+            disabled={!dictation.supported || !hasAssistantTelemetry}
           >
-            {micOn ? (speech.status === "idle" ? "Microphone on · stop" : "Microphone on · speaking") : "Enable microphone"}
+            {micOn ? (asking ? "Thinking · stop" : speech.status === "speaking" ? "Speaking · stop" : "Microphone on · stop") : "Enable microphone"}
           </button>
           {speech.status === "preparing" ? <span className="small muted">Preparing voice…</span> : null}
         </div>
         <p className="small muted">
-          Speak to hear a response; the visor then resumes listening automatically.
-          Speech is synthesized locally in English or Spanish according to the text;
-          the browser provides a fallback if the model cannot load. On first use it downloads
-          a model of about 40 MB per language.
+          Select your language, enable the microphone and speak. Recognition may use a browser service;
+          spoken answers use the browser's available voice. Check the transcript before relying on an answer.
         </p>
+        <form onSubmit={(event) => { event.preventDefault(); setMicOn(false); void ask(typedQuestion); }}>
+          <label className="field">Type a question
+            <input type="text" value={typedQuestion} onChange={(event) => setTypedQuestion(event.target.value)} maxLength={600} />
+          </label>
+          <button className="btn" type="submit" disabled={!hasAssistantTelemetry || asking || !typedQuestion.trim()}>Ask</button>
+        </form>
+        {!hasAssistantTelemetry ? <p role="status" className="small muted">Assistant unavailable: this scenario does not contain all six readings required by its current snapshot.</p> : null}
+        {asking ? <p role="status" className="small muted">Waiting for AI response…</p> : null}
         {!dictation.supported ? (
           <p className="small muted">This browser does not support speech recognition; the assistant can still display answers.</p>
         ) : null}
         {dictation.status ? <p className="small muted" role="status">{dictation.status}</p> : null}
+        {dictation.listening && dictation.transcript ? <p className="small muted">Hearing: «{dictation.transcript}»</p> : null}
         {speech.message ? <p className="small muted" role="status">{speech.message}</p> : null}
         {question ? <p className="small muted">You said: «{question}»</p> : null}
         {answer ? (

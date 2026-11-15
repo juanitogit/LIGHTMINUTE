@@ -1,10 +1,8 @@
 /**
  * Speech for the helmet visors, synthesized on the device.
  *
- * Both languages use MMS TTS (VITS) exported for transformers.js: it is small
- * enough to load without freezing the page. Kokoro was dropped because its
- * WebAssembly session blocked the main thread on some browsers and the visor
- * stopped responding. The browser's own voice is kept only as a last resort.
+ * The visor uses the browser voice first for a quicker response. The optional
+ * neural synthesis helpers remain available for other callers.
  * The UI names the engine that actually spoke; nothing is claimed to be a
  * recording or a real crew voice.
  */
@@ -110,10 +108,8 @@ function wavBlob(samples: Float32Array, sampleRate: number): Blob {
 }
 
 /**
- * Browser speech engine, kept only as a last resort when the local model
- * cannot load. Picks the best installed voice instead of the first one: the
- * neural voices that ship with the system ("Natural", "Neural", "Online")
- * sound far closer to a person than the legacy compact ones.
+ * Browser speech engine. Prefer local voices when available for lower latency;
+ * some devices have only network-backed voices.
  */
 export function browserSpeak(text: string, lang: SpeechLang, onEnd: () => void): boolean {
   if (!("speechSynthesis" in window)) return false;
@@ -143,7 +139,7 @@ function bestVoice(voices: SpeechSynthesisVoice[], lang: SpeechLang): SpeechSynt
     let value = 0;
     if (/natural|neural|online/.test(name)) value += 6;
     if (/google/.test(name)) value += 4;
-    if (!voice.localService) value += 1;
+    if (voice.localService) value += 12;
     if (lang === "es" && voice.lang.toLowerCase().startsWith("es-es")) value += 1;
     return value;
   };

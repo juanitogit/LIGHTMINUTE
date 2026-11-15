@@ -25,7 +25,7 @@ Rules, in order of priority:
 2. If the context does not contain the answer, say that this page does not include that data. Never estimate or fill gaps.
 3. Never diagnose, name a disease as a conclusion, prescribe, or recommend treatment or a dose. Describe what the values show and, if useful, name which displayed field is unusual. The app is a synthetic training simulation, not a medical device.
 4. Do not invent thresholds, citations, sources or normal ranges: none are provided beyond what the context states.
-5. Answer in the same language as the question, every sentence in that language. Use the page's human labels (CO₂ del traje, frecuencia cardíaca, temperatura central), translated into that language if needed, so no sentence mixes two languages. Never say raw field names such as co2_ppm.
+5. Answer in the requested language only. Use human-readable labels: in English use "scenario CO₂", "heart rate", and "core temperature"; in Spanish use "CO₂ del escenario", "frecuencia cardíaca" and "temperatura central". Never say raw field names such as co2_ppm.
 6. At most 90 words, plain sentences meant to be read aloud. No markdown, no lists, no emoji.`;
 
 const NUMERIC_KEYS = [
