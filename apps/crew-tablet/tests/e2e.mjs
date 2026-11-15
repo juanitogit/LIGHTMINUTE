@@ -11,7 +11,7 @@
  * Only the static build is exercised: the engine API is intentionally absent,
  * which is the documented offline path (static JSON + template cards).
  */
-import { createReadStream, existsSync, mkdirSync, statSync } from "node:fs";
+import { createReadStream, existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, join, normalize, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -372,6 +372,23 @@ async function main() {
       );
       assert(stored.length === 1, `expected 1 stored check-in, got ${stored.length}`);
       await page.screenshot({ path: join(shots, "final-checkin.png") });
+    });
+
+    await test("personal baseline PDF exports as a readable report", async () => {
+      await open(page, "scenario=cmo_fever&crew=A&day=16&ind=rest_hr&view=why");
+      const [download] = await Promise.all([
+        page.waitForEvent("download"),
+        tap(page, 'button:has-text("Export Baseline PDF")'),
+      ]);
+      const file = await download.path();
+      assert(Boolean(file), "download has no local path");
+      const bytes = readFileSync(file);
+      assert(bytes.subarray(0, 5).toString("ascii") === "%PDF-", "file is not a PDF");
+      assert(bytes.length > 40_000, `PDF is unexpectedly small (${bytes.length} bytes)`);
+      assert(
+        /Personal_Baseline_Report_CrewA_Day16_rest_hr\.pdf$/.test(download.suggestedFilename()),
+        `unexpected filename ${download.suggestedFilename()}`,
+      );
     });
 
     console.log("\nmobile");

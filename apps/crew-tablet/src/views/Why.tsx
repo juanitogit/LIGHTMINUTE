@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { BandChart, type BandPoint } from "../components/BandChart";
 import { CrewSelector } from "../components/CrewSelector";
 import { Icon } from "../components/Icon";
 import { LevelBadge, Panel } from "../components/primitives";
 import { SyndromeStrip, SYNDROME_ALERT_Z } from "../components/SyndromeStrip";
+import { generatePersonalBaselinePdf } from "../lib/baselinePdfGenerator";
 import { earthIsDemoParameter, earthRangeText, earthRule } from "../lib/earth";
 import { fmt, fmtRange, humanise, unitLabel } from "../lib/format";
 import {
@@ -66,6 +68,38 @@ export function Why({
       ? scenario.doc.indicators
       : INDICATORS.map((m) => m.key);
 
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [pdfNotice, setPdfNotice] = useState<{ filename: string; url: string; sizeKb: number } | null>(null);
+
+  const handleExportPdf = async () => {
+    if (!reading) return;
+    setIsExportingPdf(true);
+    try {
+      const result = await generatePersonalBaselinePdf({
+        scenario,
+        dayNumber,
+        crewId,
+        indicator,
+        meta,
+        reading,
+        earth,
+        member,
+        points,
+        syndrome,
+      });
+      result.download();
+      setPdfNotice({
+        filename: result.filename,
+        url: result.url,
+        sizeKb: Math.round(result.sizeBytes / 1024),
+      });
+    } catch (err) {
+      console.error("Failed to generate PDF report:", err);
+    } finally {
+      setIsExportingPdf(false);
+    }
+  };
+
   return (
     <div className="view why">
       <header className="viewhead">
@@ -80,8 +114,88 @@ export function Why({
           <CrewSelector crewIds={crewIds} crew={crewId} onCrew={onCrew} />
           {role ? <span className="chip chip--quiet">{role}</span> : null}
           {member ? <LevelBadge level={member.level} /> : null}
+          {reading ? (
+            <button
+              type="button"
+              className="btn btn--secondary"
+              onClick={handleExportPdf}
+              disabled={isExportingPdf}
+              title="Generate and download the personal baseline PDF report"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                minHeight: "36px",
+                padding: "0 12px",
+                fontSize: "13px",
+              }}
+            >
+              <Icon name="chart" size={15} />
+              <span>{isExportingPdf ? "Generating..." : "Export Baseline PDF"}</span>
+            </button>
+          ) : null}
         </div>
       </header>
+
+      {pdfNotice ? (
+        <div
+          className="pattern pattern--loud"
+          style={{
+            background: "rgba(16, 185, 129, 0.12)",
+            borderColor: "rgba(16, 185, 129, 0.4)",
+            color: "#34d399",
+            marginBottom: "16px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <Icon name="check" size={18} />
+            <div>
+              <p className="pattern__title" style={{ color: "#34d399", margin: 0 }}>
+                Baseline Report PDF Generated ({pdfNotice.sizeKb} KB)
+              </p>
+              <p className="pattern__body" style={{ margin: "2px 0 0 0", color: "#a7f3d0" }}>
+                File downloaded: <span className="mono">{pdfNotice.filename}</span>
+              </p>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <a
+              href={pdfNotice.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn--ghost"
+              style={{
+                minHeight: "28px",
+                padding: "2px 10px",
+                fontSize: "12px",
+                color: "#34d399",
+                border: "1px solid rgba(16, 185, 129, 0.4)",
+              }}
+            >
+              Open in New Tab <Icon name="arrow" size={12} />
+            </a>
+            <button
+              type="button"
+              onClick={() => setPdfNotice(null)}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#34d399",
+                cursor: "pointer",
+                padding: "4px",
+                display: "inline-flex",
+                alignItems: "center",
+              }}
+              title="Dismiss"
+            >
+              <Icon name="close" size={16} />
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       <div className="ind-grid" role="group" aria-label="Choose an indicator">
         {indicators.map((key) => {
@@ -236,6 +350,18 @@ export function Why({
               {!disagrees && pattern ? (
                 <p className="muted small">{PATTERN_COPY[pattern] ?? ""}</p>
               ) : null}
+              <div style={{ marginTop: "14px", borderTop: "1px solid var(--line)", paddingTop: "12px" }}>
+                <button
+                  type="button"
+                  className="btn btn--secondary btn--block"
+                  onClick={handleExportPdf}
+                  disabled={isExportingPdf}
+                  style={{ minHeight: "36px", fontSize: "13px" }}
+                >
+                  <Icon name="chart" size={15} />
+                  <span>{isExportingPdf ? "Generating PDF..." : "Download Full PDF Report"}</span>
+                </button>
+              </div>
             </Panel>
 
             <Panel title="What to do" labelledBy="next-title">
