@@ -1,3 +1,11 @@
 name = "lightminute"
 pages_build_output_dir = "./dist"
 compatibility_date = "2026-11-14"
+
+[vars]
+# Defaults for the Pages Functions; the visor assistant reads them at runtime.
+GROQ_BASE_URL = "https://api.groq.com/openai/v1"
+GROQ_MODEL = "openai/gpt-oss-120b"
+# The key itself is a secret, never a var:
+#   npx wrangler pages secret put GROQ_API_KEY --project-name lightminute
+# For `wrangler pages dev`, put it in .dev.vars (see .dev.vars.example).

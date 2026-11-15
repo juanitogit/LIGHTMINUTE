@@ -1,0 +1,6 @@
+# Local secrets for `npx wrangler pages dev` (Cloudflare Pages Functions).
+# Copy to .dev.vars and fill in; .dev.vars is never committed.
+# In production use: npx wrangler pages secret put GROQ_API_KEY --project-name lightminute
+GROQ_API_KEY=gsk_...
+GROQ_MODEL=openai/gpt-oss-120b
+GROQ_BASE_URL=https://api.groq.com/openai/v1

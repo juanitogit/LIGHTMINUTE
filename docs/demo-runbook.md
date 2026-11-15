@@ -12,6 +12,26 @@
 6. Select the CO₂ scenario and compare the shared crew pattern. Changes of day/crew reset
    the current ground simulation and selected protocol.
 
+## Visor voice assistant and Earth link without the API
+
+The Luna and EVA visors include a voice assistant. It answers only with the values the page is
+already showing (day, crew, telemetry, space weather); it never diagnoses, never estimates and
+never invents a threshold. English is synthesized with Kokoro (`kokoro-js`, downloaded on first
+play); Spanish uses the browser's own voice, chosen automatically from the text. Both are
+simulated voices, not a crew recording.
+
+Groq is configured per environment, never in the bundle:
+
+- Local: `GROQ_API_KEY` in `.env`, served by `POST /api/visor/answer` in the engine.
+- Pages: `npx wrangler pages secret put GROQ_API_KEY --project-name lightminute`, plus the
+  non-secret `GROQ_MODEL` / `GROQ_BASE_URL` in `wrangler.toml` under `[vars]`. The Pages
+  Function `functions/api/visor/answer.ts` proxies the call.
+
+Without a key the visor still answers from the page's fields with a deterministic sentence and
+says so. Earth link now works with no API at all: the login, the delay and the consent filter
+run in that browser against a local queue, and the panel labels it as such. The Python API keeps
+being the only server-enforced version.
+
 Fallback: stop the API and reload. Scenario JSON, all views and the protocol runner still work
 when a local static server serves the build. `prototype/three-lens.html` is the standalone backup;
 the ground console and `packages/protocol-runner/demo.html` also work by double-click.

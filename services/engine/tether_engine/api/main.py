@@ -30,6 +30,7 @@ from ..llm.case_data import (
 )
 from ..llm.stats import snapshot
 from .mission_link import router as mission_link_router
+from .visor import router as visor_router
 
 # Keep existing local DeepSeek configuration behavior independently of storage.
 load_dotenv(Path(__file__).resolve().parents[4] / ".env", override=False)
@@ -121,3 +122,4 @@ def llm_stats() -> dict:
     return {**snapshot(), "llm_provider": provider_name(), "llm_key_present": key_present()}
 
 app.include_router(mission_link_router)
+app.include_router(visor_router)

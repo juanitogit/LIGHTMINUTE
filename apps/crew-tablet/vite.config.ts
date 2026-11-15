@@ -70,7 +70,7 @@ function offlineBundle() {
       const version = digest.digest("hex").slice(0, 16);
       const serviceWorker = `const CACHE=${JSON.stringify("lightminute-static-" + version)};
 const ENGINE_CACHE=${JSON.stringify(engineManifest.cache)};
-const ASSETS=${JSON.stringify(files.filter(file => !file.startsWith("assets/pyodide/") && !/\.(glb|bin)$/i.test(file)).map(file => file === "index.html" ? "./" : "./" + file))};
+const ASSETS=${JSON.stringify(files.filter(file => !file.startsWith("assets/pyodide/") && !/\.(glb|bin|wasm)$/i.test(file)).map(file => file === "index.html" ? "./" : "./" + file))};
 // Large scientific packages and 3D models are downloaded only when requested.
 self.addEventListener("install", event => event.waitUntil((async () => {
   const cache = await caches.open(CACHE);

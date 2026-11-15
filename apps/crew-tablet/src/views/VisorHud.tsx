@@ -3,6 +3,10 @@ import type { LoadedScenario } from "../lib/types";
 import { SurfaceScene, type SurfaceBody } from "./SurfaceScene";
 import { Icon } from "../components/Icon";
 import { Chip, LevelBadge } from "../components/primitives";
+import { useDictation } from "../hooks/useDictation";
+import { useVisorSpeech } from "../hooks/useVisorSpeech";
+import { detectSpeechLang } from "../lib/kokoro";
+import { askVisorAssistant, localGroundedAnswer, snapshotSummary, type VisorSnapshot } from "../lib/visorAssistant";
 import "../hud-visor.css";
 
 interface VisorHudProps {
@@ -44,6 +48,11 @@ export function VisorHud({
   const [solarShield, setSolarShield] = useState(true);
   const [autoPlay, setAutoPlay] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
+  const [answerSource, setAnswerSource] = useState("");
+  const [asking, setAsking] = useState(false);
+  const speech = useVisorSpeech();
 
   // Auto-play through mission days
   useEffect(() => {
@@ -117,6 +126,52 @@ export function VisorHud({
   const days = useMemo(() => {
     return Array.from({ length: Math.min(30, maxDay) }, (_, i) => i + 1);
   }, [maxDay]);
+
+  // Exactly the values drawn on this page: the assistant may repeat them, never add any.
+  const snapshot = useMemo<VisorSnapshot>(() => ({
+    page: heading?.title ?? (body === "moon" ? "Entorno Lunar (Visor)" : "Visor EVA (HUD)"),
+    body,
+    scenario: String(scenario?.doc?.name ?? scenario?.doc?.scenario ?? "escenario sin nombre"),
+    crew: crewId,
+    day: dayNumber,
+    max_day: maxDay,
+    level: member?.level ?? "info",
+    integrity_score: integrityScore,
+    heart_rate_bpm: hr,
+    core_temp_c: temp,
+    sleep_h: sleep,
+    pvt_ms: pvt,
+    co2_ppm: co2,
+    headache_0_10: headache,
+    radiation_scale: sScale,
+    radiation_pfu: radPfu,
+    headline: member?.card?.headline ?? null,
+  }), [body, heading?.title, scenario?.doc?.name, scenario?.doc?.scenario, crewId, dayNumber, maxDay, member?.level, member?.card?.headline, integrityScore, hr, temp, sleep, pvt, co2, headache, sScale, radPfu]);
+
+  async function ask(text: string) {
+    const clean = text.trim();
+    if (!clean) return;
+    setQuestion(clean);
+    setAsking(true);
+    setAnswer("");
+    setAnswerSource("");
+    try {
+      const reply = await askVisorAssistant(clean, snapshot, detectSpeechLang(clean));
+      setAnswer(reply.answer);
+      setAnswerSource(`Groq · ${reply.model}`);
+      void speech.speak(reply.answer);
+    } catch (error) {
+      // No key, no network or a rejected request: answer from the page's own fields.
+      const fallback = localGroundedAnswer(clean, snapshot);
+      setAnswer(fallback);
+      setAnswerSource(`${error instanceof Error ? error.message : "LLM no disponible"} Respuesta determinista con los valores de esta página.`);
+      void speech.speak(fallback);
+    } finally {
+      setAsking(false);
+    }
+  }
+
+  const dictation = useDictation((text) => void ask(text));
 
   return (
     <div className="view visor-view">
@@ -560,6 +615,53 @@ export function VisorHud({
             LIGHTMINUTE · SIMULACIÓN DE CASCO EVA · DATOS SINTÉTICOS · NO ES UN DISPOSITIVO MÉDICO
           </span>
         </div>
+      </section>
+
+      <section className="panel" aria-labelledby="visor-voice">
+        <div className="panel__head">
+          <h2 id="visor-voice">Asistente de voz del visor</h2>
+          <span className="small muted">
+            {speech.engine === "kokoro" ? "Kokoro TTS" : speech.engine === "browser" ? "Voz del sistema" : "Español/inglés automático"}
+          </span>
+        </div>
+        <p className="small muted">
+          Responde solo con los valores que muestra esta página (día, tripulante, telemetría y clima espacial).
+          El motor determinista decide los números; el asistente solo los explica, sin diagnóstico ni cifras nuevas.
+        </p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", alignItems: "center" }}>
+          <button type="button" className="btn" onClick={() => void speech.speak(snapshotSummary(snapshot))} disabled={speech.status !== "idle"}>
+            Escuchar resumen
+          </button>
+          {dictation.supported ? (
+            <button type="button" className="btn" onClick={() => (dictation.listening ? dictation.stop() : dictation.start())}>
+              {dictation.listening ? "Detener dictado" : "Preguntar por voz"}
+            </button>
+          ) : null}
+          {speech.status !== "idle" ? (
+            <button type="button" className="btn" onClick={speech.stop}>Detener voz</button>
+          ) : null}
+          {speech.status === "preparing" ? <span className="small muted">Preparando Kokoro…</span> : null}
+        </div>
+        <p className="small muted">
+          Kokoro sintetiza inglés y la voz del sistema el español; el motor se elige solo según el texto.
+          La primera reproducción descarga el modelo en este equipo.
+        </p>
+        <form className="stack" onSubmit={(event) => { event.preventDefault(); void ask(question); }} style={{ marginTop: "14px" }}>
+          <label className="field">Pregunta al asistente
+            <input value={question} onChange={(event) => setQuestion(event.target.value)} maxLength={300} placeholder="¿Cómo está el CO₂ del traje hoy?" />
+          </label>
+          <button type="submit" className="btn btn--primary" disabled={asking || !question.trim()}>
+            {asking ? "Consultando…" : "Preguntar"}
+          </button>
+        </form>
+        {dictation.status ? <p className="small muted" role="status">{dictation.status}</p> : null}
+        {speech.message ? <p className="small muted" role="status">{speech.message}</p> : null}
+        {answer ? (
+          <article style={{ marginTop: "14px" }}>
+            <p className="micro">{answerSource}</p>
+            <p role="status">{answer}</p>
+          </article>
+        ) : null}
       </section>
 
       {/* 5-Organ Physiological Systems Evaluation */}
