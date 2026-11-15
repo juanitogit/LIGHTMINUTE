@@ -14,6 +14,7 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+from ..llm import providers
 from ..llm.card_service import (
     DEFAULT_EFFORT,
     FAST_EFFORT,
@@ -27,7 +28,6 @@ from ..llm.case_data import (
     list_scenarios,
     load_scenario,
 )
-from ..llm import providers
 from ..llm.stats import snapshot
 from .mission_link import router as mission_link_router
 

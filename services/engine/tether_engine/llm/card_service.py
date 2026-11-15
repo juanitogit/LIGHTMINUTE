@@ -9,8 +9,6 @@ Contract (see `.agents/skills/decision-card-contract`):
 """
 from __future__ import annotations
 
-import os
-
 from importlib import import_module
 
 from ..ground.delay import PROFILES
