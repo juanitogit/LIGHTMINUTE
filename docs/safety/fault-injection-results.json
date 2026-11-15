@@ -1,6 +1,6 @@
 {
-  "utc": "2026-11-15T03:39:57.708512+00:00",
-  "engine_revision": "6db4f80f5ab7580ae9d7df3b18a60d289a2b996e",
+  "utc": "2026-11-15T03:51:41.111164+00:00",
+  "engine_revision": "ff9c139481c023f949967699c7417734615ed3a5",
   "command": ".venv/Scripts/python.exe tests/fault_injection/run.py",
   "label": "synthetic",
   "results": [

@@ -1,0 +1,1430 @@
+{
+  "label": "real-public proxy, exploratory, not independent",
+  "run_utc": "2026-11-15T03:51:18.613855+00:00",
+  "git_revision": "ff9c139481c023f949967699c7417734615ed3a5",
+  "engine_sha256": "2a455732a3872b1e10a0743e9642aad5488c324dbb7ad74d9ecac2db0866d43a",
+  "environment": {
+    "python": "3.12.10",
+    "numpy": "2.2.6",
+    "scipy": "1.15.3"
+  },
+  "mmash": {
+    "label": "proxy",
+    "synthetic": false,
+    "status": "DONE",
+    "archive_sha256": "ef91ee1b36b5849a6366b1918de82686ab278915d33c7f62133f07f741f70726",
+    "users": 22,
+    "excluded": [],
+    "pooled": {
+      "raw": {
+        "report_n": 23488,
+        "covered": 15590,
+        "coverage": 0.6637431880108992,
+        "outside_band_flags_per_observed_person_day": 484.2098092643052,
+        "median_of_person_median_widths_bpm": 28.69385756021806,
+        "median_person_lag1_correlation": 0.881209466139228,
+        "calibration_gate_pass": false
+      },
+      "circadian_residual": {
+        "report_n": 23488,
+        "covered": 13197,
+        "coverage": 0.5618613760217984,
+        "outside_band_flags_per_observed_person_day": 630.9196185286104,
+        "median_of_person_median_widths_bpm": 33.56407154698258,
+        "median_person_lag1_correlation": 0.9476778771604188,
+        "calibration_gate_pass": false
+      }
+    },
+    "context_helpful_by_preregistered_rule": false,
+    "per_person": [
+      {
+        "subject": "user_1",
+        "training_n": 280,
+        "quality": {
+          "source_rows": 91858,
+          "retained_rr_rows": 91858,
+          "occupied_minutes": 1401,
+          "missing_minutes_within_span": 15
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 2
+        },
+        "training_clock_span_hours": 4.666666666666667,
+        "clock_design_condition_number": 34.767968470443535,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 54.49595776274542,
+        "hr_max_bpm": 177.51479289940826,
+        "fixed_training_circadian_coefficients": [
+          251.08321166910912,
+          9.837998359412751,
+          173.6888642368928
+        ],
+        "raw": {
+          "report_n": 1121,
+          "covered": 589,
+          "coverage": 0.5254237288135594,
+          "outside_band_flags_per_observed_person_day": 683.3898305084746,
+          "median_width_bpm": 31.072677761015136,
+          "mean_width_bpm": 31.072677761015136,
+          "lag1_innovation_correlation": 0.8914561779792196,
+          "training_sd_bpm": 14.91089260685331,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 375,
+              "covered": 203
+            },
+            "other": {
+              "n": 746,
+              "covered": 386
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1121,
+          "covered": 39,
+          "coverage": 0.03479036574487065,
+          "outside_band_flags_per_observed_person_day": 1389.9018733273863,
+          "median_width_bpm": 27.272261007273432,
+          "mean_width_bpm": 27.27226100727344,
+          "lag1_innovation_correlation": 0.9972511538881754,
+          "training_sd_bpm": 10.746804455672304,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 375,
+              "covered": 0
+            },
+            "other": {
+              "n": 746,
+              "covered": 39
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_2",
+        "training_n": 257,
+        "quality": {
+          "source_rows": 71646,
+          "retained_rr_rows": 71646,
+          "occupied_minutes": 1286,
+          "missing_minutes_within_span": 137
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 1
+        },
+        "training_clock_span_hours": 4.283333333333333,
+        "clock_design_condition_number": 41.47781580531491,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 16.731734523145565,
+        "hr_max_bpm": 154.07436708860757,
+        "fixed_training_circadian_coefficients": [
+          113.13452788501175,
+          1.4305362563261994,
+          37.64748388428894
+        ],
+        "raw": {
+          "report_n": 1029,
+          "covered": 727,
+          "coverage": 0.706511175898931,
+          "outside_band_flags_per_observed_person_day": 422.62390670553935,
+          "median_width_bpm": 37.13472938670952,
+          "mean_width_bpm": 35.91859183256393,
+          "lag1_innovation_correlation": 0.8890366552371421,
+          "training_sd_bpm": 8.937767639663445,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 223,
+              "covered": 24
+            },
+            "other": {
+              "n": 806,
+              "covered": 703
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1029,
+          "covered": 460,
+          "coverage": 0.44703595724003886,
+          "outside_band_flags_per_observed_person_day": 796.268221574344,
+          "median_width_bpm": 49.79143728307963,
+          "mean_width_bpm": 47.298776060542245,
+          "lag1_innovation_correlation": 0.9663241773474472,
+          "training_sd_bpm": 8.768031355165375,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 223,
+              "covered": 3
+            },
+            "other": {
+              "n": 806,
+              "covered": 457
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_3",
+        "training_n": 278,
+        "quality": {
+          "source_rows": 83965,
+          "retained_rr_rows": 83965,
+          "occupied_minutes": 1394,
+          "missing_minutes_within_span": 91
+        },
+        "sleep_alignment": {
+          "unaligned_sleep_rows": 1
+        },
+        "training_clock_span_hours": 4.633333333333334,
+        "clock_design_condition_number": 35.28593440973737,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 51.90311418685121,
+        "hr_max_bpm": 157.48031496062993,
+        "fixed_training_circadian_coefficients": [
+          62.62128676622195,
+          7.604066163304715,
+          -16.814868792529612
+        ],
+        "raw": {
+          "report_n": 1116,
+          "covered": 622,
+          "coverage": 0.557347670250896,
+          "outside_band_flags_per_observed_person_day": 637.4193548387096,
+          "median_width_bpm": 36.43900579438417,
+          "mean_width_bpm": 34.46150821884912,
+          "lag1_innovation_correlation": 0.9611248127871512,
+          "training_sd_bpm": 6.826104390792522,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 0,
+              "covered": 0
+            },
+            "other": {
+              "n": 1116,
+              "covered": 622
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1116,
+          "covered": 755,
+          "coverage": 0.6765232974910395,
+          "outside_band_flags_per_observed_person_day": 465.80645161290323,
+          "median_width_bpm": 45.11252077362889,
+          "mean_width_bpm": 42.53812670444931,
+          "lag1_innovation_correlation": 0.9696445529424292,
+          "training_sd_bpm": 6.489140977107601,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 0,
+              "covered": 0
+            },
+            "other": {
+              "n": 1116,
+              "covered": 755
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_4",
+        "training_n": 271,
+        "quality": {
+          "source_rows": 62669,
+          "retained_rr_rows": 62669,
+          "occupied_minutes": 1357,
+          "missing_minutes_within_span": 113
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 1
+        },
+        "training_clock_span_hours": 4.516666666666667,
+        "clock_design_condition_number": 37.19029813362284,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 41.632414584932704,
+        "hr_max_bpm": 117.30216487279844,
+        "fixed_training_circadian_coefficients": [
+          76.13841246956186,
+          10.072900352860675,
+          1.7662839248099953
+        ],
+        "raw": {
+          "report_n": 1086,
+          "covered": 960,
+          "coverage": 0.8839779005524862,
+          "outside_band_flags_per_observed_person_day": 167.0718232044199,
+          "median_width_bpm": 27.974092239867076,
+          "mean_width_bpm": 27.966683507856555,
+          "lag1_innovation_correlation": 0.807372643528224,
+          "training_sd_bpm": 8.030928564750216,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 285,
+              "covered": 275
+            },
+            "other": {
+              "n": 801,
+              "covered": 685
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1086,
+          "covered": 960,
+          "coverage": 0.8839779005524862,
+          "outside_band_flags_per_observed_person_day": 167.0718232044199,
+          "median_width_bpm": 29.392522637820864,
+          "mean_width_bpm": 29.88354893470943,
+          "lag1_innovation_correlation": 0.8324263972753063,
+          "training_sd_bpm": 7.286484141791196,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 285,
+              "covered": 277
+            },
+            "other": {
+              "n": 801,
+              "covered": 683
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_5",
+        "training_n": 269,
+        "quality": {
+          "source_rows": 77782,
+          "retained_rr_rows": 77782,
+          "occupied_minutes": 1349,
+          "missing_minutes_within_span": 126
+        },
+        "sleep_alignment": {
+          "unaligned_sleep_rows": 1
+        },
+        "training_clock_span_hours": 4.516666666666667,
+        "clock_design_condition_number": 37.730972277469,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 43.7753712210234,
+        "hr_max_bpm": 125.26096033402924,
+        "fixed_training_circadian_coefficients": [
+          92.62342650849706,
+          14.949900534727208,
+          10.853104596808638
+        ],
+        "raw": {
+          "report_n": 1080,
+          "covered": 911,
+          "coverage": 0.8435185185185186,
+          "outside_band_flags_per_observed_person_day": 225.33333333333334,
+          "median_width_bpm": 26.021759486574894,
+          "mean_width_bpm": 30.27107693666545,
+          "lag1_innovation_correlation": 0.7966756065824584,
+          "training_sd_bpm": 12.610854391441858,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 0,
+              "covered": 0
+            },
+            "other": {
+              "n": 1080,
+              "covered": 911
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1080,
+          "covered": 1004,
+          "coverage": 0.9296296296296296,
+          "outside_band_flags_per_observed_person_day": 101.33333333333333,
+          "median_width_bpm": 35.707606585428934,
+          "mean_width_bpm": 34.001192368669095,
+          "lag1_innovation_correlation": 0.7575303445341037,
+          "training_sd_bpm": 11.487010329578743,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 0,
+              "covered": 0
+            },
+            "other": {
+              "n": 1080,
+              "covered": 1004
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_6",
+        "training_n": 278,
+        "quality": {
+          "source_rows": 92357,
+          "retained_rr_rows": 92357,
+          "occupied_minutes": 1394,
+          "missing_minutes_within_span": 37
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 1
+        },
+        "training_clock_span_hours": 5.2,
+        "clock_design_condition_number": 27.877883213372044,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 57.85920925747349,
+        "hr_max_bpm": 135.74660633484163,
+        "fixed_training_circadian_coefficients": [
+          72.39998607529913,
+          -2.730090668196514,
+          -26.358225086476367
+        ],
+        "raw": {
+          "report_n": 1116,
+          "covered": 1005,
+          "coverage": 0.9005376344086021,
+          "outside_band_flags_per_observed_person_day": 143.2258064516129,
+          "median_width_bpm": 31.707035054183578,
+          "mean_width_bpm": 31.849870050695817,
+          "lag1_innovation_correlation": 0.8246863122927643,
+          "training_sd_bpm": 10.02728767632913,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 392,
+              "covered": 374
+            },
+            "other": {
+              "n": 724,
+              "covered": 631
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1116,
+          "covered": 696,
+          "coverage": 0.6236559139784946,
+          "outside_band_flags_per_observed_person_day": 541.9354838709677,
+          "median_width_bpm": 35.46858270702421,
+          "mean_width_bpm": 35.40143984387692,
+          "lag1_innovation_correlation": 0.9307021626827782,
+          "training_sd_bpm": 9.771253707308343,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 392,
+              "covered": 191
+            },
+            "other": {
+              "n": 724,
+              "covered": 505
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_7",
+        "training_n": 282,
+        "quality": {
+          "source_rows": 83507,
+          "retained_rr_rows": 83507,
+          "occupied_minutes": 1410,
+          "missing_minutes_within_span": 36
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 1
+        },
+        "training_clock_span_hours": 4.716666666666667,
+        "clock_design_condition_number": 34.027435183260046,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 49.66887417218543,
+        "hr_max_bpm": 151.5151515151515,
+        "fixed_training_circadian_coefficients": [
+          45.49999633107894,
+          0.7273125615633873,
+          -40.92389332535384
+        ],
+        "raw": {
+          "report_n": 1128,
+          "covered": 529,
+          "coverage": 0.46897163120567376,
+          "outside_band_flags_per_observed_person_day": 764.6808510638298,
+          "median_width_bpm": 30.772579126314753,
+          "mean_width_bpm": 30.774215008341745,
+          "lag1_innovation_correlation": 0.8632971723039333,
+          "training_sd_bpm": 10.768825792003755,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 419,
+              "covered": 28
+            },
+            "other": {
+              "n": 709,
+              "covered": 501
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1128,
+          "covered": 654,
+          "coverage": 0.5797872340425532,
+          "outside_band_flags_per_observed_person_day": 605.1063829787234,
+          "median_width_bpm": 35.705123467916565,
+          "mean_width_bpm": 36.566816622302326,
+          "lag1_innovation_correlation": 0.9511604040222706,
+          "training_sd_bpm": 10.475714189504279,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 419,
+              "covered": 260
+            },
+            "other": {
+              "n": 709,
+              "covered": 394
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_8",
+        "training_n": 164,
+        "quality": {
+          "source_rows": 71498,
+          "retained_rr_rows": 48064,
+          "malformed_or_bad_timestamp": 23434,
+          "occupied_minutes": 821,
+          "missing_minutes_within_span": 26
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 1
+        },
+        "training_clock_span_hours": 2.75,
+        "clock_design_condition_number": 102.25815930995536,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 48.82030829488419,
+        "hr_max_bpm": 114.94252873563218,
+        "fixed_training_circadian_coefficients": [
+          88.75089379472958,
+          -17.02509038307833,
+          13.31180646755085
+        ],
+        "raw": {
+          "report_n": 657,
+          "covered": 546,
+          "coverage": 0.8310502283105022,
+          "outside_band_flags_per_observed_person_day": 243.2876712328767,
+          "median_width_bpm": 30.154842503843383,
+          "mean_width_bpm": 31.303176974667316,
+          "lag1_innovation_correlation": 0.8683850876601864,
+          "training_sd_bpm": 6.881822922232721,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 0,
+              "covered": 0
+            },
+            "other": {
+              "n": 657,
+              "covered": 546
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 657,
+          "covered": 568,
+          "coverage": 0.8645357686453576,
+          "outside_band_flags_per_observed_person_day": 195.06849315068493,
+          "median_width_bpm": 31.964465739623492,
+          "mean_width_bpm": 33.719092287695986,
+          "lag1_innovation_correlation": 0.863157449093325,
+          "training_sd_bpm": 6.236691078803086,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 0,
+              "covered": 0
+            },
+            "other": {
+              "n": 657,
+              "covered": 568
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_9",
+        "training_n": 161,
+        "quality": {
+          "source_rows": 75250,
+          "retained_rr_rows": 51085,
+          "malformed_or_bad_timestamp": 24165,
+          "occupied_minutes": 808,
+          "missing_minutes_within_span": 26
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 1
+        },
+        "training_clock_span_hours": 2.683333333333333,
+        "clock_design_condition_number": 107.50836015377898,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 53.57142857142857,
+        "hr_max_bpm": 195.4397394136808,
+        "fixed_training_circadian_coefficients": [
+          24.038598329562884,
+          8.605301513251696,
+          -41.78843524708353
+        ],
+        "raw": {
+          "report_n": 647,
+          "covered": 368,
+          "coverage": 0.5687789799072643,
+          "outside_band_flags_per_observed_person_day": 620.9582689335394,
+          "median_width_bpm": 26.615421490091926,
+          "mean_width_bpm": 26.615421490091933,
+          "lag1_innovation_correlation": 0.957823965205188,
+          "training_sd_bpm": 7.646724696994674,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 0,
+              "covered": 0
+            },
+            "other": {
+              "n": 647,
+              "covered": 368
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 647,
+          "covered": 77,
+          "coverage": 0.11901081916537867,
+          "outside_band_flags_per_observed_person_day": 1268.6244204018546,
+          "median_width_bpm": 27.172066620919814,
+          "mean_width_bpm": 27.172066620919818,
+          "lag1_innovation_correlation": 0.982603964148942,
+          "training_sd_bpm": 7.592473505995945,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 0,
+              "covered": 0
+            },
+            "other": {
+              "n": 647,
+              "covered": 77
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_10",
+        "training_n": 244,
+        "quality": {
+          "source_rows": 68118,
+          "retained_rr_rows": 68118,
+          "occupied_minutes": 1224,
+          "missing_minutes_within_span": 232
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 1
+        },
+        "training_clock_span_hours": 4.066666666666666,
+        "clock_design_condition_number": 46.1395015855569,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 34.36426116838488,
+        "hr_max_bpm": 135.75490735644837,
+        "fixed_training_circadian_coefficients": [
+          -49.19520462455588,
+          56.99352149507044,
+          -120.69085201597066
+        ],
+        "raw": {
+          "report_n": 980,
+          "covered": 603,
+          "coverage": 0.6153061224489796,
+          "outside_band_flags_per_observed_person_day": 553.9591836734694,
+          "median_width_bpm": 15.806962249174518,
+          "mean_width_bpm": 19.728030038662457,
+          "lag1_innovation_correlation": 0.7557724902755772,
+          "training_sd_bpm": 15.38827280288204,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 171,
+              "covered": 10
+            },
+            "other": {
+              "n": 809,
+              "covered": 593
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 980,
+          "covered": 8,
+          "coverage": 0.00816326530612245,
+          "outside_band_flags_per_observed_person_day": 1428.2448979591836,
+          "median_width_bpm": 47.9721998380117,
+          "mean_width_bpm": 47.87111786985074,
+          "lag1_innovation_correlation": 0.9957556113927158,
+          "training_sd_bpm": 11.812778110560151,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 171,
+              "covered": 0
+            },
+            "other": {
+              "n": 809,
+              "covered": 8
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_11",
+        "training_n": 285,
+        "quality": {
+          "source_rows": 76803,
+          "retained_rr_rows": 76803,
+          "occupied_minutes": 1429,
+          "missing_minutes_within_span": 23
+        },
+        "sleep_alignment": {},
+        "training_clock_span_hours": 4.75,
+        "clock_design_condition_number": 33.52057590439184,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 51.30398543572196,
+        "hr_max_bpm": 127.93176972281451,
+        "fixed_training_circadian_coefficients": [
+          1.1241856580118732,
+          -6.07918403572414,
+          -82.49843444945414
+        ],
+        "raw": {
+          "report_n": 1144,
+          "covered": 1083,
+          "coverage": 0.9466783216783217,
+          "outside_band_flags_per_observed_person_day": 76.78321678321679,
+          "median_width_bpm": 29.413622880569044,
+          "mean_width_bpm": 28.428346371569262,
+          "lag1_innovation_correlation": 0.6768743714386984,
+          "training_sd_bpm": 11.478137705290955,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 0,
+              "covered": 0
+            },
+            "other": {
+              "n": 1144,
+              "covered": 1083
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1144,
+          "covered": 290,
+          "coverage": 0.2534965034965035,
+          "outside_band_flags_per_observed_person_day": 1074.9650349650349,
+          "median_width_bpm": 37.251764245519496,
+          "mean_width_bpm": 36.97726393713956,
+          "lag1_innovation_correlation": 0.9929800666959175,
+          "training_sd_bpm": 9.472185380150753,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 0,
+              "covered": 0
+            },
+            "other": {
+              "n": 1144,
+              "covered": 290
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_12",
+        "training_n": 283,
+        "quality": {
+          "source_rows": 81214,
+          "retained_rr_rows": 81214,
+          "occupied_minutes": 1417,
+          "missing_minutes_within_span": 15
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 1
+        },
+        "training_clock_span_hours": 4.716666666666667,
+        "clock_design_condition_number": 34.01157771196484,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 49.81320908176066,
+        "hr_max_bpm": 162.60162601626016,
+        "fixed_training_circadian_coefficients": [
+          114.66088710664489,
+          -3.0256948564815787,
+          40.280046786870244
+        ],
+        "raw": {
+          "report_n": 1134,
+          "covered": 429,
+          "coverage": 0.3783068783068783,
+          "outside_band_flags_per_observed_person_day": 895.2380952380952,
+          "median_width_bpm": 14.823802270954303,
+          "mean_width_bpm": 14.823802270954305,
+          "lag1_innovation_correlation": 0.9652115423282753,
+          "training_sd_bpm": 7.179694457801868,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 364,
+              "covered": 1
+            },
+            "other": {
+              "n": 770,
+              "covered": 428
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1134,
+          "covered": 99,
+          "coverage": 0.0873015873015873,
+          "outside_band_flags_per_observed_person_day": 1314.2857142857142,
+          "median_width_bpm": 17.592459126408922,
+          "mean_width_bpm": 17.592459126408922,
+          "lag1_innovation_correlation": 0.9914345897214365,
+          "training_sd_bpm": 6.817556586819662,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 364,
+              "covered": 0
+            },
+            "other": {
+              "n": 770,
+              "covered": 99
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_13",
+        "training_n": 278,
+        "quality": {
+          "source_rows": 81267,
+          "retained_rr_rows": 81267,
+          "occupied_minutes": 1394,
+          "missing_minutes_within_span": 10
+        },
+        "sleep_alignment": {
+          "unaligned_sleep_rows": 1
+        },
+        "training_clock_span_hours": 4.633333333333334,
+        "clock_design_condition_number": 35.2859344097374,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 52.01561445464398,
+        "hr_max_bpm": 123.96694214876034,
+        "fixed_training_circadian_coefficients": [
+          113.75748556625543,
+          -4.210129176759732,
+          28.70659630117444
+        ],
+        "raw": {
+          "report_n": 1116,
+          "covered": 449,
+          "coverage": 0.40232974910394265,
+          "outside_band_flags_per_observed_person_day": 860.6451612903226,
+          "median_width_bpm": 27.128048801079558,
+          "mean_width_bpm": 27.128048801079558,
+          "lag1_innovation_correlation": 0.9127895637195714,
+          "training_sd_bpm": 7.317289962078096,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 0,
+              "covered": 0
+            },
+            "other": {
+              "n": 1116,
+              "covered": 449
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1116,
+          "covered": 1056,
+          "coverage": 0.946236559139785,
+          "outside_band_flags_per_observed_person_day": 77.41935483870968,
+          "median_width_bpm": 35.13149674241704,
+          "mean_width_bpm": 36.549697086994456,
+          "lag1_innovation_correlation": 0.8361855882249499,
+          "training_sd_bpm": 7.10619248145982,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 0,
+              "covered": 0
+            },
+            "other": {
+              "n": 1116,
+              "covered": 1056
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_14",
+        "training_n": 279,
+        "quality": {
+          "source_rows": 78527,
+          "retained_rr_rows": 78527,
+          "occupied_minutes": 1396,
+          "missing_minutes_within_span": 25
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 1
+        },
+        "training_clock_span_hours": 4.65,
+        "clock_design_condition_number": 35.0255546815549,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 51.282051282051285,
+        "hr_max_bpm": 129.44998882847992,
+        "fixed_training_circadian_coefficients": [
+          112.69904726592404,
+          9.125883420130716,
+          31.94477439170361
+        ],
+        "raw": {
+          "report_n": 1117,
+          "covered": 966,
+          "coverage": 0.864816472694718,
+          "outside_band_flags_per_observed_person_day": 194.6642793196061,
+          "median_width_bpm": 17.168079059963446,
+          "mean_width_bpm": 17.524873763068936,
+          "lag1_innovation_correlation": 0.9317358678555576,
+          "training_sd_bpm": 10.706427268268646,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 387,
+              "covered": 373
+            },
+            "other": {
+              "n": 730,
+              "covered": 593
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1117,
+          "covered": 995,
+          "coverage": 0.8907788719785139,
+          "outside_band_flags_per_observed_person_day": 157.27842435094,
+          "median_width_bpm": 29.295033253715744,
+          "mean_width_bpm": 28.49723125311004,
+          "lag1_innovation_correlation": 0.9665128901958364,
+          "training_sd_bpm": 9.582629512141082,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 387,
+              "covered": 378
+            },
+            "other": {
+              "n": 730,
+              "covered": 617
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_15",
+        "training_n": 298,
+        "quality": {
+          "source_rows": 102340,
+          "retained_rr_rows": 102340,
+          "occupied_minutes": 1492,
+          "missing_minutes_within_span": 38
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 1
+        },
+        "training_clock_span_hours": 4.966666666666667,
+        "clock_design_condition_number": 30.567066501141852,
+        "longest_constant_minute_segment": 3,
+        "hr_min_bpm": 33.723217568289755,
+        "hr_max_bpm": 194.80519480519482,
+        "fixed_training_circadian_coefficients": [
+          115.27214810732046,
+          16.140745225538456,
+          27.915425794291437
+        ],
+        "raw": {
+          "report_n": 1194,
+          "covered": 1046,
+          "coverage": 0.8760469011725294,
+          "outside_band_flags_per_observed_person_day": 178.4924623115578,
+          "median_width_bpm": 35.04683393840614,
+          "mean_width_bpm": 38.32381756762751,
+          "lag1_innovation_correlation": 0.9228927310126365,
+          "training_sd_bpm": 8.276253426246523,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 256,
+              "covered": 251
+            },
+            "other": {
+              "n": 938,
+              "covered": 795
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1194,
+          "covered": 1132,
+          "coverage": 0.948073701842546,
+          "outside_band_flags_per_observed_person_day": 74.77386934673366,
+          "median_width_bpm": 44.91218687581815,
+          "mean_width_bpm": 56.4142450127301,
+          "lag1_innovation_correlation": 0.8866288343028015,
+          "training_sd_bpm": 5.566850143408251,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 256,
+              "covered": 248
+            },
+            "other": {
+              "n": 938,
+              "covered": 884
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_16",
+        "training_n": 286,
+        "quality": {
+          "source_rows": 78181,
+          "retained_rr_rows": 78181,
+          "occupied_minutes": 1434,
+          "missing_minutes_within_span": 103
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 1
+        },
+        "training_clock_span_hours": 4.766666666666667,
+        "clock_design_condition_number": 33.27894173892495,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 44.97751124437781,
+        "hr_max_bpm": 193.5483870967742,
+        "fixed_training_circadian_coefficients": [
+          27.36618615957402,
+          11.953234812434964,
+          -51.90859726533641
+        ],
+        "raw": {
+          "report_n": 1148,
+          "covered": 514,
+          "coverage": 0.44773519163763065,
+          "outside_band_flags_per_observed_person_day": 795.2613240418118,
+          "median_width_bpm": 18.868168606291903,
+          "mean_width_bpm": 23.009869090853527,
+          "lag1_innovation_correlation": 0.9365649463592319,
+          "training_sd_bpm": 8.263268452704402,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 444,
+              "covered": 6
+            },
+            "other": {
+              "n": 704,
+              "covered": 508
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1148,
+          "covered": 145,
+          "coverage": 0.12630662020905922,
+          "outside_band_flags_per_observed_person_day": 1258.1184668989547,
+          "median_width_bpm": 21.172729746857236,
+          "mean_width_bpm": 21.17272974685724,
+          "lag1_innovation_correlation": 0.9864663815953986,
+          "training_sd_bpm": 7.196132364671451,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 444,
+              "covered": 104
+            },
+            "other": {
+              "n": 704,
+              "covered": 41
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_17",
+        "training_n": 281,
+        "quality": {
+          "source_rows": 92951,
+          "retained_rr_rows": 92951,
+          "occupied_minutes": 1406,
+          "missing_minutes_within_span": 125
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 1
+        },
+        "training_clock_span_hours": 4.683333333333334,
+        "clock_design_condition_number": 34.51313610406202,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 31.08078374128595,
+        "hr_max_bpm": 205.47945205479454,
+        "fixed_training_circadian_coefficients": [
+          46.775914086150586,
+          1.956628948342491,
+          -47.773727875531335
+        ],
+        "raw": {
+          "report_n": 1125,
+          "covered": 465,
+          "coverage": 0.41333333333333333,
+          "outside_band_flags_per_observed_person_day": 844.8,
+          "median_width_bpm": 31.801341417874426,
+          "mean_width_bpm": 32.105830373082284,
+          "lag1_innovation_correlation": 0.944186903060179,
+          "training_sd_bpm": 10.440111518258062,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 352,
+              "covered": 2
+            },
+            "other": {
+              "n": 773,
+              "covered": 463
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1125,
+          "covered": 1068,
+          "coverage": 0.9493333333333334,
+          "outside_band_flags_per_observed_person_day": 72.96,
+          "median_width_bpm": 43.265248387751484,
+          "mean_width_bpm": 48.342762959533744,
+          "lag1_innovation_correlation": 0.8535896421879156,
+          "training_sd_bpm": 10.102799535954018,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 352,
+              "covered": 351
+            },
+            "other": {
+              "n": 773,
+              "covered": 717
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_18",
+        "training_n": 277,
+        "quality": {
+          "source_rows": 74296,
+          "retained_rr_rows": 74296,
+          "occupied_minutes": 1385,
+          "missing_minutes_within_span": 54
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 1
+        },
+        "training_clock_span_hours": 4.616666666666666,
+        "clock_design_condition_number": 35.54914804471076,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 48.97959183673469,
+        "hr_max_bpm": 178.57775573114125,
+        "fixed_training_circadian_coefficients": [
+          88.19298437111433,
+          5.627363005326428,
+          15.279057232786716
+        ],
+        "raw": {
+          "report_n": 1108,
+          "covered": 567,
+          "coverage": 0.5117328519855595,
+          "outside_band_flags_per_observed_person_day": 703.1046931407942,
+          "median_width_bpm": 17.25771029054488,
+          "mean_width_bpm": 17.25771029054488,
+          "lag1_innovation_correlation": 0.8022657194571569,
+          "training_sd_bpm": 9.07989844964997,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 313,
+              "covered": 25
+            },
+            "other": {
+              "n": 795,
+              "covered": 542
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1108,
+          "covered": 533,
+          "coverage": 0.48104693140794225,
+          "outside_band_flags_per_observed_person_day": 747.2924187725632,
+          "median_width_bpm": 27.81116986579899,
+          "mean_width_bpm": 27.764628674793524,
+          "lag1_innovation_correlation": 0.8968977307906147,
+          "training_sd_bpm": 8.727409275128386,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 313,
+              "covered": 14
+            },
+            "other": {
+              "n": 795,
+              "covered": 519
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_19",
+        "training_n": 281,
+        "quality": {
+          "source_rows": 80239,
+          "retained_rr_rows": 80239,
+          "occupied_minutes": 1409,
+          "missing_minutes_within_span": 17
+        },
+        "sleep_alignment": {
+          "unaligned_sleep_rows": 1
+        },
+        "training_clock_span_hours": 4.683333333333334,
+        "clock_design_condition_number": 34.513136104061964,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 50.420168067226896,
+        "hr_max_bpm": 116.05415860735009,
+        "fixed_training_circadian_coefficients": [
+          32.70934332667088,
+          4.933705526463569,
+          -63.69013804977201
+        ],
+        "raw": {
+          "report_n": 1128,
+          "covered": 1021,
+          "coverage": 0.9051418439716312,
+          "outside_band_flags_per_observed_person_day": 136.59574468085106,
+          "median_width_bpm": 22.682800203147522,
+          "mean_width_bpm": 22.73718569062013,
+          "lag1_innovation_correlation": 0.8693753417197514,
+          "training_sd_bpm": 7.255045861371176,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 0,
+              "covered": 0
+            },
+            "other": {
+              "n": 1128,
+              "covered": 1021
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1128,
+          "covered": 366,
+          "coverage": 0.324468085106383,
+          "outside_band_flags_per_observed_person_day": 972.7659574468086,
+          "median_width_bpm": 33.80846542672595,
+          "mean_width_bpm": 34.23306151209096,
+          "lag1_innovation_correlation": 0.9894722582039853,
+          "training_sd_bpm": 6.280269599177669,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 0,
+              "covered": 0
+            },
+            "other": {
+              "n": 1128,
+              "covered": 366
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_20",
+        "training_n": 271,
+        "quality": {
+          "source_rows": 72209,
+          "retained_rr_rows": 72209,
+          "occupied_minutes": 1358,
+          "missing_minutes_within_span": 58
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 1
+        },
+        "training_clock_span_hours": 4.516666666666667,
+        "clock_design_condition_number": 37.19029813362283,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 45.97701149425288,
+        "hr_max_bpm": 178.3064857990674,
+        "fixed_training_circadian_coefficients": [
+          65.27947137554749,
+          8.409335804308661,
+          -18.880450611733867
+        ],
+        "raw": {
+          "report_n": 1087,
+          "covered": 613,
+          "coverage": 0.5639374425022999,
+          "outside_band_flags_per_observed_person_day": 627.9300827966881,
+          "median_width_bpm": 29.506992068499194,
+          "mean_width_bpm": 28.236430271468464,
+          "lag1_innovation_correlation": 0.8897673687255557,
+          "training_sd_bpm": 10.809004105215942,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 385,
+              "covered": 29
+            },
+            "other": {
+              "n": 702,
+              "covered": 584
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1087,
+          "covered": 653,
+          "coverage": 0.6007359705611776,
+          "outside_band_flags_per_observed_person_day": 574.9402023919043,
+          "median_width_bpm": 27.357361486690344,
+          "mean_width_bpm": 27.067639544653183,
+          "lag1_innovation_correlation": 0.9441953502985672,
+          "training_sd_bpm": 10.519326926430168,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 385,
+              "covered": 7
+            },
+            "other": {
+              "n": 702,
+              "covered": 646
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_21",
+        "training_n": 277,
+        "quality": {
+          "source_rows": 81677,
+          "retained_rr_rows": 81677,
+          "occupied_minutes": 1387,
+          "missing_minutes_within_span": 0
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 1
+        },
+        "training_clock_span_hours": 4.616666666666666,
+        "clock_design_condition_number": 35.549148044710776,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 52.81726975940091,
+        "hr_max_bpm": 148.1490513583378,
+        "fixed_training_circadian_coefficients": [
+          105.29980189660925,
+          5.102778897142652,
+          22.180206792339906
+        ],
+        "raw": {
+          "report_n": 1110,
+          "covered": 878,
+          "coverage": 0.790990990990991,
+          "outside_band_flags_per_observed_person_day": 300.97297297297297,
+          "median_width_bpm": 32.10053820807647,
+          "mean_width_bpm": 34.113921619709195,
+          "lag1_innovation_correlation": 0.8733822770413139,
+          "training_sd_bpm": 8.586054926480983,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 297,
+              "covered": 175
+            },
+            "other": {
+              "n": 813,
+              "covered": 703
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1110,
+          "covered": 995,
+          "coverage": 0.8963963963963963,
+          "outside_band_flags_per_observed_person_day": 149.1891891891892,
+          "median_width_bpm": 33.31967766723921,
+          "mean_width_bpm": 33.190886528305555,
+          "lag1_innovation_correlation": 0.911664029324103,
+          "training_sd_bpm": 8.322525804508393,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 297,
+              "covered": 288
+            },
+            "other": {
+              "n": 813,
+              "covered": 707
+            }
+          }
+        }
+      },
+      {
+        "subject": "user_22",
+        "training_n": 279,
+        "quality": {
+          "source_rows": 70941,
+          "retained_rr_rows": 70941,
+          "occupied_minutes": 1396,
+          "missing_minutes_within_span": 11
+        },
+        "sleep_alignment": {
+          "aligned_sleep_intervals": 1
+        },
+        "training_clock_span_hours": 4.65,
+        "clock_design_condition_number": 35.025554681554894,
+        "longest_constant_minute_segment": 2,
+        "hr_min_bpm": 42.996937373289214,
+        "hr_max_bpm": 177.31796752226296,
+        "fixed_training_circadian_coefficients": [
+          56.036952758597536,
+          3.0205039392892434,
+          -11.790155169407935
+        ],
+        "raw": {
+          "report_n": 1117,
+          "covered": 699,
+          "coverage": 0.6257833482542524,
+          "outside_band_flags_per_observed_person_day": 538.8719785138765,
+          "median_width_bpm": 21.221263672538498,
+          "mean_width_bpm": 23.99974618321912,
+          "lag1_innovation_correlation": 0.8458295005099726,
+          "training_sd_bpm": 4.219678317078222,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 351,
+              "covered": 13
+            },
+            "other": {
+              "n": 766,
+              "covered": 686
+            }
+          }
+        },
+        "circadian_residual": {
+          "report_n": 1117,
+          "covered": 644,
+          "coverage": 0.576544315129812,
+          "outside_band_flags_per_observed_person_day": 609.7761862130707,
+          "median_width_bpm": 21.91655443181245,
+          "mean_width_bpm": 25.11112244984769,
+          "lag1_innovation_correlation": 0.9191530817656236,
+          "training_sd_bpm": 4.137681641266655,
+          "annotation_strata": {
+            "sleep_interval": {
+              "n": 351,
+              "covered": 4
+            },
+            "other": {
+              "n": 766,
+              "covered": 640
+            }
+          }
+        }
+      }
+    ],
+    "annotated_disease_detection": "NOT DONE: no labelled disease events",
+    "annotated_sleep_association": "Coverage stratified by explicit sleep onset/out-of-bed intervals; awakenings are not minute-resolved truth."
+  }
+}

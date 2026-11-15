@@ -1,5 +1,10 @@
 # LIGHTMINUTE · checklist de revisión y evidencia
 
+**Chequeo nuevo:** se corrigió el cómputo de desviaciones en sentidos opuestos;
+el resultado exploratorio de MMASH siguió en 66,37 %. La cobertura continúa
+fallando y la frecuencia de observación sigue sin modelarse. Detalle y límites:
+[`ml/proxy/DIRECTION-CHECK.md`](../ml/proxy/DIRECTION-CHECK.md).
+
 **Auditoría adicional:** los preregistros v2 de MMASH y autonomía se incorporaron en el mismo
 commit que sus resultados; no hay evidencia Git de un commit anterior a la ejecución. Las cifras
 v2 se deben presentar como análisis confirmatorios no ciegos, con esa limitación explícita.
