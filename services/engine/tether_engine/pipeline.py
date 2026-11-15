@@ -50,6 +50,14 @@ def _prior_hr_facts() -> dict:
             "z": 0.0, "n_seen": 0, "prior": True}
 
 
+def _decision_surprise(sur: dict) -> dict:
+    """Retain pre-change evidence when adaptation would hide a pending shift."""
+    if (sur.get("change_pending") and sur.get("pending_p_two_sided") is not None
+            and sur["pending_p_two_sided"] < sur["p_two_sided"]):
+        return {**sur, "z": sur["pending_z"], "p_two_sided": sur["pending_p_two_sided"]}
+    return sur
+
+
 def run_scenario(name: str, seed: int = 0, days: int = DEFAULT_DAYS,
                  variant: str = DEFAULT_VARIANT) -> dict:
     """Simulate a scenario and run it through the real engine, day by day."""
@@ -87,11 +95,14 @@ def run_scenario(name: str, seed: int = 0, days: int = DEFAULT_DAYS,
                 history[cid][n].append(cleaned.get(n))
 
             ind: dict[str, dict] = {}
+            decision_zs: dict[str, float] = {}
             for n in INDICATORS:
                 if n not in cleaned:
                     continue
                 model = models[cid][n]
                 sur = model.surprise(cleaned[n])          # judge before learning
+                decision_sur = _decision_surprise(sur)
+                decision_zs[n] = round(float(decision_sur["z"]), 2)
                 ind[n] = {
                     "value": round(float(cleaned[n]), 2),
                     "baseline": round(float(sur["baseline"]), 2),
@@ -100,12 +111,16 @@ def run_scenario(name: str, seed: int = 0, days: int = DEFAULT_DAYS,
                     "z": round(float(sur["z"]), 2),
                     "p": float(sur["p_two_sided"]),
                     "n_seen": sur["n_seen"],
-                    "lens": three_lens(th[n], cleaned[n], sur),
+                    "change_pending": sur["change_pending"],
+                    "unresolved_change": sur["unresolved_change"],
+                    "pending_z": sur["pending_z"],
+                    "pending_p": sur["pending_p_two_sided"],
+                    "lens": three_lens(th[n], cleaned[n], decision_sur),
                     "hrp_risk": th[n].hrp_risk,
                     "hazard": th[n].hazard,
                     "unit": th[n].unit,
                 }
-                model.robust_update(cleaned[n])           # winsorized: no self-learning
+                model.robust_update(cleaned[n], observed_at=float(day["day"]) * 86400)
 
             # Stuck-value flag (FI-11): informational only. It is written to the
             # indicator and day QC so the console can show it; it does not touch
@@ -116,7 +131,7 @@ def run_scenario(name: str, seed: int = 0, days: int = DEFAULT_DAYS,
 
             # A missing indicator contributes no evidence (z = 0), it does not
             # crash the fusion or silently reuse yesterday's number.
-            zvec = [ind[s]["z"] if s in ind else 0.0 for s in signs]
+            zvec = [decision_zs.get(s, 0.0) for s in signs]
             sy = syndromes[cid].score(zvec)
             syndromes[cid].observe(zvec)
             mature = ind.get("rest_hr", {}).get("n_seen", 0) >= MIN_DAYS_FOR_PERSONAL

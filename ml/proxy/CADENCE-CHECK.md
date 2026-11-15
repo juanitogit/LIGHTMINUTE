@@ -29,11 +29,13 @@ interpret pending status rather than treating the adaptive baseline as proof of
 normality. The mode has synthetic tests, not clinical validation.
 
 Existing calls without timestamps continue to use the original observation-count
-guard. The researcher CSV CLI offers the explicit `--timestamped-guard` option;
-the ordinary mission pipeline does not yet supply timestamps. This result applies
-only to callers explicitly using the mode and is not evidence that every product
-path has improved. The mission
-pipeline simulates daily data and remains subject to the known guard limitations.
+guard. The researcher CSV CLI offers the explicit `--timestamped-guard` option.
+The synthetic daily mission pipeline now supplies mission day converted to seconds,
+exports pending/unresolved state and uses the stronger pending-reference evidence
+for its personal lens and syndrome score. These are demo-relative timestamps,
+not acquisition times from real sensors. The personal-baseline view displays a
+warning while a shift is pending or unresolved. This does not demonstrate improved
+coverage of every pipeline signal or clinical safety.
 
 `python scripts/run_tests.py` and `python tests/fault_injection/run.py` cover the
 existing daily path, shift preservation, invalid timestamps and missing gaps;

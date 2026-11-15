@@ -2,8 +2,9 @@
 
 **Cobertura con marcas de tiempo:** un modo explícito de guardia por tiempo
 alcanzó 21.879/23.488 (93,15 %) en la repetición exploratoria de MMASH; sin
-embargo, los datos ya eran conocidos y el pipeline diario aún no usa este modo.
-La CLI de investigación lo ofrece mediante `--timestamped-guard`. La señal pendiente y los riesgos están en
+embargo, los datos ya eran conocidos. El pipeline sintético diario ahora pasa el
+tiempo de misión, conserva la evidencia de referencia y muestra cambios pendientes.
+La CLI de investigación lo ofrece mediante `--timestamped-guard`. Los riesgos están en
 [`ml/proxy/CADENCE-CHECK.md`](../ml/proxy/CADENCE-CHECK.md). Los resultados v2
 de 66,37 % corresponden a la ruta anterior sin marcas temporales.
 
