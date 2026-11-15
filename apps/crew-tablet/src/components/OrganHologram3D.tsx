@@ -7,7 +7,6 @@ export interface OrganHologram3DProps {
   classification?: string;
   fallbackGeometry?: THREE.BufferGeometry;
   heartRateBpm?: number | null;
-  referenceTilt?: number;
 }
 
 // Map canonical organ names to GLB files in /assets/organs/
@@ -22,20 +21,81 @@ const GLB_FILE_MAP: Record<string, string> = {
   kidney_right: "kidney_right.glb",
   lung: "lung.glb",
   lungs: "lung.glb",
-  "left lung": "lung.glb",
-  "right lung": "lung.glb",
   uterus: "uterus.glb",
 };
 
+/**
+ * The lung reference asset is a left+right pair, so a single-side request keeps
+ * the body mesh: showing both lungs under a "left lung" heading would misstate
+ * laterality, which matters for interpretation.
+ */
+const PAIRED_ASSETS = new Set(["left lung", "right lung"]);
+
+/**
+ * Tissue colours approximating the living organ, used instead of the asset's
+ * own base colour where that colour is near-black (liver) or carries no tissue
+ * information. Values are sRGB; the renderer tonemaps them.
+ */
+const ORGAN_TISSUE: Record<string, { base: number; deep: number }> = {
+  brain: { base: 0xd7b3a1, deep: 0xc79c8a },
+  heart: { base: 0xa33b33, deep: 0x8a2c26 },
+  liver: { base: 0x7b3a2b, deep: 0x63291e },
+  lung: { base: 0xdb9a96, deep: 0xcb8783 },
+  kidney: { base: 0x9c4a3d, deep: 0x83392e },
+  uterus: { base: 0xb26a72, deep: 0x965158 },
+};
+
+/** Pale structures that must not be painted with the parenchyma colour. */
+const PALE_STRUCTURES = /ligament|tendon|fascia|septum|cartilage|bronch|trachea|pericard/;
+
+/**
+ * Display orientation. The reference meshes are authored in body space, where
+ * the heart's base-to-apex axis lies ~40 degrees from vertical and the uterus
+ * lies almost horizontally over the bladder. Isolated in a viewer without the
+ * rest of the body that reads as an organ lying on its side, so each organ is
+ * turned to the upright presentation used in anatomy illustrations. The angles
+ * come from the principal axis of each mesh (dominant eigenvector of its vertex
+ * covariance), measured in body space.
+ */
+const ORGAN_ORIENTATION_DEG: Record<string, [number, number, number]> = {
+  heart: [40, 0, 0],
+  uterus: [-60, 0, 0],
+};
+
+/** Shared so the effect dependency stays referentially stable. */
+const UPRIGHT: [number, number, number] = [0, 0, 0];
+
 // Global cache for loaded GLTF scenes to avoid re-parsing on repeated selection
 const gltfSceneCache = new Map<string, THREE.Group>();
+
+function organKey(normName: string): string | null {
+  if (normName.includes("brain")) return "brain";
+  if (normName.includes("heart")) return "heart";
+  if (normName.includes("liver")) return "liver";
+  if (normName.includes("lung")) return "lung";
+  if (normName.includes("kidney")) return "kidney";
+  if (normName.includes("uterus")) return "uterus";
+  return null;
+}
+
+/** Tissue colour for one mesh, keeping recognisable pale structures pale. */
+function tissueColor(key: string | null, materialName: string | undefined): THREE.Color {
+  const tissue = key ? ORGAN_TISSUE[key] : undefined;
+  const base = new THREE.Color(tissue?.base ?? 0xb4746a);
+  if (materialName && PALE_STRUCTURES.test(materialName)) {
+    return new THREE.Color(0xcabda6);
+  }
+  if (materialName && /capsule|pyramid|medulla|cortex|mucosa/i.test(materialName)) {
+    return new THREE.Color(tissue?.deep ?? base);
+  }
+  return base;
+}
 
 export function OrganHologram3D({
   organName,
   classification = "reference",
   fallbackGeometry,
   heartRateBpm = null,
-  referenceTilt = 0,
 }: OrganHologram3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -57,8 +117,17 @@ export function OrganHologram3D({
   autoRotateRef.current = autoRotate;
   const heartRateRef = useRef(heartRateBpm);
   heartRateRef.current = heartRateBpm;
+  // Tissue materials are rebuilt with the scene, so the wireframe toggle is
+  // applied to the live materials instead of reloading the model.
+  const applyWireframeRef = useRef<(enabled: boolean) => void>(() => {});
 
-  // Resolve status color for the hologram
+  // Wireframe is a program-level flag: set it on the live materials straight
+  // away instead of waiting for a rendered frame.
+  useEffect(() => {
+    applyWireframeRef.current(wireframe);
+  }, [wireframe]);
+
+  // Resolve status colour for the hologram reticle
   const holoColorHex = theme === "light"
     ? classification === "mild_strain" ? 0xa94928 : classification === "sustained_deviation" ? 0x96600a : 0x514bd0
     :
@@ -69,17 +138,18 @@ export function OrganHologram3D({
         : classification === "adapted_nominal"
           ? 0x34d399 // emerald
           : 0xb4afff;
-  const wireColorHex = theme === "light" ? 0x292478 : 0xdad7ff;
 
   // Determine GLB filename
   const normName = (organName || "").toLowerCase().trim();
   let glbFile: string | null = null;
-  for (const [key, file] of Object.entries(GLB_FILE_MAP)) {
-    if (normName === key || normName.includes(key) || key.includes(normName)) {
-      glbFile = file;
-      break;
+  if (!PAIRED_ASSETS.has(normName)) {
+    for (const [key, file] of Object.entries(GLB_FILE_MAP)) {
+      if (normName === key) { glbFile = file; break; }
     }
   }
+
+  const organTissueKey = organKey(normName);
+  const orientationDeg = (organTissueKey ? ORGAN_ORIENTATION_DEG[organTissueKey] : undefined) ?? UPRIGHT;
 
   // Ref to reset angle
   const resetAngleRef = useRef<() => void>(() => {});
@@ -100,7 +170,7 @@ export function OrganHologram3D({
 
     // Camera
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-    camera.position.set(0, 0.8, 3.2);
+    camera.position.set(0, 0.55, 3.4);
     camera.lookAt(0, 0, 0);
 
     // Renderer (uses the React-managed canvas directly — NO innerHTML, NO appendChild)
@@ -115,27 +185,28 @@ export function OrganHologram3D({
       renderer.setSize(width, height, false);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.2;
+      renderer.toneMappingExposure = 1.0;
     } catch (e) {
       console.warn("Could not create WebGLRenderer for OrganHologram3D:", e);
       return;
     }
 
-    // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
+    // Lights. Kept close to neutral: brighter values blow the tissue colours out
+    // into the flat, stone-like look this viewer used to have.
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
 
-    const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.2);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.5);
     dirLight1.position.set(2, 3, 3);
     scene.add(dirLight1);
 
-    const dirLight2 = new THREE.DirectionalLight(0xc8d8ef, 0.8);
+    const dirLight2 = new THREE.DirectionalLight(0xc8d8ef, 0.55);
     dirLight2.position.set(-2, -1, -2);
     scene.add(dirLight2);
 
     // Holographic Pedestal / Reticle
     const pedestalGroup = new THREE.Group();
-    pedestalGroup.position.set(0, -0.9, 0);
+    pedestalGroup.position.set(0, -0.95, 0);
 
     // Concentric rings
     const ringGeo1 = new THREE.RingGeometry(0.7, 0.72, 48);
@@ -179,39 +250,103 @@ export function OrganHologram3D({
 
     scene.add(pedestalGroup);
 
-    // Model Pivot Group
+    // Model Pivot Group — carries the user's drag rotation
     const pivot = new THREE.Group();
-    pivot.rotation.z = referenceTilt;
     scene.add(pivot);
 
-    // Keep references to update materials on wireframe toggle
-    const holoMaterials: THREE.MeshStandardMaterial[] = [];
+    // Keep references so the wireframe toggle can reach these materials
+    const tissueMaterials: THREE.Material[] = [];
+    applyWireframeRef.current = (enabled: boolean) => {
+      for (const material of tissueMaterials) {
+        const standard = material as THREE.MeshPhysicalMaterial;
+        standard.wireframe = enabled;
+        standard.transparent = enabled;
+        standard.opacity = enabled ? 0.55 : 1;
+        standard.needsUpdate = true;
+      }
+    };
     const ownedGeometries: THREE.BufferGeometry[] = [];
+
+    /**
+     * Opaque, double-sided tissue. Opaque keeps the depth buffer honest (the
+     * old transparent material let back faces paint over front faces, which is
+     * what produced the "holes"), and double-sided fills the open hilum and
+     * section surfaces the reference meshes actually have so they read as
+     * anatomy rather than as a hole through the organ.
+     */
+    const makeTissueMaterial = (color: THREE.Color): THREE.MeshPhysicalMaterial => {
+      const material = new THREE.MeshPhysicalMaterial({
+        color,
+        roughness: 0.62,
+        metalness: 0,
+        clearcoat: 0.18,
+        clearcoatRoughness: 0.6,
+        sheen: 0.3,
+        sheenColor: new THREE.Color(0xffd7cf),
+        side: THREE.DoubleSide,
+        flatShading: false,
+        transparent: wireframeRef.current,
+        opacity: wireframeRef.current ? 0.55 : 1,
+        wireframe: wireframeRef.current,
+      });
+      tissueMaterials.push(material);
+      return material;
+    };
 
     // Reset angle handler
     resetAngleRef.current = () => {
-      pivot.rotation.set(0, 0, referenceTilt);
+      pivot.rotation.set(0, 0, 0);
     };
 
     // Load or create organ 3D model
     const loadModel = async () => {
       setLoading(true);
 
+      const attachGeometry = (geom: THREE.BufferGeometry, materialName?: string) => {
+        const material = makeTissueMaterial(tissueColor(organTissueKey, materialName));
+        const mesh = new THREE.Mesh(geom, material);
+
+        geom.computeBoundingBox();
+        if (geom.boundingBox) {
+          const center = new THREE.Vector3();
+          geom.boundingBox.getCenter(center);
+          const size = new THREE.Vector3();
+          geom.boundingBox.getSize(size);
+          const maxDim = Math.max(size.x, size.y, size.z);
+          if (maxDim > 0) {
+            mesh.scale.multiplyScalar(1.6 / maxDim);
+          }
+          mesh.position.sub(center.multiplyScalar(maxDim > 0 ? 1.6 / maxDim : 1));
+        }
+
+        pivot.add(mesh);
+      };
+
       try {
-        // The selected body's geometry preserves side, shape and reference
-        // provenance. Standalone assets are used only when that mesh is absent.
         if (normName.includes("eyeball") || normName === "eyes") {
           // An illustrative globe makes the iris visible; it is not an eye scan.
           setAssetType("illustration");
-          const globe = new THREE.Mesh(new THREE.SphereGeometry(0.75, 48, 32), new THREE.MeshStandardMaterial({color: 0xf2ece8, roughness: 0.38}));
-          const iris = new THREE.Mesh(new THREE.CircleGeometry(0.25, 48), new THREE.MeshStandardMaterial({color: 0x65839b, roughness: 0.5, side: THREE.DoubleSide}));
+          const globe = new THREE.Mesh(
+            new THREE.SphereGeometry(0.75, 48, 32),
+            new THREE.MeshStandardMaterial({color: 0xf2ece8, roughness: 0.38, side: THREE.DoubleSide})
+          );
+          const iris = new THREE.Mesh(
+            new THREE.CircleGeometry(0.25, 48),
+            new THREE.MeshStandardMaterial({color: 0x65839b, roughness: 0.5, side: THREE.DoubleSide})
+          );
           iris.position.z = 0.752;
-          const pupil = new THREE.Mesh(new THREE.CircleGeometry(0.105, 48), new THREE.MeshStandardMaterial({color: 0x171e27, roughness: 0.4, side: THREE.DoubleSide}));
+          const pupil = new THREE.Mesh(
+            new THREE.CircleGeometry(0.105, 48),
+            new THREE.MeshStandardMaterial({color: 0x171e27, roughness: 0.4, side: THREE.DoubleSide})
+          );
           pupil.position.z = 0.754;
           pivot.add(globe, iris, pupil);
           ownedGeometries.push(globe.geometry, iris.geometry, pupil.geometry);
-          holoMaterials.push(globe.material, iris.material, pupil.material);
-        } else if (glbFile && !fallbackGeometry?.attributes?.position) {
+          tissueMaterials.push(globe.material, iris.material, pupil.material);
+        } else if (glbFile) {
+          // The NIH/HRA reference mesh is preferred: the body mesh kept in the
+          // anatomy payload is a decimated copy that shows tearing and holes at
+          // close range.
           setAssetType("glb");
           const glbUrl = `${import.meta.env.BASE_URL}assets/organs/${glbFile}`;
 
@@ -228,24 +363,13 @@ export function OrganHologram3D({
 
           if (stopped) return;
 
-          // Apply holographic shaders & wireframe accents
+          // Give every part its tissue colour, preserving pale ligaments,
+          // cartilage and the deeper capsule/medulla tones.
           modelScene.traverse((child) => {
-            if ((child as THREE.Mesh).isMesh) {
-              const mesh = child as THREE.Mesh;
-              const holoMat = new THREE.MeshStandardMaterial({
-                color: holoColorHex,
-                emissive: holoColorHex,
-                emissiveIntensity: 0.45,
-                roughness: 0.25,
-                metalness: 0.5,
-                transparent: true,
-                opacity: wireframeRef.current ? 0.08 : 0.82,
-                wireframe: wireframeRef.current,
-                side: THREE.DoubleSide,
-              });
-              holoMaterials.push(holoMat);
-              mesh.material = holoMat;
-
+            const mesh = child as THREE.Mesh;
+            if (mesh.isMesh) {
+              const sourceName = (mesh.material as THREE.Material | undefined)?.name;
+              mesh.material = makeTissueMaterial(tissueColor(organTissueKey, sourceName));
             }
           });
 
@@ -262,7 +386,17 @@ export function OrganHologram3D({
 
           // Translation must follow scale: the source centre also scales.
           modelScene.position.sub(center.multiplyScalar(maxDim > 0 ? 1.65 / maxDim : 1));
-          pivot.add(modelScene);
+
+          // The display rotation goes on a wrapper: rotating the centred model
+          // itself would also rotate its centring offset and swing it off frame.
+          const oriented = new THREE.Group();
+          oriented.rotation.set(
+            THREE.MathUtils.degToRad(orientationDeg[0]),
+            THREE.MathUtils.degToRad(orientationDeg[1]),
+            THREE.MathUtils.degToRad(orientationDeg[2])
+          );
+          oriented.add(modelScene);
+          pivot.add(oriented);
         } else if (fallbackGeometry && fallbackGeometry.attributes?.position) {
           // Geometry from body anatomy.json/bin
           try {
@@ -270,35 +404,7 @@ export function OrganHologram3D({
             const geom = fallbackGeometry.clone();
             ownedGeometries.push(geom);
             if (!geom.getAttribute("normal")) geom.computeVertexNormals();
-
-            const holoMat = new THREE.MeshStandardMaterial({
-              color: holoColorHex,
-              emissive: holoColorHex,
-              emissiveIntensity: 0.5,
-              roughness: 0.3,
-              metalness: 0.4,
-              transparent: true,
-              opacity: wireframeRef.current ? 0.1 : 0.85,
-              wireframe: wireframeRef.current,
-              side: THREE.DoubleSide,
-            });
-            holoMaterials.push(holoMat);
-
-            const mesh = new THREE.Mesh(geom, holoMat);
-            geom.computeBoundingBox();
-            if (geom.boundingBox) {
-              const center = new THREE.Vector3();
-              geom.boundingBox.getCenter(center);
-              const size = new THREE.Vector3();
-              geom.boundingBox.getSize(size);
-              const maxDim = Math.max(size.x, size.y, size.z);
-              if (maxDim > 0) {
-                mesh.scale.multiplyScalar(1.6 / maxDim);
-              }
-              mesh.position.sub(center.multiplyScalar(maxDim > 0 ? 1.6 / maxDim : 1));
-            }
-
-            pivot.add(mesh);
+            attachGeometry(geom, normName);
           } catch (geoErr) {
             console.warn("Anatomical reference geometry could not be displayed:", geoErr);
             setAssetType("unavailable");
@@ -308,6 +414,19 @@ export function OrganHologram3D({
         }
       } catch (err) {
         console.warn("Could not load organ reference model:", err);
+        // The panel still has the body mesh: use it rather than an empty frame.
+        if (!stopped && fallbackGeometry?.attributes?.position) {
+          try {
+            setAssetType("geometry");
+            const geom = fallbackGeometry.clone();
+            ownedGeometries.push(geom);
+            if (!geom.getAttribute("normal")) geom.computeVertexNormals();
+            attachGeometry(geom, normName);
+            return;
+          } catch (geoErr) {
+            console.warn("Anatomical reference geometry could not be displayed:", geoErr);
+          }
+        }
         if (!stopped) setAssetType("unavailable");
       } finally {
         if (!stopped) setLoading(false);
@@ -360,18 +479,12 @@ export function OrganHologram3D({
       const elapsedTime = clock.elapsedTime;
       const reducedMotion = motionPreference.matches;
 
-      // Update wireframe state dynamically
-      holoMaterials.forEach((m) => {
-        m.wireframe = wireframeRef.current;
-        m.opacity = wireframeRef.current ? 0.15 : 0.82;
-      });
-
       // Auto-rotation if enabled and not currently dragging
       if (!reducedMotion && autoRotateRef.current && !isDragging) {
         pivot.rotation.y += delta * 0.3;
       }
 
-      // Pedestal counter-rotation for high-tech holographic effect
+      // Pedestal counter-rotation for the holographic effect
       if (!reducedMotion) pedestalGroup.rotation.y -= delta * 0.09;
 
       // Subtle levitation
@@ -404,14 +517,15 @@ export function OrganHologram3D({
       canvas.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", onPointerUp);
-      holoMaterials.forEach((material) => material.dispose());
+      tissueMaterials.forEach((material) => material.dispose());
       ownedGeometries.forEach((geometry) => geometry.dispose());
       ringGeo1.dispose(); ringGeo2.dispose(); ringMat1.dispose(); ringMat2.dispose();
       axisGeoX.dispose(); axisGeoZ.dispose(); axisMat.dispose();
       renderer.dispose();
       scene.clear();
+      applyWireframeRef.current = () => {};
     };
-  }, [glbFile, fallbackGeometry, holoColorHex, wireColorHex, normName, referenceTilt]);
+  }, [glbFile, fallbackGeometry, holoColorHex, normName, organTissueKey, orientationDeg]);
 
   return (
     <div className="organ-hologram" aria-label={`3D reference model of ${organName}`} data-organ={normName} data-asset={assetType} data-geometry={fallbackGeometry?.name}>

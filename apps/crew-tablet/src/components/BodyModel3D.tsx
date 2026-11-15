@@ -1151,7 +1151,6 @@ export function BodyModel3D({
             missionDay={missionDay}
             readings={readings}
             position={selectedCentroid}
-            referenceTilt={selectedOrgan.toLowerCase() === "heart" ? (build === "female" ? -0.38 : -0.2) : 0}
             availableOrgans={organMeshesRef.current.map((o) => o.name)}
             geometryNote={build === "male" && /^(left|right) lung$/i.test(selectedOrgan) ? "The body and inspector show scaled female-source lung references." : undefined}
             fallbackGeometry={
