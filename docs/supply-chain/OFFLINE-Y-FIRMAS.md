@@ -12,7 +12,10 @@ Una comprobación en producción con conexión lenta superó el límite anterior
 dos minutos durante la descarga de Pyodide. El instalador ahora limita a tres las
 descargas simultáneas y prioriza el runtime; el motor espera hasta diez minutos.
 Esto reduce la competencia de descargas, pero no garantiza terminar en redes
-lentas: la ejecución pública debe volver a comprobarse tras el despliegue.
+lentas. En la prueba pública del despliegue `3104a5d`, Chromium completó la
+ejecución sintética en aproximadamente 341 segundos desde el primer uso; el
+resultado apareció etiquetado como motor Python local. La duración depende de
+la conexión y del dispositivo.
 
 El botón de ejecución local inicia en un worker el mismo código Python del motor
 con Pyodide, NumPy y SciPy locales. El escenario generado es sintético, usa la
