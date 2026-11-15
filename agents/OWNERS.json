@@ -41,6 +41,7 @@
       "services/engine/tests/test_api",
       "services/engine/tests/test_database.py",
       "handoff/a2.md",
+      "scripts/check_provider.py",
       "services/engine/tests/test_mission_link.py"
     ]
   },
@@ -149,6 +150,7 @@
       "docs/TECNOLOGIAS-ESTADO.md",
       "docs/AUDITORIA-INTEGRAL-2026-11-15.md",
       "docs/ESTADO-REAL-LIGHTMINUTE.md",
+      "docs/ai/",
       "docs/avances/",
       "docs/pruebas/",
       "PROTOTYPES_REVIEW_LIGHTMINUTE.md",
