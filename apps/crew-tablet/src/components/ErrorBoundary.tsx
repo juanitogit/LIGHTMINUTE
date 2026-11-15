@@ -42,11 +42,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
             <strong style={{ color: "#f87171", fontSize: "11px" }}>
-              {this.props.fallbackTitle ?? "Visualización biomédica no disponible"}
+              {this.props.fallbackTitle ?? "Biomedical visualization unavailable"}
             </strong>
           </div>
           <p style={{ color: "var(--muted, #94a3b8)", fontSize: "10px", margin: "4px 0 8px", lineHeight: "1.4" }}>
-            {this.props.fallbackMessage ?? "Ocurrió un error al renderizar este módulo. Los datos fisiológicos permanecen seguros y disponibles en la telemetría."}
+            {this.props.fallbackMessage ?? "This module could not be displayed. Physiological data remain available in telemetry."}
           </p>
           <button
             type="button"
@@ -62,7 +62,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               cursor: "pointer",
             }}
           >
-            Reintentar visualización
+            Retry visualization
           </button>
         </div>
       );

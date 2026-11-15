@@ -38,7 +38,7 @@ const VIEW_LABELS: { id: View; label: string; detail: string; icon: IconName }[]
   { id: "earth", label: "Earth link", detail: "Earth", icon: "earth" },
   { id: "validation", label: "Evidence & validation", detail: "Data", icon: "chart" },
   { id: "checkin", label: "PVT & daily log", detail: "Local", icon: "watch" },
-  { id: "moon", label: "Entorno Lunar", detail: "Superficie", icon: "moon" },
+  { id: "moon", label: "Lunar environment", detail: "Surface", icon: "moon" },
   { id: "visor", label: "Visor EVA (HUD)", detail: "HUD", icon: "visor" },
 ];
 
@@ -434,9 +434,9 @@ export function App() {
             body="moon"
             hideControls
             heading={{
-              micro: "LIGHTMINUTE / ENTORNO LUNAR",
-              title: "Entorno Lunar (Visor)",
-              sub: "La misma proyección de casco, sobre la superficie lunar: panorama real de Apollo 11 en Tranquility Base, regolito con relieve y rocas escaneadas. Cielo sin atmósfera, sombras duras y ningún polvo en suspensión.",
+              micro: "LIGHTMINUTE / LUNAR ENVIRONMENT",
+              title: "Lunar Environment (Visor)",
+              sub: "The same helmet display on the lunar surface: Apollo 11 panorama at Tranquility Base, textured regolith and scanned rocks. An airless sky, hard shadows and no airborne dust.",
             }}
           />
         ) : null}

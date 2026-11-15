@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { browserSpeak, detectSpeechLang, kokoroClip, stopBrowserSpeech } from "../lib/kokoro";
+import { browserSpeak, detectSpeechLang, neuralClip, stopBrowserSpeech } from "../lib/speech";
 
-export type SpeechEngine = "kokoro" | "browser" | null;
+export type SpeechEngine = "neural" | "browser" | null;
 export type SpeechStatus = "idle" | "preparing" | "speaking";
 
 /**
- * Speaks visor text with Kokoro (English) or the browser voice (Spanish and
- * fallback), picking the engine from the text itself. Always stops cleanly:
- * an unmount, a new utterance or a manual stop releases the audio URL.
+ * Speaks visor text with a local neural model (MMS TTS), chosen by language.
+ * The browser voice is only reached when the model cannot load. Always stops
+ * cleanly: an unmount, a new utterance or a manual stop releases the audio URL.
  */
 export function useVisorSpeech() {
   const [engine, setEngine] = useState<SpeechEngine>(null);
@@ -51,21 +51,10 @@ export function useVisorSpeech() {
       setMessage("");
       const lang = detectSpeechLang(clean);
 
-      if (lang === "es") {
-        // Spanish has no Kokoro voice in this build: use the system voice.
-        if (!browserSpeak(clean, "es", () => setStatus("idle"))) {
-          setMessage("Este navegador no puede sintetizar voz. El texto sigue visible en pantalla.");
-          return;
-        }
-        setEngine("browser");
-        setStatus("speaking");
-        return;
-      }
-
-      setEngine("kokoro");
+      setEngine("neural");
       setStatus("preparing");
       try {
-        const clip = await kokoroClip(clean, (progress) => {
+        const clip = await neuralClip(clean, lang, (progress) => {
           if (alive.current) setMessage(progress);
         });
         if (!alive.current) {
@@ -76,20 +65,21 @@ export function useVisorSpeech() {
         const player = new Audio(clip.url);
         audio.current = player;
         player.onended = () => alive.current && setStatus("idle");
-        player.onerror = () => alive.current && setMessage("No se pudo reproducir el audio generado.");
+        player.onerror = () => alive.current && setMessage("Could not play the generated audio.");
         setMessage("");
         setStatus("speaking");
         await player.play();
       } catch {
         if (!alive.current) return;
-        // Kokoro needs a first-use download; the system voice keeps the visor usable.
-        if (browserSpeak(clean, "en", () => alive.current && setStatus("idle"))) {
+        // The model needs a first-use download; the system voice keeps the
+        // visor usable when it cannot load.
+        if (browserSpeak(clean, lang, () => alive.current && setStatus("idle"))) {
           setEngine("browser");
           setStatus("speaking");
-          setMessage("Kokoro no está disponible (descarga o WebAssembly). Se ha usado la voz del navegador.");
+          setMessage("Local voice is unavailable (download or WebAssembly). Browser speech was used instead.");
         } else {
           setStatus("idle");
-          setMessage("Kokoro y la voz del navegador no están disponibles en este equipo.");
+          setMessage("No voice is available on this device; the text remains visible.");
         }
       }
     },

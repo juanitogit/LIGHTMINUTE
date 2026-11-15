@@ -113,6 +113,38 @@ def test_co2_creep_confirms_a_shared_exposure():
     assert shared[0]["attribution"]["persistence"]["confirmed_days"] >= 2
 
 
+def test_shared_cabin_card_reports_current_observations_without_claiming_causation():
+    from tether_engine.llm.card_service import get_card
+    from tether_engine.llm.case_data import engine_facts
+    from tether_engine.llm.verifier import verify_card
+
+    doc = run_scenario("co2_creep", seed=0, days=24, variant="strong")
+    day = doc["days"][14]
+    member = day["crew"]["A"]
+    card = member["card"]
+    assert day["attribution"]["mode"] == "shared"
+    assert "carbon dioxide" in card["what_changed"]
+    assert "headache" in card["ground_message"]
+    assert "shared" in card["ground_message"]
+    assert "cause is unknown" in card["why_it_matters"]
+    assert len(card["ground_message"]) <= 140
+    assert get_card("co2_creep", "A", 15, scenario_doc=doc)["card"] == card
+    assert verify_card(card, engine_facts=engine_facts(member, "A", 15),
+                       kb_ids={"HRP-RISKS-OVERVIEW"}) == []
+
+
+def test_shared_card_never_invents_missing_measurements():
+    from tether_engine.protocols.templates import template_card
+    facts = {"crew": "A", "level": "watch", "numbers": {},
+             "attribution": {"mode": "shared", "affected": ["A", "B"]},
+             "indicators": {"co2_ppm": {"value": 4200.0,
+                                         "lens": {"personal": "unusual_high"}}}}
+    card = template_card(facts)
+    assert "4200" in card["what_changed"]
+    assert "headache score" not in card["what_changed"]
+    assert "reaction time" not in card["what_changed"]
+
+
 def test_cmo_fever_is_attributed_to_the_individual():
     d = run_scenario("cmo_fever", seed=0, days=24, variant="strong")
     modes = {day["attribution"]["mode"] for day in d["days"]}

@@ -157,8 +157,8 @@ export function ProtocolRunner({ protocolId, crewId }: { protocolId?: string | u
 
       {!selected ? (
         <p className="muted small" style={{ marginTop: 8 }}>
-          The decision card is complete on its own. Open a protocol only when the card calls for
-          one; the scenario does not label a default protocol.
+          No protocol was selected by this scenario. Review the available protocols and their
+          applicability before starting one; do not assume a specific protocol was recommended.
         </p>
       ) : null}
 

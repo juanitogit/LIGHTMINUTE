@@ -1131,7 +1131,7 @@ export function BodyModel3D({
       {/* Selected organ detailed physiological & mathematical statistics drawer */}
       {selectedOrgan ? (
         <ErrorBoundary
-          fallbackTitle="Panel de órgano no disponible"
+          fallbackTitle="Organ panel unavailable"
           onReset={() => {
             setSelectedOrgan(null);
             setSelectedCentroid(undefined);

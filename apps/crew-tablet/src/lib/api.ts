@@ -205,7 +205,7 @@ export async function loadScenario(name: string): Promise<LoadedScenario> {
       doc,
       origin: "browser-engine",
       degraded: false,
-      originLabel: "caso clínico investigado · NASA HRP evidence · datos sintéticos",
+      originLabel: "research case · NASA HRP evidence · synthetic data",
     };
   }
 

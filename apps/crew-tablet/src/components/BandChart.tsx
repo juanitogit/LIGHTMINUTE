@@ -249,7 +249,7 @@ export function BandChart({
             <span className="swatch swatch--earth" /> Earth rule · {earth.status}
           </span>
         ) : (
-          <span className="muted">No Earth range for this indicator — personal lens only.</span>
+          <span className="muted">Earth reference range is not shown on this chart — personal lens only.</span>
         )}
       </figcaption>
     </figure>

@@ -14,11 +14,17 @@ type Recognition = {
 };
 type RecognitionConstructor = new () => Recognition;
 
-/** Browser dictation for synthetic demonstration text. */
+/**
+ * Browser dictation for synthetic demonstration text. One phrase per turn: the
+ * engine stops on silence and the caller decides when to listen again.
+ */
 export function useDictation(onText: (text: string) => void) {
   const active = useRef<Recognition | null>(null);
+  const handler = useRef(onText);
+  handler.current = onText;
   const [listening, setListening] = useState(false);
   const [status, setStatus] = useState("");
+  const [error, setError] = useState("");
   const host = window as unknown as {
     SpeechRecognition?: RecognitionConstructor;
     webkitSpeechRecognition?: RecognitionConstructor;
@@ -40,11 +46,11 @@ export function useDictation(onText: (text: string) => void) {
   );
 
   const start = useCallback(() => {
-    if (!Speech) return;
+    if (!Speech || active.current) return;
     try {
       const rec = new Speech();
       active.current = rec;
-      rec.lang = navigator.language;
+      rec.lang = (navigator.language || "").toLowerCase().startsWith("es") ? "es-ES" : "en-US";
       rec.continuous = false;
       rec.interimResults = false;
       rec.onresult = (event) => {
@@ -52,24 +58,38 @@ export function useDictation(onText: (text: string) => void) {
           .map((result) => result[0]?.transcript ?? "")
           .join(" ")
           .trim();
-        if (text) onText(text);
+        if (text) handler.current(text);
       };
-      rec.onerror = (event) => setStatus(`Dictado detenido: ${event.error}.`);
+      rec.onerror = (event) => {
+        setError(event.error);
+        setStatus(
+          event.error === "not-allowed" || event.error === "service-not-allowed"
+            ? "The browser blocked the microphone. Allow access to speak to the visor."
+            : `Microphone stopped: ${event.error}.`,
+        );
+      };
       rec.onend = () => {
         setListening(false);
         active.current = null;
-        setStatus((current) => (current.startsWith("Escuchando") ? "Dictado terminado." : current));
       };
+      setError("");
       setListening(true);
       setStatus("Escuchando…");
       rec.start();
     } catch {
       setListening(false);
-      setStatus("No se pudo iniciar el dictado.");
+      active.current = null;
+      setStatus("Could not start the microphone.");
     }
-  }, [Speech, onText]);
+  }, [Speech]);
 
-  const stop = useCallback(() => active.current?.stop(), []);
+  const stop = useCallback(() => {
+    const rec = active.current;
+    active.current = null;
+    setListening(false);
+    setStatus((current) => (current.startsWith("Escuchando") ? "" : current));
+    rec?.stop();
+  }, []);
 
-  return { supported: Boolean(Speech), listening, status, start, stop };
+  return { supported: Boolean(Speech), listening, status, error, start, stop };
 }

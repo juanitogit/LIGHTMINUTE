@@ -6903,25 +6903,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 61.9 vs your usual band 51.3 to 66.3; combined score 3.2.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 2323 ppm; headache score 1.6; reaction time 350 ms. Shared pattern detected for crew A, B, C.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: Cabin carbon dioxide 2323 ppm; headache score 1.6; reaction time 350 ms; shared crew pattern (A, B, C). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -7089,25 +7089,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 58.3 vs your usual band 44 to 65.3; combined score 3.2.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 2183.4 ppm; headache score 3.4; reaction time 365.2 ms. Shared pattern detected for crew A, B, C.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: Cabin carbon dioxide 2183.4 ppm; headache score 3.4; reaction time 365.2 ms; shared crew pattern (A, B, C). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -7275,25 +7275,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 67.4 vs your usual band 54.7 to 66.1; combined score 3.1.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 2232.4 ppm; headache score 3.1; reaction time 321.3 ms. Shared pattern detected for crew A, B, C.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: Cabin carbon dioxide 2232.4 ppm; headache score 3.1; reaction time 321.3 ms; shared crew pattern (A, B, C). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -7672,25 +7672,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 60.4 vs your usual band 51.8 to 66.4; combined score 5.3.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 2739.3 ppm; headache score 2.7; reaction time 366.3 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: Cabin carbon dioxide 2739.3 ppm; headache score 2.7; reaction time 366.3 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -7858,25 +7858,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 58.6 vs your usual band 44.7 to 65.3; combined score 4.7.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 2798.8 ppm; headache score 3.7; reaction time 375.5 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: Cabin carbon dioxide 2798.8 ppm; headache score 3.7; reaction time 375.5 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -8044,25 +8044,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 63.9 vs your usual band 54 to 68; combined score 2.8.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 2725.3 ppm; headache score 3.2; reaction time 331.5 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: Cabin carbon dioxide 2725.3 ppm; headache score 3.2; reaction time 331.5 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -8230,25 +8230,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 60 vs your usual band 42.8 to 65.5; combined score 5.5.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 2776.5 ppm; headache score 3.7; reaction time 406.5 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: Cabin carbon dioxide 2776.5 ppm; headache score 3.7; reaction time 406.5 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -8445,25 +8445,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 63.3 vs your usual band 52.2 to 66.2; combined score 6.6.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 3260.2 ppm; headache score 3.5; reaction time 401.3 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: Cabin carbon dioxide 3260.2 ppm; headache score 3.5; reaction time 401.3 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -8631,25 +8631,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 57.8 vs your usual band 45.3 to 65.3; combined score 5.2.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 3219.6 ppm; headache score 4.7; reaction time 367.6 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: Cabin carbon dioxide 3219.6 ppm; headache score 4.7; reaction time 367.6 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -8793,25 +8793,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 64.7 vs your usual band 54.4 to 68.1; combined score 3.3.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 3266.3 ppm; headache score 4.1. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: Cabin carbon dioxide 3266.3 ppm; headache score 4.1; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -8979,25 +8979,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 56.1 vs your usual band 43.3 to 66; combined score 5.5.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 3250.5 ppm; headache score 5; reaction time 436.6 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: Cabin carbon dioxide 3250.5 ppm; headache score 5; reaction time 436.6 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -9194,25 +9194,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 67.8 vs your usual band 52.4 to 66.6; combined score 7.4.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 3755.5 ppm; headache score 4.2; reaction time 404.4 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: Cabin carbon dioxide 3755.5 ppm; headache score 4.2; reaction time 404.4 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -9380,25 +9380,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 62.7 vs your usual band 45.9 to 65.1; combined score 5.4.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 3735.4 ppm; headache score 6; reaction time 404.5 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: Cabin carbon dioxide 3735.4 ppm; headache score 6; reaction time 404.5 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -9542,25 +9542,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 70.6 vs your usual band 54.6 to 68.3; combined score 3.7.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 3743.7 ppm; headache score 5.4; reaction time 363.3 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: Cabin carbon dioxide 3743.7 ppm; headache score 5.4; reaction time 363.3 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -9728,25 +9728,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 59.3 vs your usual band 44 to 65.5; combined score 5.1.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 3728.6 ppm; headache score 6; reaction time 431.5 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: Cabin carbon dioxide 3728.6 ppm; headache score 6; reaction time 431.5 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -9943,25 +9943,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 68.8 vs your usual band 51.8 to 68.3; combined score 6.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4248.7 ppm; headache score 5.8; reaction time 388.2 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: Cabin carbon dioxide 4248.7 ppm; headache score 5.8; reaction time 388.2 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -10129,25 +10129,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 61.8 vs your usual band 45.9 to 66.1; combined score 6.4.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4222.5 ppm; headache score 6.6; reaction time 420.1 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: Cabin carbon dioxide 4222.5 ppm; headache score 6.6; reaction time 420.1 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -10315,25 +10315,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 70.2 vs your usual band 53.8 to 70.5; combined score 4.6.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4175.5 ppm; headache score 6.2; reaction time 379.5 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: Cabin carbon dioxide 4175.5 ppm; headache score 6.2; reaction time 379.5 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -10501,25 +10501,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 58.7 vs your usual band 44.5 to 65.7; combined score 5.5.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4172.8 ppm; headache score 6.8; reaction time 437.7 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: Cabin carbon dioxide 4172.8 ppm; headache score 6.8; reaction time 437.7 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -10716,25 +10716,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 67.3 vs your usual band 51.4 to 70; combined score 8.2.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4269.5 ppm; headache score 5.6; reaction time 423.7 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: Cabin carbon dioxide 4269.5 ppm; headache score 5.6; reaction time 423.7 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -10878,25 +10878,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 60.9 vs your usual band 46.2 to 66.6; combined score 6.4.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4169.7 ppm; reaction time 420 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: Cabin carbon dioxide 4169.7 ppm; reaction time 420 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -11226,25 +11226,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 63.8 vs your usual band 45 to 65.7; combined score 6.6.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4225.5 ppm; headache score 6.6; reaction time 461.1 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: Cabin carbon dioxide 4225.5 ppm; headache score 6.6; reaction time 461.1 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -11440,25 +11440,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 64.7 vs your usual band 51.5 to 70.7; combined score 6.7.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4205.4 ppm; headache score 5.3; reaction time 405.8 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: Cabin carbon dioxide 4205.4 ppm; headache score 5.3; reaction time 405.8 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -11626,25 +11626,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 62.5 vs your usual band 46.6 to 66.7; combined score 5.5.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4193.4 ppm; headache score 6.7; reaction time 392.6 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: Cabin carbon dioxide 4193.4 ppm; headache score 6.7; reaction time 392.6 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -11995,25 +11995,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 61.4 vs your usual band 45 to 66.9; combined score 6.1.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4289.7 ppm; headache score 7.1; reaction time 458.9 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: Cabin carbon dioxide 4289.7 ppm; headache score 7.1; reaction time 458.9 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -12209,25 +12209,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 70.5 vs your usual band 51.9 to 70.8; combined score 8.1.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4183 ppm; headache score 4.9; reaction time 420.9 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: Cabin carbon dioxide 4183 ppm; headache score 4.9; reaction time 420.9 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -12395,25 +12395,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 62.1 vs your usual band 46.9 to 67.2; combined score 5.4.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4175.7 ppm; headache score 6.4; reaction time 394.7 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: Cabin carbon dioxide 4175.7 ppm; headache score 6.4; reaction time 394.7 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -12581,25 +12581,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 71.3 vs your usual band 53.4 to 73.1; combined score 2.6.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4162.2 ppm; headache score 6.1; reaction time 366.7 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: Cabin carbon dioxide 4162.2 ppm; headache score 6.1; reaction time 366.7 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -12767,25 +12767,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 63.2 vs your usual band 45.4 to 67.2; combined score 5.6.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4162.8 ppm; headache score 6.8; reaction time 437 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: Cabin carbon dioxide 4162.8 ppm; headache score 6.8; reaction time 437 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -12982,25 +12982,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 66.2 vs your usual band 51.7 to 72.1; combined score 6.5.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4255.9 ppm; headache score 5.3; reaction time 408.1 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: Cabin carbon dioxide 4255.9 ppm; headache score 5.3; reaction time 408.1 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -13168,25 +13168,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 57.9 vs your usual band 47.2 to 67.5; combined score 4.9.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4251.6 ppm; headache score 6.4; reaction time 399.9 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: Cabin carbon dioxide 4251.6 ppm; headache score 6.4; reaction time 399.9 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -13354,25 +13354,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 71.8 vs your usual band 53.4 to 74.2; combined score 3.2.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4190.8 ppm; headache score 5.9; reaction time 373.9 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: Cabin carbon dioxide 4190.8 ppm; headache score 5.9; reaction time 373.9 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -13540,25 +13540,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 62 vs your usual band 45.6 to 67.8; combined score 5.6.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4233.6 ppm; headache score 6.3; reaction time 463.2 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: Cabin carbon dioxide 4233.6 ppm; headache score 6.3; reaction time 463.2 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -13755,25 +13755,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 67 vs your usual band 52 to 72.2; combined score 7.4.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4179.1 ppm; headache score 5.6; reaction time 419.8 ms. Shared pattern detected for crew A, B.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: Cabin carbon dioxide 4179.1 ppm; headache score 5.6; reaction time 419.8 ms; shared crew pattern (A, B). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -13941,25 +13941,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 63.1 vs your usual band 47.6 to 67.2; combined score 5.5.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4204.2 ppm; headache score 7.2; reaction time 397.4 ms. Shared pattern detected for crew A, B.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: Cabin carbon dioxide 4204.2 ppm; headache score 7.2; reaction time 397.4 ms; shared crew pattern (A, B). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -14520,25 +14520,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 65.7 vs your usual band 52.4 to 72.5; combined score 4.5.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4198 ppm; headache score 5.1; reaction time 384 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: Cabin carbon dioxide 4198 ppm; headache score 5.1; reaction time 384 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -14706,25 +14706,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 65.2 vs your usual band 47.8 to 67.6; combined score 5.8.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4268.1 ppm; headache score 6.5; reaction time 409.7 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: Cabin carbon dioxide 4268.1 ppm; headache score 6.5; reaction time 409.7 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -14892,25 +14892,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 73.4 vs your usual band 53.8 to 74.7; combined score 2.7.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4214.6 ppm; headache score 6.1; reaction time 381.9 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "C: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "C: Cabin carbon dioxide 4214.6 ppm; headache score 6.1; reaction time 381.9 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -15078,25 +15078,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 59.6 vs your usual band 46 to 68.1; combined score 5.8.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4203.9 ppm; headache score 7; reaction time 458.6 ms. Shared pattern detected for crew A, B, C, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: Cabin carbon dioxide 4203.9 ppm; headache score 7; reaction time 458.6 ms; shared crew pattern (A, B, C, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -15293,25 +15293,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 69.8 vs your usual band 52.7 to 72.5; combined score 5.9.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4219.1 ppm; headache score 5.5; reaction time 379.9 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: Cabin carbon dioxide 4219.1 ppm; headache score 5.5; reaction time 379.9 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -15479,25 +15479,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 65.5 vs your usual band 47.9 to 68.3; combined score 7.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4170.3 ppm; headache score 6.9; reaction time 430.1 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: Cabin carbon dioxide 4170.3 ppm; headache score 6.9; reaction time 430.1 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -15824,25 +15824,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 62.9 vs your usual band 46.4 to 67.9; combined score 6.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4221.2 ppm; headache score 6.5; reaction time 440.6 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: Cabin carbon dioxide 4221.2 ppm; headache score 6.5; reaction time 440.6 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -16038,25 +16038,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 67.5 vs your usual band 52.8 to 73.1; combined score 6.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4106.7 ppm; headache score 5.5; reaction time 404.2 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: Cabin carbon dioxide 4106.7 ppm; headache score 5.5; reaction time 404.2 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -16224,25 +16224,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 63.7 vs your usual band 48 to 69; combined score 6.5.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4195 ppm; headache score 6.6; reaction time 419.4 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: Cabin carbon dioxide 4195 ppm; headache score 6.6; reaction time 419.4 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -16593,25 +16593,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 60.5 vs your usual band 46.7 to 68.3; combined score 5.3.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4195.2 ppm; headache score 6.8; reaction time 466.7 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: Cabin carbon dioxide 4195.2 ppm; headache score 6.8; reaction time 466.7 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -16807,25 +16807,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 66.2 vs your usual band 53.1 to 73.3; combined score 6.7.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4250.5 ppm; headache score 5.4; reaction time 402.6 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: Cabin carbon dioxide 4250.5 ppm; headache score 5.4; reaction time 402.6 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -16993,25 +16993,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 58.7 vs your usual band 48.3 to 69.2; combined score 6.5.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4291.9 ppm; headache score 6; reaction time 433.5 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: Cabin carbon dioxide 4291.9 ppm; headache score 6; reaction time 433.5 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -17362,25 +17362,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 62.8 vs your usual band 47.1 to 68.2; combined score 5.6.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4167.8 ppm; headache score 6.8; reaction time 450.4 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: Cabin carbon dioxide 4167.8 ppm; headache score 6.8; reaction time 450.4 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -17576,25 +17576,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 64.5 vs your usual band 53.5 to 73.2; combined score 6.7.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4181.2 ppm; headache score 5.6; reaction time 403.7 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "A: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "A: Cabin carbon dioxide 4181.2 ppm; headache score 5.6; reaction time 403.7 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -17762,25 +17762,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 62.3 vs your usual band 48.6 to 68.9; combined score 4.3.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4244.7 ppm; headache score 6; reaction time 393.8 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "B: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "B: Cabin carbon dioxide 4244.7 ppm; headache score 6; reaction time 393.8 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]
@@ -18134,25 +18134,25 @@
      "rest_hr_age_days": 0,
      "card": {
       "level": "act",
-      "headline": "Several signals moved together away from your normal",
-      "what_changed": "HR 62.2 vs your usual band 47.4 to 68.4; combined score 5.8.",
-      "why_it_matters": "A pattern worth checking, not a diagnosis; shifts that move together are more informative than one reading.",
+      "headline": "Shared crew pattern and unusual cabin reading",
+      "what_changed": "Cabin carbon dioxide 4137.2 ppm; headache score 6.6; reaction time 442.8 ms. Shared pattern detected for crew A, B, D.",
+      "why_it_matters": "The readings and shared pattern warrant review. This is not a diagnosis; the cause is unknown.",
       "confidence": "moderate",
       "do_now": [
-       "Re-measure heart rate after 5 minutes of rest",
-       "Log temperature and sleep tonight",
-       "Ask a crew member to check how you look and feel"
+       "Check the cabin reading and sensor status against the onboard procedure",
+       "Record symptoms and reaction-time results for the affected crew",
+       "Share the observed pattern with mission support and consult the applicable onboard protocol"
       ],
       "monitor": [
-       "Temperature",
-       "Sleep",
+       "Cabin carbon dioxide",
+       "Headache",
        "Reaction time"
       ],
       "escalate_if": [
-       "Score stays above the alert line for 2 more days",
-       "Any new symptom"
+       "Symptoms worsen or new symptoms appear",
+       "Cabin readings remain unusual"
       ],
-      "ground_message": "D: coordinated shift in HR/temp/sleep/PVT; rechecking, will update.",
+      "ground_message": "D: Cabin carbon dioxide 4137.2 ppm; headache score 6.6; reaction time 442.8 ms; shared crew pattern (A, B, D). Review requested.",
       "citations": [
        "HRP-RISKS-OVERVIEW"
       ]

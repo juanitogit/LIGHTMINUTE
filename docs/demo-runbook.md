@@ -16,16 +16,21 @@
 
 The Luna and EVA visors include a voice assistant. It answers only with the values the page is
 already showing (day, crew, telemetry, space weather); it never diagnoses, never estimates and
-never invents a threshold. English is synthesized with Kokoro (`kokoro-js`, downloaded on first
-play); Spanish uses the browser's own voice, chosen automatically from the text. Both are
-simulated voices, not a crew recording.
+never invents a threshold. Speech is synthesized locally with MMS TTS (`Xenova/mms-tts-spa`
+and `Xenova/mms-tts-eng`), downloaded on first play; the language is chosen automatically
+from the text. The browser voice is only a last resort when the model cannot load. It is a
+simulated voice, not a crew recording. Kokoro was removed: its WebAssembly session froze the
+page on some browsers.
 
 Groq is configured per environment, never in the bundle:
 
 - Local: `GROQ_API_KEY` in `.env`, served by `POST /api/visor/answer` in the engine.
 - Pages: `npx wrangler pages secret put GROQ_API_KEY --project-name lightminute`, plus the
   non-secret `GROQ_MODEL` / `GROQ_BASE_URL` in `wrangler.toml` under `[vars]`. The Pages
-  Function `functions/api/visor/answer.ts` proxies the call.
+  Function `functions/api/visor/answer.ts` proxies the call. Pages only runs a Function
+  for paths listed in `public/_routes.json`, so `/api/visor/*` must stay in its `include`
+  list; otherwise the host answers `405` and the visor silently falls back to the
+  deterministic sentence.
 
 Without a key the visor still answers from the page's fields with a deterministic sentence and
 says so. Earth link now works with no API at all: the login, the delay and the consent filter

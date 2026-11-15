@@ -14,7 +14,7 @@ from importlib import import_module
 from ..ground.delay import PROFILES
 from ..protocols.templates import template_card
 from . import providers, stats
-from .case_data import engine_facts, find_crew, load_scenario
+from .case_data import engine_facts, find_crew, find_day, load_scenario
 from .kb import kb_ids, system_prefix
 from .verifier import verify_card
 
@@ -186,9 +186,17 @@ def get_card(scenario: str, crew: str, day: int, *, fast: bool = False,
     doc = scenario_doc or load_scenario(scenario)
     entry = find_crew(doc, crew, day)
     facts = engine_facts(entry, crew, day)
+    facts["attribution"] = find_day(doc, day).get("attribution") or {}
     if "hr_now" not in facts["numbers"]:
         raise ValueError(f"scenario '{scenario}' has no resting-HR facts for crew {crew} day {day}")
     fallback = template_card(facts)
+
+    # Preserve the deterministic shared-environment observations in the card.
+    # An optional narrative must not omit the cabin reading or shared pattern.
+    if fallback["headline"] == "Shared crew pattern and unusual cabin reading":
+        stats.record(source="template")
+        return {"card": fallback, "card_source": "template", "verifier_errors": [],
+                "usage": zero_usage(), "provider": "none", "effort": None, "attempts": 0}
 
     if not _enabled(client):
         stats.record(source="template")

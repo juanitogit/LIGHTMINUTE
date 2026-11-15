@@ -54,6 +54,28 @@ export async function saveWorkspaceRecord(record: WorkspaceRecord): Promise<void
   } finally { database.close(); }
 }
 
+/** Update a single action without replacing the check-in note or attachment. */
+export async function setWorkspaceAction(scenario: string, crew: string, day: number, key: string, checked: boolean): Promise<void> {
+  const database = await openDatabase();
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const tx = database.transaction(TABLE, "readwrite");
+      const store = tx.objectStore(TABLE);
+      const id = workspaceRecordId(scenario, crew, day);
+      const request = store.get(id);
+      request.onsuccess = () => {
+        const record: WorkspaceRecord = request.result ?? { id, scenario, crew, day, note: "", completed: [], savedAt: "", synthetic: true };
+        record.completed = checked ? [...new Set([...record.completed, key])] : record.completed.filter(item => item !== key);
+        record.savedAt = new Date().toISOString();
+        store.put(record);
+      };
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(new Error("Could not save this action on the device."));
+      tx.onabort = () => reject(new Error("The action was not saved."));
+    });
+  } finally { database.close(); }
+}
+
 export async function prepareWorkspaceImage(file: File): Promise<WorkspaceImage> {
   if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) throw new Error("Choose a JPEG, PNG or WebP demonstration image.");
   if (file.size > 12 * 1024 * 1024) throw new Error("Choose an image smaller than 12 MB.");
