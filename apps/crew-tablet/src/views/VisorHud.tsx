@@ -26,10 +26,10 @@ interface VisorHudProps {
 }
 
 const CREW_NAMES: Record<string, string> = {
-  A: "A · Oficial Médico (CMO)",
-  B: "B · Comandante (CDR)",
-  C: "C · Esp. Misión 1 (MS1)",
-  D: "D · Esp. Misión 2 (MS2)",
+  A: "A · Medical Officer (CMO)",
+  B: "B · Commander (CDR)",
+  C: "C · Mission Specialist 1 (MS1)",
+  D: "D · Mission Specialist 2 (MS2)",
 };
 
 export function VisorHud({
@@ -67,6 +67,9 @@ export function VisorHud({
   const dayEntry = scenario?.doc?.days?.find((d) => d.day === dayNumber);
   const member = dayEntry?.crew?.[crewId];
   const ind = member?.indicators;
+  const hasTelemetry = [ind?.rest_hr?.value, ind?.temp_c?.value, ind?.sleep_h?.value,
+    ind?.pvt_ms?.value, ind?.co2_ppm?.value, ind?.headache_score?.value]
+    .every((value) => typeof value === "number" && Number.isFinite(value));
 
   // Real readings from scenario or realistic nominal baselines
   const hr = ind?.rest_hr?.value ?? 64.0;
@@ -129,9 +132,9 @@ export function VisorHud({
 
   // Exactly the values drawn on this page: the assistant may repeat them, never add any.
   const snapshot = useMemo<VisorSnapshot>(() => ({
-    page: heading?.title ?? (body === "moon" ? "Entorno Lunar (Visor)" : "Visor EVA (HUD)"),
+    page: heading?.title ?? (body === "moon" ? "Lunar environment (visor)" : "Visor EVA (HUD)"),
     body,
-    scenario: String(scenario?.doc?.name ?? scenario?.doc?.scenario ?? "escenario sin nombre"),
+    scenario: String(scenario?.doc?.name ?? scenario?.doc?.scenario ?? "unnamed scenario"),
     crew: crewId,
     day: dayNumber,
     max_day: maxDay,
@@ -165,7 +168,7 @@ export function VisorHud({
       // No key, no network or a rejected request: answer from the page's own fields.
       const fallback = localGroundedAnswer(clean, snapshot);
       setAnswer(fallback);
-      setAnswerSource(`${error instanceof Error ? error.message : "LLM no disponible"} Respuesta determinista con los valores de esta página.`);
+      setAnswerSource(`${error instanceof Error ? error.message : "AI unavailable"} Deterministic response using the values on this page.`);
       void speech.speak(fallback);
     } finally {
       setAsking(false);
@@ -207,17 +210,17 @@ export function VisorHud({
     <div className="view visor-view">
       <header className="viewhead">
         <div>
-          <p className="micro">{heading?.micro ?? "LIGHTMINUTE / VISOR EXTRAVEHICULAR (EVA)"}</p>
-          <h1>{heading?.title ?? "Visor EVA (HUD de Casco)"}</h1>
+          <p className="micro">{heading?.micro ?? "LIGHTMINUTE / EXTRAVEHICULAR VISOR (EVA)"}</p>
+          <h1>{heading?.title ?? "EVA helmet visor"}</h1>
           <p className="viewhead__sub">
             {heading?.sub ??
-              "Simulación de visualización integrada en el casco de un traje de superficie marciana. Constantes vitales sobre el terreno real de Marte, escaneo orgánico fisiológico y supervisión sin retardo."}
+              "Simulated helmet display with scenario telemetry and an illustrative surface environment."}
           </p>
         </div>
         <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
           {onOpenTablet ? (
             <button type="button" className="btn" onClick={onOpenTablet}>
-              <Icon name="overview" size={16} /> Volver a resumen
+              <Icon name="overview" size={16} /> Back to overview
             </button>
           ) : null}
           <button
@@ -225,7 +228,7 @@ export function VisorHud({
             className="btn btn--primary"
             onClick={() => setIsFullscreen(!isFullscreen)}
           >
-            {isFullscreen ? "Salir de pantalla completa" : "Pantalla completa"}
+            {isFullscreen ? "Exit fullscreen" : "Fullscreen"}
           </button>
         </div>
       </header>
@@ -236,7 +239,7 @@ export function VisorHud({
         <div className="visor-controls-grid">
           {/* Crew Selector */}
           <div className="field">
-            <span className="micro">Tripulante monitoreado</span>
+            <span className="micro">Selected crew member</span>
             <div className="crew-selector">
               {crewIds.map((id) => (
                 <button
@@ -254,9 +257,9 @@ export function VisorHud({
           {/* Timeline Scrubber */}
           <div className="field">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-              <span className="micro">Línea temporal de misión</span>
+              <span className="micro">Mission timeline</span>
               <span className="mono small">
-                Día <strong>{String(dayNumber).padStart(2, "0")}</strong> de {maxDay}
+                Day <strong>{String(dayNumber).padStart(2, "0")}</strong> of {maxDay}
               </span>
             </div>
             <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
@@ -264,13 +267,14 @@ export function VisorHud({
                 type="button"
                 className="btn btn--tiny"
                 onClick={() => setAutoPlay(!autoPlay)}
-                title="Auto-reproducción"
+                title="Automatic playback"
               >
                 <Icon name={autoPlay ? "pause" : "play"} size={14} />
-                {autoPlay ? "Pausa" : "Simular"}
+                {autoPlay ? "Pause" : "Play"}
               </button>
               <input
                 type="range"
+                aria-label="Mission day"
                 min={1}
                 max={maxDay}
                 value={dayNumber}
@@ -282,31 +286,42 @@ export function VisorHud({
 
           {/* Visor Optical Shield Toggle */}
           <div className="field">
-            <span className="micro">Óptica de visor EVA</span>
+            <span className="micro">EVA visor optics</span>
             <button
               type="button"
               className="btn btn--tiny"
               onClick={() => setSolarShield(!solarShield)}
             >
               <Icon name="sun" size={14} />
-              {solarShield ? "Escudo solar: Oro / Ámbar (EVA)" : "Filtro: Neutro claro"}
+              {solarShield ? "Solar shield: gold / amber" : "Filter: clear"}
             </button>
           </div>
         </div>
       </section>
       )}
 
+      {!hasTelemetry ? (
+        <section className="panel" role="status">
+          <h2>Telemetry unavailable</h2>
+          <p>The selected crew and day do not contain every reading required by this illustrative visor. No substitute readings are displayed.</p>
+        </section>
+      ) : <>
       {/* Main Helmet HUD Stage */}
       <section className="panel">
         <div className="panel__head">
-          <h2>Proyección de telemetría en casco</h2>
+          <h2>Helmet telemetry display</h2>
           <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
             <LevelBadge level={member?.level ?? "info"} />
             <Chip tone={integrityScore >= 80 ? "accent" : "warn"}>
-              Integridad {integrityScore}%
+              Illustrative score {integrityScore}%
             </Chip>
           </div>
         </div>
+
+        <p className="small muted">
+          Demonstration only: CO₂ comes from the scenario, not a suit sensor. The score and simulated
+          space-weather numbers are illustrative and are not measurements or clinical assessments.
+        </p>
 
         <div className={`visor-viewport ${isFullscreen ? "is-fullscreen" : ""} ${levelClass} ${isAlarm ? "alarm" : ""}`}>
           {/* 1. Real Mars surface (NASA panorama + 3D ground, rocks and dust) */}
@@ -328,7 +343,7 @@ export function VisorHud({
               className="hud-fs-exit-btn"
               onClick={() => setIsFullscreen(false)}
             >
-              ✕ Salir de pantalla completa
+              ✕ Exit fullscreen
             </button>
           )}
 
@@ -370,7 +385,7 @@ export function VisorHud({
 
         {/* Suit CO2 Bar */}
         <div id="hud-co2">
-          <span>CO₂ TRAJE</span>
+          <span>CO₂</span>
           <div className="bk">
             <i style={{ width: `${Math.min(100, (co2 / 6000) * 100)}%` }} />
           </div>
@@ -378,7 +393,7 @@ export function VisorHud({
         </div>
 
         {/* Mission Day Tape */}
-        <div id="hud-tape" aria-label="Línea de tiempo de días de misión">
+        <div id="hud-tape" aria-label="Mission day timeline">
           {days.map((d) => (
             <div
               key={d}
@@ -403,7 +418,7 @@ export function VisorHud({
       </div>
 
       {/* 7. Dial: Global Physiological Integrity (Top-Left) */}
-      <svg className="hud-abs" id="hud-dial" viewBox="-52 -52 104 104" aria-label="Integridad Global">
+      <svg className="hud-abs" id="hud-dial" viewBox="-52 -52 104 104" aria-label="Illustrative status score">
         <circle r="48" className="hud-ln hud-dim" />
         <circle r="44" className="hud-ln" />
         <path className="hud-ln hud-dim" d="M-44 0H44M0-44V44" />
@@ -436,12 +451,12 @@ export function VisorHud({
         </text>
       </svg>
       <div className="hud-abs" id="hud-dial-label">
-        INTEGRIDAD GLOBAL
+        ILLUSTRATIVE SCORE
       </div>
 
       {/* 8. Space Weather Panel (Top-Right) */}
       <div className="hud-abs" id="hud-rad">
-        <span className="rad-title">CLIMA ESPACIAL</span>
+        <span className="rad-title">SIMULATED SPACE WEATHER</span>
         <b>S{sScale}</b>
         <span className="rad-sub">{radPfu.toFixed(1)} PFU (&gt;10 MeV)</span>
       </div>
@@ -451,10 +466,10 @@ export function VisorHud({
       <div className="hud-ruler L">
         <div className="hud-rt">
           <span className="hud-rt-dot" />
-          <span>FC CARDIACA</span>
+          <span>HEART RATE</span>
         </div>
         <div className="hud-rb">
-          <div className="hud-rg" style={{ bottom: "20%", height: "40%" }} title="Rango nominal 60-100" />
+          <div className="hud-rg" style={{ bottom: "20%", height: "40%" }} title="Reference range 60-100" />
           <div className="hud-mk" style={{ bottom: `${hrPct}%` }}>
             <s />
             <span>
@@ -468,10 +483,10 @@ export function VisorHud({
       <div className="hud-ruler R">
         <div className="hud-rt">
           <span className="hud-rt-dot" />
-          <span>TEMP CENTRAL</span>
+          <span>CORE TEMP</span>
         </div>
         <div className="hud-rb">
-          <div className="hud-rg" style={{ bottom: "17%", height: "40%" }} title="Rango nominal 36.1-37.5" />
+          <div className="hud-rg" style={{ bottom: "17%", height: "40%" }} title="Reference range 36.1-37.5" />
           <div className="hud-mk" style={{ bottom: `${tPct}%` }}>
             <s />
             <span>
@@ -488,17 +503,17 @@ export function VisorHud({
         <path d="M-20 0H-16M16 0H20M0-20V-16M0 16V20" stroke="var(--c)" strokeWidth="1.2" />
       </svg>
       <div className="hud-abs" id="hud-det">
-        {member?.level ? `ESTADO OPERATIVO: ${member.level.toUpperCase()}` : "TELEMETRÍA NOMINAL"}
+        {member?.level ? `STATUS: ${member.level.toUpperCase()}` : "NO STATUS AVAILABLE"}
       </div>
 
       {/* 11. Bottom-Left: Vital Signs & Rest Card */}
       <div className="hud-abs" id="hud-bl">
-        <div id="hud-bl-title">SIGNOS VITALES · REPOSO & COGNICIÓN</div>
+        <div id="hud-bl-title">VITALS · REST & COGNITION</div>
 
         {/* Sleep */}
         <div className="hud-row">
           <div className="hud-row-info">
-            <span className="hud-row-lbl">Sueño descanso</span>
+            <span className="hud-row-lbl">Sleep</span>
             <b>{sleep.toFixed(1)} <small>H</small></b>
             <div className="hud-row-bar">
               <i style={{ width: `${Math.min(100, (sleep / 9.0) * 100)}%` }} />
@@ -510,7 +525,7 @@ export function VisorHud({
         {/* PVT Vigilance */}
         <div className="hud-row">
           <div className="hud-row-info">
-            <span className="hud-row-lbl">Tiempo Reacción PVT</span>
+            <span className="hud-row-lbl">PVT reaction time</span>
             <b>{pvt.toFixed(0)} <small>MS</small></b>
             <div className="hud-row-bar">
               <i style={{ width: `${Math.min(100, (pvt / 500) * 100)}%` }} />
@@ -522,7 +537,7 @@ export function VisorHud({
         {/* Headache */}
         <div className="hud-row">
           <div className="hud-row-info">
-            <span className="hud-row-lbl">Cefalea autoreportada</span>
+            <span className="hud-row-lbl">Reported headache</span>
             <b>{headache.toFixed(0)} <small>/10</small></b>
             <div className="hud-row-bar">
               <i style={{ width: `${Math.min(100, (headache / 10) * 100)}%` }} />
@@ -534,9 +549,9 @@ export function VisorHud({
 
       {/* 12. Bottom-Right: Humanoid Body Scanner & Organs */}
       <div className="hud-abs" id="hud-br">
-        <span id="hud-br-title">ESCÁNER CORPORAL</span>
+        <span id="hud-br-title">BODY SCANNER</span>
 
-        <svg className="hud-body" viewBox="0 0 100 220" aria-label="Modelo corporal con órganos monitoreados">
+        <svg className="hud-body" viewBox="0 0 100 220" aria-label="Illustrative body diagram">
           {/* Anatomical Outline */}
           <ellipse className="hud-outline" cx="50" cy="18" rx="13" ry="16" />
           <path className="hud-outline" d="M44 32 L44 40 Q50 42 56 40 L56 32" />
@@ -618,7 +633,7 @@ export function VisorHud({
         </svg>
 
         <div>
-          <div className="t">ESTADO ORGÁNICO</div>
+          <div className="t">DISPLAY SCORE</div>
           <div className="n">{integrityScore}%</div>
           <div className="hud-seg">
             <b style={{ opacity: integrityScore > 20 ? 1 : 0.2 }} />
@@ -634,33 +649,33 @@ export function VisorHud({
 
         <div className="visor-stage-footer">
           <div className="overview-context" style={{ margin: 0 }}>
-            <span>FC: <strong className="mono">{hr.toFixed(0)} bpm</strong></span>
+            <span>HR: <strong className="mono">{hr.toFixed(0)} bpm</strong></span>
             <span>Temp: <strong className="mono">{temp.toFixed(1)} °C</strong></span>
-            <span>CO₂ traje: <strong className="mono">{co2} ppm</strong></span>
-            <span>Sueño: <strong className="mono">{sleep.toFixed(1)} h</strong></span>
+            <span>CO₂: <strong className="mono">{co2} ppm</strong></span>
+            <span>Sleep: <strong className="mono">{sleep.toFixed(1)} h</strong></span>
             <span>PVT: <strong className="mono">{pvt.toFixed(0)} ms</strong></span>
-            <span>Radiación: <strong className="mono">S{sScale} ({radPfu.toFixed(1)} pfu)</strong></span>
+            <span>Radiation: <strong className="mono">S{sScale} ({radPfu.toFixed(1)} pfu)</strong></span>
           </div>
           <span className="micro muted">
-            LIGHTMINUTE · SIMULACIÓN DE CASCO EVA · DATOS SINTÉTICOS · NO ES UN DISPOSITIVO MÉDICO
+            LIGHTMINUTE · EVA HELMET SIMULATION · SYNTHETIC DATA · NOT A MEDICAL DEVICE
           </span>
         </div>
       </section>
 
       <section className="panel" aria-labelledby="visor-voice">
         <div className="panel__head">
-          <h2 id="visor-voice">Asistente de voz del visor</h2>
+          <h2 id="visor-voice">Visor voice assistant</h2>
           <span className="small muted">
             {speech.engine === "neural"
-              ? "Voz neuronal local · español/inglés"
+              ? "Local neural voice · English/Spanish"
               : speech.engine === "browser"
-                ? "Voz del navegador (respaldo)"
-                : "Español/inglés automático"}
+                ? "Browser voice (fallback)"
+                : "Automatic English/Spanish"}
           </span>
         </div>
         <p className="small muted">
-          Responde solo con los valores que muestra esta página (día, tripulante, telemetría y clima espacial).
-          El motor determinista decide los números; el asistente solo los explica, sin diagnóstico ni cifras nuevas.
+          Answers using only values displayed on this page (day, crew member, telemetry and space weather).
+          The assistant explains displayed values without adding a diagnosis or new figures.
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", alignItems: "center" }}>
           <button
@@ -670,22 +685,22 @@ export function VisorHud({
             aria-pressed={micOn}
             disabled={!dictation.supported}
           >
-            {micOn ? (speech.status === "idle" ? "Micrófono activo · detener" : "Micrófono activo · altavoz") : "Activar micrófono"}
+            {micOn ? (speech.status === "idle" ? "Microphone on · stop" : "Microphone on · speaking") : "Enable microphone"}
           </button>
-          {speech.status === "preparing" ? <span className="small muted">Preparando Kokoro…</span> : null}
+          {speech.status === "preparing" ? <span className="small muted">Preparing voice…</span> : null}
         </div>
         <p className="small muted">
-          Habla: el visor responde en voz alta y vuelve a escuchar solo, sin pulsar nada más.
-          La voz se sintetiza en este equipo con MMS TTS, en español o inglés según el texto;
-          el navegador solo interviene si el modelo no puede cargar. La primera vez se descarga
-          el modelo, unos 40 MB por idioma.
+          Speak to hear a response; the visor then resumes listening automatically.
+          Speech is synthesized locally in English or Spanish according to the text;
+          the browser provides a fallback if the model cannot load. On first use it downloads
+          a model of about 40 MB per language.
         </p>
         {!dictation.supported ? (
-          <p className="small muted">Este navegador no ofrece dictado por voz; el asistente sigue explicando los valores de la página en pantalla.</p>
+          <p className="small muted">This browser does not support speech recognition; the assistant can still display answers.</p>
         ) : null}
         {dictation.status ? <p className="small muted" role="status">{dictation.status}</p> : null}
         {speech.message ? <p className="small muted" role="status">{speech.message}</p> : null}
-        {question ? <p className="small muted">Has dicho: «{question}»</p> : null}
+        {question ? <p className="small muted">You said: «{question}»</p> : null}
         {answer ? (
           <article style={{ marginTop: "14px" }}>
             <p className="micro">{answerSource}</p>
@@ -697,82 +712,83 @@ export function VisorHud({
       {/* 5-Organ Physiological Systems Evaluation */}
       <section className="panel">
         <div className="panel__head">
-          <h2>Evaluación fisiológica por subsistemas (EVA)</h2>
-          <span className="small muted">Algoritmos deterministas N-de-1 de referencia personal</span>
+          <h2>Illustrative subsystem overview</h2>
+          <span className="small muted">Illustrative thresholds · not a clinical assessment</span>
         </div>
 
         <div className="hud-organs-grid">
           {/* 1. Brain / Neurological */}
           <div className="hud-organ-card">
             <div className="hud-organ-card__head">
-              <h3>Cerebro y Cognición</h3>
+              <h3>Brain and cognition</h3>
               <span className={`status-label status-label--${brainStrain ? "act" : "info"}`}>
-                {brainStrain ? "Sobrecarga" : "Nominal"}
+                {brainStrain ? "Above display threshold" : "Nominal"}
               </span>
             </div>
             <div className="val">{pvt.toFixed(0)} <small className="mono">ms</small></div>
             <p className="desc">
-              Tiempo de reacción psicomotora (PVT) y cefalea reportada ({headache.toFixed(0)}/10). Sensible a congestión cefálica (SANS) e hipoxia.
+              Psychomotor reaction time (PVT) and reported headache ({headache.toFixed(0)}/10). These values do not diagnose a condition.
             </p>
           </div>
 
           {/* 2. Cardiovascular */}
           <div className="hud-organ-card">
             <div className="hud-organ-card__head">
-              <h3>Sistema Cardiovascular</h3>
+              <h3>Cardiovascular system</h3>
               <span className={`status-label status-label--${heartStrain ? "act" : "info"}`}>
-                {heartStrain ? "Desviación" : "Nominal"}
+                {heartStrain ? "Outside display threshold" : "Nominal"}
               </span>
             </div>
             <div className="val">{hr.toFixed(0)} <small className="mono">bpm</small></div>
             <p className="desc">
-              Frecuencia cardíaca en reposo y evaluación de flujo venoso yugular interno (IJV) para detección temprana de estasis o trombosis.
+              Resting heart rate from the scenario. This display does not diagnose venous conditions.
             </p>
           </div>
 
           {/* 3. Respiratory */}
           <div className="hud-organ-card">
             <div className="hud-organ-card__head">
-              <h3>Respiratorio y Traje</h3>
+              <h3>Respiratory and environment</h3>
               <span className={`status-label status-label--${lungStrain ? "act" : "info"}`}>
-                {lungStrain ? "Atención CO₂" : "Nominal"}
+                {lungStrain ? "CO₂ attention" : "Nominal"}
               </span>
             </div>
             <div className="val">{co2} <small className="mono">ppm</small></div>
             <p className="desc">
-              Presión parcial de CO₂ en bucle de respiración de traje lunar. Prevención de hipercapnia e incremento de presión intracraneal.
+              CO₂ concentration from the scenario. This value is not a direct measurement of suit breathing gas.
             </p>
           </div>
 
           {/* 4. Thermal */}
           <div className="hud-organ-card">
             <div className="hud-organ-card__head">
-              <h3>Termorregulación Central</h3>
+              <h3>Temperature</h3>
               <span className={`status-label status-label--${liverStrain ? "act" : "info"}`}>
-                {liverStrain ? "Hipertermia" : "Nominal"}
+                {liverStrain ? "Above display threshold" : "Nominal"}
               </span>
             </div>
             <div className="val">{temp.toFixed(1)} <small className="mono">°C</small></div>
             <p className="desc">
-              Temperatura central de reposo circadiana. Indicador precoz de respuesta inmunitaria activa o sobrecalentamiento metabólico en EVA.
+              Temperature from the scenario. A reading alone cannot establish its cause.
             </p>
           </div>
 
           {/* 5. Rest / Sleep */}
           <div className="hud-organ-card">
             <div className="hud-organ-card__head">
-              <h3>Recuperación y Sueño</h3>
+              <h3>Recovery and sleep</h3>
               <span className={`status-label status-label--${sleep < 6 ? "watch" : "info"}`}>
-                {sleep < 6 ? "Deuda de sueño" : "Adecuado"}
+                {sleep < 6 ? "Below display threshold" : "Within display threshold"}
               </span>
             </div>
             <div className="val">{sleep.toFixed(1)} <small className="mono">h</small></div>
             <p className="desc">
-              Horas acumuladas de sueño vigilia. Monitoreo del ritmo circadiano frente a alteraciones de luz solar rasante en superficie lunar.
+              Sleep duration from the scenario. Compare it with the personal baseline in the main dashboard.
             </p>
           </div>
         </div>
       </section>
+      </>}
     </div>
   );
 }

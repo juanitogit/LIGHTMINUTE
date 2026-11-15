@@ -157,7 +157,8 @@ def engine_facts(entry: dict, crew: str, day: int) -> dict:
     # Age of the HR value in days (0 = today). Absent when no reading exists at all.
     hr_today = (ind.get("rest_hr") or {}).get("value") is not None
     put("hr_age_days", 0 if hr_today else entry.get("rest_hr_age_days"))
-    for short, name in (("temp", "temp_c"), ("sleep", "sleep_h"), ("pvt", "pvt_ms")):
+    for short, name in (("temp", "temp_c"), ("sleep", "sleep_h"), ("pvt", "pvt_ms"),
+                        ("co2", "co2_ppm"), ("headache", "headache_score")):
         cur = ind.get(name) or {}
         put(f"{short}_now", cur.get("value"))
         put(f"{short}_base", cur.get("baseline"))

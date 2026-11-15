@@ -25,7 +25,7 @@
 /* Simulation Controls Panel */
 .visor-controls-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 20px;
   align-items: center;
   background: var(--surface);
@@ -753,13 +753,16 @@
 /* 5-Organ Telemetry Grid below simulator */
 .hud-organs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
   gap: 16px;
   margin-top: 14px;
 }
 
 .hud-organ-card {
   display: flex;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
   flex-direction: column;
   gap: 6px;
   padding: 14px 16px;
@@ -772,6 +775,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .hud-organ-card h3 {
@@ -792,4 +797,15 @@
   font-size: 11px;
   color: var(--muted);
   line-height: 1.4;
+}
+
+@media (max-width: 600px) {
+  .visor-view { padding-inline: 16px; }
+  .visor-viewport { min-height: 320px; max-height: none; }
+  #hud-bl, #hud-br { box-sizing: border-box; max-width: 43cqw; padding: 7px; }
+  #hud-bl { min-width: 0; }
+  #hud-br { gap: 4px; }
+  #hud-br-title { right: 7px; letter-spacing: 0; }
+  .hud-seg { width: min(18cqw, 90px); }
+  .hud-body { width: min(12cqw, 48px); }
 }

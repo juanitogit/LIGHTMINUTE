@@ -259,8 +259,8 @@ export function Validation() {
               <Panel title="Design" labelledBy="design-title">
                 <Tiles entries={designTiles} />
                 <p className="muted small">
-                  Every method is compared at the same false-alarm budget: a method is not allowed
-                  to look better by alerting more often.
+                  The study targets a shared false-alarm budget during calibration. Observed rates
+                  can exceed that target, especially for individual heterogeneous crews; inspect each result below.
                 </p>
               </Panel>
 

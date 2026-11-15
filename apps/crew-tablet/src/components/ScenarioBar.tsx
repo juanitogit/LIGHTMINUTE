@@ -77,6 +77,7 @@ export function ScenarioBar({
           </span>
           <input
             type="range"
+            aria-label="Mission day"
             min={1}
             max={Math.max(1, maxDay)}
             step={1}

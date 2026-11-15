@@ -14,7 +14,6 @@ The published static build uses the mirrored Cloudflare Pages Function in
 from __future__ import annotations
 
 import json
-
 from typing import Literal
 
 from fastapi import APIRouter, HTTPException
@@ -93,7 +92,7 @@ def create_router() -> APIRouter:
             kwargs["reasoning_effort"] = "low"
         try:
             response = client.chat.completions.create(**kwargs)
-        except Exception as exc:  # noqa: BLE001 -- an upstream failure must not expose the key
+        except Exception as exc:
             raise HTTPException(502, f"El proveedor LLM falló ({type(exc).__name__}).") from exc
         content = response.choices[0].message.content if response.choices else None
         if not isinstance(content, str) or not content.strip():

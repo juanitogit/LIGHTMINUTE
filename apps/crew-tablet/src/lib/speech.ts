@@ -44,7 +44,7 @@ async function load(lang: SpeechLang, onProgress?: (message: string) => void) {
     progress_callback: (event: { status?: string; progress?: number }) => {
       if (!onProgress) return;
       if (event.status === "progress" && typeof event.progress === "number") {
-        onProgress(`Preparando la voz local… ${Math.round(event.progress)}%`);
+        onProgress(`Preparing local voice… ${Math.round(event.progress)}%`);
       } else if (event.status === "ready") {
         onProgress("Voz local lista.");
       }

@@ -68,7 +68,8 @@ def _stub_openai(captured: list[dict]):
         message = _Message()
 
     class _Response:
-        choices = [_Choice()]
+        def __init__(self):
+            self.choices = [_Choice()]
 
     class _Completions:
         def create(self, **kwargs):

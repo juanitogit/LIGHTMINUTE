@@ -65,7 +65,7 @@ export function useVisorSpeech() {
         const player = new Audio(clip.url);
         audio.current = player;
         player.onended = () => alive.current && setStatus("idle");
-        player.onerror = () => alive.current && setMessage("No se pudo reproducir el audio generado.");
+        player.onerror = () => alive.current && setMessage("Could not play the generated audio.");
         setMessage("");
         setStatus("speaking");
         await player.play();
@@ -76,10 +76,10 @@ export function useVisorSpeech() {
         if (browserSpeak(clean, lang, () => alive.current && setStatus("idle"))) {
           setEngine("browser");
           setStatus("speaking");
-          setMessage("La voz local no está disponible (descarga o WebAssembly). Se ha usado la voz del navegador.");
+          setMessage("Local voice is unavailable (download or WebAssembly). Browser speech was used instead.");
         } else {
           setStatus("idle");
-          setMessage("No hay ninguna voz disponible en este equipo; el texto sigue visible en pantalla.");
+          setMessage("No voice is available on this device; the text remains visible.");
         }
       }
     },

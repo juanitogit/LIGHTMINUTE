@@ -35,28 +35,28 @@ function fmt(value: number, decimals = 0) {
 /** Every sentence is built from snapshot fields only. */
 function facts(s: VisorSnapshot): string[] {
   return [
-    `Día ${s.day} de ${s.max_day}, tripulante ${s.crew}, escenario ${s.scenario}.`,
-    `Estado operativo ${s.level} e integridad global ${s.integrity_score}%.`,
-    `Frecuencia cardíaca ${fmt(s.heart_rate_bpm)} bpm y temperatura central ${fmt(s.core_temp_c, 1)} °C.`,
-    `Sueño ${fmt(s.sleep_h, 1)} h, PVT ${fmt(s.pvt_ms)} ms y cefalea ${fmt(s.headache_0_10)}/10.`,
-    `CO₂ del traje ${fmt(s.co2_ppm)} ppm y clima espacial S${s.radiation_scale} (${fmt(s.radiation_pfu, 1)} pfu).`,
+    `Day ${s.day} of ${s.max_day}, crew ${s.crew}, scenario ${s.scenario}.`,
+    `Operational status ${s.level} and overall integrity ${s.integrity_score}%.`,
+    `Heart rate ${fmt(s.heart_rate_bpm)} bpm and core temperature ${fmt(s.core_temp_c, 1)} °C.`,
+    `Sleep ${fmt(s.sleep_h, 1)} h, PVT ${fmt(s.pvt_ms)} ms and headache ${fmt(s.headache_0_10)}/10.`,
+    `Scenario CO₂ ${fmt(s.co2_ppm)} ppm and illustrative space weather S${s.radiation_scale} (${fmt(s.radiation_pfu, 1)} pfu).`,
   ];
 }
 
 export function snapshotSummary(s: VisorSnapshot): string {
-  return `${facts(s).join(" ")} Valores sintéticos de la simulación; no es un dispositivo médico.`;
+  return `${facts(s).join(" ")} Synthetic simulation values; not a medical device.`;
 }
 
 const RULES: { test: RegExp; answer: (s: VisorSnapshot) => string }[] = [
-  { test: /co2|co₂|di[oó]xido|aire|respir/i, answer: (s) => `El visor muestra ${fmt(s.co2_ppm)} ppm de CO₂ en el bucle del traje en el día ${s.day}.` },
-  { test: /sue[nñ]o|descans|dorm/i, answer: (s) => `La página registra ${fmt(s.sleep_h, 1)} h de sueño para el tripulante ${s.crew} en el día ${s.day}.` },
-  { test: /pvt|reacci[oó]n|atenci[oó]n|cognic/i, answer: (s) => `El tiempo de reacción PVT es de ${fmt(s.pvt_ms)} ms (día ${s.day}, tripulante ${s.crew}).` },
-  { test: /temperatura|fiebre|t[eé]rmic|°c/i, answer: (s) => `La temperatura central mostrada es ${fmt(s.core_temp_c, 1)} °C.` },
-  { test: /pulso|coraz[oó]n|cardi|frecuencia|bpm|fc\b/i, answer: (s) => `La frecuencia cardíaca en reposo mostrada es ${fmt(s.heart_rate_bpm)} bpm.` },
-  { test: /cefalea|dolor|cabeza/i, answer: (s) => `La cefalea autoreportada es ${fmt(s.headache_0_10)}/10.` },
-  { test: /radiaci[oó]n|clima espacial|sep|pfu|tormenta/i, answer: (s) => `El clima espacial de la página marca S${s.radiation_scale} con ${fmt(s.radiation_pfu, 1)} pfu (>10 MeV).` },
-  { test: /integridad|estado|nivel|alarma/i, answer: (s) => `El estado operativo es ${s.level} y la integridad global ${s.integrity_score}%.` },
-  { test: /d[ií]a|tripulante|qui[eé]n|resumen|todo/i, answer: (s) => facts(s).join(" ") },
+  { test: /co2|co₂|di[oó]xido|aire|respir|air|breath/i, answer: (s) => `The visor shows ${fmt(s.co2_ppm)} ppm of scenario CO₂ on day ${s.day}.` },
+  { test: /sue[nñ]o|descans|dorm|sleep|rest/i, answer: (s) => `The page records ${fmt(s.sleep_h, 1)} h of sleep for crew member ${s.crew} on day ${s.day}.` },
+  { test: /pvt|reacci[oó]n|atenci[oó]n|cognic|reaction|attention|cognit/i, answer: (s) => `PVT reaction time is ${fmt(s.pvt_ms)} ms (day ${s.day}, crew ${s.crew}).` },
+  { test: /temperatura|fiebre|t[eé]rmic|temperature|fever|thermal|°c/i, answer: (s) => `The displayed core temperature is ${fmt(s.core_temp_c, 1)} °C.` },
+  { test: /pulso|coraz[oó]n|cardi|frecuencia|pulse|heart|bpm|fc\b/i, answer: (s) => `The displayed resting heart rate is ${fmt(s.heart_rate_bpm)} bpm.` },
+  { test: /cefalea|dolor|cabeza|headache|pain/i, answer: (s) => `Self-reported headache is ${fmt(s.headache_0_10)}/10.` },
+  { test: /radiaci[oó]n|clima espacial|sep|pfu|tormenta|radiation|space weather|storm/i, answer: (s) => `The page shows illustrative space weather S${s.radiation_scale} at ${fmt(s.radiation_pfu, 1)} pfu (>10 MeV).` },
+  { test: /integridad|estado|nivel|alarma|integrity|status|level|alarm/i, answer: (s) => `The operational status is ${s.level} and overall integrity is ${s.integrity_score}%.` },
+  { test: /d[ií]a|tripulante|qui[eé]n|resumen|todo|day|crew|who|summary/i, answer: (s) => facts(s).join(" ") },
 ];
 
 /**
@@ -68,7 +68,7 @@ export function localGroundedAnswer(question: string, s: VisorSnapshot): string 
   if (match) return match.answer(s);
   // Says plainly that the LLM is unreachable instead of dressing a dump of
   // every field as an answer to the question.
-  return `El asistente no está disponible ahora. Valores de la página: ${facts(s).join(" ")}`;
+  return `The assistant is unavailable. Values on this page: ${facts(s).join(" ")}`;
 }
 
 export interface AssistantReply { answer: string; provider: string; model: string }
@@ -86,8 +86,8 @@ export async function askVisorAssistant(question: string, context: VisorSnapshot
     signal: AbortSignal.timeout(25000),
   });
   const payload = (await response.json().catch(() => ({}))) as Partial<AssistantReply> & { detail?: string };
-  if (!response.ok) throw new Error(typeof payload.detail === "string" ? payload.detail : "El asistente no está disponible.");
-  if (typeof payload.answer !== "string" || !payload.answer.trim()) throw new Error("El asistente devolvió una respuesta vacía.");
+  if (!response.ok) throw new Error(typeof payload.detail === "string" ? payload.detail : "The assistant is unavailable.");
+  if (typeof payload.answer !== "string" || !payload.answer.trim()) throw new Error("The assistant returned an empty response.");
   return {
     answer: payload.answer.trim(),
     provider: payload.provider ?? "unknown",

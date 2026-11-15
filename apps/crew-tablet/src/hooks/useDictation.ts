@@ -64,8 +64,8 @@ export function useDictation(onText: (text: string) => void) {
         setError(event.error);
         setStatus(
           event.error === "not-allowed" || event.error === "service-not-allowed"
-            ? "El navegador ha bloqueado el micrófono. Permítelo para hablar con el visor."
-            : `Micrófono detenido: ${event.error}.`,
+            ? "The browser blocked the microphone. Allow access to speak to the visor."
+            : `Microphone stopped: ${event.error}.`,
         );
       };
       rec.onend = () => {
@@ -79,7 +79,7 @@ export function useDictation(onText: (text: string) => void) {
     } catch {
       setListening(false);
       active.current = null;
-      setStatus("No se pudo iniciar el micrófono.");
+      setStatus("Could not start the microphone.");
     }
   }, [Speech]);
 

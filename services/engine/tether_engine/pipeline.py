@@ -178,13 +178,24 @@ def run_scenario(name: str, seed: int = 0, days: int = DEFAULT_DAYS,
         qc = {"dropped": dropped, "total": total}
         if stuck_today:
             qc["stuck"] = stuck_today
+        crew_attribution = attribution.step(zdirs)
+        for cid, entry in crew_out.items():
+            # Construct cards after attribution so shared patterns are available.
+            facts = {"crew": cid, "level": entry["level"],
+                     "confidence": "low" if entry["learning"] else "moderate",
+                     "numbers": {"hr_now": 0, "hr_lo": 0, "hr_hi": 0, "z_dir": entry["syndrome_z"]},
+                     "indicators": entry["indicators"], "attribution": crew_attribution}
+            co2 = entry["indicators"].get("co2_ppm", {})
+            if (crew_attribution["mode"] == "shared" and cid in crew_attribution["affected"]
+                    and str(co2.get("lens", {}).get("personal", "")).startswith("unusual")):
+                entry["card"] = template_card(facts)
         out_days.append({
             "day": day["day"],
             "context": day["context"],
             "hazards": day["hazards"],
             "qc": qc,
             "crew": crew_out,
-            "attribution": attribution.step(zdirs),
+            "attribution": crew_attribution,
         })
 
     return {
