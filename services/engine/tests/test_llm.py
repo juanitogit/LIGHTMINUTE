@@ -1,4 +1,4 @@
-"""LLM layer tests: no network, fake DeepSeek client, deterministic prefix."""
+"""LLM layer tests: no network, fake provider client, deterministic prefix."""
 import json
 import os
 from contextlib import contextmanager
@@ -293,3 +293,13 @@ def test_case_payload_carries_per_scenario_mission_context():
         text = json.dumps(payload["case"]["mission_context"]).lower()
         assert needle in text
         assert ("mars" in text) == (profile == "mars")
+
+
+def test_groq_provider_routes_and_falls_back():
+    """Groq is a first-class provider: same contract, template on any failure."""
+    with env(LLM_PROVIDER="groq", GROQ_API_KEY="gsk-test-key"):
+        out = card_service.get_card("cmo_fever", "A", 15, client=object())
+    assert out["provider"] == "groq"
+    assert out["card_source"] == "template"      # the dummy client cannot answer
+    assert out["card"]["level"] in ("info", "watch", "act")
+

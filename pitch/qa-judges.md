@@ -58,10 +58,11 @@ Nothing breaks. The engine sets every number and level, cards fall back to deter
 templates, and `LLM_PROVIDER=none` makes zero network calls. The demo is designed to show the
 product with the LLM unplugged.
 
-**12. Why DeepSeek, and what if the vendor disappears?**
-One million tokens of context plus disk caching let us put the whole cited knowledge base in a
-byte-stable prefix instead of running a vector database. The client sits behind one interface;
-provider swap is a config change, and the product does not depend on it.
+**12. Why Groq, and what if the vendor disappears?**
+The model is open-weight (`openai/gpt-oss-120b`), so no vendor owns it, and Groq just serves it
+fast. The whole cited knowledge base goes into a byte-stable prefix instead of a vector database.
+The client sits behind one interface: we swapped DeepSeek for Groq without touching the card
+logic, and `LLM_PROVIDER=none` removes the provider entirely.
 
 **13. How do you stop the LLM from inventing things?**
 A deterministic verifier: unknown citations rejected, every number must exist in the engine

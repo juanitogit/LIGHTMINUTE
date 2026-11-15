@@ -11,9 +11,11 @@ from __future__ import annotations
 
 import os
 
+from importlib import import_module
+
 from ..ground.delay import PROFILES
 from ..protocols.templates import template_card
-from . import stats
+from . import providers, stats
 from .case_data import engine_facts, find_crew, load_scenario
 from .kb import kb_ids, system_prefix
 from .verifier import verify_card
@@ -63,22 +65,49 @@ HR_VALUE_KEYS = ("hr_now", "hr_lo", "hr_hi", "hr_base", "z_hr")
 
 # ---------------------------------------------------------------- provider ---
 def key_present() -> bool:
-    """True when a DeepSeek key is configured. The value is never logged or returned."""
-    return bool((os.environ.get("DEEPSEEK_API_KEY") or "").strip())
+    """True when the active provider has a key. The value is never logged or returned."""
+    return providers.key_present()
 
 
 def provider_name() -> str:
-    raw = (os.environ.get("LLM_PROVIDER") or "").strip().lower()
-    if raw in ("", "auto"):
-        return "deepseek" if key_present() else "none"
-    return raw
+    return providers.active_name()
+
+
+def _client_module():
+    """The client module of the active provider, imported lazily.
+
+    Groq and DeepSeek are both OpenAI-compatible, so `ask_json` keeps the same
+    signature in both modules and this layer never learns the vendor's name.
+    """
+    provider = providers.active()
+    if provider is None:
+        raise RuntimeError(f"unknown LLM provider: {provider_name()}")
+    return import_module(f".{provider.client_module}", __package__)
 
 
 def _enabled(client) -> bool:
-    return provider_name() == "deepseek" and (client is not None or key_present())
+    return providers.active() is not None and (client is not None or key_present())
 
 
 # ------------------------------------------------------------------- usage ---
+def error_detail(exc: BaseException) -> str:
+    """The provider's own sentence, so an operator knows what to fix.
+
+    Kept separate from `verifier_errors` (which stays a stable, testable list of
+    short codes) and truncated: a vendor message is diagnostic text, not a place
+    to leak request bodies.
+    """
+    response = getattr(exc, "response", None)
+    detail = ""
+    if response is not None:
+        try:
+            detail = ((response.json().get("error") or {}).get("message") or "")
+        except Exception:  # noqa: BLE001 -- a non-JSON error body is still worth showing
+            detail = getattr(response, "text", "") or ""
+    detail = (detail or str(exc)).replace("\n", " ").strip()
+    return detail[:300]
+
+
 def _get(obj, key: str, default=None):
     if obj is None:
         return default
@@ -172,13 +201,13 @@ def get_card(scenario: str, crew: str, day: int, *, fast: bool = False,
     # FI-07: building the provider client is part of the same trust boundary as the
     # request itself, so an init/import failure must yield the template card too.
     try:
-        from .deepseek_client import ask_json, make_client
-
-        cl = client if client is not None else make_client()
+        llm = _client_module()
+        cl = client if client is not None else llm.make_client()
     except Exception as exc:  # noqa: BLE001 -- third-party init boundary must preserve the verified fallback
         reason = f"llm_error: {type(exc).__name__}"
         stats.record(source="template", fallback=True, error=reason)
         return {"card": fallback, "card_source": "template", "verifier_errors": [reason],
+                "llm_error_detail": error_detail(exc),
                 "usage": zero_usage(), "provider": provider_name(), "effort": effort,
                 "attempts": 0}
     allowed = kb_ids()
@@ -191,12 +220,13 @@ def get_card(scenario: str, crew: str, day: int, *, fast: bool = False,
     for attempt in (1, 2):
         attempts = attempt
         try:
-            res = ask_json(cl, system_prefix=prefix, case_payload=payload,
-                           effort=effort, max_tokens=2000)
+            res = llm.ask_json(cl, system_prefix=prefix, case_payload=payload,
+                               effort=effort, max_tokens=2000)
         except Exception as exc:  # noqa: BLE001 -- third-party transport boundary must preserve the verified fallback
             reason = f"llm_error: {type(exc).__name__}"
             stats.record(fallback=True, error=reason)
             return {"card": fallback, "card_source": "template", "verifier_errors": [reason],
+                    "llm_error_detail": error_detail(exc),
                     "usage": usage, "provider": provider_name(), "effort": effort,
                     "attempts": attempts}
 

@@ -8,7 +8,7 @@ Tres niveles: **Núcleo a bordo** (determinista, offline) → **Explicación** (
 ```mermaid
 flowchart LR
   I[Entradas: wearables, hábitat, radiación, manual] --> Q[QC] --> F[(Feature store)] --> B[N-of-1 Bayes + CUSUM] --> X[Fusión de contexto] --> P[Protocolos: info/watch/act/escalate]
-  K[(KB citada)] --> L[DeepSeek V4.1 Flash] --> V{Verificador}
+  K[(KB citada)] --> L[Groq gpt-oss-120b] --> V{Verificador}
   P --> L
   V -->|ok| C[Decision Card]
   V -->|rechazo| T[Plantilla]

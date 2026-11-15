@@ -17,7 +17,7 @@ flowchart LR
     F --> P[Protocol rules\ninfo/watch/act/escalate]
   end
   subgraph Explain["Explanation tier (optional)"]
-    KB[(Cited KB\nevidence.yaml)] --> L[DeepSeek V4.1 Flash\ncache-stuffed prefix]
+    KB[(Cited KB\nevidence.yaml)] --> L[Groq\ngpt-oss-120b\ncache-stuffed prefix]
     P --> L --> V{Verifier\nschema, cites, numbers,\nno lowered urgency}
     V -- ok --> C[Decision Card]
     V -- reject --> T[Template card]
@@ -56,7 +56,7 @@ see `handoff/a6.md`.
 |---|---|---|
 | 1 | Engine decides, LLM explains | Safety + validity; works with no LLM |
 | 2 | N-of-1 conjugate Bayes (not deep nets) | n=4 crews; explainable; aligned with NASA HRP Artemis II methods |
-| 3 | Cache-stuffed KB, no vector DB | DeepSeek 1M context + disk cache; zero infra |
+| 3 | Cache-stuffed KB, no vector DB | prompt caching on a byte-stable prefix; zero infra |
 | 4 | Python engine + TS PWA | Fast to build; schemas shared via JSON Schema |
 | 5 | Snapshots + manifest for real data | Hackathon networks fail; reproducible |
 | 6 | Template fallback for every card | Demo never dies; honest degraded state |

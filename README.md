@@ -21,7 +21,7 @@ Current verification: [audit and remaining delivery items](docs/ui-audit.md) · 
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](#stack)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9%20strict-3178C6?style=flat-square&logo=typescript&logoColor=white)](#stack)
 [![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)](#stack)
-[![LLM](https://img.shields.io/badge/LLM-DeepSeek%20V4.1%20Flash%20(optional)-4D6BFE?style=flat-square)](#stack)
+[![LLM](https://img.shields.io/badge/LLM-Groq%20gpt--oss--120b%20(optional)-F55036?style=flat-square)](#stack)
 [![Tests](https://img.shields.io/badge/python%20tests-78%20passing-brightgreen?style=flat-square)](#tests)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue?style=flat-square)](#license)
 
@@ -82,7 +82,7 @@ Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not
 | **N-of-1 engine** | Per-person conjugate Bayesian baseline (NIG + Student-t), winsorised robust updates, two-sided CUSUM, directional **syndrome** score, three-lens verdicts, crew attribution with 2-day persistence, QC that drops impossible readings before any update | `python scripts/run_tests.py` → **111/111** (nof1, syndrome, lenses, crew/ground/space, pipeline, simulate, qc, verifier, api, llm) |
 | **Scenarios** | 3 scripted scenarios × `strong`/`mild`, 24 days, 4 crew with roles (CMO/CDR/MS1/MS2), 6 indicators (`rest_hr`, `temp_c`, `sleep_h`, `pvt_ms`, `co2_ppm`, `headache_score`), sensor dropouts, hazards, deterministic by `(name, variant, seed, days)` | `python scripts/export_demo_json.py --all`; `apps/crew-tablet/public/data/scenario-*.json` + `scenario-index.json` |
 | **API** | `GET /api/health`, `GET /api/scenarios`, `GET /api/scenario/{name}`, `POST /api/card`, `GET /api/llm-stats`; scenarios come from `pipeline.run_scenario` when importable, else the static JSON; CORS restricted to localhost | uvicorn smoke: `/api/scenario/cmo_fever` → `source: engine`, 24 days, 6 indicators; `POST /api/card` day 15 crew A → `level: act`, `card_source: template` |
-| **Decision Cards** | One byte-stable system prefix (rules + whole KB + thresholds/syndromes with their status) so DeepSeek disk caching hits; verify → one retry with the error list → deterministic template fallback | `test_llm`: rejection→fallback, retry feeds errors back, prefix bytes identical across calls, injection stays in the *user* message, `LLM_PROVIDER=none` → zero network |
+| **Decision Cards** | One byte-stable system prefix (rules + whole KB + thresholds/syndromes with their status) so provider-side prompt caching can hit; verify → one retry with the error list → deterministic template fallback | `test_llm`: rejection→fallback, retry feeds errors back, prefix bytes identical across calls, injection stays in the *user* message, `LLM_PROVIDER=none` → zero network |
 | **Verifier** | Frozen field set, KB-only citations, numbers checked against engine facts, urgency may only rise, no diagnosis wording, no dose language, 140-char ground message | `test_verifier` + **30/30** adversarial cards rejected (`python -m tether_engine.llm.redteam`) |
 | **Crew tablet** | React app: **Glance → Why → Act**; crew strip, body map, personal 95 % band charts for all 6 indicators, Earth rule with its cited status, three-lens cards, syndrome strip, checklist, ground message with budget and reply countdown, protocol runner mounted, dark/light, presentation mode, URL hash state | `npm run build` green (293 kB JS / 92 kB gzip); A3 ran it in a browser with the API **on and off** |
 | **Protocol runner** | `mountProtocolRunner(el, {protocolId, onStep, onDone})`; one step per screen, ≥64 px targets, per-step timer, "can't do this" branch (skip / crew mate / escalate), undo, `→ ← C`, ARIA progressbar + live regions, `demo wording` badge with source | Mounted in the tablet and in `packages/protocol-runner/demo.html` (9-step run, undo, cannot-branch exercised) |
@@ -97,7 +97,7 @@ Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not
 
 | Area | Limit |
 |---|---|
-| **LLM path** | **No live DeepSeek call has ever been executed** (no key in the build environment). Request shape, `response_format: json_object`, effort tiers and cache-hit accounting are implemented but unverified against the real API. Everything is covered by a fake client; templates are always the fallback. |
+| **LLM path** | Provider is now **Groq** (`openai/gpt-oss-120b`) and a key is configured, but the Groq project has every model **disabled at the project level**, so no live card has been generated yet. `GET /api/health` reports the provider, and `python scripts/check_provider.py` names the exact blocker. Request shape, JSON mode, effort tiers and cache accounting are covered by a fake client; the template is always the fallback. |
 | **Real-data evidence** | MMASH proxy (22 healthy adults, per-minute HR) tests **interval honesty, not detection**: no labelled events, so no recall or delay can be claimed from it. OSDR / Inspiration4 was processed from the unrestricted OSD-575 CMP table (4 participants, 79/287 postflight values outside preflight bands, exploratory only); literature-direction concordance is NOT DONE. |
 | **Mild scenarios** | Deliberately weak: `cmo_fever` mild reaches `act` only on some seeds, `sep_sleep_loss` mild mostly stays `watch`. Do not present mild as "detected". |
 | **Radiation panel** | Verified in the production build: archived NOAA flux plot, `real-public` label, retrieval time and source. One day, one satellite; S0. Flux is not absorbed dose and this is not live telemetry. |
@@ -114,7 +114,7 @@ Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not
 - Submission assets: the 60-second video, public demo/video URL and team/roles section. Eight screenshots are in `docs/screenshots/`.
 - `.github/workflows/ci.yml` runs the tests and the tablet build on every push to `main` and on PRs, it ran green on both jobs on 14-nov (run 43613134201) but never on a public repo, and ownership now includes the vault and passes locally. The expanded CI workflow has not been pushed in this revision.
 - OSDR / Inspiration4 data (blocked by 404s), and any prospective validation on real crew data.
-- Vision / voice input endpoints, DeepSeek web-search use, production auth and multi-crew sessions remain outside the prototype scope.
+- Vision / voice input endpoints, provider-side web search, production auth and multi-crew sessions remain outside the prototype scope.
 - Expert clinical review of thresholds and protocol steps, and regulatory classification work.
 
 ### The defect we found and fixed (read this before quoting numbers)
@@ -142,7 +142,7 @@ reproducible. Full write-up: [`docs/model-card.md`](docs/model-card.md).
 |---|---|---|
 | **Engine** | Python 3.11+, `numpy`, `scipy` | Conjugate Bayesian updates with Student-t predictives, CUSUM, directional fusion. No ML framework: at n=4 you need explainability, not parameters. |
 | **API** | FastAPI 0.128, uvicorn, Pydantic 2 | Five endpoints, typed bodies, automatic OpenAPI, template cards with `LLM_PROVIDER=none`. |
-| **LLM** | DeepSeek **V4.1 Flash** (`deepseek-flash`, OpenAI-compatible) — optional | 1M context + disk caching means the whole cited KB is cache-stuffed in the system prefix: no vector DB, no RAG infra; case data goes last. Effort `high` for cards, `low` with `?fast=1`, `max` for red-teaming. |
+| **LLM** | **Groq** serving the open-weight model `openai/gpt-oss-120b` (OpenAI-compatible) — optional; DeepSeek is a config switch away | No vendor lock: the weights are open, JSON mode keeps the card parseable, and `reasoning_effort` gives a cheap `?fast=1` tier. One registry (`llm/providers.py`) plus one thin client per vendor; the card service never learns the vendor's name. The whole cited KB is cache-stuffed in a byte-stable system prefix, so there is no vector DB and no RAG infra. |
 | **Crew tablet** | React 19, TypeScript 5.9 (strict), Vite 7 | Typed payloads straight from the data contract; virtual modules inline `kb/protocols` and thresholds at build time. Charts are hand-written SVG — no chart library. |
 | **Protocol runner** | TypeScript source, generated ES module and classic script | Framework-free; embeddable in React and openable from `file://`. |
 | **Ground console** | TypeScript source, SVG and SubtleCrypto | Generated static browser scripts work offline; the audit chain verifies in the browser. |
@@ -158,7 +158,7 @@ flowchart LR
   QC --> B[N-of-1 Bayes\nNIG + Student-t + CUSUM]
   B --> F[Syndrome fusion + hazards\nCO₂ · solar flux · delay]
   F --> P[Protocol rules\ninfo / watch / act / escalate]
-  KB[(kb/evidence.yaml\n+ thresholds + syndromes)] --> L[DeepSeek V4.1 Flash\ncache-stuffed prefix]
+  KB[(kb/evidence.yaml\n+ thresholds + syndromes)] --> L[Groq\ngpt-oss-120b\ncache-stuffed prefix]
   P --> L
   L --> V{Verifier\nschema · cites · numbers\nno lowered urgency · no doses}
   V -- accept --> C[Decision Card]
@@ -175,7 +175,8 @@ flowchart LR
 ## Quick start
 
 ```bash
-cp .env.example .env          # optional: DEEPSEEK_API_KEY; LLM_PROVIDER=none works with no key
+cp .env.example .env          # optional: GROQ_API_KEY; LLM_PROVIDER=none works with no key
+python scripts/check_provider.py   # does the configured provider actually answer?
 python scripts/run_tests.py   # 111/111, no network, no pytest required
 
 # engine + API on :8000
@@ -195,10 +196,11 @@ python -m http.server 8130    # -> http://localhost:8130/apps/ground-console/
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `LLM_PROVIDER` | auto | `deepseek` \| `none`. Unset/`auto` = deepseek when a key exists, else none |
-| `DEEPSEEK_API_KEY` | — | required for the LLM path; never returned by the API, logged or committed |
-| `DEEPSEEK_BASE_URL` | `https://api.deepseek.com` | OpenAI-compatible endpoint |
-| `DEEPSEEK_MODEL` | `deepseek-flash` | model id |
+| `LLM_PROVIDER` | auto | `groq` \| `deepseek` \| `none`. Unset/`auto` = the first provider with a key, else none |
+| `GROQ_API_KEY` | — | required for the Groq path; never returned by the API, logged or committed |
+| `GROQ_BASE_URL` | `https://api.groq.com/openai/v1` | OpenAI-compatible endpoint |
+| `GROQ_MODEL` | `openai/gpt-oss-120b` | model id (see `python scripts/check_provider.py` for what the key can reach) |
+| `DEEPSEEK_*` | — | same three variables for the alternative provider |
 | `MISSION_PROFILE` | `mars` | `iss` \| `moon` \| `mars` — light-delay simulation |
 | `VITE_API_BASE` | empty | optional absolute API origin for the tablet |
 
@@ -308,7 +310,7 @@ outside preflight bands, exploratory only. Directional concordance with the lite
 ```
 services/engine/tether_engine/   Bayesian engine, QC, lenses, syndromes, attribution, pipeline, audit, ingest
 services/engine/tether_engine/api/          FastAPI app (5 endpoints)
-services/engine/tether_engine/llm/          card service, KB prefix, verifier, DeepSeek client, red-team
+services/engine/tether_engine/llm/          card service, KB prefix, verifier, provider registry + clients, red-team
 apps/crew-tablet/                React 19 + TS crew app (Glance → Why → Act) + no-build prototype screen
 apps/ground-console/             static flight-surgeon console + browser audit chain
 packages/protocol-runner/        framework-free timed protocol runner (ESM + classic build)
@@ -325,7 +327,7 @@ handoff/                         per-agent handoff notes
 
 ## Use of AI
 
-Built with **DeepSeek V4.1 Flash** and coding agents, as disclosed per Space Apps guidance. The
+Built with coding agents, with **Groq** serving an open-weight model as the optional explanation layer, as disclosed per Space Apps guidance. The
 team reviews and owns every modelling decision, threshold and word that reaches the crew; the
 model is a swappable explanation layer, never a decision maker.
 

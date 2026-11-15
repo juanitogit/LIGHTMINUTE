@@ -66,8 +66,8 @@ Twenty-seven commits carry a `Co-Authored-By: Codebuff` trailer. The team
 reviewed and owns every change.
 
 **Optional explanation layer in the product.** The deterministic engine computes
-every number and urgency level. A hosted model (`deepseek-flash` through the
-DeepSeek API) may only rewrite those facts as a Decision Card. A deterministic
+every number and urgency level. A hosted model (`openai/gpt-oss-120b` through the
+Groq API) may only rewrite those facts as a Decision Card. A deterministic
 verifier rejects invented citations, changed numbers, lowered urgency, diagnosis
 and dosing, and the product falls back to a template card. It runs with no model
 at all (`LLM_PROVIDER=none`). The repository contains no recorded live model
