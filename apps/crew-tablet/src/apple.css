@@ -15,9 +15,6 @@ button:disabled { cursor:default; }
 .brand__patch img { position:absolute; width:224%; height:auto; max-width:none; left:-56.8%; top:-3.2%; }
 .brand__text { font-family:var(--font-sans); font-size:12px; letter-spacing:.055em; font-weight:700; }
 .brand__sub { display:block; font-size:7px; font-weight:400; margin-top:5px; letter-spacing:.06em; white-space:nowrap; text-transform:none; }
-.sidebar__mission { display:flex; gap:7px; align-items:center; margin-top:25px; font-size:9px; letter-spacing:.05em; color:var(--muted); }
-.sidebar__mission .mono { margin-left:auto; font-size:9px; }
-.mission-dot { width:4px; height:4px; border-radius:50%; background:var(--accent); }
 .sidebar__label { margin:36px 0 11px; font-size:10px; letter-spacing:0; text-transform:none; }
 .sidebar .views { display:flex; flex-direction:column; gap:6px; background:none; border:0; padding:0; overflow:visible; border-radius:0; }
 .sidebar .views__btn { min-height:46px; padding:9px 0; display:flex; align-items:center; gap:11px; text-align:left; background:transparent; color:var(--muted); border:0; border-radius:0; font-size:12px; font-weight:400; box-shadow:none; }
@@ -141,7 +138,7 @@ input[type="range"]::-webkit-slider-thumb { margin-top:-5px; width:12px; height:
 /* Physiological simulation panel ───────────────────────────────────── */
 .physio-panel { margin:10px 0 4px; padding:10px 14px; background:color-mix(in srgb,var(--accent) 6%,var(--bg)); border:1px solid var(--line); border-radius:10px; font-size:11px; }
 .physio-panel__header { font-size:10px; color:var(--muted); margin:0 0 6px; letter-spacing:.02em; }
-.physio-panel__tag { font-family:monospace; font-size:9.5px; color:var(--accent); background:color-mix(in srgb,var(--accent) 12%,transparent); border-radius:3px; padding:1px 4px; }
+.physio-panel__tag { font-family:var(--font-sans); font-size:9.5px; color:var(--accent); background:color-mix(in srgb,var(--accent) 12%,transparent); border-radius:3px; padding:1px 4px; }
 .physio-panel__organ { border-bottom:1px solid var(--line); padding:5px 0; }
 .physio-panel__organ:last-of-type { border-bottom:none; }
 .physio-panel__organ-name { cursor:pointer; font-weight:600; font-size:11px; color:var(--ink); list-style:none; padding:3px 0; }
@@ -340,7 +337,7 @@ input[type="range"]::-webkit-slider-thumb { margin-top:-5px; width:12px; height:
   font-weight: 700;
   letter-spacing: 0.06em;
   color: #7dd3fc;
-  font-family: monospace;
+  font-family: var(--font-sans);
 }
 .organ-hologram__controls {
   display: flex;
@@ -436,7 +433,7 @@ input[type="range"]::-webkit-slider-thumb { margin-top:-5px; width:12px; height:
   letter-spacing: 0.02em;
 }
 .organ-hologram__status-tag {
-  font-family: monospace;
+  font-family: var(--font-sans);
   font-weight: 700;
   font-size: 8.5px;
   color: #7dd3fc;
@@ -528,7 +525,7 @@ input[type="range"]::-webkit-slider-thumb { margin-top:-5px; width:12px; height:
   color: #e5c07b;
 }
 .organ-stats-panel__coords {
-  font-family: monospace;
+  font-family: var(--font-sans);
   font-size: 8.5px;
   color: var(--muted);
   letter-spacing: 0.01em;
@@ -619,7 +616,7 @@ input[type="range"]::-webkit-slider-thumb { margin-top:-5px; width:12px; height:
 .organ-stats-panel__anomaly-val { font-size: 14px; font-weight: 650; color: var(--ink); }
 .organ-stats-panel__anomaly-sub { display: flex; flex-wrap: wrap; gap: 6px; font-size: 9px; color: var(--muted); margin-bottom: 5px; }
 .organ-stats-panel__z-tag {
-  font-family: monospace;
+  font-family: var(--font-sans);
   font-size: 9px;
   font-weight: 600;
   color: #e5c07b;
@@ -687,7 +684,7 @@ input[type="range"]::-webkit-slider-thumb { margin-top:-5px; width:12px; height:
 .organ-stats-panel__metric-val { font-size: 14px; font-weight: 650; color: var(--ink); }
 .organ-stats-panel__metric-unit { font-size: 9.5px; color: var(--muted); }
 .organ-stats-panel__tag {
-  font-family: monospace;
+  font-family: var(--font-sans);
   font-size: 8px;
   color: var(--accent);
   background: color-mix(in srgb, var(--accent) 10%, transparent);
@@ -734,7 +731,7 @@ input[type="range"]::-webkit-slider-thumb { margin-top:-5px; width:12px; height:
 .organ-stats-panel__math-label { font-size: 8.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
 .organ-stats-panel__equations { display: flex; flex-direction: column; gap: 3px; }
 .organ-stats-panel__code-line {
-  font-family: monospace;
+  font-family: var(--font-sans);
   font-size: 9px;
   background: rgba(255,255,255,0.05);
   padding: 2px 7px;
@@ -887,7 +884,6 @@ input[type="range"]::-webkit-slider-thumb { margin-top:-5px; width:12px; height:
 @media(max-width:900px) {
   .sidebar { position:relative; width:100%; padding:18px 24px 0; border-right:0; border-bottom:1px solid var(--line); }
   .sidebar .brand { width:max-content; }
-  .sidebar__mission { position:absolute; top:28px; right:24px; margin:0; }
   .sidebar__label,.sidebar__bottom { display:none; }
   .sidebar .views { flex-direction:row; margin-top:15px; gap:15px; justify-content:space-between; }
   .sidebar .views__btn { flex-direction:column; justify-content:center; gap:5px; font-size:10px; padding:10px 5px 13px; min-height:63px; }
@@ -912,8 +908,6 @@ input[type="range"]::-webkit-slider-thumb { margin-top:-5px; width:12px; height:
 @media(max-width:600px) {
   .sidebar { padding:16px 18px 0; }
   .brand__text { font-size:12px; }
-  .sidebar__mission { top:24px; right:18px; font-size:8px; }
-  .sidebar__mission .mono { display:none; }
   .sidebar .views { gap:4px; margin-top:14px; }
   .sidebar .views__btn { flex:1; font-size:9px; padding:9px 2px 12px; white-space:normal; text-align:center; }
   .sidebar .views__btn svg { width:18px; height:18px; }

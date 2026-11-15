@@ -1,6 +1,7 @@
 # LIGHTMINUTE interface and human 3D view
 
-Revision: 2026-11-14, following the owner's request to remove cards and pills and use a ready-made 3D human.
+Revision: 2026-11-15, adapting the owner's CRM reference while retaining the
+flat content layout and licensed 3D anatomy.
 This replaces the first visual pass recorded in `ui-audit.md`.
 
 ## Design decisions
@@ -8,8 +9,24 @@ This replaces the first visual pass recorded in `ui-audit.md`.
 The web app follows the hierarchy, alignment, progressive disclosure and adaptive navigation principles
 in [Apple HIG Layout](https://developer.apple.com/design/human-interface-guidelines/layout) and
 [Materials](https://developer.apple.com/design/human-interface-guidelines/materials).
-It remains a React web application, not a native Apple application. System typography is used; no Apple
-font files or proprietary UI assets are redistributed. The owner's LIGHTMINUTE logo is unchanged.
+It remains a React web application, not a native Apple application. The locally
+bundled Inter Variable font follows the CRM reference and is licensed under OFL;
+no Apple font files or proprietary UI assets are redistributed. The owner's
+LIGHTMINUTE logo is unchanged. See `src/workspace-design.css` for the neutral
+surfaces, violet accent, responsive navigation and motion treatments.
+
+Each page load includes a short, silent startup animation rendered locally from
+the editable HyperFrames composition in `apps/crew-tablet/media/hyperframes/`.
+The overlay does not intercept input, ends on a timer if video playback fails,
+and is omitted for reduced motion. Chart strokes animate when their selected
+data changes; displayed values and accessibility labels update immediately,
+without inventing intermediate data. Inter Variable is bundled for offline use.
+
+The body and heart-only detail model animate at the selected scenario's resting
+heart rate divided by 60. This is a stylized depiction, not live measurement or a
+physiological prediction; absent or invalid data stop the heartbeat. Vascular
+meshes remain static. Reduced-motion preferences stop automatic beating and
+rotation and remove the camera transition. Bluetooth readings remain separate.
 
 | Before | After | Why |
 |---|---|---|

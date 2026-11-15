@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Vector3 } from "three";
 import type { Mesh, Material, Object3D, SkinnedMesh, Group } from "three";
 import { indicatorMeta, REGION_LABEL, RISK_REGION, type BodyRegion } from "../lib/meta";
 import type { Reading } from "../lib/types";
@@ -537,7 +538,14 @@ export function BodyModel3D({
           const height = host.clientHeight;
           if (!width || !height || stopped) return;
           camera.aspect = width / height;
-          camera.position.setLength(Math.max(5.3, 3.25 / Math.max(0.55, camera.aspect)));
+          // Fit around the orbit target. Scaling the position from the world
+          // origin lifted the camera above its target and clipped the head.
+          const halfFov = T.MathUtils.degToRad(camera.fov / 2);
+          const distance = Math.max(1.58 / Math.tan(halfFov),
+            0.68 / (Math.tan(halfFov) * camera.aspect));
+          const offset = camera.position.clone().sub(controls.target).normalize();
+          camera.position.copy(controls.target).addScaledVector(offset, distance);
+          controls.update();
           camera.updateProjectionMatrix();
           renderer.setSize(width, height, false);
           render();
@@ -682,8 +690,15 @@ export function BodyModel3D({
               if (!stopped && uterusGltf?.scene) {
                 const uterusGroup = uterusGltf.scene;
                 uterusGroup.name = "uterus";
-                // Pelvic cavity position in Visible Human female
-                uterusGroup.position.set(-0.01, 0.82, 0.02);
+                // Register the separate reference by its bounds, preserving its
+                // metre scale. GLB origin is not the anatomical centre.
+                const bounds = new T.Box3().setFromObject(uterusGroup);
+                const centre = bounds.getCenter(new T.Vector3());
+                const bladder = reference.organs.find(organ => organ.name === "urinary bladder")?.center;
+                if (!bladder || bounds.isEmpty()) throw new Error("Missing pelvic registration reference");
+                uterusGroup.position.add(new T.Vector3(
+                  bladder[0], bladder[1] + 0.025, bladder[2] - 0.04
+                ).sub(centre));
                 uterusGroup.traverse((child) => {
                   if ((child as Mesh).isMesh) {
                     const m = child as Mesh;
@@ -1061,7 +1076,7 @@ export function BodyModel3D({
                        name.toLowerCase().includes(o.name.toLowerCase())
               );
               if (item) {
-                const p = item.mesh.position;
+                const p = item.mesh.getWorldPosition(new Vector3());
                 control.current?.focusToPoint([p.x, p.y, p.z], 1.6);
               }
             }}
@@ -1072,7 +1087,7 @@ export function BodyModel3D({
               );
               setSelectedOrgan(name);
               if (item) {
-                const p = item.mesh.position;
+                const p = item.mesh.getWorldPosition(new Vector3());
                 setSelectedCentroid([p.x, p.y, p.z]);
               } else {
                 setSelectedCentroid(undefined);

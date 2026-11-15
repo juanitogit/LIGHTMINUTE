@@ -25,7 +25,7 @@ let failure = null;
 let apiOnline = false;
 let tamperStatic = false;
 let runtimeRequests = 0;
-const mime = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".wasm": "application/wasm", ".css": "text/css", ".json": "application/json", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".png": "image/png" };
+const mime = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".wasm": "application/wasm", ".css": "text/css", ".json": "application/json", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".png": "image/png", ".webm": "video/webm" };
 const server = createServer(async (req, res) => {
   const pathname = decodeURIComponent(new URL(req.url, "http://localhost").pathname);
   // Cloudflare Pages redirects /index.html to /; cached navigations must use /.
@@ -100,7 +100,7 @@ try {
   assert.equal(runtimeRequests, 0, "Pyodide must not download during first visit or service-worker installation");
   if (process.env.LIGHTMINUTE_TEST_BROWSER_ENGINE === "1") {
     await offlinePage.getByRole("button",{name:"Run engine on this device"}).click();
-    await expect(offlinePage.locator(".engine-local-control [role=status]")).toContainText(/Preparing Python: .* MiB/);
+    await expect(offlinePage.locator(".engine-local-control [role=status]")).toContainText(/Preparing Python: .* MiB/, {timeout:60000});
     await expect(offlinePage.getByRole("button",{name:"Run engine on this device"})).toBeEnabled({timeout:180000});
     if (await offlinePage.locator(".engine-local-control [role=alert]").count()) throw Error(await offlinePage.locator(".engine-local-control [role=alert]").innerText());
     assert(runtimeRequests > 0, "Pyodide download must start after the user requests the engine");
@@ -118,6 +118,34 @@ try {
   }
   await offlineContext.close();
   record("Installed service worker loads cached synthetic scenario after network loss");
+  const motionContext = await browser.newContext({viewport:{width:1024,height:900}, reducedMotion:"no-preference"});
+  const motionPage = await motionContext.newPage();
+  await motionPage.addInitScript(() => {
+    const observer = new MutationObserver(() => {
+      const splash = document.querySelector(".startup-motion");
+      if (!splash) return;
+      window.__startupPointerEvents = getComputedStyle(splash).pointerEvents;
+      observer.disconnect();
+    });
+    observer.observe(document, {childList:true,subtree:true});
+  });
+  await motionPage.goto(`${base}/#scenario=cmo_fever&crew=A&day=16&view=glance`, {waitUntil:"domcontentloaded"});
+  await motionPage.waitForFunction(() => window.__startupPointerEvents !== undefined);
+  assert.equal(await motionPage.evaluate(()=>window.__startupPointerEvents),"none");
+  await expect(motionPage.locator(".startup-motion")).toHaveCount(0,{timeout:8000});
+  const motionLine = motionPage.locator(".signal-spark .chart-continuous").first();
+  await motionLine.waitFor();
+  assert.equal(await motionLine.evaluate(el=>getComputedStyle(el).animationName),"none");
+  await motionLine.evaluate(el=>el.setAttribute("data-persistent-line","yes"));
+  const oldPoints=await motionLine.getAttribute("points");
+  await motionPage.locator(".crew-row").nth(1).click();
+  await expect(motionLine).not.toHaveAttribute("points",oldPoints);
+  await expect(motionLine).toHaveAttribute("data-persistent-line","yes");
+  await motionPage.locator(".crew-row").first().click();
+  await expect(motionLine).toHaveAttribute("points",oldPoints);
+  await expect(motionLine).toHaveAttribute("data-persistent-line","yes");
+  await motionContext.close();
+  record("Startup clears without blocking input and chart transitions preserve the line across rapid changes");
   const voiceContext = await browser.newContext();
   await voiceContext.addInitScript(() => {
     window.SpeechRecognition = class {
@@ -173,6 +201,9 @@ try {
   await auditContext.close();
   record("Audit signature verification detects tampering and checks an independently supplied key fingerprint");
   await goto(); await page.locator(".signal-row").first().waitFor();
+  assert.equal(await page.locator(".startup-motion").count(),0, "Reduced motion must skip startup video");
+  assert.equal(await page.locator(".signal-spark .chart-continuous").first().evaluate(el=>getComputedStyle(el).animationName),"none");
+  assert.equal(await page.getByText("MISSION LM-01").count(),0);
   assert.equal(await page.title(), "LIGHTMINUTE — crew tablet");
   assert.equal(await page.locator(".signal-row").count(), 6);
   assert.equal(await page.locator(".crew-row").count(), 4);
@@ -232,6 +263,8 @@ try {
   await page.getByRole("combobox",{name:"Body systems",exact:true}).selectOption("all");
   await expect(page.locator(".human-viewer")).toHaveAttribute("data-model-status","ready",{timeout:30000});
   record("CC BY reference anatomy renders; male/female, systems, rotation, zoom and reset respond");
+  await page.getByRole("button",{name:"Front view",exact:true}).click();
+  await page.waitForTimeout(700); // Allow the camera reset to finish before the reference capture.
   await capture("01-overview");
 
   const noGpu = await browser.newContext();

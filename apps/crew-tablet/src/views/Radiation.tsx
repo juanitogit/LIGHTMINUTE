@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { AnimatedPolyline } from "../components/AnimatedPolyline";
 import { Bullets, RawDetails } from "../components/DataView";
 import { Chip, DataNotice, EmptyState, Panel } from "../components/primitives";
 import { loadRadiation, loadSpaceWeather } from "../lib/api";
@@ -76,7 +77,7 @@ function FluxChart({ panel }: { panel: RadiationPanel }) {
           y2={H - PAD_Y}
         />
         <polygon className="rad-chart__area" points={area} />
-        <polyline className="rad-chart__line" points={line} />
+        <AnimatedPolyline className="rad-chart__line chart-continuous" points={line} />
         {panel.peak ? (
           <circle
             className="rad-chart__peak"

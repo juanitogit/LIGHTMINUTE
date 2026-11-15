@@ -41,6 +41,13 @@ export function OrganHologram3D({
   const [autoRotate, setAutoRotate] = useState(true);
   const [loading, setLoading] = useState(true);
   const [assetType, setAssetType] = useState<"glb" | "geometry" | "procedural">("glb");
+  const [theme, setTheme] = useState(() => document.documentElement.dataset.theme ?? "light");
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => setTheme(document.documentElement.dataset.theme ?? "light"));
+    observer.observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+    return () => observer.disconnect();
+  }, []);
 
   const wireframeRef = useRef(wireframe);
   wireframeRef.current = wireframe;
@@ -50,14 +57,17 @@ export function OrganHologram3D({
   heartRateRef.current = heartRateBpm;
 
   // Resolve status color for the hologram
-  const holoColorHex =
+  const holoColorHex = theme === "light"
+    ? classification === "mild_strain" ? 0xa94928 : classification === "sustained_deviation" ? 0x96600a : 0x514bd0
+    :
     classification === "mild_strain"
       ? 0xf87171 // soft red/coral
       : classification === "sustained_deviation"
         ? 0xfbbf24 // amber
         : classification === "adapted_nominal"
           ? 0x34d399 // emerald
-          : 0x38bdf8; // cyan
+          : 0xb4afff;
+  const wireColorHex = theme === "light" ? 0x292478 : 0xdad7ff;
 
   // Determine GLB filename
   const normName = (organName || "").toLowerCase().trim();
@@ -185,7 +195,9 @@ export function OrganHologram3D({
       setLoading(true);
 
       try {
-        if (glbFile) {
+        // The selected body's geometry preserves side, shape and reference
+        // provenance. Standalone assets are used only when that mesh is absent.
+        if (glbFile && !fallbackGeometry?.attributes?.position) {
           setAssetType("glb");
           const glbUrl = `${import.meta.env.BASE_URL}assets/organs/${glbFile}`;
 
@@ -223,7 +235,7 @@ export function OrganHologram3D({
               // Add subtle wireframe overlay
               if (mesh.geometry) {
                 const wireMat = new THREE.MeshBasicMaterial({
-                  color: 0xbae6fd,
+                  color: wireColorHex,
                   wireframe: true,
                   transparent: true,
                   opacity: 0.3,
@@ -239,8 +251,6 @@ export function OrganHologram3D({
           const box = new THREE.Box3().setFromObject(modelScene);
           const center = new THREE.Vector3();
           box.getCenter(center);
-          modelScene.position.sub(center);
-
           const size = new THREE.Vector3();
           box.getSize(size);
           const maxDim = Math.max(size.x, size.y, size.z);
@@ -248,6 +258,8 @@ export function OrganHologram3D({
             modelScene.scale.multiplyScalar(1.65 / maxDim);
           }
 
+          // Translation must follow scale: the source centre also scales.
+          modelScene.position.sub(center.multiplyScalar(maxDim > 0 ? 1.65 / maxDim : 1));
           pivot.add(modelScene);
         } else if (fallbackGeometry && fallbackGeometry.attributes?.position) {
           // Geometry from body anatomy.json/bin
@@ -271,7 +283,7 @@ export function OrganHologram3D({
 
             const mesh = new THREE.Mesh(geom, holoMat);
             const wireMat = new THREE.MeshBasicMaterial({
-              color: 0xbae6fd,
+              color: wireColorHex,
               wireframe: true,
               transparent: true,
               opacity: 0.32,
@@ -284,13 +296,13 @@ export function OrganHologram3D({
             if (geom.boundingBox) {
               const center = new THREE.Vector3();
               geom.boundingBox.getCenter(center);
-              mesh.position.sub(center);
               const size = new THREE.Vector3();
               geom.boundingBox.getSize(size);
               const maxDim = Math.max(size.x, size.y, size.z);
               if (maxDim > 0) {
                 mesh.scale.multiplyScalar(1.6 / maxDim);
               }
+              mesh.position.sub(center.multiplyScalar(maxDim > 0 ? 1.6 / maxDim : 1));
             }
 
             pivot.add(mesh);
@@ -324,7 +336,7 @@ export function OrganHologram3D({
       const mesh = new THREE.Mesh(geo, holoMat);
 
       const wireMat = new THREE.MeshBasicMaterial({
-        color: 0xbae6fd,
+        color: wireColorHex,
         wireframe: true,
         transparent: true,
         opacity: 0.3,
@@ -429,7 +441,7 @@ export function OrganHologram3D({
       renderer.dispose();
       scene.clear();
     };
-  }, [glbFile, fallbackGeometry, holoColorHex]);
+  }, [glbFile, fallbackGeometry, holoColorHex, wireColorHex]);
 
   return (
     <div className="organ-hologram" aria-label={`3D reference model of ${organName}`}>
@@ -450,6 +462,7 @@ export function OrganHologram3D({
             onClick={() => setWireframe((v) => !v)}
             title="Toggle wireframe mode"
             aria-label="Toggle wireframe mode"
+            aria-pressed={wireframe}
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
               <rect x="3" y="3" width="18" height="18" rx="2" strokeDasharray="3 2" />
@@ -465,6 +478,7 @@ export function OrganHologram3D({
             onClick={() => setAutoRotate((v) => !v)}
             title="Toggle auto-rotation"
             aria-label="Toggle auto-rotation"
+            aria-pressed={autoRotate}
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
               {autoRotate ? (
@@ -515,10 +529,10 @@ export function OrganHologram3D({
         <span className="organ-hologram__reticle-hint">Drag to inspect 360° · Real-time WebGL</span>
         <span className="organ-hologram__status-tag">
           {classification === "mild_strain"
-            ? "⚡ BIO-STRAIN ALERT"
+            ? "Simulated strain"
             : classification === "sustained_deviation"
-              ? "▲ ELEVATED DEVIATION"
-              : "✓ ZERO-G ADAPTED"}
+              ? "Simulated deviation"
+              : classification === "adapted_nominal" ? "Simulated adaptation" : "Anatomical reference"}
         </span>
       </div>
     </div>

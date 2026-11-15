@@ -1,9 +1,33 @@
 {
   "status": "passed",
-  "executed_at": "2026-11-15T00:27:35.931Z",
+  "executed_at": "2026-11-15T14:45:10.445Z",
   "checks": [
     {
+      "name": "Installed service worker loads cached synthetic scenario after network loss",
+      "detail": "passed"
+    },
+    {
+      "name": "Voice-note control inserts a synthetic transcript with a mocked browser recognizer",
+      "detail": "passed"
+    },
+    {
+      "name": "Bluetooth mock connects, decodes a notification and disconnects",
+      "detail": "passed"
+    },
+    {
+      "name": "Ed25519 verification rejects modified synthetic scenario bytes",
+      "detail": "passed"
+    },
+    {
+      "name": "Audit signature verification detects tampering and checks an independently supplied key fingerprint",
+      "detail": "passed"
+    },
+    {
       "name": "Static fallback, six indicators, four crew and LIGHTMINUTE branding",
+      "detail": "passed"
+    },
+    {
+      "name": "Heart animation uses the selected crew's synthetic heart rate; anatomy landmarks stay in view",
       "detail": "passed"
     },
     {
@@ -60,14 +84,6 @@
     },
     {
       "name": "Double-click ground console and protocol demo using file://",
-      "detail": "passed"
-    },
-    {
-      "name": "Earth-link demo login, authenticated queue, persisted report and logout",
-      "detail": "passed"
-    },
-    {
-      "name": "Production UI with real local API and LLM_PROVIDER=none",
       "detail": "passed"
     }
   ],

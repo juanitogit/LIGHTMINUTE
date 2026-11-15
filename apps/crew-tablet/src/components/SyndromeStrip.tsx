@@ -1,4 +1,5 @@
 import { fmt } from "../lib/format";
+import { AnimatedPolyline } from "./AnimatedPolyline";
 
 export const SYNDROME_ALERT_Z = 2.33;
 
@@ -58,7 +59,7 @@ export function SyndromeStrip({
           0
         </text>
         <polyline points={area} className="syndrome-area" />
-        <polyline points={line} className="syndrome-line" />
+        <AnimatedPolyline points={line} className="syndrome-line chart-continuous" />
         {selected ? (
           <circle
             cx={x(selectedIndex)}

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import type { OrganVisualAttributes } from "../physiology/types";
 import type { Reading } from "../lib/types";
 import { scenarioHeartRate } from "../lib/heartMotion";
+import { AnimatedPolyline } from "./AnimatedPolyline";
 
 export interface OrganMetadata {
   id: string;
@@ -840,8 +841,9 @@ export function OrganStatsPanel({
             />
 
             {/* Trajectory Curve */}
-            <path
-              d={svgGraph.pathD}
+            <AnimatedPolyline
+              points={svgGraph.points.map(point => `${point.x},${point.y}`).join(" ")}
+              className="chart-continuous"
               fill="none"
               stroke="#38bdf8"
               strokeWidth="2.2"
