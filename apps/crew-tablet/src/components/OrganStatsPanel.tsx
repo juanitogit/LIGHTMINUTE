@@ -841,7 +841,10 @@ export function OrganStatsPanel({
 
             {/* Trajectory Curve */}
             <path
+              key={`${missionDay}-${timeSeries.variableName}`}
               d={svgGraph.pathD}
+              className="chart-stroke"
+              pathLength={1}
               fill="none"
               stroke="#38bdf8"
               strokeWidth="2.2"

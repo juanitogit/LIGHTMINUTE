@@ -62,8 +62,8 @@ export function Glance({ scenario, dayNumber, crewId, onCrew, onOpenWhy, onOpenA
                 const verdict=reading?.lens.personal, unusual=verdict==="unusual_high"||verdict==="unusual_low";
                 return <button type="button" key={key} className={`signal-row ${unusual?"is-unusual":""}`} onClick={()=>onOpenIndicator(key)} aria-label={`${meta.label}: ${reading?fmt(reading.value,meta.decimals):"no reading"}. Open personal baseline`}>
                   <span className="signal-row__name"><strong>{meta.label}</strong><small>{PERSONAL_LABEL[verdict??""]??"No reading today"}</small></span>
-                  <span className="signal-row__value">{reading?fmt(reading.value,meta.decimals):"—"}<small>{unitLabel(reading?.unit??meta.unit)}</small></span>
-                  <svg className="signal-spark" viewBox="0 0 100 40" aria-hidden="true">{segments.filter(Boolean).map((s,i)=><polyline key={i} points={s}/>)}{finite.length===1?<circle cx="5" cy="32" r="2"/>:null}</svg>
+                  <span className="signal-row__value"><span className="metric-change" key={`${crewId}-${dayNumber}-${key}`}>{reading?fmt(reading.value,meta.decimals):"—"}</span><small>{unitLabel(reading?.unit??meta.unit)}</small></span>
+                  <svg className="signal-spark" viewBox="0 0 100 40" aria-hidden="true">{segments.filter(Boolean).map((s,i)=><polyline key={`${crewId}-${dayNumber}-${i}`} className="chart-stroke" pathLength={1} points={s}/>)}{finite.length===1?<circle cx="5" cy="32" r="2"/>:null}</svg>
                   <Icon name="chevron" size={13} className="disclosure-arrow" />
                 </button>;
               })}

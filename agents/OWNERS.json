@@ -67,6 +67,7 @@
       "packages/schemas/",
       "handoff/a3.md",
       "apps/crew-tablet/scripts/",
+      "apps/crew-tablet/media/",
       "apps/crew-tablet/functions/",
       "apps/crew-tablet/server/",
       "apps/crew-tablet/wrangler.toml",

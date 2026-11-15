@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { CrewSelector } from "./components/CrewSelector";
 import { Brand } from "./components/Brand";
+import { StartupMotion } from "./components/StartupMotion";
 import { Icon, type IconName } from "./components/Icon";
 import { Chip, DataNotice, EmptyState, Panel } from "./components/primitives";
 import { ScenarioBar } from "./components/ScenarioBar";
@@ -210,13 +211,13 @@ export function App() {
 
   return (
     <div className={`app ${state.pres ? "is-present" : ""}`}>
+      <StartupMotion />
       <a className="skip-link" href="#main">
         Skip to content
       </a>
 
       <aside className="sidebar" aria-label="Mission workspace">
         <Brand />
-        <div className="sidebar__mission"><span className="mission-dot" />MISSION LM-01 <span className="mono">/ 2026</span></div>
         <p className="sidebar__label micro">Crew workspace</p>
         <nav className="views" aria-label="Views">
           {VIEW_LABELS.map(({ id, label, detail, icon }) => (

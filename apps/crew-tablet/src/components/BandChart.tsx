@@ -213,7 +213,7 @@ export function BandChart({
           />
         ) : null}
 
-        <polyline points={valueLine} className="value-line" />
+        <polyline key={`${selectedDay}-${valueLine}`} points={valueLine} pathLength={1} className="value-line chart-stroke" />
 
         <line
           x1={selectedX}

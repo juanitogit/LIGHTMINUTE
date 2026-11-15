@@ -15,6 +15,13 @@ no Apple font files or proprietary UI assets are redistributed. The owner's
 LIGHTMINUTE logo is unchanged. See `src/workspace-design.css` for the neutral
 surfaces, violet accent, responsive navigation and motion treatments.
 
+Each page load includes a short, silent startup animation rendered locally from
+the editable HyperFrames composition in `apps/crew-tablet/media/hyperframes/`.
+The overlay does not intercept input, ends on a timer if video playback fails,
+and is omitted for reduced motion. Chart strokes animate when their selected
+data changes; displayed values and accessibility labels update immediately,
+without inventing intermediate data. Inter Variable is bundled for offline use.
+
 The body and heart-only detail model animate at the selected scenario's resting
 heart rate divided by 60. This is a stylized depiction, not live measurement or a
 physiological prediction; absent or invalid data stop the heartbeat. Vascular

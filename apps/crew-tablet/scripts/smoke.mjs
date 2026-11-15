@@ -25,7 +25,7 @@ let failure = null;
 let apiOnline = false;
 let tamperStatic = false;
 let runtimeRequests = 0;
-const mime = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".wasm": "application/wasm", ".css": "text/css", ".json": "application/json", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".png": "image/png" };
+const mime = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".wasm": "application/wasm", ".css": "text/css", ".json": "application/json", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".png": "image/png", ".webm": "video/webm" };
 const server = createServer(async (req, res) => {
   const pathname = decodeURIComponent(new URL(req.url, "http://localhost").pathname);
   // Cloudflare Pages redirects /index.html to /; cached navigations must use /.
@@ -118,6 +118,28 @@ try {
   }
   await offlineContext.close();
   record("Installed service worker loads cached synthetic scenario after network loss");
+  const motionContext = await browser.newContext({viewport:{width:1024,height:900}, reducedMotion:"no-preference"});
+  const motionPage = await motionContext.newPage();
+  await motionPage.addInitScript(() => {
+    const observer = new MutationObserver(() => {
+      const splash = document.querySelector(".startup-motion");
+      if (!splash) return;
+      window.__startupPointerEvents = getComputedStyle(splash).pointerEvents;
+      observer.disconnect();
+    });
+    observer.observe(document, {childList:true,subtree:true});
+  });
+  await motionPage.goto(`${base}/#scenario=cmo_fever&crew=A&day=16&view=glance`, {waitUntil:"domcontentloaded"});
+  await motionPage.waitForFunction(() => window.__startupPointerEvents !== undefined);
+  assert.equal(await motionPage.evaluate(()=>window.__startupPointerEvents),"none");
+  await expect(motionPage.locator(".startup-motion")).toHaveCount(0,{timeout:8000});
+  await motionPage.locator(".signal-spark .chart-stroke").first().waitFor();
+  assert.equal(await motionPage.locator(".signal-spark .chart-stroke").first().evaluate(el=>getComputedStyle(el).animationName),"chart-draw");
+  const oldPoints=await motionPage.locator(".signal-spark .chart-stroke").first().getAttribute("points");
+  await motionPage.locator(".crew-row").nth(1).click();
+  await expect(motionPage.locator(".signal-spark .chart-stroke").first()).not.toHaveAttribute("points",oldPoints);
+  await motionContext.close();
+  record("Startup motion clears without blocking input and chart redraws for a new crew member");
   const voiceContext = await browser.newContext();
   await voiceContext.addInitScript(() => {
     window.SpeechRecognition = class {
@@ -173,6 +195,9 @@ try {
   await auditContext.close();
   record("Audit signature verification detects tampering and checks an independently supplied key fingerprint");
   await goto(); await page.locator(".signal-row").first().waitFor();
+  assert.equal(await page.locator(".startup-motion").count(),0, "Reduced motion must skip startup video");
+  assert.equal(await page.locator(".signal-spark .chart-stroke").first().evaluate(el=>getComputedStyle(el).animationName),"none");
+  assert.equal(await page.getByText("MISSION LM-01").count(),0);
   assert.equal(await page.title(), "LIGHTMINUTE — crew tablet");
   assert.equal(await page.locator(".signal-row").count(), 6);
   assert.equal(await page.locator(".crew-row").count(), 4);

@@ -2,6 +2,7 @@
 :root {
   --font-sans: "Inter Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-display: var(--font-sans);
+  --font-mono: var(--font-sans);
   --sidebar-width: 228px;
   --workspace-ease: cubic-bezier(.22, 1, .36, 1);
 }
@@ -22,7 +23,6 @@ body { background: var(--bg-deep); font-family: var(--font-sans); font-size: 14p
 .brand { padding: 0 8px; }
 .brand__text { letter-spacing: -.01em; font-size: 13px; }
 .brand__sub { letter-spacing: 0; font-size: 9px; }
-.sidebar__mission { padding: 0 9px; font-size: 10px; letter-spacing: 0; }
 .sidebar__label { margin: 29px 10px 8px; font-size: 11px; }
 .sidebar .views { gap: 2px; }
 .sidebar .views__btn { position: relative; min-height: 44px; padding: 9px 10px; border-radius: 9px; font-size: 13px; font-weight: 500; transition: background-color 180ms var(--workspace-ease), color 180ms var(--workspace-ease), box-shadow 180ms var(--workspace-ease); }
@@ -54,16 +54,35 @@ body { background: var(--bg-deep); font-family: var(--font-sans); font-size: 14p
   outline: 2px solid var(--accent); outline-offset: 2px;
 }
 .heart-motion-note { color: var(--muted); font-size: 11px; line-height: 1.5; margin: 10px 0 0; }
+.startup-motion { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; background: var(--bg); pointer-events: none; animation: startup-exit 1.8s var(--workspace-ease) forwards; }
+.startup-motion__mark { position: relative; width: 256px; height: 256px; display: grid; place-items: center; }
+.startup-motion__orbit { position: absolute; inset: 0; width: 100%; height: 100%; }
+.startup-motion .brand { position: relative; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 0; text-align: center; animation: startup-brand 800ms var(--workspace-ease) both; }
+.startup-motion .brand__patch { width: 76px; height: 76px; }
+.startup-motion .brand__text { font-size: 15px; letter-spacing: .015em; }
+.startup-motion .brand__sub { font-size: 10px; margin-top: 5px; }
+@keyframes startup-brand { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes startup-exit { 0%, 68% { opacity: 1; } 100% { opacity: 0; } }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .disclosure-arrow { transition: transform 180ms var(--workspace-ease); }
   .signal-row:hover .disclosure-arrow { transform: translateX(3px); }
 }
 @media (prefers-reduced-motion: no-preference) {
-  @keyframes workspace-enter { from { opacity: .78; } to { opacity: 1; } }
-  .view { animation: workspace-enter 220ms var(--workspace-ease); }
+  @keyframes workspace-enter { from { opacity: .75; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes chart-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes chart-bar-in { from { transform: scaleX(.02); opacity: .4; } to { transform: scaleX(1); opacity: 1; } }
+  @keyframes metric-arrive { from { opacity: .45; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+  .view { animation: workspace-enter 300ms var(--workspace-ease); }
+  .chart-stroke { stroke-dasharray: 1; animation: chart-draw 650ms var(--workspace-ease) both; }
+  .benchmark-track > span { transform-origin: left center; animation: chart-bar-in 550ms var(--workspace-ease) both; }
+  .metric-change { display: inline-block; font-variant-numeric: tabular-nums; animation: metric-arrive 260ms var(--workspace-ease); }
+  .today-dot, .today-halo, .syndrome-dot { transition: cx 300ms var(--workspace-ease), cy 300ms var(--workspace-ease), fill 180ms var(--workspace-ease); }
+  .crew-row, .crew-choice, .views__btn { transition: background-color 180ms var(--workspace-ease), color 180ms var(--workspace-ease), border-color 180ms var(--workspace-ease), box-shadow 180ms var(--workspace-ease); }
+  .btn:active, .icon-btn:active { transform: scale(.97); }
 }
 @media (prefers-reduced-motion: reduce) {
   .view { animation: none; }
+  .startup-motion { display: none; }
   .organ-hologram__scanbeam, .organ-hologram__pulse-dot { animation: none !important; }
 }
 @media (max-width: 900px) {

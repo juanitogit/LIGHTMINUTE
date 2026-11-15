@@ -76,7 +76,7 @@ function FluxChart({ panel }: { panel: RadiationPanel }) {
           y2={H - PAD_Y}
         />
         <polygon className="rad-chart__area" points={area} />
-        <polyline className="rad-chart__line" points={line} />
+        <polyline className="rad-chart__line chart-stroke" pathLength={1} points={line} />
         {panel.peak ? (
           <circle
             className="rad-chart__peak"

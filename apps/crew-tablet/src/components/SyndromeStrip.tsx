@@ -58,7 +58,7 @@ export function SyndromeStrip({
           0
         </text>
         <polyline points={area} className="syndrome-area" />
-        <polyline points={line} className="syndrome-line" />
+        <polyline key={`${selectedDay}-${line}`} points={line} pathLength={1} className="syndrome-line chart-stroke" />
         {selected ? (
           <circle
             cx={x(selectedIndex)}
