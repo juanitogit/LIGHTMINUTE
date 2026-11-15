@@ -1,4 +1,5 @@
 import random
+import math
 
 from tether_engine.bayes import CUSUM, BaselineModel
 
@@ -108,6 +109,33 @@ def test_sustained_downward_shift_remains_unresolved():
         model.robust_update(60.0)
     assert model.unresolved_change is True
     assert model.surprise(60.0)["p_two_sided"] < 0.05
+
+
+def test_timestamped_persistent_shift_keeps_anchor_and_requires_elapsed_time():
+    model = BaselineModel(70, 5)
+    for _ in range(20):
+        model.update(70)
+    for minute in range(24 * 60):
+        model.robust_update(80, observed_at=float(minute * 60))
+    assert not model.unresolved_change
+    for minute in range(24 * 60, 2 * 24 * 60 + 1):
+        model.robust_update(80, observed_at=float(minute * 60))
+    assert model.unresolved_change
+    assert model.surprise(80)["p_two_sided"] < .05
+
+
+def test_timestamp_rejects_invalid_and_unordered_without_mutating_model():
+    model = BaselineModel(70, 5)
+    model.robust_update(70, observed_at=100.0)
+    before = model.predictive(), model.n_seen
+    for time in (100.0, 99.0, math.nan, math.inf):
+        try:
+            model.robust_update(70, observed_at=time)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("Invalid or unordered timestamp accepted")
+        assert (model.predictive(), model.n_seen) == before
 
 
 def test_rebaseline_clears_state_and_healthy_readings_update_again():

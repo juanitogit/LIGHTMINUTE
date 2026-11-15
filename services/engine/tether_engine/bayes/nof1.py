@@ -33,6 +33,8 @@ class NIG:
 # (|z| > 3 happens ~0.3% of the time) almost never does.
 UNRESOLVED_Z = 3.0     # |z| above this counts as a departure from the level
 UNRESOLVED_RUN = 3     # consecutive departures before the change is declared unresolved
+UNRESOLVED_DURATION_S = 2 * 24 * 60 * 60  # demo policy: three daily samples span two days
+MAX_OBSERVATION_GAP_S = 24 * 60 * 60  # larger gaps cannot establish continuity
 
 
 class BaselineModel:
@@ -50,6 +52,8 @@ class BaselineModel:
         self.held_n = 0          # readings not absorbed while unresolved
         self._run = 0            # consecutive departures from the level
         self._run_direction = 0  # opposite excursions are not a sustained shift
+        self._last_observed_at = None
+        self._candidate = None
         alpha = 1.0 + prior_var_n / 2.0
         # alpha0 is the floor alpha is discounted back toward; see update().
         self.alpha0 = alpha
@@ -95,7 +99,7 @@ class BaselineModel:
         self.n_seen += 1
 
 
-def _robust_update(self, x: float, clip: float = 3.0) -> None:
+def _robust_update(self, x: float, clip: float = 3.0, *, observed_at: float | None = None) -> None:
     """Winsorized update: an anomalous point may not drag the baseline toward
     itself (otherwise the model 'learns' the illness within a few days).
 
@@ -103,10 +107,36 @@ def _robust_update(self, x: float, clip: float = 3.0) -> None:
     sustained change, not an outlier: winsorizing alone would still absorb it
     (~3 sd per day), so the state is set and the baseline stops moving.
     """
+    if observed_at is not None:
+        if not math.isfinite(observed_at) or (self._last_observed_at is not None and observed_at <= self._last_observed_at):
+            raise ValueError("observation timestamps must be finite and strictly increasing")
+        if self._last_observed_at is not None and observed_at - self._last_observed_at > MAX_OBSERVATION_GAP_S:
+            self._candidate = None
+        self._last_observed_at = observed_at
+    elif self._last_observed_at is not None:
+        raise ValueError("timestamps are required after timestamped observations")
     loc, scale, _ = self.predictive()
     z = (x - loc) / scale
     if self.unresolved_change:
         self.held_n += 1
+        return
+    if observed_at is not None:
+        candidate = self._candidate
+        if candidate is not None:
+            anchor, start, direction = candidate
+            anchor_scale = max(math.sqrt(anchor.beta * (anchor.kappa + 1.0) / (anchor.alpha * anchor.kappa)), self.min_sd)
+            anchor_z = (x - anchor.mu0) / anchor_scale
+            if anchor_z * direction <= UNRESOLVED_Z:
+                self._candidate = None
+            elif observed_at - start >= UNRESOLVED_DURATION_S:
+                self.post = anchor
+                self.unresolved_change = True
+                self.held_n += 1
+                return
+        if self._candidate is None and abs(z) > UNRESOLVED_Z:
+            p = self.post
+            self._candidate = (NIG(p.mu0, p.kappa, p.alpha, p.beta), observed_at, 1 if z > 0 else -1)
+        self.update(loc + max(-clip, min(clip, z)) * scale)
         return
     direction = (1 if z > 0 else -1) if abs(z) > UNRESOLVED_Z else 0
     self._run = (self._run + 1 if direction == self._run_direction else 1) if direction else 0
@@ -124,6 +154,7 @@ def _rebaseline(self, x: float | None = None) -> None:
     to x (spread and evidence count are kept)."""
     self.unresolved_change, self._run, self.held_n = False, 0, 0
     self._run_direction = 0
+    self._candidate = None
     if x is not None:
         p = self.post
         self.post = NIG(mu0=float(x), kappa=p.kappa, alpha=p.alpha, beta=p.beta)

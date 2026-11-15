@@ -111,20 +111,20 @@ def lag1(values: list[float], times: np.ndarray) -> float | None:
 
 
 def score_stream(values: np.ndarray, times: np.ndarray, training_n: int,
-                 sleeping: np.ndarray) -> dict:
+                 sleeping: np.ndarray, *, timestamped: bool = False) -> dict:
     train = values[:training_n]
     prior_sd = max(float(np.std(train, ddof=1)), 1e-6)
     model = BaselineModel(float(np.mean(train)), prior_sd)
-    for x in train:
-        model.robust_update(float(x))
+    for x, minute in zip(train, times[:training_n]):
+        model.robust_update(float(x), **({"observed_at": float(minute) * 60} if timestamped else {}))
     covered, widths, residuals = [], [], []
-    for x in values[training_n:]:
+    for x, minute in zip(values[training_n:], times[training_n:]):
         s = model.surprise(float(x))
         lo, hi = s["ci95"]
         covered.append(bool(lo <= x <= hi))
         widths.append(float(hi - lo))
         residuals.append(float(x - s["baseline"]))
-        model.robust_update(float(x))
+        model.robust_update(float(x), **({"observed_at": float(minute) * 60} if timestamped else {}))
     mask = sleeping[training_n:]
     n = len(covered)
     counts = {}
@@ -146,7 +146,7 @@ def longest_constant(values: np.ndarray, times: np.ndarray) -> int:
     return best
 
 
-def mmash() -> dict:
+def mmash(*, timestamped: bool = False) -> dict:
     archive = ROOT / "data" / "snapshots" / "MMASH.zip"
     if sha(archive) != MMASH_SHA:
         raise ValueError("MMASH archive differs from official SHA256SUMS")
@@ -165,8 +165,8 @@ def mmash() -> dict:
             design = clock_design(t)
             coefficients = np.linalg.lstsq(design[:training_n], y[:training_n], rcond=None)[0]
             adjusted = y - design @ coefficients
-            raw = score_stream(y, t, training_n, sleeping)
-            context = score_stream(adjusted, t, training_n, sleeping)
+            raw = score_stream(y, t, training_n, sleeping, timestamped=timestamped)
+            context = score_stream(adjusted, t, training_n, sleeping, timestamped=timestamped)
             record = {"subject": user, "training_n": training_n, "quality": quality,
                       "sleep_alignment": sleep_quality,
                       "training_clock_span_hours": float((t[training_n-1]-t[0]+1)/60),
