@@ -65,8 +65,10 @@ const RULES: { test: RegExp; answer: (s: VisorSnapshot) => string }[] = [
  */
 export function localGroundedAnswer(question: string, s: VisorSnapshot): string {
   const match = RULES.find((rule) => rule.test.test(question));
-  const body = match ? match.answer(s) : `${facts(s).join(" ")} No hay más datos en esta página para responder a esa pregunta.`;
-  return `${body} Respuesta determinista construida solo con los valores visibles del visor (sin LLM, sin diagnóstico y sin cifras nuevas).`;
+  if (match) return match.answer(s);
+  // Says plainly that the LLM is unreachable instead of dressing a dump of
+  // every field as an answer to the question.
+  return `El asistente no está disponible ahora. Valores de la página: ${facts(s).join(" ")}`;
 }
 
 export interface AssistantReply { answer: string; provider: string; model: string }

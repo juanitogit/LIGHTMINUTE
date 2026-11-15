@@ -10,10 +10,14 @@ interface Env {
   GROQ_API_KEY?: string;
   GROQ_BASE_URL?: string;
   GROQ_MODEL?: string;
+  GROQ_FALLBACK_MODEL?: string;
 }
 
 const DEFAULT_BASE = "https://api.groq.com/openai/v1";
 const DEFAULT_MODEL = "openai/gpt-oss-120b";
+const DEFAULT_FALLBACK_MODEL = "openai/gpt-oss-20b";
+const RETRY_STATUS = new Set([429, 500, 502, 503, 504]);
+const sleep = (ms: number) => new Promise((done) => setTimeout(done, ms));
 
 const SYSTEM = `You are the LIGHTMINUTE helmet-visor assistant. The crew member asks about the values currently displayed on the page.
 Rules, in order of priority:
@@ -97,29 +101,45 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
   }
   const baseUrl = (env.GROQ_BASE_URL ?? DEFAULT_BASE).replace(/\/$/, "");
   const model = env.GROQ_MODEL ?? DEFAULT_MODEL;
+  const fallbackModel = env.GROQ_FALLBACK_MODEL ?? DEFAULT_FALLBACK_MODEL;
+  const payload = (chosen: string) => JSON.stringify({
+    model: chosen,
+    messages: [
+      { role: "system", content: SYSTEM + directive },
+      { role: "user", content: JSON.stringify({ question, page: snapshot }) },
+    ],
+    max_tokens: 400,
+    reasoning_effort: "low",
+  });
 
-  let upstream: Response;
-  try {
-    upstream = await fetch(`${baseUrl}/chat/completions`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: "system", content: SYSTEM + directive },
-          { role: "user", content: JSON.stringify({ question, page: snapshot }) },
-        ],
-        max_tokens: 400,
-        reasoning_effort: "low",
-      }),
-    });
-  } catch {
-    return json({ detail: "No se pudo contactar con Groq." }, 502);
+  // Groq's free tier answers 429 and 5xx under short bursts. Two short retries
+  // and a lighter model keep the visor on the LLM instead of dropping to the
+  // deterministic sentence on the first hiccup.
+  const attempts = [model, model, fallbackModel];
+  let upstream: Response | null = null;
+  let used = model;
+  for (let attempt = 0; attempt < attempts.length; attempt += 1) {
+    used = attempts[attempt];
+    if (attempt > 0) {
+      const told = Number(upstream?.headers.get("retry-after") ?? "");
+      await sleep(Number.isFinite(told) && told > 0 ? Math.min(told * 1000, 2500) : attempt === 1 ? 600 : 1500);
+    }
+    try {
+      upstream = await fetch(`${baseUrl}/chat/completions`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+        body: payload(used),
+      });
+    } catch {
+      if (attempt === attempts.length - 1) return json({ detail: "No se pudo contactar con Groq." }, 502);
+      continue;
+    }
+    if (upstream.ok || !RETRY_STATUS.has(upstream.status)) break;
   }
 
-  if (!upstream.ok) {
+  if (!upstream || !upstream.ok) {
     // Never echo the key or the upstream body verbatim.
-    return json({ detail: `Groq respondió ${upstream.status}.` }, 502);
+    return json({ detail: `Groq respondió ${upstream ? upstream.status : "sin respuesta"}.` }, 502);
   }
 
   const result = (await upstream.json().catch(() => null)) as
@@ -129,7 +149,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
   if (typeof answer !== "string" || !answer.trim()) {
     return json({ detail: "Groq devolvió una respuesta vacía." }, 502);
   }
-  return json({ answer: answer.trim(), provider: "groq", model });
+  return json({ answer: answer.trim(), provider: "groq", model: used });
 };
 
 export const onRequest = async (context: { request: Request; env: Env }) => {
