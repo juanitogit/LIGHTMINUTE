@@ -1,64 +1,26 @@
 PASS FI-01 Invented number in facts
-FAIL FI-02 Invented number outside facts field
+PASS FI-02 Invented number outside facts field
 PASS FI-03 LLM lowers urgency
 PASS FI-04 Nonexistent citation
 PASS FI-05 Prompt injection in free text
 PASS FI-06 LLM transport unavailable
-ERROR FI-07 LLM client initialization unavailable
+PASS FI-07 LLM client initialization unavailable
 PASS FI-08 NaN sensor reading
 PASS FI-09 Impossible physiological value
-FAIL FI-10 Dropout must not quote stale HR as current
-FAIL FI-11 Stuck-value sensor detection
+PASS FI-10 Dropout must not quote stale HR as current
+PASS FI-11 Stuck-value sensor detection
 PASS FI-12 Bound single outlier influence on baseline
-FAIL FI-13 Prolonged illness must not become an unflagged normal
+PASS FI-13 Prolonged illness must not become an unflagged normal
 PASS FI-14 Insufficient days retain learning phase
-FAIL FI-15 Duplicate delivery retry must be idempotent
+PASS FI-15 Duplicate delivery retry must be idempotent
 PASS FI-16 Out-of-order arrivals retain separate records
 PASS FI-17 Communication delay hides undelivered messages
 PASS FI-18 Storage/transport loss is not acknowledged as delivered
 PASS FI-19 Structured behavioral consent filter
-FAIL FI-20 Behavioral text hidden inside allowed fields
+PASS FI-20 Behavioral text hidden inside allowed fields
 PASS FI-21 Audit entry tampering
 PASS FI-22 Unknown mission profile rejected
-FAIL FI-23 Mission context matches scenario
+PASS FI-23 Mission context matches scenario
 PASS FI-24 Engine outage is explicitly labelled static
-FAIL FI-25 Static fallback must not rename another scenario
-----------------------------------------
-Exception occurred during processing of request from ('127.0.0.1', 60783)
-Traceback (most recent call last):
-  File "C:\Python314\Lib\socketserver.py", line 697, in process_request_thread
-    self.finish_request(request, client_address)
-    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Python314\Lib\socketserver.py", line 362, in finish_request
-    self.RequestHandlerClass(request, client_address, self)
-    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Python314\Lib\http\server.py", line 732, in __init__
-    super().__init__(*args, **kwargs)
-    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
-  File "C:\Python314\Lib\socketserver.py", line 766, in __init__
-    self.handle()
-    ~~~~~~~~~~~^^
-  File "C:\Python314\Lib\http\server.py", line 496, in handle
-    self.handle_one_request()
-    ~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "C:\Python314\Lib\http\server.py", line 484, in handle_one_request
-    method()
-    ~~~~~~^^
-  File "C:\Users\abel1\Desktop\tether-kit\tether-kit\project\tests\fault_injection\run.py", line 369, in do_GET
-    else: super().do_GET()
-          ~~~~~~~~~~~~~~^^
-  File "C:\Python314\Lib\http\server.py", line 739, in do_GET
-    self.copyfile(f, self.wfile)
-    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
-  File "C:\Python314\Lib\http\server.py", line 942, in copyfile
-    shutil.copyfileobj(source, outputfile)
-    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
-  File "C:\Python314\Lib\shutil.py", line 257, in copyfileobj
-    fdst_write(buf)
-    ~~~~~~~~~~^^^^^
-  File "C:\Python314\Lib\socketserver.py", line 845, in write
-    self._sock.sendall(b)
-    ~~~~~~~~~~~~~~~~~~^^^
-ConnectionResetError: [WinError 10054] Se ha forzado la interrupci�n de una conexi�n existente por el host remoto
-----------------------------------------
-18/27 safe-behavior assertions passed
+PASS FI-25 Static fallback must not rename another scenario
+27/27 safe-behavior assertions passed
