@@ -1,5 +1,12 @@
 # LIGHTMINUTE · checklist de revisión y evidencia
 
+**Cobertura con marcas de tiempo:** un modo explícito de guardia por tiempo
+alcanzó 21.879/23.488 (93,15 %) en la repetición exploratoria de MMASH; sin
+embargo, los datos ya eran conocidos y el pipeline diario aún no usa este modo.
+La CLI de investigación lo ofrece mediante `--timestamped-guard`. La señal pendiente y los riesgos están en
+[`ml/proxy/CADENCE-CHECK.md`](../ml/proxy/CADENCE-CHECK.md). Los resultados v2
+de 66,37 % corresponden a la ruta anterior sin marcas temporales.
+
 **Chequeo nuevo:** se corrigió el cómputo de desviaciones en sentidos opuestos;
 el resultado exploratorio de MMASH siguió en 66,37 %. La cobertura continúa
 fallando y la frecuencia de observación sigue sin modelarse. Detalle y límites:

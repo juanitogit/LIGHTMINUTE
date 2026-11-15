@@ -22,6 +22,7 @@ TRAINING = 7
 LABELS = ("synthetic", "real-public", "proxy")
 READING_FIELDS = ["subject", "time", "indicator", "value", "status", "n_seen",
                   "baseline", "ci95_low", "ci95_high", "df", "z", "p_two_sided",
+                  "change_pending", "pending_z", "pending_p_two_sided", "unresolved_change",
                   "cusum_hi", "cusum_lo", "cusum_alarm"]
 SYNDROME_FIELDS = ["subject", "time", "status", "z_dir", "p_one_sided"]
 
@@ -107,7 +108,7 @@ def _finite(value):
 
 
 def analyze(path: Path, *, subject: str, time: str, indicators: list[str],
-            label: str, signs: dict[str, int] | None = None) -> dict:
+            label: str, signs: dict[str, int] | None = None, timestamped_guard: bool = False) -> dict:
     """Score each held-out row before learning it. Training rows have no inference."""
     if label not in LABELS:
         raise ValueError("explicit label must be synthetic, real-public or proxy")
@@ -126,7 +127,7 @@ def analyze(path: Path, *, subject: str, time: str, indicators: list[str],
         current_z = {}
         for name in indicators:
             key = (sid, name)
-            state = states.setdefault(key, {"training": [], "model": None, "cusum": CUSUM()})
+            state = states.setdefault(key, {"training": [], "training_times": [], "model": None, "cusum": CUSUM()})
             summary = summaries.setdefault(key, {"subject": sid, "indicator": name,
                                                  "observed": 0, "missing": 0,
                                                  "scored": 0, "status": "insufficient_observations"})
@@ -140,20 +141,23 @@ def analyze(path: Path, *, subject: str, time: str, indicators: list[str],
                 summary["observed"] += 1
                 record["status"] = "learning"
                 state["training"].append(value)
+                state["training_times"].append(datetime.fromisoformat(row["time"].replace("Z", "+00:00")).timestamp())
                 if len(state["training"]) == TRAINING:
                     # These values initialize only the next prediction, never any
                     # earlier training output. Each subject/indicator is isolated.
                     prior_sd = statistics.stdev(state["training"])
                     summary["status"] = "constant_training" if prior_sd == 0 else "ready"
                     model = BaselineModel(statistics.mean(state["training"]), max(prior_sd, 1e-6))
-                    for training_value in state["training"]:
-                        model.robust_update(training_value)
+                    for training_value, training_time in zip(state["training"], state["training_times"]):
+                        model.robust_update(training_value, **({"observed_at": training_time} if timestamped_guard else {}))
                     state["model"] = model
             else:
                 summary["observed"] += 1
                 model = state["model"]
                 result = model.surprise(value)
                 record.update(status="scored", n_seen=result["n_seen"],
+                              change_pending=result["change_pending"], pending_z=result["pending_z"],
+                              pending_p_two_sided=result["pending_p_two_sided"], unresolved_change=result["unresolved_change"],
                               baseline=_finite(result["baseline"]), df=_finite(result["df"]),
                               ci95_low=_finite(result["ci95"][0]), ci95_high=_finite(result["ci95"][1]),
                               z=_finite(result["z"]), p_two_sided=_finite(result["p_two_sided"]))
@@ -166,7 +170,8 @@ def analyze(path: Path, *, subject: str, time: str, indicators: list[str],
                                   cusum_alarm=alarm["alarm"])
                     current_z[name] = record["z"]
                     summary["scored"] += 1
-                model.robust_update(value)
+                moment = datetime.fromisoformat(row["time"].replace("Z", "+00:00")).timestamp()
+                model.robust_update(value, **({"observed_at": moment} if timestamped_guard else {}))
             readings.append(record)
         if score_names:
             sy = {"subject": sid, "time": row["time"], "status": "insufficient_current_data",
@@ -201,6 +206,7 @@ def analyze(path: Path, *, subject: str, time: str, indicators: list[str],
                                 for name in ("nof1.py", "syndrome.py")},
         "settings": {"subject_column": subject, "time_column": time, "indicators": indicators,
                      "signs": signs, "training_observations": TRAINING,
+                     "timestamped_guard": timestamped_guard,
                      "nominal_predictive_coverage": 0.95, "cusum_k": 0.5, "cusum_h": 4.0},
         "quality": quality, "readings": readings, "syndromes": syndromes,
     }
@@ -264,12 +270,13 @@ def main(argv=None) -> int:
     parser.add_argument("--indicators", required=True, help="comma-separated numeric columns")
     parser.add_argument("--signs", help="optional directions, e.g. hr:+,sleep:-")
     parser.add_argument("--label", choices=LABELS, required=True)
+    parser.add_argument("--timestamped-guard", action="store_true", help="use experimental elapsed-time guard; review pending change fields")
     parser.add_argument("--out", type=Path, default=Path("report"))
     args = parser.parse_args(argv)
     try:
         indicators = [name.strip() for name in args.indicators.split(",")]
         result = analyze(args.data, subject=args.subject, time=args.time, indicators=indicators,
-                         signs=parse_signs(args.signs, indicators), label=args.label)
+                         signs=parse_signs(args.signs, indicators), label=args.label, timestamped_guard=args.timestamped_guard)
         write_report(result, args.out)
     except (OSError, ValueError, csv.Error) as exc:
         parser.exit(2, f"error: {exc}\n")
