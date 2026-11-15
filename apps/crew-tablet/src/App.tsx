@@ -20,6 +20,8 @@ import { MissionWorkspace } from "./views/MissionWorkspace";
 import { SignalLibrary } from "./views/SignalLibrary";
 import { EarthLink } from "./views/EarthLink";
 import { Why } from "./views/Why";
+import { MoonEnvironmentView } from "./views/MoonEnvironment";
+import { VisorHud } from "./views/VisorHud";
 
 const VIEW_LABELS: { id: View; label: string; detail: string; icon: IconName }[] = [
   { id: "glance", label: "Overview", detail: "Glance", icon: "overview" },
@@ -33,6 +35,8 @@ const VIEW_LABELS: { id: View; label: string; detail: string; icon: IconName }[]
   { id: "earth", label: "Earth link", detail: "Earth", icon: "earth" },
   { id: "validation", label: "Evidence & validation", detail: "Data", icon: "chart" },
   { id: "checkin", label: "PVT & daily log", detail: "Local", icon: "watch" },
+  { id: "moon", label: "Entorno Lunar", detail: "Luna", icon: "moon" },
+  { id: "visor", label: "Visor EVA (HUD)", detail: "HUD", icon: "visor" },
 ];
 
 const FALLBACK_CREW = ["A", "B", "C", "D"];
@@ -395,6 +399,28 @@ export function App() {
         {/* Local-only tools: they must work even when no scenario loads. */}
         {state.view === "checkin" ? <CheckIn /> : null}
         {state.view === "sources" ? <DataSources /> : null}
+        {state.view === "moon" ? (
+          <MoonEnvironmentView
+            scenario={scenario.data}
+            dayNumber={day}
+            crewId={crew}
+            onOpenTablet={() => goView("glance")}
+            onOpenHud={() => goView("visor")}
+          />
+        ) : null}
+        {state.view === "visor" ? (
+          <VisorHud
+            scenario={scenario.data}
+            dayNumber={day}
+            crewId={crew}
+            crewIds={crewIds}
+            onCrew={goCrew}
+            onDay={(next) => update({ day: next })}
+            maxDay={maxDay}
+            onOpenTablet={() => goView("glance")}
+            onOpenMoon={() => goView("moon")}
+          />
+        ) : null}
       </main>
 
       <footer className="statusbar">

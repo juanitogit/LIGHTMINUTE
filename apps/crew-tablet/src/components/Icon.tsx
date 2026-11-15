@@ -14,6 +14,7 @@ type IconName =
   | "pause"
   | "sun"
   | "moon"
+  | "visor"
   | "check"
   | "arrow"
   | "copy"
@@ -69,6 +70,13 @@ const PATHS: Record<IconName, ReactNode> = {
     </>
   ),
   moon: <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" />,
+  visor: (
+    <>
+      <rect x="3" y="4" width="18" height="16" rx="4" />
+      <path d="M6 9h12M7 13h10" />
+      <circle cx="12" cy="11" r="2.5" fill="currentColor" stroke="none" opacity="0.3" />
+    </>
+  ),
   check: <path d="m4.5 12.5 5 5 10-11" />,
   arrow: <path d="M4 12h15M13 6l6 6-6 6" />,
   copy: (

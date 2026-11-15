@@ -1,0 +1,472 @@
+import { useEffect, useMemo, useState } from "react";
+import type { LoadedScenario } from "../lib/types";
+import { MoonEnvironmentView } from "./MoonEnvironment";
+import "../hud-visor.css";
+
+interface VisorHudProps {
+  scenario?: LoadedScenario | null;
+  dayNumber: number;
+  crewId: string;
+  crewIds: string[];
+  onCrew: (id: string) => void;
+  onDay: (day: number) => void;
+  maxDay: number;
+  onOpenTablet: () => void;
+  onOpenMoon: () => void;
+}
+
+const CREW_NAMES: Record<string, string> = {
+  A: "A · Oficial Médico (CMO)",
+  B: "B · Comandante (CDR)",
+  C: "C · Esp. Misión 1 (MS1)",
+  D: "D · Esp. Misión 2 (MS2)",
+};
+
+export function VisorHud({
+  scenario,
+  dayNumber,
+  crewId,
+  crewIds,
+  onCrew,
+  onDay,
+  maxDay,
+  onOpenTablet,
+  onOpenMoon,
+}: VisorHudProps) {
+  const [solarShield, setSolarShield] = useState(true);
+  const [autoPlay, setAutoPlay] = useState(false);
+
+  // Auto-play through mission days
+  useEffect(() => {
+    if (!autoPlay) return;
+    const interval = window.setInterval(() => {
+      onDay(dayNumber >= maxDay ? 1 : dayNumber + 1);
+    }, 1800);
+    return () => window.clearInterval(interval);
+  }, [autoPlay, dayNumber, maxDay, onDay]);
+
+  // Extract day and member telemetry
+  const dayEntry = scenario?.doc?.days?.find((d) => d.day === dayNumber);
+  const member = dayEntry?.crew?.[crewId];
+  const ind = member?.indicators;
+
+  // Real readings from scenario or realistic nominal baselines
+  const hr = ind?.rest_hr?.value ?? 64.0;
+  const temp = ind?.temp_c?.value ?? 36.65;
+  const sleep = ind?.sleep_h?.value ?? 7.4;
+  const pvt = ind?.pvt_ms?.value ?? 270;
+  const co2 = ind?.co2_ppm?.value ?? 820;
+  const headache = ind?.headache_score?.value ?? 0;
+
+  // Severity level determination (l0: routine, l1: watch, l2: act/escalate)
+  const levelClass = useMemo(() => {
+    const lvl = member?.level ?? "info";
+    if (lvl === "act" || lvl === "escalate") return "l2";
+    if (lvl === "watch") return "l1";
+    return "l0";
+  }, [member?.level]);
+
+  const isAlarm = levelClass === "l2";
+
+  // Global integrity score calculation (0 - 100)
+  const integrityScore = useMemo(() => {
+    let score = 98;
+    if (member?.syndrome_z) {
+      score -= Math.min(65, Math.abs(member.syndrome_z) * 14);
+    }
+    if (hr > 95 || hr < 48) score -= 12;
+    if (temp > 37.8) score -= 15;
+    if (sleep < 5.0) score -= 10;
+    if (pvt > 340) score -= 8;
+    if (co2 > 4000) score -= 12;
+    return Math.max(20, Math.min(100, Math.round(score)));
+  }, [member?.syndrome_z, hr, temp, sleep, pvt, co2]);
+
+  // Radiation from scenario SEP event
+  const isSep = Boolean(scenario?.doc?.scenario?.toLowerCase().includes("sep") ?? scenario?.doc?.name?.toLowerCase().includes("sep"));
+  const sScale = !isSep || dayNumber < 12 ? 0 : dayNumber <= 14 ? 3 : dayNumber <= 16 ? 2 : 1;
+  const radPfu = isSep && dayNumber >= 12 ? 240.0 : 4.5;
+
+  // Rulers positioning percentages
+  const hrMin = 40, hrMax = 140;
+  const hrPct = Math.max(0, Math.min(100, ((hr - hrMin) / (hrMax - hrMin)) * 100));
+
+  const tMin = 35.5, tMax = 39.0;
+  const tPct = Math.max(0, Math.min(100, ((temp - tMin) / (tMax - tMin)) * 100));
+
+  // Organ glow states
+  const brainStrain = pvt > 330 || headache >= 2;
+  const heartStrain = hr > 90 || hr < 50;
+  const lungStrain = co2 > 3500;
+  const liverStrain = temp > 37.5;
+  const jugularStrain = ind?.jugular_flow_vel ? ind.jugular_flow_vel.value < 2.0 : false;
+
+  const organColor = (strained: boolean) =>
+    strained ? (isAlarm ? "#ff4a36" : "#ffe27a") : "#e8a321";
+
+  // Days list for tape
+  const days = useMemo(() => {
+    return Array.from({ length: Math.min(30, maxDay) }, (_, i) => i + 1);
+  }, [maxDay]);
+
+  return (
+    <div className={`hud-container ${levelClass} ${isAlarm ? "alarm" : ""}`}>
+      {/* 1. Realistic Lunar Surface Environment Background */}
+      <div className="hud-moon-bg">
+        <MoonEnvironmentView embedded={true} scenario={scenario} dayNumber={dayNumber} />
+      </div>
+
+      {/* 2. Amber/Gold Solar Shield Visor Optical Coating */}
+      <div className={`hud-visor-filter ${solarShield ? "" : "is-disabled"}`} />
+
+      {/* 3. Vignette and Emergency Alarm Glow */}
+      <div className="hud-vignette" />
+      <div className="hud-alarm" />
+
+      {/* 4. Top Navigation Action to Exit HUD */}
+      <button type="button" className="hud-exit-btn" onClick={onOpenTablet}>
+        ← Salir del Visor (Tablet)
+      </button>
+
+      {/* 5. Helmet Outer Curvature Framing */}
+      <svg className="hud-corner cl" viewBox="0 0 300 150" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 10C90 10 200 40 262 150H0Z" fill="#000" fillOpacity=".65" />
+        <path className="hud-ln" d="M0 10C90 10 200 40 262 150" />
+        <path className="hud-ln hud-dim" d="M0 24C84 24 184 52 238 150" />
+      </svg>
+      <svg className="hud-corner cr" viewBox="0 0 300 150" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 10C90 10 200 40 262 150H0Z" fill="#000" fillOpacity=".65" />
+        <path className="hud-ln" d="M0 10C90 10 200 40 262 150" />
+        <path className="hud-ln hud-dim" d="M0 24C84 24 184 52 238 150" />
+      </svg>
+      <svg className="hud-tc" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 0H130C50 0 0 30 0 100Z" fill="#000" fillOpacity=".58" />
+        <path className="hud-ln" d="M0 100C0 30 50 0 130 0" />
+        <path className="hud-ln hud-dim" d="M0 78C4 34 52 8 120 0" />
+      </svg>
+      <svg className="hud-tc r" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 0H130C50 0 0 30 0 100Z" fill="#000" fillOpacity=".58" />
+        <path className="hud-ln" d="M0 100C0 30 50 0 130 0" />
+        <path className="hud-ln hud-dim" d="M0 78C4 34 52 8 120 0" />
+      </svg>
+
+      {/* 6. Top Bezel with CO2 Gauge and Mission Day Scroller */}
+      <div id="hud-top">
+        <svg viewBox="0 0 760 96" aria-hidden="true">
+          <path
+            d="M170 0H590C575 12 572 22 560 30H200C188 22 185 12 170 0Z"
+            fill="#000"
+            fillOpacity=".85"
+            stroke="#e8a321"
+            strokeWidth="1"
+          />
+          <path className="hud-ln" d="M20 30Q380 92 740 30" />
+          <path className="hud-ln hud-dim" d="M60 28Q380 80 700 28" />
+        </svg>
+
+        {/* Suit CO2 Bar */}
+        <div id="hud-co2">
+          <span>CO₂ TRAJE</span>
+          <div className="bk">
+            <i style={{ width: `${Math.min(100, (co2 / 6000) * 100)}%` }} />
+          </div>
+          <span>{co2} PPM</span>
+        </div>
+
+        {/* Mission Day Tape */}
+        <div id="hud-tape" aria-label="Línea de tiempo de días de misión">
+          {days.map((d) => (
+            <div
+              key={d}
+              className={d === dayNumber ? "cur" : ""}
+              style={{
+                left: `calc(50% + ${(d - dayNumber) * 44}px - 20px)`,
+                cursor: "pointer",
+              }}
+              onClick={() => onDay(d)}
+            >
+              {d}
+            </div>
+          ))}
+        </div>
+
+        {/* Alert Banner from Engine Decision Card */}
+        {member?.card ? (
+          <div id="hud-banner" className={`on ${levelClass}`} role="alert">
+            {member.card.headline}
+          </div>
+        ) : null}
+      </div>
+
+      {/* 7. Dial: Global Physiological Integrity (Top-Left) */}
+      <svg className="hud-abs" id="hud-dial" viewBox="-52 -52 104 104" aria-label="Integridad Global">
+        <circle r="48" className="hud-ln hud-dim" />
+        <circle r="44" className="hud-ln" />
+        <path className="hud-ln hud-dim" d="M-44 0H44M0-44V44" />
+        <circle r="30" className="hud-ln hud-dim" />
+        <circle
+          id="hud-arc"
+          r="38"
+          fill="none"
+          stroke="var(--c)"
+          strokeWidth="3"
+          strokeDasharray="238.8"
+          strokeDashoffset={238.8 - (238.8 * integrityScore) / 100}
+          transform="rotate(-90)"
+        />
+        <line x1="0" y1="0" x2="0" y2="-30" stroke="var(--hud-a)" strokeWidth="1.4">
+          <animateTransform
+            attributeName="transform"
+            type="rotate"
+            from="0"
+            to="360"
+            dur="9s"
+            repeatCount="indefinite"
+          />
+        </line>
+        <text y="7" textAnchor="middle" fontSize="20" fill="var(--c)">
+          {integrityScore}
+        </text>
+        <text y="22" textAnchor="middle" fontSize="6" opacity=".5" fill="var(--c)">
+          INTEGR.
+        </text>
+      </svg>
+      <div className="hud-abs" id="hud-dial-label">
+        INTEGRIDAD GLOBAL
+      </div>
+
+      {/* 8. Space Weather Panel (Top-Right) */}
+      <div className="hud-abs" id="hud-rad">
+        <span className="rad-title">CLIMA ESPACIAL</span>
+        <b>S{sScale}</b>
+        <span className="rad-sub">{radPfu.toFixed(1)} PFU (&gt;10 MeV)</span>
+      </div>
+
+      {/* 9. Lateral Vitals Rulers */}
+      {/* Left Ruler: Heart Rate */}
+      <div className="hud-ruler L">
+        <div className="hud-rt">
+          <span className="hud-rt-dot" />
+          <span>FC CARDIACA</span>
+        </div>
+        <div className="hud-rb">
+          <div className="hud-rg" style={{ bottom: "20%", height: "40%" }} title="Rango nominal 60-100" />
+          <div className="hud-mk" style={{ bottom: `${hrPct}%` }}>
+            <s />
+            <span>
+              {hr.toFixed(0)} <small>BPM</small>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Ruler: Core Temperature */}
+      <div className="hud-ruler R">
+        <div className="hud-rt">
+          <span className="hud-rt-dot" />
+          <span>TEMP CENTRAL</span>
+        </div>
+        <div className="hud-rb">
+          <div className="hud-rg" style={{ bottom: "17%", height: "40%" }} title="Rango nominal 36.1-37.5" />
+          <div className="hud-mk" style={{ bottom: `${tPct}%` }}>
+            <s />
+            <span>
+              {temp.toFixed(1)} <small>°C</small>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* 10. Center Reticle & Status */}
+      <svg className="hud-abs" id="hud-ret" viewBox="-20 -20 40 40" aria-hidden="true">
+        <path d="M0-9L8 0 0 9-8 0Z" stroke="var(--c)" fill="none" strokeWidth="1.2" />
+        <circle r="14" stroke="var(--c)" fill="none" strokeWidth="1.2" strokeDasharray="2 5" />
+        <path d="M-20 0H-16M16 0H20M0-20V-16M0 16V20" stroke="var(--c)" strokeWidth="1.2" />
+      </svg>
+      <div className="hud-abs" id="hud-det">
+        {member?.level ? `ESTADO OPERATIVO: ${member.level.toUpperCase()}` : "TELEMETRÍA NOMINAL"}
+      </div>
+
+      {/* 11. Bottom-Left: Vital Signs & Rest Card */}
+      <div className="hud-abs" id="hud-bl">
+        <div id="hud-bl-title">SIGNOS VITALES · REPOSO & COGNICIÓN</div>
+
+        {/* Sleep */}
+        <div className="hud-row">
+          <div className="hud-row-info">
+            <span className="hud-row-lbl">Sueño descanso</span>
+            <b>{sleep.toFixed(1)} <small>H</small></b>
+            <div className="hud-row-bar">
+              <i style={{ width: `${Math.min(100, (sleep / 9.0) * 100)}%` }} />
+            </div>
+          </div>
+          <span className="hud-row-status" />
+        </div>
+
+        {/* PVT Vigilance */}
+        <div className="hud-row">
+          <div className="hud-row-info">
+            <span className="hud-row-lbl">Tiempo Reacción PVT</span>
+            <b>{pvt.toFixed(0)} <small>MS</small></b>
+            <div className="hud-row-bar">
+              <i style={{ width: `${Math.min(100, (pvt / 500) * 100)}%` }} />
+            </div>
+          </div>
+          <span className="hud-row-status" />
+        </div>
+
+        {/* Headache */}
+        <div className="hud-row">
+          <div className="hud-row-info">
+            <span className="hud-row-lbl">Cefalea autoreportada</span>
+            <b>{headache.toFixed(0)} <small>/10</small></b>
+            <div className="hud-row-bar">
+              <i style={{ width: `${Math.min(100, (headache / 10) * 100)}%` }} />
+            </div>
+          </div>
+          <span className="hud-row-status" />
+        </div>
+      </div>
+
+      {/* 12. Bottom-Right: Humanoid Body Scanner & Organs */}
+      <div className="hud-abs" id="hud-br">
+        <span id="hud-br-title">ESCÁNER CORPORAL</span>
+
+        <svg className="hud-body" viewBox="0 0 100 220" aria-label="Modelo corporal con órganos monitoreados">
+          {/* Anatomical Outline */}
+          <ellipse className="hud-outline" cx="50" cy="18" rx="13" ry="16" />
+          <path className="hud-outline" d="M44 32 L44 40 Q50 42 56 40 L56 32" />
+          <path
+            className="hud-outline"
+            d="M44 40 Q38 41 28 46 L22 48 Q18 50 19 56 L21 100 Q22 104 28 105 L35 106 Q38 108 38 112 L38 116 Q38 118 40 118 L42 118 Q44 116 44 112 L44 110 Q46 108 50 108 Q54 108 56 110 L56 112 Q56 116 58 118 L60 118 Q62 118 62 116 L62 112 Q62 108 65 106 L72 105 Q78 104 79 100 L81 56 Q82 50 78 48 L72 46 Q62 41 56 40 Q53 39 50 39 Q47 39 44 40 Z"
+          />
+
+          {/* Ribs & Spine */}
+          <path className="hud-bone" d="M32 55 Q50 52 68 55 M31 61 Q50 58 69 61 M30 67 Q50 64 70 67" />
+          <path className="hud-bone" d="M50 42 L50 108" strokeDasharray="2 3" />
+
+          {/* Arms & Legs */}
+          <rect className="hud-outline" x="13" y="44" width="12" height="32" rx="5" />
+          <rect className="hud-outline" x="75" y="44" width="12" height="32" rx="5" />
+          <rect className="hud-outline" x="34" y="118" width="14" height="34" rx="6" />
+          <rect className="hud-outline" x="52" y="118" width="14" height="34" rx="6" />
+          <rect className="hud-outline" x="35" y="156" width="12" height="32" rx="5" />
+          <rect className="hud-outline" x="53" y="156" width="12" height="32" rx="5" />
+
+          {/* Brain */}
+          <path
+            className={`hud-org ${brainStrain ? "f" : ""}`}
+            style={{ stroke: organColor(brainStrain), fill: brainStrain ? organColor(brainStrain) : "none" }}
+            d="M43 12 Q44 7 50 6 Q56 7 57 12 Q58 17 55 20 Q52 22 50 21 Q48 22 45 20 Q42 17 43 12Z"
+          />
+
+          {/* Jugular Veins */}
+          <path
+            style={{
+              fill: "none",
+              stroke: organColor(jugularStrain),
+              strokeWidth: 1.8,
+            }}
+            d="M46 33 L46 40 M54 33 L54 40"
+          />
+
+          {/* Lungs */}
+          <path
+            className={`hud-org ${lungStrain ? "f" : ""}`}
+            style={{ stroke: organColor(lungStrain), fill: lungStrain ? organColor(lungStrain) : "none" }}
+            d="M36 52 Q28 54 26 65 Q24 76 27 85 Q30 90 36 88 Q42 86 44 78 Q46 68 44 58 Q42 52 36 52Z"
+          />
+          <path
+            className={`hud-org ${lungStrain ? "f" : ""}`}
+            style={{ stroke: organColor(lungStrain), fill: lungStrain ? organColor(lungStrain) : "none" }}
+            d="M64 52 Q72 54 74 65 Q76 76 73 85 Q70 90 64 88 Q58 86 56 78 Q54 68 56 58 Q58 52 64 52Z"
+          />
+
+          {/* Heart */}
+          <path
+            className={`hud-org ${heartStrain ? "f" : ""}`}
+            style={{ stroke: organColor(heartStrain), fill: heartStrain ? organColor(heartStrain) : "none" }}
+            d="M50 72 Q44 64 38 68 Q34 72 38 79 Q42 85 50 92 Q58 85 62 79 Q66 72 62 68 Q56 64 50 72Z"
+          />
+
+          {/* Liver */}
+          <path
+            className={`hud-org ${liverStrain ? "f" : ""}`}
+            style={{ stroke: organColor(liverStrain), fill: liverStrain ? organColor(liverStrain) : "none" }}
+            d="M55 90 Q65 88 72 92 Q76 96 74 102 Q72 106 64 106 Q56 106 54 100 Q52 94 55 90Z"
+          />
+
+          {/* Kidneys */}
+          <ellipse cx="37" cy="97" rx="5" ry="7" stroke="var(--hud-a)" fill="none" strokeWidth="1" />
+          <ellipse cx="63" cy="97" rx="5" ry="7" stroke="var(--hud-a)" fill="none" strokeWidth="1" />
+
+          {/* Scanning Beam Animation */}
+          <rect
+            className="hud-scan-beam"
+            x="19"
+            y="4"
+            width="62"
+            height="2"
+            rx="1"
+            fill="var(--c)"
+            opacity="0.6"
+          />
+        </svg>
+
+        <div>
+          <div className="t">ESTADO ORGÁNICO</div>
+          <div className="n">{integrityScore}%</div>
+          <div className="hud-seg">
+            <b style={{ opacity: integrityScore > 20 ? 1 : 0.2 }} />
+            <b style={{ opacity: integrityScore > 40 ? 1 : 0.2 }} />
+            <b style={{ opacity: integrityScore > 60 ? 1 : 0.2 }} />
+            <b style={{ opacity: integrityScore > 80 ? 1 : 0.2 }} />
+            <b style={{ opacity: integrityScore > 90 ? 1 : 0.2 }} />
+          </div>
+        </div>
+      </div>
+
+      {/* 13. Interactive Bottom Toolbar */}
+      <div id="hud-sim">
+        <label>
+          Tripulante:{" "}
+          <select value={crewId} onChange={(e) => onCrew(e.target.value)}>
+            {crewIds.map((id) => (
+              <option key={id} value={id}>
+                {CREW_NAMES[id] ?? `Tripulante ${id}`}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          Día:{" "}
+          <input
+            type="range"
+            min="1"
+            max={maxDay}
+            value={dayNumber}
+            onChange={(e) => onDay(Number(e.target.value))}
+          />{" "}
+          <span>{dayNumber}</span>
+        </label>
+
+        <button type="button" onClick={() => setAutoPlay(!autoPlay)}>
+          {autoPlay ? "⏸ Pausa" : "▶ Auto"}
+        </button>
+
+        <button type="button" onClick={() => setSolarShield(!solarShield)}>
+          {solarShield ? "Visor: Dorado (EVA)" : "Visor: Claro"}
+        </button>
+
+        <button type="button" onClick={onOpenMoon}>
+          Entorno Lunar 3D
+        </button>
+      </div>
+
+      <div id="hud-note">
+        LIGHTMINUTE · SIMULACIÓN DE CASCO EVA · DATOS SINTÉTICOS · NO ES UN DISPOSITIVO MÉDICO
+      </div>
+    </div>
+  );
+}

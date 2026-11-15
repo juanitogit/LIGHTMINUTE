@@ -2108,3 +2108,42 @@ Quiero que realices las correciones de 1 a 6 de los casos de estudio Real propue
 
 ---
 
+## Prompt 28 — Sesión HUD Visor + Entorno Lunar (Parte 1)
+- **Fecha y Hora (UTC):** `2026-11-15T15:00:00Z`
+- **Modelo de IA utilizado:** `Claude Sonnet 4.6 (Thinking)`
+- **Propósito:** *Integrar dos archivos HTML existentes (`moon-environment.html` y `lightminute-visor-hud.html` de la carpeta `HUD-Visor/`) al aplicativo React como módulos separados, usando las mismas tecnologías del proyecto (React + TypeScript + Vite), cada uno con su botón de navegación, compatibles con el resto del trabajo y con los datos del escenario activo.*
+
+### Contenido del Prompt:
+```text
+Se agregaron dos archivos html, llamados:
+/home/pablo/Documents/GitHub/NASA-SPACE-APPS-2026/HUD-Visor/moon-environment.html
+/home/pablo/Documents/GitHub/NASA-SPACE-APPS-2026/HUD-Visor/lightminute-visor-hud.html
+necesito que estos dos htmls esten vinculados al aplicativo que estamos realizando usando las mismas tecnoliogias, lenguajes que estamos trabajando en el software, cada uno sera una seccion (modulo) aparte con un boton para ir la interfaz de cada uno de estos dos modulos de estos htmls (realizando los respectivos cambios para que quede acorde con el proyecto), hazlos mas realistas, necesita seguir las reglas del aplicativo y su estrucutra del trabajo para no afectar al resto del aplicativo, estos modulos deben estar vinculados al resto del trabajo que todea sea compatibles, coherentes, muestren los datos respectivos al resto del trabjo, no vas a realizar push, commit o merge, eso lo hago yo. Al finalizar dame un reporte de los cambios que hiciste.
+```
+
+---
+
+## Prompt 29 — Sesión HUD Visor + Entorno Lunar (Continuación 1)
+- **Fecha y Hora (UTC):** `2026-11-15T16:00:00Z`
+- **Modelo de IA utilizado:** `Claude Sonnet 4.6 (Thinking)`
+- **Propósito:** *Continuar la implementación interrumpida de los módulos Visor EVA (HUD) y Entorno Lunar, completando la integración de rutas, íconos, VIEW_LABELS y CSS en el sistema de enrutamiento de App.tsx.*
+
+### Contenido del Prompt:
+```text
+continue
+```
+
+---
+
+## Prompt 30 — Sesión HUD Visor + Entorno Lunar (Continuación 2)
+- **Fecha y Hora (UTC):** `2026-11-15T16:49:39Z`
+- **Modelo de IA utilizado:** `Claude Sonnet 4.6 (Thinking)`
+- **Propósito:** *Continuar y finalizar la integración de los módulos MoonEnvironmentView y VisorHud en App.tsx: añadir icono "visor" a Icon.tsx, registrar las vistas en useHashState.ts y VIEW_LABELS, agregar el routing condicional, corregir errores de tipo TypeScript (hazard_kind no existe en ScenarioDoc), y verificar que 123/123 tests pasan.*
+
+### Contenido del Prompt:
+```text
+continue
+```
+
+---
+

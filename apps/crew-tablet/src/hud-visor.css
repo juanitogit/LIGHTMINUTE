@@ -1,0 +1,745 @@
+/* LIGHTMINUTE VISOR HUD — EVA IN-HELMET HEADS-UP DISPLAY */
+
+:root {
+  --hud-a: #e8a321;
+  --hud-a2: rgba(232, 163, 33, 0.4);
+  --hud-a3: rgba(232, 163, 33, 0.14);
+  --hud-cy: #5fdcff;
+  --hud-grn: #8dffa6;
+  --hud-red: #ff4a36;
+  --hud-yel: #ffe27a;
+}
+
+.hud-container {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: #000;
+  color: var(--hud-a);
+  font-family: "Bank Gothic", "Eurostile", "Agency FB", "Segoe UI", Arial, sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.hud-container.l0 { --c: var(--hud-a); }
+.hud-container.l1 { --c: var(--hud-yel); }
+.hud-container.l2 { --c: var(--hud-red); }
+
+/* Background container: renders the Moon SVG directly */
+.hud-moon-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Visor filter: gold / amber EVA solar shield optics */
+.hud-visor-filter {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  backdrop-filter: sepia(0.68) contrast(1.12) saturate(1.3) brightness(0.94) hue-rotate(-10deg);
+  -webkit-backdrop-filter: sepia(0.68) contrast(1.12) saturate(1.3) brightness(0.94) hue-rotate(-10deg);
+  background:
+    linear-gradient(120deg, transparent 22%, rgba(255, 215, 105, 0.09) 30%, rgba(255, 175, 45, 0.14) 36%, transparent 44%),
+    linear-gradient(112deg, transparent 58%, rgba(255, 195, 60, 0.05) 64%, transparent 72%),
+    radial-gradient(ellipse at 50% 45%, rgba(230, 160, 25, 0.22) 0%, rgba(180, 110, 15, 0.34) 55%, rgba(65, 35, 5, 0.68) 100%),
+    linear-gradient(rgba(195, 130, 20, 0.16), rgba(140, 85, 10, 0.22)),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.03) 0 1px, transparent 1px 3px);
+  box-shadow:
+    inset 0 0 140px 35px rgba(120, 70, 5, 0.6),
+    inset 0 0 50px rgba(0, 0, 0, 0.85);
+  transition: opacity 0.3s ease;
+}
+
+.hud-visor-filter.is-disabled {
+  opacity: 0.15;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Subtle vignette to maintain HUD contrast */
+.hud-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 42%, transparent 25%, rgba(0, 0, 0, 0.35) 65%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+/* Emergency alarm pulse */
+.hud-alarm {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 3;
+  box-shadow: inset 0 0 110px 20px rgba(255, 74, 54, 0.4);
+  transition: opacity 0.4s ease;
+}
+
+.hud-container.alarm .hud-alarm {
+  animation: hud-alarm-glow 2.4s ease-in-out infinite;
+}
+
+@keyframes hud-alarm-glow {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 1; }
+}
+
+.hud-abs {
+  position: absolute;
+  z-index: 5;
+}
+
+.hud-ln {
+  fill: none;
+  stroke: var(--hud-a);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+
+.hud-dim {
+  opacity: 0.45;
+}
+
+/* Helmet corners */
+.hud-corner {
+  position: absolute;
+  bottom: 0;
+  width: min(32vw, 440px);
+  height: min(34vh, 240px);
+  z-index: 4;
+  pointer-events: none;
+}
+.hud-corner.cl { left: 0; }
+.hud-corner.cr { right: 0; transform: scaleX(-1); }
+
+.hud-tc {
+  position: absolute;
+  top: 0;
+  width: min(20vw, 260px);
+  height: min(14vh, 120px);
+  z-index: 4;
+  pointer-events: none;
+}
+.hud-tc.r { right: 0; transform: scaleX(-1); }
+
+/* Top bezel + day tape */
+#hud-top {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: min(60vw, 820px);
+  aspect-ratio: 760/96;
+  z-index: 5;
+}
+
+#hud-co2 {
+  position: absolute;
+  left: 25%;
+  right: 25%;
+  top: 2%;
+  height: 28%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 10px;
+  color: var(--c);
+}
+
+#hud-co2 .bk {
+  width: 80px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  position: relative;
+}
+
+#hud-co2 .bk i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--c);
+}
+
+#hud-tape {
+  position: absolute;
+  left: 19%;
+  right: 19%;
+  top: 33%;
+  height: 20%;
+  overflow: hidden;
+  mask: linear-gradient(90deg, transparent, #000 25%, #000 75%, transparent);
+  -webkit-mask: linear-gradient(90deg, transparent, #000 25%, #000 75%, transparent);
+}
+
+#hud-tape div {
+  position: absolute;
+  top: 0;
+  width: 40px;
+  text-align: center;
+  font-size: 9px;
+  opacity: 0.85;
+}
+
+#hud-tape div::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 13px;
+  width: 1px;
+  height: 6px;
+  background: var(--hud-a);
+}
+
+#hud-tape div.cur {
+  color: #ffd37a;
+  opacity: 1;
+}
+
+#hud-tape div.cur::before {
+  height: 10px;
+  width: 2px;
+  top: 11px;
+  background: #ffd37a;
+}
+
+#hud-banner {
+  position: absolute;
+  left: 50%;
+  top: 114%;
+  transform: translateX(-50%);
+  display: none;
+  white-space: nowrap;
+  font-size: 11px;
+  padding: 5px 26px;
+  color: var(--c);
+  border: 1px solid var(--c);
+  background: rgba(0, 0, 0, 0.7);
+  clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%);
+}
+
+#hud-banner.on { display: block; }
+#hud-banner.l2 { animation: hud-bk 1.6s steps(2) infinite; }
+
+@keyframes hud-bk {
+  50% { opacity: 0.35; }
+}
+
+/* DIAL: global integrity — top left */
+#hud-dial {
+  left: 3.2vw;
+  top: 3.4vh;
+  width: 104px;
+}
+#hud-dial text {
+  fill: var(--c);
+  font-family: inherit;
+}
+
+#hud-dial-label {
+  left: 3.2vw;
+  top: calc(3.4vh + 112px);
+  font-size: 8px;
+  opacity: 0.6;
+  letter-spacing: 0.12em;
+  width: 104px;
+  text-align: center;
+}
+
+/* SPACE WEATHER — top right */
+#hud-rad {
+  right: 3.4vw;
+  top: 3.5vh;
+  text-align: right;
+  font-size: 10px;
+  line-height: 1.9;
+  opacity: 0.9;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.45));
+  border: 1px solid var(--hud-a2);
+  padding: 8px 12px 8px 16px;
+  min-width: 110px;
+  position: absolute;
+  z-index: 5;
+}
+
+#hud-rad::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: -1px;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid var(--hud-a);
+  border-top: 2px solid var(--hud-a);
+}
+
+#hud-rad::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--hud-a);
+  border-bottom: 2px solid var(--hud-a);
+}
+
+#hud-rad .rad-title {
+  font-size: 8px;
+  opacity: 0.5;
+  letter-spacing: 0.2em;
+  margin-bottom: 3px;
+  display: block;
+}
+
+#hud-rad b {
+  font-weight: 400;
+  color: var(--c);
+  font-size: 16px;
+}
+
+#hud-rad .rad-sub {
+  font-size: 8px;
+  opacity: 0.65;
+  display: block;
+  margin-top: 2px;
+}
+
+/* LATERAL RULERS */
+.hud-ruler {
+  position: absolute;
+  top: 26vh;
+  height: 42vh;
+  width: 130px;
+  display: flex;
+  gap: 6px;
+  z-index: 5;
+}
+
+.hud-ruler.L { left: 1.6vw; }
+.hud-ruler.R { right: 1.6vw; flex-direction: row-reverse; text-align: right; }
+
+.hud-rt {
+  position: absolute;
+  top: -22px;
+  font-size: 9px;
+  opacity: 0.8;
+  letter-spacing: 0.12em;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.hud-ruler.R .hud-rt { right: 0; flex-direction: row-reverse; }
+
+.hud-rt-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 5px var(--c);
+  flex: none;
+}
+
+.hud-rb {
+  position: relative;
+  width: 16px;
+  height: 100%;
+  flex: none;
+  background:
+    repeating-linear-gradient(0deg, var(--hud-a2) 0 1px, transparent 1px 10px) 0 0 / 8px 100% no-repeat,
+    repeating-linear-gradient(0deg, var(--hud-a) 0 1px, transparent 1px 50px) 0 0 / 16px 100% no-repeat;
+}
+.hud-ruler.R .hud-rb { background-position: 100% 0, 100% 0; }
+
+.hud-rg {
+  position: absolute;
+  top: 0;
+  width: 3px;
+  background: var(--hud-a);
+  opacity: 0.9;
+}
+.hud-ruler.L .hud-rg { left: -5px; }
+.hud-ruler.R .hud-rg { right: -5px; }
+
+.hud-mk {
+  position: absolute;
+  left: 0;
+  width: 150px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--c);
+  transform: translateY(50%);
+  transition: bottom 0.25s ease;
+}
+.hud-ruler.R .hud-mk { left: auto; right: 0; flex-direction: row-reverse; }
+
+.hud-mk s {
+  display: block;
+  width: 22px;
+  height: 1px;
+  background: var(--c);
+  box-shadow: 0 0 4px var(--c);
+  flex: none;
+}
+
+.hud-mk span {
+  font-size: 15px;
+  text-shadow: 0 0 6px var(--c);
+  white-space: nowrap;
+}
+
+.hud-mk small {
+  font-size: 9px;
+  opacity: 0.75;
+  margin-left: 3px;
+}
+
+/* RETICLE */
+#hud-ret {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 34px;
+}
+#hud-ret * {
+  stroke: var(--c);
+  fill: none;
+  stroke-width: 1.2;
+}
+
+#hud-det {
+  left: 50%;
+  top: 56%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  text-align: center;
+  color: var(--c);
+  max-width: 60vw;
+  opacity: 0.9;
+}
+
+/* BOTTOM-LEFT VITALS CARD */
+#hud-bl {
+  left: 3.2vw;
+  bottom: 5vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.45));
+  border: 1px solid var(--hud-a2);
+  padding: 10px 12px;
+  min-width: 210px;
+  position: absolute;
+  z-index: 5;
+}
+
+#hud-bl::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: -1px;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid var(--hud-a);
+  border-top: 2px solid var(--hud-a);
+}
+
+#hud-bl::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--hud-a);
+  border-bottom: 2px solid var(--hud-a);
+}
+
+#hud-bl-title {
+  font-size: 8px;
+  opacity: 0.5;
+  letter-spacing: 0.2em;
+  margin-bottom: 8px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--hud-a3);
+}
+
+.hud-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--c);
+  padding: 7px 0;
+  border-bottom: 1px solid var(--hud-a3);
+  position: relative;
+}
+.hud-row:last-child { border-bottom: none; }
+
+.hud-row svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--c);
+  fill: none;
+  stroke-width: 1.4;
+  flex: none;
+  opacity: 0.85;
+}
+
+.hud-row-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+}
+
+.hud-row b {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1;
+  text-shadow: 0 0 6px var(--c);
+}
+
+.hud-row small { font-size: 8px; opacity: 0.6; }
+.hud-row-lbl { font-size: 8px; opacity: 0.6; letter-spacing: 0.1em; }
+
+.hud-row-bar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  margin-top: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hud-row-bar i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 2px;
+  background: var(--c);
+  box-shadow: 0 0 4px var(--c);
+}
+
+.hud-row-status {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 6px var(--c);
+  flex: none;
+  align-self: flex-start;
+  margin-top: 3px;
+}
+
+/* BOTTOM-RIGHT BODY SCANNER CARD */
+#hud-br {
+  right: 3.2vw;
+  bottom: 5vh;
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.45));
+  border: 1px solid var(--hud-a2);
+  padding: 12px 14px;
+  position: absolute;
+  z-index: 5;
+}
+
+#hud-br::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: -1px;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid var(--hud-a);
+  border-top: 2px solid var(--hud-a);
+}
+
+#hud-br::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--hud-a);
+  border-bottom: 2px solid var(--hud-a);
+}
+
+#hud-br .n {
+  font-size: 30px;
+  line-height: 1;
+  text-align: right;
+  color: var(--c);
+  text-shadow: 0 0 8px var(--c);
+}
+
+#hud-br .t {
+  font-size: 8px;
+  opacity: 0.7;
+  text-align: right;
+  margin-bottom: 6px;
+  letter-spacing: 0.12em;
+}
+
+#hud-br-title {
+  font-size: 8px;
+  opacity: 0.5;
+  letter-spacing: 0.2em;
+  position: absolute;
+  top: 6px;
+  right: 14px;
+}
+
+.hud-seg {
+  display: flex;
+  gap: 3px;
+  width: 150px;
+  margin-top: 8px;
+}
+
+.hud-seg b {
+  flex: 1;
+  height: 5px;
+  background: var(--c);
+  box-shadow: 0 0 5px var(--c);
+}
+
+.hud-body {
+  width: 70px;
+  height: 138px;
+  flex: none;
+}
+
+.hud-org {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 1.2;
+}
+
+.hud-org.f {
+  fill: var(--c);
+  fill-opacity: 0.3;
+}
+
+.hud-outline {
+  fill: none;
+  stroke: var(--hud-a2);
+  stroke-width: 0.9;
+}
+
+.hud-bone {
+  fill: none;
+  stroke: var(--hud-a2);
+  stroke-width: 0.6;
+  stroke-dasharray: 1.5 2;
+}
+
+.hud-scan-beam {
+  animation: hud-scan-move 2.8s linear infinite;
+}
+
+@keyframes hud-scan-move {
+  0% { transform: translateY(-100%); opacity: 0.8; }
+  100% { transform: translateY(500%); opacity: 0; }
+}
+
+/* TOP-RIGHT RETURN ACTION */
+.hud-exit-btn {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  z-index: 10;
+  background: rgba(14, 20, 28, 0.85);
+  color: #e8a321;
+  border: 1px solid rgba(232, 163, 33, 0.4);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.18s ease;
+  backdrop-filter: blur(6px);
+}
+
+.hud-exit-btn:hover {
+  background: rgba(232, 163, 33, 0.2);
+  color: #ffd87a;
+  box-shadow: 0 0 10px rgba(232, 163, 33, 0.4);
+}
+
+/* BOTTOM INTERACTIVE CONTROLS BAR */
+#hud-sim {
+  position: absolute;
+  left: 50%;
+  bottom: 1.4vh;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 10px;
+  opacity: 0.45;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+  background: rgba(8, 12, 18, 0.8);
+  backdrop-filter: blur(8px);
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(232, 163, 33, 0.3);
+}
+
+#hud-sim:hover, #hud-sim:focus-within {
+  opacity: 1;
+}
+
+#hud-sim select, #hud-sim button {
+  background: #000;
+  color: var(--hud-a);
+  border: 1px solid var(--hud-a2);
+  font: inherit;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+#hud-sim select:hover, #hud-sim button:hover {
+  border-color: var(--hud-a);
+  background: rgba(232, 163, 33, 0.1);
+}
+
+#hud-sim input[type="range"] {
+  accent-color: var(--hud-a);
+  width: 90px;
+  cursor: pointer;
+}
+
+#hud-note {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.3vh;
+  text-align: center;
+  font-size: 8px;
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 6;
+  letter-spacing: 0.1em;
+}
