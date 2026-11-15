@@ -38,7 +38,7 @@ export class Physiology3DAdapter {
       classification: cardioStatus,
       statusDescription: `Heart rate ${hr.toFixed(1)} bpm, SV ${cardio.strokeVolume_mL.toFixed(1)} mL, CO ${cardio.cardiacOutput_Lmin.toFixed(2)} L/min.`,
       telemetry: {
-        heartRate: { value: hr, unit: "bpm", label: "Heart Rate", tag: "[DATOS REALES]" },
+        heartRate: { value: hr, unit: "bpm", label: "Heart Rate", tag: "[SIMULADO]" },
         strokeVolume: { value: cardio.strokeVolume_mL, unit: "mL", label: "Stroke Volume", tag: "[SIMULADO]" },
         cardiacOutput: { value: cardio.cardiacOutput_Lmin, unit: "L/min", label: "Cardiac Output", tag: "[DERIVADO]" },
         meanArterialPressure: { value: cardio.meanArterialPressure_mmHg, unit: "mmHg", label: "MAP", tag: "[SIMULADO]" },
@@ -81,7 +81,7 @@ export class Physiology3DAdapter {
       classification: eyeStatus,
       statusDescription: `Translaminar pressure difference (IOP - ICP) ${tlcpd.toFixed(1)} mmHg. Optic sheath strain ratio: ${neuro.opticNerveSheathStrain.toFixed(2)}.`,
       telemetry: {
-        iop: { value: neuro.intraocularPressure_mmHg, unit: "mmHg", label: "Intraocular Pressure", tag: "[DATOS REALES]" },
+        iop: { value: neuro.intraocularPressure_mmHg, unit: "mmHg", label: "Intraocular Pressure", tag: "[SIMULADO]" },
         tlcpd: { value: tlcpd, unit: "mmHg", label: "Translaminar Pressure", tag: "[DERIVADO]" },
         opticSheathStrain: { value: neuro.opticNerveSheathStrain, unit: "strain", label: "Optic Nerve Strain", tag: "[SIMULADO]" },
       },
@@ -130,7 +130,7 @@ export class Physiology3DAdapter {
       classification: liverStatus,
       statusDescription: `Core temperature ${coreT.toFixed(2)} C. Metabolic heat: ${thermal.metabolicHeat_W.toFixed(0)} W. Microgravity convective dissipation impairment active.`,
       telemetry: {
-        coreTemp: { value: coreT, unit: "C", label: "Core Body Temperature", tag: "[DATOS REALES]" },
+        coreTemp: { value: coreT, unit: "C", label: "Core Body Temperature", tag: "[SIMULADO]" },
         skinTemp: { value: thermal.skinTemp_C, unit: "C", label: "Skin Temperature", tag: "[ESTIMADO]" },
         heatProduction: { value: thermal.metabolicHeat_W, unit: "W", label: "Metabolic Heat", tag: "[DERIVADO]" },
       },
@@ -223,10 +223,8 @@ export class Physiology3DAdapter {
       pulsationAmplitude: 0.0,
       volumeScale: 1.0,
       classification: "reference",
-      statusDescription: "Reference anatomical structure. Dynamic spaceflight endocrine ODE models are not published in open NASA HRP data; retained as geometric reference without synthetic extrapolation.",
-      telemetry: {
-        status: { value: 1.0, unit: "reference", label: "Anatomical Baseline", tag: "[DATOS REALES]" },
-      },
+      statusDescription: "Anatomical reference only.",
+      telemetry: {},
     };
 
     return map;

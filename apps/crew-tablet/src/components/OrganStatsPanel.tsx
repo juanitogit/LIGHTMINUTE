@@ -250,7 +250,7 @@ export const ORGAN_METADATA_REGISTRY: Record<string, OrganMetadata> = {
       "Status = Baseline Reference (Static)",
       "Dynamic ODEs = Omitted per NASA Scientific Data Rule",
     ],
-    stateVariables: ["Anatomical Reference Baseline [DATOS REALES]"],
+    stateVariables: ["Reference anatomy"],
     solverMethod: "Static geometric reference",
     timeStep: "N/A",
     scientificReference: "HuBMAP Consortium (HRA Visible Human female CC BY 4.0); NASA HRP Guidelines",
@@ -302,46 +302,6 @@ export function OrganStatsPanel({
     };
   }, [normKey, organName, build]);
 
-  // Synthetic trend series for sparkline visualization (7 days up to missionDay)
-  const sparklineData = useMemo(() => {
-    if (!visualAttrs || Object.keys(visualAttrs.telemetry).length === 0) return null;
-    const firstMetric = Object.values(visualAttrs.telemetry)[0];
-    if (!firstMetric) return null;
-
-    const baseVal = firstMetric.value;
-    const points: { day: number; val: number }[] = [];
-    const count = 7;
-    for (let i = count - 1; i >= 0; i--) {
-      const d = Math.max(1, missionDay - i);
-      // Generate slight deterministic fluctuation based on day
-      const wave = Math.sin(d * 1.3) * 0.03 * baseVal;
-      points.push({ day: d, val: baseVal + wave });
-    }
-
-    const vals = points.map((p) => p.val);
-    const min = Math.min(...vals);
-    const max = Math.max(...vals);
-    const range = max - min || 1;
-
-    // Map to SVG coordinates (width 240, height 50, padding 4)
-    const svgPoints = points
-      .map((p, i) => {
-        const x = 8 + (i / (count - 1)) * 224;
-        const y = 44 - ((p.val - min) / range) * 36;
-        return `${x.toFixed(1)},${y.toFixed(1)}`;
-      })
-      .join(" ");
-
-    return {
-      label: firstMetric.label,
-      unit: firstMetric.unit,
-      currentVal: baseVal,
-      points: svgPoints,
-      min,
-      max,
-    };
-  }, [visualAttrs, missionDay]);
-
   const classification = visualAttrs?.classification ?? "reference";
   const statusLabel =
     classification === "mild_strain"
@@ -384,7 +344,7 @@ export function OrganStatsPanel({
 
       {/* B. Estado Fisiológico en Tiempo Real */}
       <section className="organ-stats-panel__section">
-        <h4 className="organ-stats-panel__section-title">Physiological State Telemetry</h4>
+        <h4 className="organ-stats-panel__section-title">Simulated physiology · Day {missionDay}</h4>
         {visualAttrs && Object.keys(visualAttrs.telemetry).length > 0 ? (
           <div className="organ-stats-panel__metrics-grid">
             {Object.entries(visualAttrs.telemetry).map(([key, item]) => (
@@ -406,39 +366,6 @@ export function OrganStatsPanel({
           </p>
         )}
       </section>
-
-      {/* C. Evolución Temporal (Gráfico de Tendencia) */}
-      {sparklineData ? (
-        <section className="organ-stats-panel__section">
-          <div className="organ-stats-panel__chart-header">
-            <h4 className="organ-stats-panel__section-title">Temporal Evolution (Last 7 Days)</h4>
-            <span className="organ-stats-panel__chart-current">
-              Day {missionDay}: <strong>{sparklineData.currentVal.toFixed(1)}</strong> {sparklineData.unit}
-            </span>
-          </div>
-          <div className="organ-stats-panel__chart-box">
-            <svg
-              className="organ-stats-panel__chart-svg"
-              viewBox="0 0 240 50"
-              aria-hidden="true"
-            >
-              <polyline
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                points={sparklineData.points}
-              />
-            </svg>
-            <div className="organ-stats-panel__chart-labels">
-              <span>Day {Math.max(1, missionDay - 6)}</span>
-              <span>{sparklineData.label}</span>
-              <span>Day {missionDay}</span>
-            </div>
-          </div>
-        </section>
-      ) : null}
 
       {/* D. Parámetros del Modelo Matemático */}
       <section className="organ-stats-panel__section">

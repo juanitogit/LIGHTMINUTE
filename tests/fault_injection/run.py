@@ -336,14 +336,14 @@ def wrong_static_fallback():
 
 
 def write_results():
-    out = ROOT / "docs/safety"
+    out = Path(os.environ.get("TETHER_FAULT_REPORT_DIR", ROOT / "docs/safety"))
     out.mkdir(parents=True, exist_ok=True)
     metadata = {"utc": datetime.now(timezone.utc).isoformat(), "engine_revision": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
                 "command": ".venv/Scripts/python.exe tests/fault_injection/run.py", "label": "synthetic", "results": RESULTS}
     (out / "fault-injection-results.json").write_text(json.dumps(metadata, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     passed = sum(r["status"] == "PASS" for r in RESULTS)
     lines = ["# Real-interface fault injection", "", f"Run UTC: {metadata['utc']}. Revision: `{metadata['engine_revision']}`.",
-             f"Command: `{metadata['command']}`. Raw evidence: `docs/safety/fault-injection-results.json`.",
+             f"Command: `{metadata['command']}`. Raw evidence: [JSON](fault-injection-results.json).",
              f"Result: **{passed}/{len(RESULTS)} assertions passed**. Failures are safety findings, not engine fixes.", "", "| Fault | Test | Result | Observation |", "|---|---|---|---|"]
     for r in RESULTS:
         observation = json.dumps(r["observation"], ensure_ascii=False).replace("|", "/").replace("\n", " ")

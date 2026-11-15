@@ -87,6 +87,10 @@ jobs:
         working-directory: apps/crew-tablet
         run: npm run build
 
+      - name: Physiology simulator regression tests
+        working-directory: apps/crew-tablet
+        run: npm run test:physiology
+
       - name: Google OAuth security and session regressions
         working-directory: apps/crew-tablet
         run: npm run test:auth

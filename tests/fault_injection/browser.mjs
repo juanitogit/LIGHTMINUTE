@@ -12,7 +12,7 @@ try {
   await page.route("**/data/radiation.json", route => route.fulfill({ json: fixture }));
   await page.goto(`${url}/#view=radiation`);
   await page.getByText("Archived snapshot · not live", { exact: true }).waitFor();
-  await page.getByText(/Retrieved: 2000-01-01/).waitFor();
+  await page.locator("dt").filter({ hasText: /^Retrieved$/ }).locator("..").getByText("1 Jan 2000 00:00 UTC", { exact: true }).waitFor();
   const stale = { id: "FI-26", title: "Stale space weather stays visibly archived", component: "Radiation UI", severity: "high",
     status: "PASS", test: "stale_weather_archived", evidence: "tests/fault_injection/browser.mjs",
     observation: { injected_retrieval: fixture.retrieved_at, label: "Archived snapshot · not live", limit: "No automatic maximum-age rejection; label only" } };

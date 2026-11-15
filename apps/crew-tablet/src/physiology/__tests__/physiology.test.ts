@@ -155,6 +155,10 @@ export function runAllPhysiologyTests() {
     assert(visuals["uterus"] !== undefined, "Uterus visual attributes mapped");
     assert(visuals["uterus"]!.classification === "reference", "Uterus correctly classified as reference baseline without synthetic dynamics");
     assert(visuals["heart"]!.pulsationFrequency_Hz > 0.0, "Heart has valid non-zero dynamic pulsation frequency");
+    assert(Object.keys(visuals["uterus"]!.telemetry).length === 0, "Reference anatomy has no telemetry");
+    assert(Object.values(visuals).every(organ =>
+      Object.values(organ.telemetry).every(metric => metric.tag !== "[DATOS REALES]")
+    ), "Scenario telemetry must retain synthetic provenance");
     console.log("  PASS 8: Multi-organ Engine orchestration and 3D Visual Adapter mapping");
   }
 

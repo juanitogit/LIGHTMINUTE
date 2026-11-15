@@ -396,7 +396,7 @@ export function Radiation() {
               <Chip tone="quiet">{panel.channel ?? "channel not recorded"}</Chip>
               <Chip tone="quiet">GOES-{panel.satellite ?? "?"}</Chip>
               <Chip tone="quiet">
-                {panel.synthetic ? "synthetic replay" : "public snapshot"}
+                {panel.synthetic ? "synthetic replay" : "Archived snapshot · not live"}
               </Chip>
               {panel.unitsContracted ? null : <Chip tone="warn">units are not pfu</Chip>}
               {panel.labelConflict ? (
@@ -406,10 +406,10 @@ export function Radiation() {
               ) : null}
             </p>
 
-            <Panel title="Now" labelledBy="rad-now">
+            <Panel title="Latest sample in snapshot" labelledBy="rad-now">
               <dl className="tiles tiles--3">
                 <div className="tile">
-                  <dt>Current flux</dt>
+                  <dt>Latest archived flux</dt>
                   <dd>{panel.current ? formatFlux(panel.current.flux, unit) : "—"}</dd>
                 </div>
                 <div className="tile">
@@ -417,13 +417,13 @@ export function Radiation() {
                   <dd>{panel.peak ? formatFlux(panel.peak.flux, unit) : "—"}</dd>
                 </div>
                 <div className="tile">
-                  <dt>S-scale now / max</dt>
+                  <dt>S-scale latest / max</dt>
                   <dd>
                     {sScaleLabel(panel.sScaleNow)} / {sScaleLabel(panel.sScaleMax)}
                   </dd>
                 </div>
                 <div className="tile">
-                  <dt>Current sample</dt>
+                  <dt>Latest sample</dt>
                   <dd>{panel.current ? formatTs(panel.current.ts) : "—"}</dd>
                 </div>
                 <div className="tile">
