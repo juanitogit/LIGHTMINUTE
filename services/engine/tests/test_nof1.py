@@ -1,5 +1,5 @@
-import random
 import math
+import random
 
 from tether_engine.bayes import CUSUM, BaselineModel
 
@@ -118,6 +118,8 @@ def test_timestamped_persistent_shift_keeps_anchor_and_requires_elapsed_time():
     for minute in range(24 * 60):
         model.robust_update(80, observed_at=float(minute * 60))
     assert not model.unresolved_change
+    assert model.surprise(80)["change_pending"]
+    assert model.surprise(80)["pending_p_two_sided"] < .05
     for minute in range(24 * 60, 2 * 24 * 60 + 1):
         model.robust_update(80, observed_at=float(minute * 60))
     assert model.unresolved_change
@@ -136,6 +138,25 @@ def test_timestamp_rejects_invalid_and_unordered_without_mutating_model():
         else:
             raise AssertionError("Invalid or unordered timestamp accepted")
         assert (model.predictive(), model.n_seen) == before
+
+
+def test_timestamped_change_with_long_gap_is_not_assumed_continuous():
+    model = BaselineModel(70, 5)
+    for _ in range(20):
+        model.update(70)
+    model.robust_update(80, observed_at=0.0)
+    model.robust_update(80, observed_at=3 * 86400.0)
+    assert not model.unresolved_change
+
+
+def test_timestamped_candidate_clears_when_values_return_to_reference():
+    model = BaselineModel(70, 5)
+    for _ in range(20):
+        model.update(70)
+    model.robust_update(80, observed_at=0.0)
+    assert model.surprise(80)["change_pending"] is True
+    model.robust_update(70, observed_at=60.0)
+    assert model.surprise(70)["change_pending"] is False
 
 
 def test_rebaseline_clears_state_and_healthy_readings_update_again():

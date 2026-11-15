@@ -73,9 +73,17 @@ class BaselineModel:
         loc, scale, df = self.predictive()
         z = (x - loc) / scale
         lo, hi = stats.t.interval(0.95, df, loc=loc, scale=scale)
+        pending_z = pending_p = None
+        if self._candidate is not None and not self.unresolved_change:
+            anchor = self._candidate[0]
+            anchor_scale = max(math.sqrt(anchor.beta * (anchor.kappa + 1.0) / (anchor.alpha * anchor.kappa)), self.min_sd)
+            pending_z = (x - anchor.mu0) / anchor_scale
+            pending_p = 2.0 * stats.t.sf(abs(pending_z), 2.0 * anchor.alpha)
         return {"z": z, "p_two_sided": 2.0 * stats.t.sf(abs(z), df),
                 "ci95": (lo, hi), "baseline": loc, "df": df, "n_seen": self.n_seen,
-                "unresolved_change": self.unresolved_change}
+                "unresolved_change": self.unresolved_change,
+                "change_pending": self._candidate is not None and not self.unresolved_change,
+                "pending_z": pending_z, "pending_p_two_sided": pending_p}
 
     def update(self, x: float) -> None:
         if self.unresolved_change:

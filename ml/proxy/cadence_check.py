@@ -3,12 +3,11 @@ import hashlib
 import json
 import platform
 import subprocess
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import numpy
 import scipy
-
 from credibility_analysis import ROOT, mmash
 
 
@@ -16,7 +15,7 @@ def main():
     engine = ROOT / "services/engine/tether_engine/bayes/nof1.py"
     result = {
         "label": "real-public proxy; exploratory, not independent or clinical",
-        "run_utc": datetime.now(timezone.utc).isoformat(),
+        "run_utc": datetime.now(UTC).isoformat(),
         "revision": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         "engine_sha256": hashlib.sha256(engine.read_bytes()).hexdigest(),
         "environment": {"python": platform.python_version(), "numpy": numpy.__version__, "scipy": scipy.__version__},
