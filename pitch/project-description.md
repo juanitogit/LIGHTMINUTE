@@ -51,3 +51,44 @@ not a personal radiation dose. The ground link is a local simulation, and the
 public static website does not supply the Python backend. The prototype has not
 been validated for real patients or real crews. AI tools assisted development;
 the project team remains responsible for reviewing its claims and outputs.
+
+## Use of AI
+
+AI was used in three separate ways. Evidence for each statement is collected in
+[`docs/ai/INVENTORY.md`](../docs/ai/INVENTORY.md); gaps are listed in
+[`docs/ai/OPEN-QUESTIONS.md`](../docs/ai/OPEN-QUESTIONS.md).
+
+**Development assistance.** Development used coding agents and assistants:
+OpenCode (`opencode/deepseek-v4.1-flash-free`),
+Freebuff (`DeepSeek V4.1 Flash Slow`) and Antigravity (`Gemini 3.8 Flash
+(Medium)`, `Claude Sonnet 4.6 (Thinking)`), as recorded in `docs/prompts/`.
+Twenty-seven commits carry a `Co-Authored-By: Codebuff` trailer. The team
+reviewed and owns every change.
+
+**Optional explanation layer in the product.** The deterministic engine computes
+every number and urgency level. A hosted model (`deepseek-flash` through the
+DeepSeek API) may only rewrite those facts as a Decision Card. A deterministic
+verifier rejects invented citations, changed numbers, lowered urgency, diagnosis
+and dosing, and the product falls back to a template card. It runs with no model
+at all (`LLM_PROVIDER=none`). The repository contains no recorded live model
+call; the project audit states that none was made in that session, and the
+template path is what the demo uses.
+
+**An experimental small language model, not integrated.** A LoRA adapter on
+`Qwen/Qwen2.5-0.5B-Instruct` was trained on synthetic cards written by free-tier
+hosted models and evaluated offline. It did not meet its pre-set gates: 2,125
+training rows against a 4,000-row bar, and no human review. It is not imported by
+the product. See
+[`docs/ai/MODEL-CARD.md`](../docs/ai/MODEL-CARD.md).
+
+Not AI: the anatomical meshes are CC-licensed (NIH 3D, BodyParts3D, HRA), the
+logo is owner-supplied, and the simulator is deterministic code. No shipped
+image, video or audio is described as AI-generated anywhere in the repository;
+that check was textual, not a visual review of every asset. The Bayesian
+N-of-1 baseline and the conformal experiment are classical statistics, not model
+training. Browser dictation uses the Web Speech API, so the browser vendor may
+receive microphone audio; the interface states this and dictation is optional.
+
+Limitations: the LLM layer is optional and has not been verified in live
+operation; the trained model is a partial feasibility result, not a shipped
+feature; no AI component is a medical device or provides diagnosis.
