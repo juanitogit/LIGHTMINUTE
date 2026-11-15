@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LIGHTMINUTE · HUD de casco</title>
+<style>
+:root{--a:#e8a321;--a2:#e8a32166;--a3:#e8a32122;--cy:#5fdcff;--grn:#8dffa6;--red:#ff4a36;--yel:#ffe27a}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#000;overflow:hidden;color:var(--a);font-family:"Bank Gothic","Eurostile","Agency FB","Segoe UI",Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase}
+.l0{--c:var(--a)}.l1{--c:var(--yel)}.l2{--c:var(--red)}
+#hud{position:relative;height:100vh;width:100vw;overflow:hidden;background:#000}
+/* fondo lunar: iframe a pantalla completa detrás de todo */
+#moon-bg{position:absolute;inset:0;width:100%;height:100%;border:none;z-index:0;pointer-events:none}
+
+/* filtro amarillo / tono sepia del visor del casco */
+#visor-filter{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  /* Simulación óptica de la visera dorada/ámbar de protección solar EVA */
+  backdrop-filter:sepia(0.68) contrast(1.12) saturate(1.3) brightness(0.94) hue-rotate(-10deg);
+  -webkit-backdrop-filter:sepia(0.68) contrast(1.12) saturate(1.3) brightness(0.94) hue-rotate(-10deg);
+  background:
+    /* reflejos diagonales de curvatura en el cristal */
+    linear-gradient(120deg, transparent 22%, rgba(255, 215, 105, 0.09) 30%, rgba(255, 175, 45, 0.14) 36%, transparent 44%),
+    linear-gradient(112deg, transparent 58%, rgba(255, 195, 60, 0.05) 64%, transparent 72%),
+    /* tinte radial ámbar/sepia de la película protectora del visor */
+    radial-gradient(ellipse at 50% 45%, rgba(230, 160, 25, 0.22) 0%, rgba(180, 110, 15, 0.34) 55%, rgba(65, 35, 5, 0.68) 100%),
+    /* velo sepia cálido */
+    linear-gradient(rgba(195, 130, 20, 0.16), rgba(140, 85, 10, 0.22)),
+    /* microtextura de policarbonato / polarizado */
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0 1px, transparent 1px 3px);
+  box-shadow:
+    inset 0 0 140px 35px rgba(120, 70, 5, 0.6),
+    inset 0 0 50px rgba(0, 0, 0, 0.85);
+}
+
+/* velo sutil para mantener el contraste de las alertas y HUD */
+#hud::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+ background:radial-gradient(ellipse at 50% 42%,transparent 25%,#00000044 65%,#00000088 100%)}
+#alarm{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:2;box-shadow:inset 0 0 110px 20px #ff4a3666}
+#hud.alarm #alarm{animation:glow 2.4s ease-in-out infinite}@keyframes glow{50%{opacity:1}}
+.abs{position:absolute;z-index:3}
+svg{display:block;overflow:visible}
+.ln{fill:none;stroke:var(--a);stroke-width:1.2;vector-effect:non-scaling-stroke}
+.dim{opacity:.45}
+/* esquinas del casco */
+.corner{position:absolute;bottom:0;width:min(32vw,440px);height:min(34vh,240px);z-index:3}
+.corner.cr{right:0;transform:scaleX(-1)}.corner.cl{left:0}
+.tc{position:absolute;top:0;width:min(20vw,260px);height:min(14vh,120px);z-index:3}.tc.r{right:0;transform:scaleX(-1)}
+/* superior: bisel + cinta */
+#top{position:absolute;left:50%;top:0;transform:translateX(-50%);width:min(60vw,820px);aspect-ratio:760/96;z-index:3}
+#top svg{width:100%;height:100%}
+#co2{position:absolute;left:25%;right:25%;top:2%;height:28%;display:flex;align-items:center;justify-content:center;gap:10px;font-size:10px;color:var(--c)}
+#co2 .bk{width:80px;height:4px;background:#ffffff1f;position:relative}#co2 .bk i{position:absolute;left:0;top:0;bottom:0;background:var(--c)}
+#tape{position:absolute;left:19%;right:19%;top:33%;height:20%;overflow:hidden;
+ -webkit-mask:linear-gradient(90deg,transparent,#000 25%,#000 75%,transparent);mask:linear-gradient(90deg,transparent,#000 25%,#000 75%,transparent)}
+#tape div{position:absolute;top:0;width:40px;text-align:center;font-size:9px;opacity:.85}
+#tape div::before{content:"";position:absolute;left:50%;top:13px;width:1px;height:6px;background:var(--a)}
+#tape div.cur{color:#ffd37a;opacity:1}#tape div.cur::before{height:10px;width:2px;top:11px;background:#ffd37a}
+#banner{position:absolute;left:50%;top:114%;transform:translateX(-50%);display:none;white-space:nowrap;font-size:11px;padding:5px 26px;color:var(--c);border:1px solid var(--c);background:#000a;
+ clip-path:polygon(12px 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,12px 100%,0 50%)}
+#banner.on{display:block}#banner.l2{animation:bk 1.6s steps(2) infinite}@keyframes bk{50%{opacity:.35}}
+
+/* ============================================================
+   DIAL: integridad global — superior izquierdo
+   ============================================================ */
+#dial{left:3.2vw;top:3.4vh;width:104px}
+#dial text{fill:var(--c);font-family:inherit}
+
+/* etiqueta debajo del dial */
+#dial-label{left:3.2vw;top:calc(3.4vh + 112px);font-size:8px;opacity:.6;letter-spacing:.12em;width:104px;text-align:center}
+
+/* ============================================================
+   CLIMA ESPACIAL — superior derecho, panel estilizado
+   ============================================================ */
+#rad{right:3.4vw;top:3.5vh;text-align:right;font-size:10px;line-height:1.9;opacity:.9;
+  background:linear-gradient(135deg,#000c,#0007);
+  border:1px solid var(--a2);
+  padding:8px 12px 8px 16px;
+  min-width:110px;
+  position:absolute;z-index:3}
+#rad::before{content:"";position:absolute;left:-1px;top:-1px;width:10px;height:10px;border-left:2px solid var(--a);border-top:2px solid var(--a)}
+#rad::after{content:"";position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border-right:2px solid var(--a);border-bottom:2px solid var(--a)}
+#rad .rad-title{font-size:8px;opacity:.5;letter-spacing:.2em;margin-bottom:3px;display:block}
+#rad b{font-weight:400;color:var(--c);font-size:16px}
+#rad .rad-sub{font-size:8px;opacity:.65;display:block;margin-top:2px}
+
+/* ============================================================
+   REGLAS LATERALES
+   ============================================================ */
+.ruler{position:absolute;top:26vh;height:42vh;width:130px;display:flex;gap:6px;z-index:3}
+.ruler.L{left:1.6vw}.ruler.R{right:1.6vw;flex-direction:row-reverse;text-align:right}
+.rt{position:absolute;top:-22px;font-size:9px;opacity:.8;letter-spacing:.12em;display:flex;align-items:center;gap:5px}
+.ruler.R .rt{right:0;flex-direction:row-reverse}
+.rt-dot{width:6px;height:6px;border-radius:50%;background:var(--c);box-shadow:0 0 5px var(--c);flex:none}
+.rb{position:relative;width:16px;height:100%;flex:none;
+ background:repeating-linear-gradient(0deg,var(--a2) 0 1px,transparent 1px 10px) 0 0/8px 100% no-repeat,repeating-linear-gradient(0deg,var(--a) 0 1px,transparent 1px 50px) 0 0/16px 100% no-repeat}
+.ruler.R .rb{background-position:100% 0,100% 0}
+.rg{position:absolute;top:0;width:3px;background:var(--a);opacity:.9}.ruler.L .rg{left:-5px}.ruler.R .rg{right:-5px}
+.mk{position:absolute;left:0;width:150px;display:flex;align-items:center;gap:5px;color:var(--c);transform:translateY(50%)}
+.ruler.R .mk{left:auto;right:0;flex-direction:row-reverse}
+.mk s{display:block;width:22px;height:1px;background:var(--c);box-shadow:0 0 4px var(--c);flex:none}
+.mk span{font-size:15px;text-shadow:0 0 6px var(--c);white-space:nowrap}.mk small{font-size:9px;opacity:.75;margin-left:3px}
+.mk.l2{animation:bk 1.6s steps(2) infinite}
+
+/* etiquetas de rango de las reglas */
+.ruler-range-label{position:absolute;font-size:7.5px;opacity:.45;white-space:nowrap}
+.ruler.L .ruler-range-label{right:calc(100% + 4px)}
+.ruler.R .ruler-range-label{left:calc(100% + 4px)}
+
+/* ============================================================
+   RETÍCULA CENTRAL
+   ============================================================ */
+#ret{left:50%;top:50%;transform:translate(-50%,-50%);width:34px}
+#ret *{stroke:var(--c);fill:none;stroke-width:1.2}
+#ret.l2{animation:bk 1.6s steps(2) infinite}
+#det{left:50%;top:56%;transform:translateX(-50%);font-size:10px;text-align:center;color:var(--c);max-width:60vw;opacity:.9}
+
+/* ============================================================
+   INFERIOR IZQUIERDO — Sueño · PVT · Cefalea
+   ============================================================ */
+#bl{left:3.2vw;bottom:5vh;display:flex;flex-direction:column;gap:0;
+  background:linear-gradient(135deg,#000c,#0007);
+  border:1px solid var(--a2);
+  padding:10px 12px;
+  min-width:200px;
+  position:absolute;z-index:3}
+#bl::before{content:"";position:absolute;left:-1px;top:-1px;width:10px;height:10px;border-left:2px solid var(--a);border-top:2px solid var(--a)}
+#bl::after{content:"";position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border-right:2px solid var(--a);border-bottom:2px solid var(--a)}
+#bl-title{font-size:8px;opacity:.5;letter-spacing:.2em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--a3)}
+.row{display:flex;align-items:center;gap:10px;color:var(--c);padding:7px 0;border-bottom:1px solid var(--a3);position:relative}
+.row:last-child{border-bottom:none}
+.row svg{width:20px;height:20px;stroke:var(--c);fill:none;stroke-width:1.4;flex:none;opacity:.85}
+.row-info{display:flex;flex-direction:column;gap:1px;flex:1}
+.row b{font-weight:400;font-size:18px;line-height:1;text-shadow:0 0 6px var(--c)}.row small{font-size:8px;opacity:.6}
+.row-lbl{font-size:8px;opacity:.6;letter-spacing:.1em}
+.row-bar{height:3px;background:#ffffff12;border-radius:2px;margin-top:4px;position:relative;overflow:hidden}
+.row-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:2px;background:var(--c);box-shadow:0 0 4px var(--c)}
+.row.l2{animation:bk 1.6s steps(2) infinite}
+.row-status{width:7px;height:7px;border-radius:50%;background:var(--c);box-shadow:0 0 6px var(--c);flex:none;align-self:flex-start;margin-top:3px}
+
+/* ============================================================
+   INFERIOR DERECHO — Cuerpo + Órganos + Barra integridad
+   ============================================================ */
+#br{right:3.2vw;bottom:5vh;display:flex;align-items:flex-end;gap:16px;
+  background:linear-gradient(135deg,#000c,#0007);
+  border:1px solid var(--a2);
+  padding:12px 14px;
+  position:absolute;z-index:3}
+#br::before{content:"";position:absolute;left:-1px;top:-1px;width:10px;height:10px;border-left:2px solid var(--a);border-top:2px solid var(--a)}
+#br::after{content:"";position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border-right:2px solid var(--a);border-bottom:2px solid var(--a)}
+#br .n{font-size:30px;line-height:1;text-align:right;color:var(--c);text-shadow:0 0 8px var(--c)}
+#br .t{font-size:8px;opacity:.7;text-align:right;margin-bottom:6px;letter-spacing:.12em}
+#br-title{font-size:8px;opacity:.5;letter-spacing:.2em;position:absolute;top:6px;right:14px}
+.seg{display:flex;gap:3px;width:150px;margin-top:8px}.seg b{flex:1;height:5px;background:var(--c);box-shadow:0 0 5px var(--c)}
+
+/* cuerpo SVG mejorado */
+.body{width:70px;height:138px;flex:none}
+.org{fill:none;stroke:var(--c);stroke-width:1.2}.org.l2{animation:bk 1.6s steps(2) infinite}
+.org.f{fill:var(--c);fill-opacity:.3}
+.outline{fill:none;stroke:var(--a2);stroke-width:.9}
+.bone{fill:none;stroke:var(--a2);stroke-width:.6;stroke-dasharray:1.5 2}
+
+/* etiquetas de órganos */
+.org-label{font-size:6px;fill:var(--c);opacity:.7;font-family:inherit}
+
+/* scan line animación sobre el cuerpo */
+@keyframes scan-move{0%{transform:translateY(-100%);opacity:.8}100%{transform:translateY(500%);opacity:0}}
+.scan-beam{animation:scan-move 2.8s linear infinite}
+
+/* ============================================================
+   CONTROL DE SIMULACIÓN
+   ============================================================ */
+#sim{position:absolute;left:50%;bottom:1.2vh;transform:translateX(-50%);display:flex;gap:8px;align-items:center;font-size:9px;opacity:.3;transition:.2s;z-index:9}#sim:hover,#sim:focus-within{opacity:1}
+#sim select,#sim button{background:#000;color:var(--a);border:1px solid var(--a2);font:inherit;padding:2px 6px;cursor:pointer;text-transform:uppercase}
+#sim input{accent-color:var(--a);width:100px}
+#note{position:absolute;left:0;right:0;bottom:.3vh;text-align:center;font-size:7px;opacity:.35;pointer-events:none}
+:focus-visible{outline:2px solid #5fdcff;outline-offset:2px}
+@media (max-width:760px){.ruler{width:96px}.mk{width:110px}.mk span{font-size:12px}.row b{font-size:16px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div id="hud" class="l0">
+ <!-- Entorno lunar como fondo — archivo independiente -->
+ <iframe id="moon-bg" src="moon-environment.html" title="Entorno lunar" aria-hidden="true" tabindex="-1"></iframe>
+ <!-- Filtro de visor de casco (tono ámbar/sepia, curvatura y reflejos ópticos) -->
+ <div id="visor-filter"></div>
+ <div id="alarm"></div>
+
+ <!-- esquinas que imitan el casco -->
+ <svg class="corner cl" viewBox="0 0 300 150" preserveAspectRatio="none" aria-hidden="true"><path d="M0 10C90 10 200 40 262 150H0Z" fill="#000" fill-opacity=".62"/><path class="ln" d="M0 10C90 10 200 40 262 150"/><path class="ln dim" d="M0 24C84 24 184 52 238 150"/></svg>
+ <svg class="corner cr" viewBox="0 0 300 150" preserveAspectRatio="none" aria-hidden="true"><path d="M0 10C90 10 200 40 262 150H0Z" fill="#000" fill-opacity=".62"/><path class="ln" d="M0 10C90 10 200 40 262 150"/><path class="ln dim" d="M0 24C84 24 184 52 238 150"/></svg>
+ <svg class="tc" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H130C50 0 0 30 0 100Z" fill="#000" fill-opacity=".55"/><path class="ln" d="M0 100C0 30 50 0 130 0"/><path class="ln dim" d="M0 78C4 34 52 8 120 0"/></svg>
+ <svg class="tc r" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H130C50 0 0 30 0 100Z" fill="#000" fill-opacity=".55"/><path class="ln" d="M0 100C0 30 50 0 130 0"/><path class="ln dim" d="M0 78C4 34 52 8 120 0"/></svg>
+
+ <!-- bisel superior + cinta de días -->
+ <div id="top">
+  <svg viewBox="0 0 760 96" aria-hidden="true">
+   <path d="M170 0H590C575 12 572 22 560 30H200C188 22 185 12 170 0Z" fill="#000" fill-opacity=".85" stroke="#e8a321" stroke-width="1"/>
+   <path class="ln" d="M20 30Q380 92 740 30"/><path class="ln dim" d="M60 28Q380 80 700 28"/>
+  </svg>
+  <div id="co2"></div><div id="tape" aria-label="Día de misión"></div>
+  <div id="banner" role="alert"></div>
+ </div>
+
+ <!-- dial: integridad global -->
+ <svg class="abs" id="dial" viewBox="-52 -52 104 104" aria-label="Integridad global">
+  <circle r="48" class="ln dim"/><circle r="44" class="ln"/>
+  <path class="ln dim" d="M-44 0H44M0-44V44"/>
+  <circle r="30" class="ln dim"/>
+  <circle id="arc" r="38" fill="none" stroke="var(--c)" stroke-width="3" stroke-dasharray="238.8" stroke-dashoffset="0" transform="rotate(-90)"/>
+  <line x1="0" y1="0" x2="0" y2="-30" stroke="var(--a)" stroke-width="1.4"><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="9s" repeatCount="indefinite"/></line>
+  <text id="dn" y="7" text-anchor="middle" font-size="20">--</text>
+  <text y="22" text-anchor="middle" font-size="6" opacity=".5">INTEGR.</text>
+ </svg>
+ <div class="abs" id="dial-label">INTEGRIDAD GLOBAL</div>
+
+ <!-- clima espacial -->
+ <div class="abs" id="rad"></div>
+
+ <!-- reglas laterales -->
+ <div class="ruler L" id="rl"></div><div class="ruler R" id="rr"></div>
+
+ <!-- retícula central -->
+ <svg class="abs l0" id="ret" viewBox="-20 -20 40 40" aria-hidden="true"><path d="M0-9L8 0 0 9-8 0Z"/><circle r="14" stroke-dasharray="2 5"/><path d="M-20 0H-16M16 0H20M0-20V-16M0 16V20"/></svg>
+ <div class="abs" id="det"></div>
+
+ <!-- inferior izquierdo -->
+ <div class="abs" id="bl">
+  <div id="bl-title">SIGNOS VITALES</div>
+ </div>
+ <!-- inferior derecho -->
+ <div class="abs" id="br">
+  <span id="br-title">ESCÁNER CORPORAL</span>
+ </div>
+
+ <div id="sim">
+  <label>Portador <select id="who"><option value="0">A · Oficial médico</option><option value="1">B · Ingeniera</option><option value="2">C · Piloto</option><option value="3">D · Científico</option></select></label>
+  <label>Escenario <select id="scn"><option value="cmo_fever">Síndrome febril</option><option value="sep_sleep_loss">Tormenta solar + sueño</option><option value="co2_creep">Ascenso de CO₂</option><option value="nominal">Nominal</option></select></label>
+  <label>Día <input type="range" id="day" min="1" max="30" value="18"></label><button id="play">▶ Auto</button>
+ </div>
+ <div id="note">Simulación · datos sintéticos · no es un dispositivo médico · sin diagnóstico ni tratamiento</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const CREW=[{k:'A',hr:62,t:36.6,s:7.6,p:255},{k:'B',hr:68,t:36.7,s:7.2,p:270},{k:'C',hr:58,t:36.5,s:7.8,p:240},{k:'D',hr:72,t:36.8,s:7.0,p:285}];
+const IND={
+ rest_hr:{l:'FC',u:'bpm',e:[60,100],sc:[40,130],d:0},
+ temp_c:{l:'Temp. central',u:'°C',e:[36.1,37.5],sc:[35.5,39],d:1},
+ sleep_h:{l:'Sueño',u:'h',e:[7,9],sc:[2,10],d:1},
+ pvt_ms:{l:'Reacción PVT',u:'ms',e:null,sc:[200,420],d:0},
+ co2_ppm:{l:'CO₂ cabina',u:'ppm',e:[0,5000],sc:[2500,7000],d:0},
+ headache_score:{l:'Cefalea',u:'/10',e:[0,3],sc:[0,10],d:0}};
+const S=()=>$('scn').value,D=()=>+$('day').value,W=()=>+$('who').value;
+const n=(i,d,k)=>{const x=Math.sin(i*12.9+d*78.2+k*37.7)*43758.5;return x-Math.floor(x)-.5};
+const ramp=(d,s,w)=>Math.max(0,Math.min(1,(d-s)/w));
+const sScale=d=>S()!=='sep_sleep_loss'||d<12?0:d===12?1:d<=14?3:d<=16?2:1;
+const co2=d=>Math.round(3200+n(9,d,1)*160+(S()==='co2_creep'&&d>=8?(d-7)*140:0));
+function vals(i,d){const c=CREW[i],r=k=>n(i,d,k);
+ let v={rest_hr:c.hr+r(1)*4,temp_c:c.t+r(2)*.25,sleep_h:c.s+r(3)*.7,pvt_ms:c.p+r(4)*16,co2_ppm:co2(d),headache_score:0};
+ if(S()==='cmo_fever'&&i===0){const q=ramp(d,14,4);v.rest_hr+=18*q;v.temp_c+=1.3*q;v.sleep_h-=1.9*q;v.pvt_ms+=62*q}
+ if(S()==='sep_sleep_loss'&&i===2){const q=ramp(d,11,4);v.sleep_h-=2.8*q;v.rest_hr+=12*q;v.pvt_ms+=72*q}
+ if(S()==='co2_creep'){v.pvt_ms+=Math.max(0,(v.co2_ppm-3800)/12)*(1-i*.12);v.headache_score=Math.max(0,Math.min(8,Math.round((v.co2_ppm-3900-i*120)/260)))}
+ return v}
+function lvl(key,v,c){
+ const b={rest_hr:c.hr,temp_c:c.t,sleep_h:c.s,pvt_ms:c.p}[key],dv=b==null?0:Math.abs(v-b),e=IND[key].e,eOk=!e||(v>=e[0]&&v<=e[1]);let L=0;
+ if(key==='rest_hr')L=dv>15?2:dv>8?1:0;
+ if(key==='temp_c')L=dv>1?2:dv>.5?1:0;
+ if(key==='sleep_h')L=(dv>2||v<5)?2:dv>1.2?1:0;
+ if(key==='pvt_ms')L=dv>60?2:dv>35?1:0;
+ if(key==='co2_ppm')L=v>5000?2:v>4000?1:0;
+ if(key==='headache_score')L=v>3?2:v>=2?1:0;
+ const p=L>0;if(L===0&&!eOk)L=1;
+ return{L,eOk,p,hidden:eOk&&p}}
+
+/* Íconos SVG para la sección inferior izquierda */
+const ICON={
+ sleep_h:'<path d="M12 3a8 8 0 1 0 8 10 6 6 0 0 1-8-10z"/>',
+ pvt_ms:'<circle cx="12" cy="13" r="7"/><path d="M12 13V9M9 3h6"/>',
+ headache_score:'<circle cx="12" cy="12" r="8"/><path d="M7 12l2.5-3 2.5 5 2-4 3 2"/>'};
+
+/* Rango normalizado para barra */
+const pct=(key,val)=>{const m=IND[key];return Math.max(0,Math.min(100,(val-m.sc[0])/(m.sc[1]-m.sc[0])*100))};
+
+let playing=null;
+
+/* ============================================================
+   SVG HUMANOIDE MEJORADO (viewBox 0 0 100 220)
+   Proporciones anatómicas realistas con órganos posicionados
+   ============================================================ */
+function bodySVG(o){
+ const col=l=>['#e8a321','#ffe27a','#ff4a36'][l];
+ const org=(id,l,d,extra='')=>`<path id="${id}" class="org l${l}${l?' f':''}" style="--c:${col(l)}" d="${d}" ${extra}/>`;
+
+ // Colores de nivel para órganos
+ const cb=col(o.brain), ch=col(o.heart), cl_=col(o.lung), cg=col(o.liver);
+
+ return `<svg class="body" viewBox="0 0 100 220" aria-label="Modelo corporal con órganos monitoreados">
+  <defs>
+   <linearGradient id="bodyG" x1="0" x2="1" y1="0" y2="0">
+    <stop offset="0" stop-color="#ffffff" stop-opacity=".06"/>
+    <stop offset=".5" stop-color="#ffffff" stop-opacity=".12"/>
+    <stop offset="1" stop-color="#ffffff" stop-opacity=".04"/>
+   </linearGradient>
+   <filter id="glow"><feGaussianBlur stdDeviation="1.2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+
+  <!-- === SILUETA CORPORAL === -->
+  <!-- Cabeza: óvalo levemente más estrecho en la cima -->
+  <ellipse class="outline" cx="50" cy="18" rx="13" ry="16"/>
+  <!-- Detalle cráneo: línea sagital -->
+  <path class="bone" d="M50 4 Q52 10 50 18"/>
+  <!-- Orejas -->
+  <path class="outline" d="M37 17 Q34 18 35 22 Q36 25 38 24" stroke-width=".7"/>
+  <path class="outline" d="M63 17 Q66 18 65 22 Q64 25 62 24" stroke-width=".7"/>
+
+  <!-- Cuello -->
+  <path class="outline" d="M44 32 L44 40 Q50 42 56 40 L56 32"/>
+  <!-- Líneas de cuello (venas yugulares) -->
+  <path class="bone" d="M46 33 L46 39 M54 33 L54 39"/>
+
+  <!-- Torso: trapecio (hombros más anchos, cadera estrecha) -->
+  <path class="outline" d="
+   M44 40 Q38 41 28 46
+   L22 48
+   Q18 50 19 56
+   L21 100
+   Q22 104 28 105
+   L35 106 Q38 108 38 112
+   L38 116 Q38 118 40 118
+   L42 118 Q44 116 44 112
+   L44 110 Q46 108 50 108 Q54 108 56 110
+   L56 112 Q56 116 58 118
+   L60 118 Q62 118 62 116
+   L62 112 Q62 108 65 106
+   L72 105 Q78 104 79 100
+   L81 56 Q82 50 78 48
+   L72 46 Q62 41 56 40
+   Q53 39 50 39 Q47 39 44 40 Z"/>
+
+  <!-- Costillas (sutil) -->
+  <path class="bone" d="M32 55 Q50 52 68 55 M31 61 Q50 58 69 61 M30 67 Q50 64 70 67 M31 73 Q50 70 69 73"/>
+
+  <!-- Columna vertebral -->
+  <path class="bone" d="M50 42 L50 108" stroke-dasharray="2 3"/>
+
+  <!-- Hombros: rectángulos redondeados -->
+  <rect class="outline" x="13" y="44" width="12" height="32" rx="5" ry="5"/>
+  <rect class="outline" x="75" y="44" width="12" height="32" rx="5" ry="5"/>
+
+  <!-- Brazos superiores -->
+  <rect class="outline" x="13" y="75" width="11" height="26" rx="4" ry="4"/>
+  <rect class="outline" x="76" y="75" width="11" height="26" rx="4" ry="4"/>
+
+  <!-- Codos -->
+  <ellipse class="outline" cx="18.5" cy="101" rx="6" ry="4"/>
+  <ellipse class="outline" cx="81.5" cy="101" rx="6" ry="4"/>
+
+  <!-- Antebrazos (ligeramente girados para pose natural) -->
+  <rect class="outline" x="14" y="104" width="10" height="24" rx="4" ry="4" transform="rotate(4 19 116)"/>
+  <rect class="outline" x="76" y="104" width="10" height="24" rx="4" ry="4" transform="rotate(-4 81 116)"/>
+
+  <!-- Manos -->
+  <ellipse class="outline" cx="19" cy="130" rx="6" ry="4"/>
+  <ellipse class="outline" cx="81" cy="130" rx="6" ry="4"/>
+  <!-- Dedos (3 líneas en cada mano) -->
+  <path class="bone" d="M16 132 L14 137 M19 133 L19 138 M22 132 L24 137" stroke-width=".5"/>
+  <path class="bone" d="M78 132 L76 137 M81 133 L81 138 M84 132 L86 137" stroke-width=".5"/>
+
+  <!-- Pelvis -->
+  <path class="outline" d="M35 112 Q35 120 42 122 Q50 124 58 122 Q65 120 65 112"/>
+
+  <!-- Muslos -->
+  <rect class="outline" x="34" y="118" width="14" height="34" rx="6"/>
+  <rect class="outline" x="52" y="118" width="14" height="34" rx="6"/>
+
+  <!-- Rodillas -->
+  <ellipse class="outline" cx="41" cy="153" rx="7" ry="5"/>
+  <ellipse class="outline" cx="59" cy="153" rx="7" ry="5"/>
+
+  <!-- Espinillas / tibias -->
+  <rect class="outline" x="35" y="156" width="12" height="32" rx="5"/>
+  <rect class="outline" x="53" y="156" width="12" height="32" rx="5"/>
+
+  <!-- Pies -->
+  <path class="outline" d="M35 186 Q33 190 31 193 Q28 196 32 198 Q38 200 46 198 Q50 196 48 190 L47 186Z"/>
+  <path class="outline" d="M53 186 Q51 190 52 198 Q54 200 68 198 Q72 196 69 196 Q66 196 65 193 Q63 190 65 186Z"/>
+
+  <!-- === RELLENO BODY (gradiente sutil) === -->
+  <path fill="url(#bodyG)" fill-opacity=".5" d="
+   M44 40 Q38 41 28 46 L22 48 Q18 50 19 56 L21 100 Q22 104 28 105
+   L38 112 Q38 118 42 118 L44 112 Q46 108 50 108 Q54 108 56 110
+   L56 112 Q58 118 60 118 L62 116 L62 112 Q62 108 65 106
+   L72 105 Q78 104 79 100 L81 56 Q82 50 78 48
+   L72 46 Q62 41 56 40 Q53 39 50 39 Q47 39 44 40 Z"/>
+
+  <!-- === ÓRGANOS === -->
+  <!-- Cerebro (dentro de la cabeza) -->
+  <path id="ob" class="org l${o.brain}${o.brain?' f':''}" style="--c:${cb}" d="
+   M43 12 Q44 7 50 6 Q56 7 57 12
+   Q58 17 55 20 Q52 22 50 21 Q48 22 45 20 Q42 17 43 12Z"/>
+  <!-- Circunvoluciones cerebrales -->
+  <path style="fill:none;stroke:${cb};stroke-width:.6;opacity:.7" d="M45 13 Q48 11 50 13 Q52 11 55 13 M44 16 Q47 14 50 16 Q53 14 56 16"/>
+
+  <!-- Vasos yugulares / cuello -->
+  <path id="oj" class="org l${o.brain?1:0}" style="--c:${o.brain?cb:'#e8a321'};fill:none;stroke-width:1.8"
+    d="M46 33 L46 40 M54 33 L54 40"/>
+
+  <!-- Pulmón izquierdo -->
+  <path id="ol" class="org l${o.lung}${o.lung?' f':''}" style="--c:${cl_}" d="
+   M36 52 Q28 54 26 65 Q24 76 27 85 Q30 90 36 88 Q42 86 44 78
+   Q46 68 44 58 Q42 52 36 52Z"/>
+  <!-- Lóbulos pulmonares izq -->
+  <path style="fill:none;stroke:${cl_};stroke-width:.6;opacity:.6" d="M30 68 Q37 65 43 70 M29 77 Q36 74 43 79"/>
+
+  <!-- Pulmón derecho -->
+  <path id="or" class="org l${o.lung}${o.lung?' f':''}" style="--c:${cl_}" d="
+   M64 52 Q72 54 74 65 Q76 76 73 85 Q70 90 64 88 Q58 86 56 78
+   Q54 68 56 58 Q58 52 64 52Z"/>
+  <!-- Lóbulos pulmonares der -->
+  <path style="fill:none;stroke:${cl_};stroke-width:.6;opacity:.6" d="M70 68 Q63 65 57 70 M71 77 Q64 74 57 79"/>
+
+  <!-- Corazón (centro-izquierda del torso) -->
+  <path id="oh" class="org l${o.heart}${o.heart?' f':''}" style="--c:${ch}" d="
+   M50 72 Q44 64 38 68 Q34 72 38 79 Q42 85 50 92
+   Q58 85 62 79 Q66 72 62 68 Q56 64 50 72Z"/>
+  <!-- Aorta -->
+  <path style="fill:none;stroke:${ch};stroke-width:1.2;opacity:.8" d="M50 72 Q50 65 50 60 Q50 56 46 54"/>
+
+  <!-- Hígado (lado derecho, bajo pulmón) -->
+  <path id="og" class="org l${o.liver}${o.liver?' f':''}" style="--c:${cg}" d="
+   M55 90 Q65 88 72 92 Q76 96 74 102 Q72 106 64 106
+   Q56 106 54 100 Q52 94 55 90Z"/>
+
+  <!-- Riñones -->
+  <ellipse class="org l0" style="--c:#e8a321" cx="37" cy="97" rx="5" ry="7"/>
+  <ellipse class="org l0" style="--c:#e8a321" cx="63" cy="97" rx="5" ry="7"/>
+  <!-- Uréteres -->
+  <path class="bone" d="M37 104 Q37 110 40 114 M63 104 Q63 110 60 114" stroke-width=".6"/>
+
+  <!-- Estómago (centro, pequeño) -->
+  <ellipse class="outline" cx="46" cy="96" rx="7" ry="5" opacity=".35"/>
+
+  <!-- Línea de escaneo animada -->
+  <rect class="scan-beam" x="19" y="4" width="62" height="2" rx="1"
+    fill="var(--cy)" fill-opacity=".18" filter="url(#glow)"/>
+ </svg>`;
+}
+
+function render(){
+ const d=D(),i=W(),c=CREW[i],v=vals(i,d),L={};let max=0,score=0;
+ for(const k in IND){L[k]=lvl(k,v[k],c);max=Math.max(max,L[k].L);score+=L[k].L}
+ const integ=Math.max(8,100-score*11),sc=sScale(d),al=[],push=(l,t,x)=>al.push({l,t,x});
+ const f=['rest_hr','temp_c','pvt_ms','sleep_h'].filter(k=>L[k].p).length;
+ if(f>=3)push(2,'Patrón febril','↑FC ↑Temp ↓Sueño ↑PVT · protocolo fever_like_syndrome');
+ else if(f===2)push(1,'Tendencia febril','Dos indicadores se desvían de tu baseline');
+ if(v.co2_ppm>4000&&v.headache_score>=2)push(2,'Cefalea con CO₂ en ascenso','Revisar el hábitat antes de tratar · co2_headache_cluster');
+ else if(v.co2_ppm>5000)push(2,'CO₂ de cabina crítico',v.co2_ppm+' ppm sobre el techo demo de 5 000');
+ else if(v.co2_ppm>4000)push(1,'CO₂ en ascenso',v.co2_ppm+' ppm · exposición compartida');
+ if(sc>=3)push(2,'Tormenta de protones S'+sc,'Refugio de radiación recomendado en el escenario');
+ else if(sc>=1)push(1,'Tormenta de protones S'+sc,'Contexto: no eleva alertas por sí sola');
+ if(sc>=1&&L.sleep_h.p&&L.pvt_ms.p)push(max===2?2:1,'Sueño bajo + reacción lenta','Durante evento de partículas');
+ if(d>=11&&d<=13&&S()==='sep_sleep_loss'&&i===2)push(1,'Contexto EVA','Vigilar mareo al ponerse de pie · post_eva_orthostatic');
+ if(!al.length&&max===2){const k=Object.keys(IND).find(k=>L[k].L===2);push(2,'Valor crítico · '+IND[k].l,'Fuera de tu baseline personal')}
+ al.sort((a,b)=>b.l-a.l);
+ const top=al[0],lv=top?top.l:max;
+ $('hud').className='l'+lv+(al[0]&&al[0].l===2?' alarm':'');
+
+ // cinta de días
+ let t='';for(let k=-6;k<=6;k++){const x=d+k;if(x<1||x>30)continue;t+=`<div class="${k?'':'cur'}" style="left:calc(50% + ${k*44-20}px)">${k?x:'D'+x}</div>`}
+ $('tape').innerHTML=t;
+
+ // CO2 (bisel)
+ const cl=v.co2_ppm>5000?2:v.co2_ppm>4000?1:0,cp=Math.max(0,Math.min(1,(v.co2_ppm-2500)/4500));
+ $('co2').className='l'+cl;$('co2').innerHTML=`<span>CO₂</span><span class="bk"><i style="width:${cp*100}%"></i></span><span>${v.co2_ppm} ppm</span>`;
+
+ // banner y detalle
+ const b=$('banner');
+ if(top){b.className='on l'+top.l;b.textContent=(top.l===2?'▲ ':'! ')+top.t+(al.length>1?'  +'+(al.length-1):'')}else b.className='';
+ $('det').textContent=top?top.x:'';$('det').className='abs l'+(top?top.l:0);
+ $('ret').setAttribute('class','abs l'+lv);
+
+ // dial
+ $('arc').setAttribute('stroke-dashoffset',238.8*(1-integ/100));$('arc').parentNode.setAttribute('class','abs l'+max);$('dn').textContent=integ;
+
+ // clima espacial — panel mejorado
+ const scLbl=['Sin eventos','Leve','Moderada','Severa','Extrema','Extrema'][sc]||'—';
+ const scCl=sc>=3?2:sc?1:0;
+ $('rad').innerHTML=`
+  <span class="rad-title">CLIMA ESPACIAL</span>
+  Radiación solar<br>
+  <b class="l${scCl}">S${sc}</b> <span style="font-size:9px;vertical-align:middle;opacity:.8">${scLbl}</span><br>
+  <span class="rad-sub">${sc>=1?'SEP · FLR · CME':'Sin eventos activos'}</span>`;
+
+ // reglas laterales
+ const ruler=(el,key)=>{const m=IND[key],p=q=>Math.max(0,Math.min(100,(q-m.sc[0])/(m.sc[1]-m.sc[0])*100)),x=L[key];
+  $(el).innerHTML=`<div class="rt"><span class="rt-dot"></span>${m.l}${x.hidden?' ◇':''}</div><div class="rb"><i class="rg" style="bottom:${p(m.e[0])}%;height:${p(m.e[1])-p(m.e[0])}%"></i><div class="mk l${x.L}" style="bottom:${p(v[key])}%"><s></s><span>${v[key].toFixed(m.d)}<small>${m.u}</small></span></div></div>`;
+  $(el).className='ruler '+(el==='rl'?'L':'R')+' l'+x.L};
+ ruler('rl','rest_hr');ruler('rr','temp_c');
+
+ // ============================================================
+ // INFERIOR IZQUIERDO — Sueño · PVT · Cefalea (panel mejorado)
+ // ============================================================
+ const blHTML=['sleep_h','pvt_ms','headache_score'].map(k=>{
+  const m=IND[k],x=L[k],val=v[k],pp=pct(k,val);
+  const colHex=['#e8a321','#ffe27a','#ff4a36'][x.L];
+  return `<div class="row l${x.L}" title="${m.l}${x.hidden?' · dentro de rango Tierra pero fuera de tu baseline':''}">
+   <svg viewBox="0 0 24 24">${ICON[k]}</svg>
+   <div class="row-info">
+    <div class="row-lbl">${m.l}${x.hidden?' ◇':''}</div>
+    <b>${val.toFixed(m.d)}<small> ${m.u}</small></b>
+    <div class="row-bar"><i style="width:${pp}%;background:${colHex};box-shadow:0 0 4px ${colHex}"></i></div>
+   </div>
+   <div class="row-status" style="background:${colHex};box-shadow:0 0 6px ${colHex}"></div>
+  </div>`;}).join('');
+ // preservar el título
+ $('bl').innerHTML=`<div id="bl-title">SIGNOS VITALES</div>${blHTML}`;
+
+ // ============================================================
+ // INFERIOR DERECHO — Cuerpo + Órganos
+ // ============================================================
+ const g=k=>L[k].L;
+ const o={brain:Math.max(g('sleep_h'),g('pvt_ms'),g('headache_score')),heart:g('rest_hr'),lung:g('co2_ppm'),liver:g('temp_c')};
+ const segs=Object.keys(IND).map(k=>`<b style="--c:${['#e8a32166','#ffe27a','#ff4a36'][L[k].L]}"></b>`).join('');
+
+ $('br').innerHTML=`
+  <span id="br-title">ESCÁNER CORPORAL</span>
+  ${bodySVG(o)}
+  <div>
+   <div class="t">${LNAME[lv]}${al.length?' · '+al.length+(al.length>1?' alertas':' alerta'):''}</div>
+   <div class="n" style="--c:${['#e8a321','#ffe27a','#ff4a36'][lv]}">${al.length}</div>
+   <div class="seg">${segs}</div>
+   <div style="font-size:7px;opacity:.45;margin-top:8px;line-height:1.6">
+    ${['Cerebro','Corazón','Pulmones','Hígado'].map((n,idx)=>{
+     const ll=[o.brain,o.heart,o.lung,o.liver][idx];
+     return `<div style="color:${['#e8a321','#ffe27a','#ff4a36'][ll]}">${n}: ${['OK','VIGILAR','CRÍTICO'][ll]}</div>`;
+    }).join('')}
+   </div>
+  </div>`;
+}
+const LNAME=['Normal','Vigilar','Crítico'];
+$('who').addEventListener('change',render);
+$('scn').addEventListener('change',()=>{$('day').value={cmo_fever:18,sep_sleep_loss:14,co2_creep:19,nominal:10}[S()];$('who').value={cmo_fever:0,sep_sleep_loss:2,co2_creep:1,nominal:0}[S()];render()});
+$('day').addEventListener('input',render);
+$('play').addEventListener('click',()=>{
+ if(playing){clearInterval(playing);playing=null;$('play').textContent='▶ Auto';return}
+ $('play').textContent='❚❚ Pausa';playing=setInterval(()=>{$('day').value=D()>=30?1:D()+1;render()},1100)});
+$('who').value=0;render();
+</script>
+</body>
+</html>
