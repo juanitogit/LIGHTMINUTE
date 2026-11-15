@@ -73,6 +73,7 @@
       "apps/crew-tablet/tests/",
       "apps/crew-tablet/public/data/space-weather.json",
       "organs/",
+      "simulator-prototypes/",
       "handoff/freebuff-checklist.md"
     ]
   },
@@ -133,6 +134,11 @@
       "docs/reference-coverage.md",
       "docs/google-oauth.md",
       "docs/seo-deploy.md"
+      ,"docs/ESTADO-REAL-LIGHTMINUTE.md"
+      ,"docs/avances/"
+      ,"docs/pruebas/"
+      ,"PROTOTYPES_REVIEW_LIGHTMINUTE.md"
+      ,"SENSOR_RESEARCH_LIGHTMINUTE.md"
     ]
   },
   "A7": {
