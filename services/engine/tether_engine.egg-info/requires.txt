@@ -6,6 +6,8 @@ pydantic>=2
 httpx
 openai>=1.50
 duckdb
+psycopg[binary]<4,>=3.2
+python-dotenv<2,>=1
 
 [dev]
 pytest

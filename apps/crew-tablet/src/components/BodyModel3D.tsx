@@ -8,6 +8,7 @@ import { PhysiologySimulationEngine } from "../physiology/engine";
 import { Physiology3DAdapter } from "../physiology/adapter";
 import type { OrganVisualizationMap } from "../physiology/types";
 import { OrganStatsPanel } from "./OrganStatsPanel";
+import { ErrorBoundary } from "./ErrorBoundary";
 
 /** Anatomically scaled anchor coordinates in world space (scaled to 2.8m). */
 const ANCHORS_BY_BUILD: Record<"male" | "female", Record<BodyRegion, [number, number, number]>> = {
@@ -230,12 +231,31 @@ export function BodyModel3D({
   const [focusRegion, setFocusRegion] = useState<FocusRegion>("full");
   const [status, setStatus] = useState<"loading" | "ready" | "unavailable">("loading");
   const [selectedOrgan, setSelectedOrgan] = useState<string | null>(null);
+  const [hoveredOrgan, setHoveredOrgan] = useState<string | null>(null);
 
   // Keep latest references for render callbacks
   const selectedOrganRef = useRef(selectedOrgan);
   selectedOrganRef.current = selectedOrgan;
+  const hoveredOrganRef = useRef(hoveredOrgan);
+  hoveredOrganRef.current = hoveredOrgan;
   const buildRef = useRef(build);
   buildRef.current = build;
+
+  // ESC key listener to dismiss selected organ drawer
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && selectedOrgan) {
+        setSelectedOrgan(null);
+        setSelectedCentroid(undefined);
+        control.current?.refresh();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selectedOrgan]);
+
+  // Centroid coordinates of currently selected organ — set at click time, inside the WebGL handler
+  const [selectedCentroid, setSelectedCentroid] = useState<[number, number, number] | undefined>(undefined);
 
   const systemRef = useRef(system);
   systemRef.current = system;
@@ -362,6 +382,15 @@ export function BodyModel3D({
                selectedOrganRef.current.toLowerCase().includes(item.name.toLowerCase()))
             );
 
+            // Check if this organ is actively hovered by pointer
+            const isHovered = Boolean(
+              !isSelected &&
+              hoveredOrganRef.current &&
+              (item.name.toLowerCase() === hoveredOrganRef.current.toLowerCase() ||
+               item.mesh.name.toLowerCase() === hoveredOrganRef.current.toLowerCase() ||
+               hoveredOrganRef.current.toLowerCase().includes(item.name.toLowerCase()))
+            );
+
             // Lookup physiological visual attributes for this organ (case-insensitive fuzzy key match)
             const organKey = item.name.toLowerCase();
             const physioEntry =
@@ -374,8 +403,14 @@ export function BodyModel3D({
               // Highlight selected organ with cyan accent glow
               surfaceMat.color.setHex(0x38bdf8);
               surfaceMat.emissive.setHex(0x0284c7);
-              surfaceMat.emissiveIntensity = 0.55;
+              surfaceMat.emissiveIntensity = 0.65;
               surfaceMat.roughness = 0.22;
+            } else if (isHovered) {
+              // Subtle hover highlight (light cyan sheen with blue emissive glow)
+              surfaceMat.color.setHex(0x7dd3fc);
+              surfaceMat.emissive.setHex(0x0369a1);
+              surfaceMat.emissiveIntensity = 0.4;
+              surfaceMat.roughness = 0.3;
             } else if (unusual) {
               // Existing anomaly sentinel has priority (personal baseline unusual reading)
               surfaceMat.color.setHex(0xe28b62);
@@ -672,7 +707,7 @@ export function BodyModel3D({
           bodyOrgans[keyName] = organList;
         }
 
-        // Raycasting for organ selection and double-click focus
+        // Raycasting for organ selection, hover feedback and double-click focus
         const raycaster = new T.Raycaster();
         const mouse = new T.Vector2();
 
@@ -684,6 +719,49 @@ export function BodyModel3D({
           pointerDownX = event.clientX;
           pointerDownY = event.clientY;
           pointerDownTime = performance.now();
+        };
+
+        const onPointerMove = (event: PointerEvent) => {
+          // If camera is actively animating/rotating, skip hover checks
+          if (animating) return;
+
+          const rect = renderer.domElement.getBoundingClientRect();
+          mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+          mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+          raycaster.setFromCamera(mouse, camera);
+
+          const currentOrgans = bodyOrgans[buildRef.current] ?? [];
+          const visibleMeshes = currentOrgans
+            .map((o) => o.mesh)
+            .filter((m) => m.visible && m.name !== "skin");
+          const intersects = raycaster.intersectObjects(visibleMeshes, false);
+
+          if (intersects.length > 0 && intersects[0]?.object) {
+            const hitMesh = intersects[0].object as Mesh;
+            const hitName = hitMesh.name || "organ";
+            if (hoveredOrganRef.current !== hitName) {
+              hoveredOrganRef.current = hitName;
+              setHoveredOrgan(hitName);
+              renderer.domElement.style.cursor = "pointer";
+              render();
+            }
+          } else {
+            if (hoveredOrganRef.current !== null) {
+              hoveredOrganRef.current = null;
+              setHoveredOrgan(null);
+              renderer.domElement.style.cursor = "grab";
+              render();
+            }
+          }
+        };
+
+        const onPointerLeave = () => {
+          if (hoveredOrganRef.current !== null) {
+            hoveredOrganRef.current = null;
+            setHoveredOrgan(null);
+            renderer.domElement.style.cursor = "grab";
+            render();
+          }
         };
 
         const onPointerUp = (event: PointerEvent) => {
@@ -708,15 +786,21 @@ export function BodyModel3D({
             const hitMesh = intersects[0].object as Mesh;
             const hitName = hitMesh.name || "organ";
             setSelectedOrgan(hitName);
+            // Capture the centroid of the clicked mesh immediately while in WebGL scope
+            const p = hitMesh.position;
+            setSelectedCentroid([p.x, p.y, p.z]);
           } else {
             // Clicked background or skin -> clear selection
             setSelectedOrgan(null);
+            setSelectedCentroid(undefined);
           }
           render();
         };
 
         renderer.domElement.addEventListener("pointerdown", onPointerDown);
         renderer.domElement.addEventListener("pointerup", onPointerUp);
+        renderer.domElement.addEventListener("pointermove", onPointerMove);
+        renderer.domElement.addEventListener("pointerleave", onPointerLeave);
 
         const onDblClick = (event: MouseEvent) => {
           const rect = renderer.domElement.getBoundingClientRect();
@@ -745,6 +829,8 @@ export function BodyModel3D({
           controls.removeEventListener("start", onControlsStart);
           renderer.domElement.removeEventListener("pointerdown", onPointerDown);
           renderer.domElement.removeEventListener("pointerup", onPointerUp);
+          renderer.domElement.removeEventListener("pointermove", onPointerMove);
+          renderer.domElement.removeEventListener("pointerleave", onPointerLeave);
           renderer.domElement.removeEventListener("dblclick", onDblClick);
           controls.dispose();
           disposeObject(scene);
@@ -921,24 +1007,69 @@ export function BodyModel3D({
           : null}
       </div>
 
-      {/* Selected organ detailed physiological & mathematical statistics panel */}
+      {/* Selected organ detailed physiological & mathematical statistics drawer */}
       {selectedOrgan ? (
-        <OrganStatsPanel
-          organName={selectedOrgan}
-          visualAttrs={
-            physioVisualMap[selectedOrgan.toLowerCase()] ??
-            physioVisualMap[selectedOrgan.toLowerCase().replace(/\s+/g, "_")] ??
-            Object.entries(physioVisualMap).find(([k]) =>
-              selectedOrgan.toLowerCase().includes(k) || k.includes(selectedOrgan.toLowerCase())
-            )?.[1]
-          }
-          build={build}
-          missionDay={missionDay}
-          onClose={() => {
+        <ErrorBoundary
+          fallbackTitle="Panel de órgano no disponible"
+          onReset={() => {
             setSelectedOrgan(null);
+            setSelectedCentroid(undefined);
             control.current?.refresh();
           }}
-        />
+        >
+          <OrganStatsPanel
+            organName={selectedOrgan}
+            visualAttrs={
+              physioVisualMap[selectedOrgan.toLowerCase()] ??
+              physioVisualMap[selectedOrgan.toLowerCase().replace(/\s+/g, "_")] ??
+              Object.entries(physioVisualMap).find(([k]) =>
+                selectedOrgan.toLowerCase().includes(k) || k.includes(selectedOrgan.toLowerCase())
+              )?.[1]
+            }
+            build={build}
+            missionDay={missionDay}
+            readings={readings}
+            position={selectedCentroid}
+            fallbackGeometry={
+              organMeshesRef.current.find(
+                (o) =>
+                  o.name.toLowerCase() === selectedOrgan.toLowerCase() ||
+                  selectedOrgan.toLowerCase().includes(o.name.toLowerCase()) ||
+                  o.name.toLowerCase().includes(selectedOrgan.toLowerCase())
+              )?.mesh.geometry
+            }
+            onClose={() => {
+              setSelectedOrgan(null);
+              setSelectedCentroid(undefined);
+              control.current?.refresh();
+            }}
+            onFocusOrgan={(name) => {
+              const item = organMeshesRef.current.find(
+                (o) => o.name.toLowerCase() === name.toLowerCase() ||
+                       name.toLowerCase().includes(o.name.toLowerCase())
+              );
+              if (item) {
+                const p = item.mesh.position;
+                control.current?.focusToPoint([p.x, p.y, p.z], 1.6);
+              }
+            }}
+            onSelectOrgan={(name) => {
+              const item = organMeshesRef.current.find(
+                (o) => o.name.toLowerCase() === name.toLowerCase() ||
+                       name.toLowerCase().includes(o.name.toLowerCase())
+              );
+              setSelectedOrgan(name);
+              if (item) {
+                const p = item.mesh.position;
+                setSelectedCentroid([p.x, p.y, p.z]);
+              } else {
+                setSelectedCentroid(undefined);
+              }
+              control.current?.refresh();
+            }}
+            onOpenIndicator={onOpenIndicator}
+          />
+        </ErrorBoundary>
       ) : null}
 
       {/* Physiology simulation panel — deterministic model, not diagnosis (shows when region focused and no single organ selected) */}

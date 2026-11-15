@@ -10,6 +10,8 @@ Requires-Dist: pydantic>=2
 Requires-Dist: httpx
 Requires-Dist: openai>=1.50
 Requires-Dist: duckdb
+Requires-Dist: psycopg[binary]<4,>=3.2
+Requires-Dist: python-dotenv<2,>=1
 Provides-Extra: dev
 Requires-Dist: pytest; extra == "dev"
 Requires-Dist: ruff; extra == "dev"
