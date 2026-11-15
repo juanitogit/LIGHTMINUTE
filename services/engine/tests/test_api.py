@@ -43,10 +43,22 @@ def test_health_reports_provider_without_leaking_the_key():
 
 
 def test_health_reports_none_provider_without_a_key():
-    with env(LLM_PROVIDER=None, DEEPSEEK_API_KEY=None), env(DEEPSEEK_API_KEY=""):
+    # .env is loaded at import time, so both providers have to be cleared.
+    with env(LLM_PROVIDER=None, DEEPSEEK_API_KEY=None, GROQ_API_KEY=None),          env(DEEPSEEK_API_KEY="", GROQ_API_KEY=""):
         body = CLIENT.get("/api/health").json()
     assert body["llm_provider"] == "none"
     assert body["llm_key_present"] is False
+
+
+def test_health_reports_groq_without_leaking_the_key():
+    with env(LLM_PROVIDER="groq", GROQ_API_KEY="gsk-test-value",
+             GROQ_MODEL="openai/gpt-oss-120b"):
+        r = CLIENT.get("/api/health")
+    body = r.json()
+    assert body["llm_provider"] == "groq"
+    assert body["llm_key_present"] is True
+    assert body["llm_model"] == "openai/gpt-oss-120b"
+    assert "gsk-test-value" not in r.text
 
 
 def test_scenarios_lists_the_three_contract_names():

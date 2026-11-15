@@ -135,3 +135,17 @@ pública del repo.
 
 ## Relacionado
 [[00-Home]] · [[Board]] · [[Plan 48h]] · [[Resultados de validacion]] · [[Matriz de superioridad]] · [[Personas]] · [[Pulido visual - plan]] · [[Seguridad y etica]] · [[Guion pitch y video]] · [[2026-11-13]]
+
+## Proveedor LLM: Groq (14-nov)
+
+- El producto ya no apunta a DeepSeek: `LLM_PROVIDER=groq` con `openai/gpt-oss-120b`
+  (`https://api.groq.com/openai/v1`). DeepSeek sigue soportado por la misma interfaz.
+- Nuevo registro `services/engine/tether_engine/llm/providers.py` (proveedor, clave, base URL y
+  modelo por entorno) y `llm/groq_client.py`. `card_service` ya no conoce al proveedor: importa el
+  módulo del registro, así que un cambio de vendor es configuración, no código.
+- **Estado real de la clave:** autentica (el SDK lista 11 modelos) pero **todos los modelos están
+  bloqueados a nivel de proyecto**. `python scripts/check_provider.py` lo dice con la URL exacta de
+  la consola. Hasta que se habilite un modelo, cada tarjeta sale de la plantilla verificada
+  (`card_source: template`, `llm_error: PermissionDeniedError` + `llm_error_detail`).
+- La clave vive solo en `.env` (gitignored). No aparece en el repo, en `/api/health` ni en logs.
+- `GET /api/health` ahora informa `llm_provider`, `llm_model` y `llm_base_url`.

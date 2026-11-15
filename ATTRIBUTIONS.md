@@ -54,7 +54,8 @@ aggregate results are published. Attribution: data courtesy of the MMASH authors
 
 ## Tools
 
-- DeepSeek V4.1 Flash (`deepseek-flash`) — optional explanation layer and development assistance.
+- Groq (inference) serving `openai/gpt-oss-120b` (open-weight model) — optional explanation
+  layer. DeepSeek V4.1 Flash remains supported as an alternative provider.
 - Coding agents (DeepSeek Harness / Claude Code-compatible) — implementation assistance, reviewed
   by the team.
 - Python, numpy, scipy — runtime for the engine and the validation harness.

@@ -19,7 +19,7 @@ Read `.agents/skills/tether-product-brief/SKILL.md` first. Skills in `.agents/sk
 Python 3.11+, type hints, ruff. TypeScript strict. Small functions, pure where possible. Comments explain *why*. Commit small; keep `main` demo-able at all times.
 
 ## Models
-DeepSeek `deepseek-flash` (V4.1 Flash). See `deepseek-flash-playbook`. Temperature 1.0 / top_p 0.95 for agentic coding runs; effort `high` default, `max` for hard debugging.
+Groq serving `openai/gpt-oss-120b` (open weights); DeepSeek stays supported as an alternative. `llm/providers.py` selects one; `python scripts/check_provider.py` checks it. Effort `high` default, `low` for `?fast=1`.
 
 ## Memory
 Log decisions/facts in the Obsidian vault (`obsidian-vault-ops`). Update `docs/` when behavior changes.

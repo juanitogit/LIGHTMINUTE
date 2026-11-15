@@ -27,7 +27,7 @@ from ..llm.case_data import (
     list_scenarios,
     load_scenario,
 )
-from ..llm.deepseek_client import MODEL
+from ..llm import providers
 from ..llm.stats import snapshot
 from .mission_link import router as mission_link_router
 
@@ -78,7 +78,8 @@ def health() -> dict:
         "version": VERSION,
         "llm_provider": provider_name(),
         "llm_key_present": key_present(),
-        "llm_model": MODEL,
+        "llm_model": providers.model_name(),
+        "llm_base_url": (providers.active().default_base_url if providers.active() else None),
         "default_effort": DEFAULT_EFFORT,
         "fast_effort": FAST_EFFORT,
         "card_fallback": "template",
