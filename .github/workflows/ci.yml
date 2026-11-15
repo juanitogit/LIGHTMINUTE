@@ -37,6 +37,9 @@ jobs:
       - name: Unit tests (dependency-free runner)
         run: python scripts/run_tests.py
 
+      - name: Offline researcher CLI contracts
+        run: python tools/researcher/test_researcher.py
+
       - name: Obsidian links, checklist inventory and ownership
         run: |
           python scripts/audit_vault.py
