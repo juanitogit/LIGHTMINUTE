@@ -326,12 +326,15 @@ try {
     await expect(anatomyPage.locator(".organ-stats-panel")).toBeVisible();
     const nav = anatomyPage.getByRole("navigation",{name:"Quick select organ"});
     const model = anatomyPage.locator(".organ-hologram");
+    // An organ with a dedicated HRA reference mesh shows that GLB; organs that
+    // only exist as body anatomy (vessels, spine) keep the body mesh. A single
+    // lung side keeps the body mesh because the lung GLB is a left+right pair.
     for (const [label,organ,geometry,kind] of [
-      ["Lungs",build === "male" ? "right lung" : "lungs","lungs","geometry"],
+      ["Lungs",build === "male" ? "right lung" : "lungs","lungs",build === "male" ? "geometry" : "glb"],
       ["Eyes","left eyeball","left eyeball","illustration"],
       ["Vessels","blood vessels","blood vessels","geometry"],
       ["Spine","vertebral column","vertebral column","geometry"],
-      ["Heart","heart","heart","geometry"],
+      ["Heart","heart","heart","glb"],
     ]) {
       await nav.getByRole("button",{name:label,exact:true}).click();
       await expect(model).toHaveAttribute("data-organ",organ);
