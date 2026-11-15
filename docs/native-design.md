@@ -56,7 +56,9 @@ No measurements, urgency, thresholds, medical claims or source data are derived 
 
 The female source has limited peripheral vasculature and no vertebral-column mesh. For visual
 completeness, the viewer aligns and scales the male-source peripheral vessels and spine to the female
-reference; these are explicitly labelled illustrative and are not sex-specific measurements. The
+reference, with peripheral arm vessels aligned to its silhouette; these are explicitly labelled
+illustrative and are not sex-specific measurements. The heart is tilted about its own centre in the
+body and inspector, without changing the selected synthetic heart-rate animation. The
 male body and its lung inspector use scaled female-source lung surfaces where the original male lung
 mesh does not depict a useful surface. The inspector's eye is a clearly labelled illustration. Organ
 selectors use exact available mesh names; missing references are not replaced by generic geometry.

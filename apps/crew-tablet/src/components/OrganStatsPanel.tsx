@@ -525,6 +525,7 @@ export interface OrganStatsPanelProps {
   availableOrgans?: string[];
   fallbackGeometry?: THREE.BufferGeometry;
   geometryNote?: string;
+  referenceTilt?: number;
   onClose: () => void;
   onFocusOrgan?: (name: string) => void;
   onSelectOrgan?: (name: string) => void;
@@ -540,6 +541,7 @@ export function OrganStatsPanel({
   position,
   fallbackGeometry,
   geometryNote,
+  referenceTilt,
   availableOrgans = [],
   onClose,
   onFocusOrgan,
@@ -795,6 +797,7 @@ export function OrganStatsPanel({
             organName={organName}
             classification={classification}
             fallbackGeometry={fallbackGeometry}
+            referenceTilt={referenceTilt}
             heartRateBpm={scenarioHeartRate(readings?.rest_hr)}
           />
         </ErrorBoundary>

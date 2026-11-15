@@ -4,6 +4,7 @@ import type { BufferGeometry, Mesh, Material, Object3D, SkinnedMesh, Group } fro
 import { indicatorMeta, REGION_LABEL, RISK_REGION, type BodyRegion } from "../lib/meta";
 import type { Reading } from "../lib/types";
 import { heartScale, scenarioHeartRate } from "../lib/heartMotion";
+import { armAlignment } from "../lib/anatomyAlignment";
 import { Icon } from "./Icon";
 // Physiology simulation – isolated mathematical engine (no LLM, no diagnosis)
 import { PhysiologySimulationEngine } from "../physiology/engine";
@@ -719,6 +720,8 @@ export function BodyModel3D({
               })
             );
             mesh.position.copy(center);
+            // Rotate around the organ centroid; the reference apex points downwards.
+            if (organ.name === "heart") mesh.rotation.z = keyName === "female" ? -0.38 : -0.2;
             mesh.name = organ.name;
             group.add(mesh);
             organList.push({ name: organ.name, mesh, blood, neuro, supplemental: Boolean(registered) });
@@ -744,6 +747,12 @@ export function BodyModel3D({
               }
               geometry.setIndex(limbTriangles);
               geometry.scale(factor, factor, factor);
+              const sourceSkin = new Float32Array(bytes, male.skin.pos, male.skin.verts * 3);
+              const targetSkin = new Float32Array(bytes, reference.skin.pos, reference.skin.verts * 3);
+              const alignArm = armAlignment(sourceSkin, male.height, targetSkin, reference.height);
+              for (let i = 0; i < positions.count; i++) positions.setX(i, alignArm(positions.getX(i), positions.getY(i)));
+              positions.needsUpdate = true;
+              geometry.computeVertexNormals();
               const mesh = new T.Mesh(geometry, new T.MeshStandardMaterial({color: 0xc96a79, roughness: 0.5, metalness: 0.08}));
               mesh.name = "blood vessels";
               group.add(mesh);
@@ -1142,6 +1151,7 @@ export function BodyModel3D({
             missionDay={missionDay}
             readings={readings}
             position={selectedCentroid}
+            referenceTilt={selectedOrgan.toLowerCase() === "heart" ? (build === "female" ? -0.38 : -0.2) : 0}
             availableOrgans={organMeshesRef.current.map((o) => o.name)}
             geometryNote={build === "male" && /^(left|right) lung$/i.test(selectedOrgan) ? "The body and inspector show scaled female-source lung references." : undefined}
             fallbackGeometry={

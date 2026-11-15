@@ -7,6 +7,7 @@ export interface OrganHologram3DProps {
   classification?: string;
   fallbackGeometry?: THREE.BufferGeometry;
   heartRateBpm?: number | null;
+  referenceTilt?: number;
 }
 
 // Map canonical organ names to GLB files in /assets/organs/
@@ -34,6 +35,7 @@ export function OrganHologram3D({
   classification = "reference",
   fallbackGeometry,
   heartRateBpm = null,
+  referenceTilt = 0,
 }: OrganHologram3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -179,6 +181,7 @@ export function OrganHologram3D({
 
     // Model Pivot Group
     const pivot = new THREE.Group();
+    pivot.rotation.z = referenceTilt;
     scene.add(pivot);
 
     // Keep references to update materials on wireframe toggle
@@ -187,7 +190,7 @@ export function OrganHologram3D({
 
     // Reset angle handler
     resetAngleRef.current = () => {
-      pivot.rotation.set(0, 0, 0);
+      pivot.rotation.set(0, 0, referenceTilt);
     };
 
     // Load or create organ 3D model
@@ -408,7 +411,7 @@ export function OrganHologram3D({
       renderer.dispose();
       scene.clear();
     };
-  }, [glbFile, fallbackGeometry, holoColorHex, wireColorHex, normName]);
+  }, [glbFile, fallbackGeometry, holoColorHex, wireColorHex, normName, referenceTilt]);
 
   return (
     <div className="organ-hologram" aria-label={`3D reference model of ${organName}`} data-organ={normName} data-asset={assetType} data-geometry={fallbackGeometry?.name}>
