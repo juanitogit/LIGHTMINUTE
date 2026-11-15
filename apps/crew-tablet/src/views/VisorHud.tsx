@@ -68,21 +68,30 @@ export function VisorHud({
   const dayEntry = scenario?.doc?.days?.find((d) => d.day === dayNumber);
   const member = dayEntry?.crew?.[crewId];
   const ind = member?.indicators;
-  const hasTelemetry = [ind?.rest_hr?.value, ind?.temp_c?.value, ind?.sleep_h?.value,
-    ind?.pvt_ms?.value, ind?.co2_ppm?.value, ind?.headache_score?.value]
-    .every((value) => typeof value === "number" && Number.isFinite(value));
+
+  // The active NASA case decides which metric earns a fixed HUD row. Its cases
+  // carry five indicators plus the case metric, so the complete-telemetry guard
+  // below is scoped to the readings that case actually records.
+  const caseMeta = nasaCaseForDoc(scenario?.doc);
+  const metric = caseMeta?.critical;
+
+  const isFiniteNumber = (value: number | undefined) => typeof value === "number" && Number.isFinite(value);
+  const hasTelemetry = caseMeta
+    ? [ind?.rest_hr?.value, ind?.temp_c?.value, ind?.pvt_ms?.value, ind?.[caseMeta.critical.key]?.value]
+        .every(isFiniteNumber)
+    : [ind?.rest_hr?.value, ind?.temp_c?.value, ind?.sleep_h?.value,
+        ind?.pvt_ms?.value, ind?.co2_ppm?.value, ind?.headache_score?.value]
+        .every(isFiniteNumber);
 
   // Real readings from scenario or realistic nominal baselines
   const hr = ind?.rest_hr?.value ?? 64.0;
   const temp = ind?.temp_c?.value ?? 36.65;
   const sleep = ind?.sleep_h?.value ?? 7.4;
   const pvt = ind?.pvt_ms?.value ?? 270;
+  const hasCo2 = typeof ind?.co2_ppm?.value === "number";
   const co2 = ind?.co2_ppm?.value ?? 820;
   const headache = ind?.headache_score?.value ?? 0;
 
-  // The active NASA case decides which metric earns a fixed HUD row.
-  const caseMeta = nasaCaseForDoc(scenario?.doc);
-  const metric = caseMeta?.critical;
   const metricValue = metric ? ind?.[metric.key]?.value : undefined;
   const metricLevel = metric ? metricTone(metric, metricValue) : "normal";
   const metricColor = metricLevel === "alert" ? "#ff4a36" : metricLevel === "watch" ? "#ffe27a" : "#e8a321";
@@ -399,9 +408,9 @@ export function VisorHud({
         <div id="hud-co2">
           <span>CO₂</span>
           <div className="bk">
-            <i style={{ width: `${Math.min(100, (co2 / 6000) * 100)}%` }} />
+            <i style={{ width: hasCo2 ? `${Math.min(100, (co2 / 6000) * 100)}%` : "0%" }} />
           </div>
-          <span>{co2} PPM</span>
+          <span>{hasCo2 ? `${co2} PPM` : "N/A"}</span>
         </div>
 
         {/* Mission Day Tape */}
@@ -704,7 +713,7 @@ export function VisorHud({
           <div className="overview-context" style={{ margin: 0 }}>
             <span>HR: <strong className="mono">{hr.toFixed(0)} bpm</strong></span>
             <span>Temp: <strong className="mono">{temp.toFixed(1)} °C</strong></span>
-            <span>CO₂: <strong className="mono">{co2} ppm</strong></span>
+            <span>CO₂: <strong className="mono">{hasCo2 ? `${co2} ppm` : "not recorded"}</strong></span>
             <span>Sleep: <strong className="mono">{sleep.toFixed(1)} h</strong></span>
             <span>PVT: <strong className="mono">{pvt.toFixed(0)} ms</strong></span>
             <span>Radiation: <strong className="mono">S{sScale} ({radPfu.toFixed(1)} pfu)</strong></span>
