@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import type { OrganVisualAttributes } from "../physiology/types";
 import type { Reading } from "../lib/types";
+import { scenarioHeartRate } from "../lib/heartMotion";
 
 export interface OrganMetadata {
   id: string;
@@ -782,12 +783,17 @@ export function OrganStatsPanel({
             organName={organName}
             classification={classification}
             fallbackGeometry={fallbackGeometry}
+            heartRateBpm={scenarioHeartRate(readings?.rest_hr)}
           />
         </ErrorBoundary>
       </section>
 
-      {/* 4. Temporal Trajectory Graph (Time Series across Mission Days) */}
-      <section className="organ-stats-panel__section">
+      {/* A single reading cannot establish a heart-rate trajectory. */}
+      {normKey === "heart" ? <section className="organ-stats-panel__section">
+        <h4 className="organ-stats-panel__section-title">Selected synthetic heart rate</h4>
+        <p>{scenarioHeartRate(readings?.rest_hr) !== null ? `${scenarioHeartRate(readings?.rest_hr)} bpm · mission day ${missionDay}` : "No heart-rate reading for this day."}</p>
+        <p className="small muted">The animation follows this scenario reading. It is not live sensor telemetry.</p>
+      </section> : <section className="organ-stats-panel__section">
         <div className="organ-stats-panel__chart-header">
           <div>
             <h4 className="organ-stats-panel__section-title">
@@ -902,7 +908,7 @@ export function OrganStatsPanel({
             </span>
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* 5. Personal Baseline Anomaly Indicators (Cross-Correlation with Crew Readings) */}
       <section className="organ-stats-panel__section">

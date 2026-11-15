@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { heartScale } from "../lib/heartMotion";
 
 export interface OrganHologram3DProps {
   organName: string;
   classification?: string;
   fallbackGeometry?: THREE.BufferGeometry;
+  heartRateBpm?: number | null;
 }
 
 // Map canonical organ names to GLB files in /assets/organs/
@@ -31,6 +33,7 @@ export function OrganHologram3D({
   organName,
   classification = "reference",
   fallbackGeometry,
+  heartRateBpm = null,
 }: OrganHologram3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -43,6 +46,8 @@ export function OrganHologram3D({
   wireframeRef.current = wireframe;
   const autoRotateRef = useRef(autoRotate);
   autoRotateRef.current = autoRotate;
+  const heartRateRef = useRef(heartRateBpm);
+  heartRateRef.current = heartRateBpm;
 
   // Resolve status color for the hologram
   const holoColorHex =
@@ -364,12 +369,15 @@ export function OrganHologram3D({
     window.addEventListener("pointerup", onPointerUp);
 
     // Animation Loop
-    let clock = new THREE.Clock();
+    const clock = new THREE.Clock();
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
     const animate = () => {
       if (stopped) return;
       animId = requestAnimationFrame(animate);
 
-      const elapsedTime = clock.getElapsedTime();
+      const delta = Math.min(clock.getDelta(), 0.1);
+      const elapsedTime = clock.elapsedTime;
+      const reducedMotion = motionPreference.matches;
 
       // Update wireframe state dynamically
       holoMaterials.forEach((m) => {
@@ -381,15 +389,16 @@ export function OrganHologram3D({
       });
 
       // Auto-rotation if enabled and not currently dragging
-      if (autoRotateRef.current && !isDragging) {
-        pivot.rotation.y += 0.01;
+      if (!reducedMotion && autoRotateRef.current && !isDragging) {
+        pivot.rotation.y += delta * 0.3;
       }
 
       // Pedestal counter-rotation for high-tech holographic effect
-      pedestalGroup.rotation.y -= 0.003;
+      if (!reducedMotion) pedestalGroup.rotation.y -= delta * 0.09;
 
       // Subtle levitation
-      pivot.position.y = Math.sin(elapsedTime * 2.0) * 0.035;
+      pivot.position.y = reducedMotion ? 0 : Math.sin(elapsedTime * 2.0) * 0.035;
+      pivot.scale.setScalar(heartScale(normName, heartRateRef.current, performance.now() / 1000, reducedMotion));
 
       renderer.render(scene, camera);
     };
@@ -423,13 +432,13 @@ export function OrganHologram3D({
   }, [glbFile, fallbackGeometry, holoColorHex]);
 
   return (
-    <div className="organ-hologram" aria-label={`3D Hologram of ${organName}`}>
+    <div className="organ-hologram" aria-label={`3D reference model of ${organName}`}>
       {/* Sci-fi HUD Header */}
       <div className="organ-hologram__hud-top">
         <div className="organ-hologram__badge">
           <span className="organ-hologram__pulse-dot" />
           <span className="organ-hologram__badge-text">
-            HOLOGRAPHIC 3D SCAN · {assetType === "glb" ? "GLB ASSET" : assetType === "geometry" ? "ANATOMY MESH" : "PROCEDURAL"}
+            3D REFERENCE MODEL · {assetType === "glb" ? "GLB ASSET" : assetType === "geometry" ? "ANATOMY MESH" : "PROCEDURAL"}
           </span>
         </div>
 

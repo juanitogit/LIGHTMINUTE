@@ -204,6 +204,19 @@ try {
   }
   await expect(page.locator(".human-viewer")).toHaveAttribute("data-model-status","ready",{timeout:30000});
   assert.equal(await page.locator(".human-canvas").count(),1);
+  const fixture=JSON.parse(await readFile(resolve(app,"public/data/scenario-cmo_fever.json"),"utf8"));
+  await expect(page.locator(".human-viewer")).toHaveAttribute("data-heart-bpm",String(fixture.days[15].crew.A.indicators.rest_hr.value));
+  await page.locator(".crew-row").nth(1).click();
+  await expect(page.locator(".human-viewer")).toHaveAttribute("data-heart-bpm",String(fixture.days[15].crew.B.indicators.rest_hr.value));
+  await page.locator(".crew-row").first().click();
+  await expect(page.locator(".human-viewer")).toHaveAttribute("data-heart-bpm",String(fixture.days[15].crew.A.indicators.rest_hr.value));
+  await page.getByRole("slider", {name:/Mission day/}).fill("17");
+  await expect(page.locator(".human-viewer")).toHaveAttribute("data-heart-bpm",String(fixture.days[16].crew.A.indicators.rest_hr.value));
+  await page.getByRole("slider", {name:/Mission day/}).fill("16");
+  await expect(page.locator(".human-viewer")).toHaveAttribute("data-heart-bpm",String(fixture.days[15].crew.A.indicators.rest_hr.value));
+  const pinTop = await page.locator(".human-landmark").first().evaluate(el=>parseFloat(el.style.top));
+  assert(pinTop >= 0 && pinTop <= 100, "Body landmark must start inside the 3D viewport");
+  record("Heart animation uses the selected crew's synthetic heart rate; anatomy landmarks stay in view");
   const position = await page.locator(".human-landmark").first().getAttribute("style");
   await page.getByRole("button",{name:"Rotate model right",exact:true}).click();
   assert.notEqual(await page.locator(".human-landmark").first().getAttribute("style"),position);

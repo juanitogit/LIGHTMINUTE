@@ -1,7 +1,14 @@
 # Attributions
 
-Only sources actually used are listed. No third-party code, assets, 3D models or branding were
-copied; the three-lens layout and protocol ideas were studied in public READMEs and reimplemented.
+Only sources actually used are listed. Third-party reference anatomy and runtime
+assets are credited below; the three-lens layout and protocol ideas were studied
+in public READMEs and reimplemented.
+
+## Typography
+
+**Inter Variable**, © The Inter Project Authors, SIL Open Font License 1.1.
+The font is bundled locally via `@fontsource-variable/inter`; the license is
+included in `apps/crew-tablet/public/assets/fonts/INTER-OFL.txt`.
 
 ## Data
 

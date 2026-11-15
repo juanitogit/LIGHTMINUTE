@@ -1,8 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import "@fontsource-variable/inter";
 import "../../../packages/ui-kit/tokens.css";
 import "./styles.css";
 import "./apple.css";
+import "./workspace-design.css";
 import { App } from "./App";
 
 if (import.meta.env.PROD && "serviceWorker" in navigator) {

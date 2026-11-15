@@ -96,9 +96,9 @@ jobs:
         working-directory: apps/crew-tablet
         run: npm run build
 
-      - name: FHIR and Bluetooth packet tests
+      - name: FHIR, Bluetooth and heart-motion tests
         working-directory: apps/crew-tablet
-        run: npx tsx --test scripts/fhirExport.test.ts scripts/heartRate.test.ts
+        run: npx tsx --test scripts/fhirExport.test.ts scripts/heartRate.test.ts scripts/heartMotion.test.ts
 
       - name: Physiology simulator regression tests
         working-directory: apps/crew-tablet

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Mesh, Material, Object3D, SkinnedMesh, Group } from "three";
 import { indicatorMeta, REGION_LABEL, RISK_REGION, type BodyRegion } from "../lib/meta";
 import type { Reading } from "../lib/types";
+import { heartScale, scenarioHeartRate } from "../lib/heartMotion";
 import { Icon } from "./Icon";
 // Physiology simulation – isolated mathematical engine (no LLM, no diagnosis)
 import { PhysiologySimulationEngine } from "../physiology/engine";
@@ -232,6 +233,7 @@ export function BodyModel3D({
   const [status, setStatus] = useState<"loading" | "ready" | "unavailable">("loading");
   const [selectedOrgan, setSelectedOrgan] = useState<string | null>(null);
   const [hoveredOrgan, setHoveredOrgan] = useState<string | null>(null);
+  const heartBpm = scenarioHeartRate(readings.rest_hr);
 
   // Keep latest references for render callbacks
   const selectedOrganRef = useRef(selectedOrgan);
@@ -339,6 +341,8 @@ export function BodyModel3D({
         controls.minPolarAngle = Math.PI * 0.28;
         controls.maxPolarAngle = Math.PI * 0.72;
         controls.rotateSpeed = 0.65;
+        // OrbitControls initially looks at the origin; aim it at the body before projecting labels.
+        controls.update();
 
         scene.add(new T.HemisphereLight(0xffffff, 0x83919d, 2.7));
         const key = new T.DirectionalLight(0xfff8f2, 3.5);
@@ -362,6 +366,7 @@ export function BodyModel3D({
         scene.add(shadow);
 
         const projected = new T.Vector3();
+        const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
 
         const render = () => {
           if (stopped) return;
@@ -431,15 +436,9 @@ export function BodyModel3D({
               surfaceMat.roughness = 0.5;
             }
 
-            // Apply organ pulsation scale if physiological data provides frequency
-            // Scaled strictly around organ centroid; capped to max +/- 1.8% to prevent exceeding body
-            if (physioEntry && physioEntry.pulsationFrequency_Hz > 0 && physioEntry.pulsationAmplitude > 0) {
-              const phase = Math.sin(2 * Math.PI * physioEntry.pulsationFrequency_Hz * now);
-              const safeAmp = Math.min(0.018, Math.max(0.0, physioEntry.pulsationAmplitude));
-              const scale = 1.0 + safeAmp * phase;
-              item.mesh.scale.setScalar(scale);
-            } else {
-              item.mesh.scale.setScalar(1.0);
+            // Only the heart mesh contracts; vessels and other structures stay anchored.
+            if (item.name.trim().toLowerCase() === "heart") {
+              item.mesh.scale.setScalar(heartScale(item.name, scenarioHeartRate(readingsRef.current.rest_hr), now, motionPreference.matches));
             }
           }
 
@@ -471,6 +470,14 @@ export function BodyModel3D({
           if (currentOffset.lengthSq() < 0.001) currentOffset.set(0, 0, 1);
           const dir = currentOffset.normalize();
           animCamPos.copy(animTarget).add(dir.multiplyScalar(distance));
+          if (motionPreference.matches) {
+            animating = false;
+            controls.target.copy(animTarget);
+            camera.position.copy(animCamPos);
+            controls.update();
+            render();
+            return;
+          }
           animating = true;
 
           const step = () => {
@@ -500,6 +507,7 @@ export function BodyModel3D({
           render();
         };
         controls.addEventListener("change", onControlsChange);
+        motionPreference.addEventListener("change", render);
 
         // Lightweight pulsation animation loop (~30fps).
         // Runs only when at least one organ has an active pulsation frequency.
@@ -510,9 +518,7 @@ export function BodyModel3D({
           if (stopped) return;
           requestAnimationFrame(pulsationLoop);
           // Check if any organ has non-zero pulsation
-          const hasPulsation = Object.values(physioVisualMapRef.current).some(
-            (v) => v.pulsationFrequency_Hz > 0
-          );
+          const hasPulsation = !motionPreference.matches && !document.hidden && scenarioHeartRate(readingsRef.current.rest_hr) !== null;
           if (!hasPulsation) return;
           if (ts - lastPulse >= PULSE_INTERVAL_MS) {
             lastPulse = ts;
@@ -825,6 +831,7 @@ export function BodyModel3D({
         cleanup = () => {
           observer.disconnect();
           themeObserver.disconnect();
+          motionPreference.removeEventListener("change", render);
           controls.removeEventListener("change", onControlsChange);
           controls.removeEventListener("start", onControlsStart);
           renderer.domElement.removeEventListener("pointerdown", onPointerDown);
@@ -930,6 +937,7 @@ export function BodyModel3D({
       className="human-viewer"
       aria-label={`Interactive 3D body view for ${crewLabel}`}
       data-model-status={status}
+      data-heart-bpm={heartBpm ?? "unavailable"}
     >
       <div className="anatomy-tools">
         <label>
@@ -1006,6 +1014,10 @@ export function BodyModel3D({
             ))
           : null}
       </div>
+
+      <p className="heart-motion-note">{heartBpm !== null
+        ? `Heart motion follows the selected synthetic resting heart rate: ${heartBpm} bpm (${(heartBpm / 60).toFixed(2)} beats per second).`
+        : "Heart motion is paused because this synthetic scenario has no valid heart-rate reading."}</p>
 
       {/* Selected organ detailed physiological & mathematical statistics drawer */}
       {selectedOrgan ? (
