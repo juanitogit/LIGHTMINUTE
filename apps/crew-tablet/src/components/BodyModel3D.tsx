@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Vector3 } from "three";
-import type { Mesh, Material, Object3D, SkinnedMesh, Group } from "three";
+import type { BufferGeometry, Mesh, Material, Object3D, SkinnedMesh, Group } from "three";
 import { indicatorMeta, REGION_LABEL, RISK_REGION, type BodyRegion } from "../lib/meta";
 import type { Reading } from "../lib/types";
 import { heartScale, scenarioHeartRate } from "../lib/heartMotion";
+import { armAlignment } from "../lib/anatomyAlignment";
 import { Icon } from "./Icon";
 // Physiology simulation – isolated mathematical engine (no LLM, no diagnosis)
 import { PhysiologySimulationEngine } from "../physiology/engine";
@@ -57,6 +58,7 @@ type OrganMeshRecord = {
   mesh: Mesh;
   blood: boolean;
   neuro: boolean;
+  supplemental?: boolean;
 };
 
 /** Module-level singleton cache so geometry buffers are fetched only once per session. */
@@ -233,6 +235,7 @@ export function BodyModel3D({
   const [focusRegion, setFocusRegion] = useState<FocusRegion>("full");
   const [status, setStatus] = useState<"loading" | "ready" | "unavailable">("loading");
   const [selectedOrgan, setSelectedOrgan] = useState<string | null>(null);
+  const lungPairRef = useRef<BufferGeometry | null>(null);
   const [hoveredOrgan, setHoveredOrgan] = useState<string | null>(null);
   const heartBpm = scenarioHeartRate(readings.rest_hr);
 
@@ -598,6 +601,7 @@ export function BodyModel3D({
 
         function createGeometry(data: SurfaceDef) {
           const geometry = new T.BufferGeometry();
+          geometry.name = data.name;
           geometry.setAttribute(
             "position",
             new T.Float32BufferAttribute(new Float32Array(bytes, data.pos, data.verts * 3), 3)
@@ -635,6 +639,41 @@ export function BodyModel3D({
           return { geometry, center };
         }
 
+        function createRegisteredLung(source: SurfaceDef, target: SurfaceDef, factor: number) {
+          const original = createGeometry(source);
+          const vertices = original.getAttribute("position");
+          const indices = original.getIndex();
+          if (!indices || !target.center) { original.dispose(); return null; }
+          const middle = source.center?.[0] ?? 0;
+          const right = target.name === "right lung";
+          const remap = new Map<number, number>();
+          const positions: number[] = [];
+          const triangles: number[] = [];
+          for (let i = 0; i < indices.count; i += 3) {
+            const triangle = [indices.getX(i), indices.getX(i + 1), indices.getX(i + 2)];
+            const x = triangle.reduce((sum, index) => sum + vertices.getX(index), 0) / 3;
+            if (right ? x >= middle : x < middle) continue;
+            for (const index of triangle) {
+              if (!remap.has(index)) {
+                remap.set(index, remap.size);
+                positions.push(vertices.getX(index) * factor, vertices.getY(index) * factor, vertices.getZ(index) * factor);
+              }
+              triangles.push(remap.get(index)!);
+            }
+          }
+          original.dispose();
+          if (!triangles.length) return null;
+          const geometry = new T.BufferGeometry();
+          geometry.name = target.name;
+          geometry.setAttribute("position", new T.Float32BufferAttribute(positions, 3));
+          geometry.setIndex(triangles);
+          geometry.computeVertexNormals();
+          geometry.computeBoundingBox();
+          const center = geometry.boundingBox!.getCenter(new T.Vector3());
+          geometry.translate(-center.x, -center.y, -center.z);
+          return {geometry, center: new T.Vector3(...target.center)};
+        }
+
         // Build models for both male and female so switching is instant without re-fetching
         const bodyGroups: Record<string, Group> = {};
         const bodyOrgans: Record<string, OrganMeshRecord[]> = {};
@@ -664,7 +703,12 @@ export function BodyModel3D({
             const blood = /heart|aorta|vessel|jugular/.test(organ.name);
             const neuro = /brain|eye|spinal|vertebral/.test(organ.name);
 
-            const { geometry, center } = createOrganGeometry(organ);
+            const female = description.bodies.female;
+            const femaleLungs = female?.organs.find((item) => item.name === "lungs");
+            const registered = keyName === "male" && /^(left|right) lung$/.test(organ.name) && female && femaleLungs
+              ? createRegisteredLung(femaleLungs, organ, reference.height / female.height) : null;
+            const { geometry, center } = registered ?? createOrganGeometry(organ);
+            if (keyName === "female" && organ.name === "lungs") lungPairRef.current = geometry;
             const mesh = new T.Mesh(
               geometry,
               new T.MeshStandardMaterial({
@@ -676,9 +720,54 @@ export function BodyModel3D({
               })
             );
             mesh.position.copy(center);
+            // Rotate around the organ centroid; the reference apex points downwards.
+            if (organ.name === "heart") mesh.rotation.z = keyName === "female" ? -0.38 : -0.2;
             mesh.name = organ.name;
             group.add(mesh);
-            organList.push({ name: organ.name, mesh, blood, neuro });
+            organList.push({ name: organ.name, mesh, blood, neuro, supplemental: Boolean(registered) });
+          }
+
+          // The female source includes central vessels but limited peripheral vasculature and no
+          // vertebral column. Supplement those references with scaled male-source
+          // meshes; this is illustrative, not sex-specific or measured anatomy.
+          const male = description.bodies.male;
+          if (keyName === "female" && male) {
+            const factor = reference.height / male.height;
+            const sourceVessels = male.organs.find((organ) => organ.name === "blood vessels");
+            if (sourceVessels) {
+              const geometry = createGeometry(sourceVessels);
+              const positions = geometry.getAttribute("position");
+              const indices = geometry.getIndex();
+              const limbTriangles: number[] = [];
+              if (indices) for (let i = 0; i < indices.count; i += 3) {
+                const a = indices.getX(i), b = indices.getX(i + 1), c = indices.getX(i + 2);
+                const x = (positions.getX(a) + positions.getX(b) + positions.getX(c)) / 3;
+                const y = (positions.getY(a) + positions.getY(b) + positions.getY(c)) / 3;
+                if (y < male.height * 0.5 || y > male.height * 0.87 || Math.abs(x) > male.height * 0.075) limbTriangles.push(a, b, c);
+              }
+              geometry.setIndex(limbTriangles);
+              geometry.scale(factor, factor, factor);
+              const sourceSkin = new Float32Array(bytes, male.skin.pos, male.skin.verts * 3);
+              const targetSkin = new Float32Array(bytes, reference.skin.pos, reference.skin.verts * 3);
+              const alignArm = armAlignment(sourceSkin, male.height, targetSkin, reference.height);
+              for (let i = 0; i < positions.count; i++) positions.setX(i, alignArm(positions.getX(i), positions.getY(i)));
+              positions.needsUpdate = true;
+              geometry.computeVertexNormals();
+              const mesh = new T.Mesh(geometry, new T.MeshStandardMaterial({color: 0xc96a79, roughness: 0.5, metalness: 0.08}));
+              mesh.name = "blood vessels";
+              group.add(mesh);
+              organList.push({name: "blood vessels", mesh, blood: true, neuro: false, supplemental: true});
+            }
+            const spine = male.organs.find((organ) => organ.name === "vertebral column");
+            if (spine && !reference.organs.some((organ) => organ.name === "vertebral column")) {
+              const {geometry, center} = createOrganGeometry(spine);
+              geometry.scale(factor, factor, factor);
+              const mesh = new T.Mesh(geometry, new T.MeshStandardMaterial({color: 0xb8a4d5, roughness: 0.5, metalness: 0.08}));
+              mesh.position.copy(center).multiplyScalar(factor);
+              mesh.name = "vertebral column";
+              group.add(mesh);
+              organList.push({name: "vertebral column", mesh, blood: false, neuro: true, supplemental: true});
+            }
           }
 
           // If female build, load female-exclusive uterus reference anatomy
@@ -885,6 +974,9 @@ export function BodyModel3D({
             if (isCurrent) {
               const organs = bodyOrgans[keyName] ?? [];
               organMeshesRef.current = organs;
+              renderer.domElement.dataset.supplementalVessels = String(organs.some((item) => item.supplemental && item.blood));
+              renderer.domElement.dataset.supplementalSpine = String(organs.some((item) => item.supplemental && item.name === "vertebral column"));
+              renderer.domElement.dataset.registeredLungs = String(organs.some((item) => item.supplemental && /^(left|right) lung$/.test(item.name)));
               for (const item of organs) {
                 const isVisible =
                   currentSystem === "all"
@@ -1033,6 +1125,8 @@ export function BodyModel3D({
       <p className="heart-motion-note">{heartBpm !== null
         ? `Heart motion follows the selected synthetic resting heart rate: ${heartBpm} bpm (${(heartBpm / 60).toFixed(2)} beats per second).`
         : "Heart motion is paused because this synthetic scenario has no valid heart-rate reading."}</p>
+      {build === "female" ? <p className="heart-motion-note">Female reference: peripheral vessels and spine include scaled male-source reference geometry where the female dataset has no corresponding mesh. Illustrative only.</p> : null}
+      {build === "male" ? <p className="heart-motion-note">Lung surfaces use a scaled female-source anatomical reference. Illustrative only.</p> : null}
 
       {/* Selected organ detailed physiological & mathematical statistics drawer */}
       {selectedOrgan ? (
@@ -1057,12 +1151,12 @@ export function BodyModel3D({
             missionDay={missionDay}
             readings={readings}
             position={selectedCentroid}
+            referenceTilt={selectedOrgan.toLowerCase() === "heart" ? (build === "female" ? -0.38 : -0.2) : 0}
+            availableOrgans={organMeshesRef.current.map((o) => o.name)}
+            geometryNote={build === "male" && /^(left|right) lung$/i.test(selectedOrgan) ? "The body and inspector show scaled female-source lung references." : undefined}
             fallbackGeometry={
-              organMeshesRef.current.find(
-                (o) =>
-                  o.name.toLowerCase() === selectedOrgan.toLowerCase() ||
-                  selectedOrgan.toLowerCase().includes(o.name.toLowerCase()) ||
-                  o.name.toLowerCase().includes(selectedOrgan.toLowerCase())
+              selectedOrgan.toLowerCase() === "uterus" ? undefined : build === "male" && /^(left|right) lung$/i.test(selectedOrgan) && lungPairRef.current ? lungPairRef.current : organMeshesRef.current.find(
+                (o) => o.name.toLowerCase() === selectedOrgan.toLowerCase()
               )?.mesh.geometry
             }
             onClose={() => {
@@ -1071,20 +1165,15 @@ export function BodyModel3D({
               control.current?.refresh();
             }}
             onFocusOrgan={(name) => {
-              const item = organMeshesRef.current.find(
-                (o) => o.name.toLowerCase() === name.toLowerCase() ||
-                       name.toLowerCase().includes(o.name.toLowerCase())
-              );
+              const item = organMeshesRef.current.find((o) => o.name.toLowerCase() === name.toLowerCase());
               if (item) {
                 const p = item.mesh.getWorldPosition(new Vector3());
                 control.current?.focusToPoint([p.x, p.y, p.z], 1.6);
               }
             }}
             onSelectOrgan={(name) => {
-              const item = organMeshesRef.current.find(
-                (o) => o.name.toLowerCase() === name.toLowerCase() ||
-                       name.toLowerCase().includes(o.name.toLowerCase())
-              );
+              const item = organMeshesRef.current.find((o) => o.name.toLowerCase() === name.toLowerCase());
+              if (!item) return;
               setSelectedOrgan(name);
               if (item) {
                 const p = item.mesh.getWorldPosition(new Vector3());

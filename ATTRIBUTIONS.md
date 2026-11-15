@@ -12,6 +12,14 @@ included in `apps/crew-tablet/public/assets/fonts/INTER-OFL.txt`.
 
 ## Data
 
+| Source | How accessed | Used for | Does not show |
+|---|---|---|---|
+| [NASA OSD-575](https://osdr.nasa.gov/bio/repo/data/studies/OSD-575) | Public CMP file, retrieved 2026-11-14; source hash in `ml/proxy/credibility-provenance.json` | Exploratory Inspiration4 biomedical research | Clinical validation or live crew telemetry |
+| [NASA DONKI](https://ccmc.gsfc.nasa.gov/DONKI/api/) | Build-time snapshots, retrieved 2026-11-14 | Historical space-weather context | Individual dose or a forecast |
+| [NOAA GOES](https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json) | Build-time snapshot, retrieved 2026-11-14 | Historical proton flux | Individual dose |
+
+Data are courtesy of the NASA Open Science Data Repository (https://osdr.nasa.gov/bio/repo). See [NASA's citation guidance](https://science.nasa.gov/reference/osdr-faq/).
+
 **NASA DONKI — Space Weather Database Of Notifications, Knowledge, Information (CCMC)**
 <https://ccmc.gsfc.nasa.gov/DONKI/api/> · reference <https://ccmc.gsfc.nasa.gov/tools/DONKI/>
 NASA open data. Snapshots for SEP, FLR, CME and GST cover 2026-08-16..2026-11-14 UTC and are
@@ -42,7 +50,7 @@ aggregate results are published. Attribution: data courtesy of the MMASH authors
 - NASA HRP, 24-hour core body temperature RFI — <https://www.nasa.gov/help-nasa-find-practical-ways-to-monitor-astronaut-body-temperature-in-low-earth-orbit/>
 - NASA HRP, Artemis II Data Methodology Challenge winners — <https://www.nasa.gov/hrp/winners-of-nasa-hrps-artemis-ii-data-methodology-challenge/>
 - Sanders et al., Inspiration4 multi-omics in NASA OSDR — <https://doi.org/10.1038/s41526-024-00393-5>
-  (cited as motivation for small-sample methods; the dataset was **not** downloaded or analysed)
+  (the public OSD-575 CMP file was analysed exploratorily; see `ml/proxy/RESULTS.md`)
 
 ## Tools
 

@@ -1,0 +1,41 @@
+{
+  "id": "behavioral_countermeasure",
+  "title": "Behavioral Health & Isolation Countermeasure Protocol",
+  "trigger_patterns": [
+    "Vocal prosody stress index or PVT reaction time degradation exceeds personal baseline band",
+    "Crew reports sleep disruption, persistent irritability, interpersonal friction, or cognitive fatigue",
+    "Prolonged isolation phase under multi-minute communication latency (> 10 min round-trip)"
+  ],
+  "steps": [
+    {
+      "text": "Initiate autonomous offline psychological support module on personal crew tablet; all logs remain private and stored strictly on-device unless voluntarily shared.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Perform a 5-minute guided HRV coherence biofeedback and 4-7-8 respiratory pacing session (inhale 4s, hold 7s, exhale 8s) to downregulate autonomic sympathetic tone.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Activate sensory nature immersion: engage high-resolution dynamic terrestrial landscapes (forest canopy, ocean surf) with binaural acoustic soundscapes in crew quarters.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Adjust habitat circadian lighting: transition crew quarters luminaires to 2700K warm spectrum (zero 460-480 nm blue emission) 90 minutes before scheduled sleep.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Execute autonomous workload deconfliction: defer non-urgent maintenance work orders by 24 hours to create a guaranteed 60-minute personal privacy buffer.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Schedule asynchronous private voice message exchange with terrestrial psychological support team; tablet displays exact one-way light delay for message delivery expectations.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "id": "sans_fluid_shift",
+  "title": "SANS & Cephalad Fluid Shift Review",
+  "trigger_patterns": [
+    "Near vision acuity shift or optic nerve sheath diameter (ONSD) exceeds individual baseline band",
+    "Crew reports progressive visual blur, difficulty reading small checklists, or orbital fullness",
+    "Routine mission surveillance protocol for long-duration microgravity exposure"
+  ],
+  "steps": [
+    {
+      "text": "Perform standard near-vision acuity assessment with the onboard Jaeger/tumbling-E reading card under calibrated 500 lux cabin lighting.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Record refractive change delta in diopters and compare against the pre-flight baseline in the crew tablet.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Deploy the ocular ultrasound probe to measure bilateral Optic Nerve Sheath Diameter (ONSD) 3.0 mm posterior to the globe.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Check for secondary SANS signs: optic disc margin elevation, cotton wool spots, choroidal folds, or globe posterior flattening.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Schedule prescribed Lower Body Negative Pressure (LBNP / Chibis) session (25-35 mmHg caudal suction for 60 min) to pull fluid away from the head.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Adjust crew tablet and console UI display ergonomics: increase font scaling by +20%, set high-contrast dark mode, and verify helmet visor focal clearance.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Queue encrypted ocular ultrasound cine loops and subjective symptom log for ground flight surgeon review over the next mission pass.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    }
+  ]
+}

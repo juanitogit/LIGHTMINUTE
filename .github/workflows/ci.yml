@@ -40,6 +40,9 @@ jobs:
       - name: Property-based verifier invariants
         run: python tests/property/test_verifier_properties.py
 
+      - name: NASA snapshot provenance and integrity
+        run: python tests/test_nasa_data_provenance.py
+
       - name: Adaptive conformal research contracts
         run: python ml/proxy/test_adaptive_conformal.py
 
@@ -98,7 +101,7 @@ jobs:
 
       - name: FHIR, Bluetooth and heart-motion tests
         working-directory: apps/crew-tablet
-        run: npx tsx --test scripts/fhirExport.test.ts scripts/heartRate.test.ts scripts/heartMotion.test.ts
+        run: npx tsx --test scripts/fhirExport.test.ts scripts/heartRate.test.ts scripts/heartMotion.test.ts scripts/anatomyAlignment.test.ts
 
       - name: Physiology simulator regression tests
         working-directory: apps/crew-tablet

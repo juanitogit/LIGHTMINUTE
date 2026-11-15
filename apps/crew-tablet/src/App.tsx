@@ -11,6 +11,7 @@ import { FALLBACK_SCENARIOS, loadHealth, loadScenarioIndex } from "./lib/api";
 import { fmtDay, fmtDelay, titleFromName } from "./lib/format";
 import type { ApiHealth, DecisionCard, ScenarioSummary } from "./lib/types";
 import { Act } from "./views/Act";
+import { DataSources } from "./views/DataSources";
 import { Glance } from "./views/Glance";
 import { Radiation } from "./views/Radiation";
 import { Validation } from "./views/Validation";
@@ -237,7 +238,7 @@ export function App() {
       <div className="workspace">
       <div className="chrome">
         <header className="topbar">
-          <div className="topbar__breadcrumb"><span className="mobile-brand">LIGHTMINUTE</span><span>Crew health</span><span aria-hidden="true">/</span><b>{VIEW_LABELS.find((v) => v.id === state.view)?.label}</b></div>
+          <div className="topbar__breadcrumb"><span className="mobile-brand">LIGHTMINUTE</span><span>Crew health</span><span aria-hidden="true">/</span><b>{state.view === "sources" ? "Data sources" : VIEW_LABELS.find((v) => v.id === state.view)?.label}</b></div>
 
           <div className="topbar__tools">
             <span className={`engine-badge ${health ? "is-online" : ""}`}><span className="status__dot" />{health ? "Engine connected" : health === undefined ? "Connecting…" : "Local simulation"}</span>
@@ -288,7 +289,7 @@ export function App() {
         </div>
       </div>
       <main id="main" className="main" tabIndex={-1}>
-        {scenario.phase === "loading" ? (
+        {state.view !== "sources" && scenario.phase === "loading" ? (
           <div className="view">
             <Panel>
               <p className="muted" role="status">Loading {titleFromName(scenarioName)}…</p>
@@ -297,7 +298,7 @@ export function App() {
           </div>
         ) : null}
 
-        {scenario.phase === "error" ? (
+        {state.view !== "sources" && scenario.phase === "error" ? (
           <div className="view">
             <Panel title="Scenario could not load" labelledBy="load-error">
               <EmptyState title="No data source reachable">
@@ -313,7 +314,7 @@ export function App() {
           </div>
         ) : null}
 
-        {scenario.phase === "ready" && scenario.data && doc ? (
+        {state.view !== "sources" && scenario.phase === "ready" && scenario.data && doc ? (
           <>
             <div className="banners">
               {scenario.data.degraded &&
@@ -393,9 +394,11 @@ export function App() {
 
         {/* Local-only tools: they must work even when no scenario loads. */}
         {state.view === "checkin" ? <CheckIn /> : null}
+        {state.view === "sources" ? <DataSources /> : null}
       </main>
 
       <footer className="statusbar">
+        <button type="button" className="btn" onClick={() => goView("sources")}>Data sources</button>
         <span className="status">
           <span
             className={`status__dot ${

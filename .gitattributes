@@ -1,3 +1,5 @@
 # Ed25519 signatures cover exact bytes; ensure identical working-tree bytes on all OSes.
 apps/crew-tablet/public/data/scenario-*.json text eol=lf
 apps/crew-tablet/public/demo-data.json text eol=lf
+# Snapshot manifests hash the exact downloaded bytes; keep them stable on Windows.
+data/snapshots/*.json text eol=lf

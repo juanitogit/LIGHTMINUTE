@@ -36,6 +36,16 @@ benefit. Details: [autonomy results](../docs/autonomy/RESULTS.md),
 
 ## Limitations and disclosures
 
+| Source | How accessed | Used for | Does not show |
+|---|---|---|---|
+| [NASA OSD-575](https://osdr.nasa.gov/bio/repo/data/studies/OSD-575) | Public research file, retrieved 2026-11-14 | Exploratory postflight comparisons | Clinical validation or live crew data |
+| [NASA DONKI](https://ccmc.gsfc.nasa.gov/DONKI/api/) | Build-time snapshots, retrieved 2026-11-14 | Historical space-weather context | Individual radiation dose or a forecast |
+| [NOAA GOES](https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json) | Build-time snapshot, retrieved 2026-11-14 | Historical solar proton context | Individual radiation dose |
+
+### NASA Data field (proposed)
+
+LIGHTMINUTE uses public NASA OSDR study OSD-575 for exploratory comparisons of Inspiration4 serum chemistry and historical NASA DONKI event snapshots for space-weather context. The crew scenarios are synthetic. These sources do not establish clinical performance or individual radiation dose. No LSAH or restricted LSDA astronaut medical records were used; applicable LSAH/LSDA records are available by request. OSD-575 itself contains public biomedical research data from private astronauts. Data are courtesy of the NASA Open Science Data Repository (https://osdr.nasa.gov/bio/repo). AI-assisted development is disclosed below.
+
 All crew-facing scenarios are synthetic. NOAA space-weather data are historical,
 not a personal radiation dose. The ground link is a local simulation, and the
 public static website does not supply the Python backend. The prototype has not

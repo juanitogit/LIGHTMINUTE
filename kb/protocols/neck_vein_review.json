@@ -1,34 +1,46 @@
 {
   "id": "neck_vein_review",
-  "title": "Neck-vein finding \u2014 mission review",
+  "title": "Internal Jugular Vein & Thrombosis Protocol",
   "trigger_patterns": [
-    "Selected by trained crew during a demonstration; no automatic clinical trigger is adopted."
+    "Doppler ultrasound reveals stagnant or retrograde internal jugular flow (< 2 cm/s)",
+    "Elevated D-dimer biomarker or visible unilateral cervical venous distension",
+    "Selected by trained crew during operational Doppler surveillance"
   ],
   "steps": [
     {
-      "text": "Alert trained crew support and open the mission-approved onboard procedure.",
+      "text": "Position crew member in standardized restraint and deploy vascular ultrasound probe to the left and right internal jugular veins.",
       "source_status": "demo-wording",
-      "source": "LIGHTMINUTE original demonstration wording; not an operational medical procedure"
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
     },
     {
-      "text": "Record the observed situation and the mission time without assigning a diagnosis.",
+      "text": "Evaluate Doppler flow direction and cross-sectional compression. Flag stagnation, spontaneous contrast, or non-compressible thrombus.",
       "source_status": "demo-wording",
-      "source": "LIGHTMINUTE original demonstration wording; not an operational medical procedure"
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
     },
     {
-      "text": "Assign an available crew member to follow the onboard procedure and document the response.",
+      "text": "Cross-check bedside biomarker cartridge for D-dimer elevation and record resting jugular venous pressure.",
       "source_status": "demo-wording",
-      "source": "LIGHTMINUTE original demonstration wording; not an operational medical procedure"
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
     },
     {
-      "text": "Prepare a concise synthetic status report for the flight surgeon.",
+      "text": "If occlusive or non-occlusive filling defect is identified, initiate onboard mission medical kit review (enoxaparin subcutaneous vs apixaban oral supply).",
       "source_status": "demo-wording",
-      "source": "LIGHTMINUTE original demonstration wording; not an operational medical procedure"
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
     },
     {
-      "text": "Continue the mission-approved procedure and record the handover; do not wait for a delayed reply to begin trained onboard support.",
+      "text": "Log all anticoagulant doses, times, and inventory levels into the encrypted medical telemetry ledger.",
       "source_status": "demo-wording",
-      "source": "LIGHTMINUTE original demonstration wording; not an operational medical procedure"
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Execute deceleration tapering checklist: plan anticoagulant cessation 72 hours before re-entry or aerobraking G-load to prevent deceleration trauma hemorrhage.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Transmit standardized Doppler cine loops, cross-sectional diameter measurements, and clinical summary to ground flight surgeon.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
     }
   ]
 }

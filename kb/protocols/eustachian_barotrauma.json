@@ -1,0 +1,41 @@
+{
+  "id": "eustachian_barotrauma",
+  "title": "Upper Respiratory & Middle Ear Barotrauma Protocol",
+  "trigger_patterns": [
+    "Crew reports nasal congestion, Eustachian tube fullness, or severe otalgia upon swallowing",
+    "Nasal-ear score exceeds baseline watch threshold (> 2/10)",
+    "Mandatory pre-entry or pre-EVA helmet donning checklist with active upper respiratory symptoms"
+  ],
+  "steps": [
+    {
+      "text": "Assess bilateral tympanic membrane mobility and Eustachian tube patency using gentle modified Valsalva/Toynbee maneuver; do NOT force auto-inflation against severe pain.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Record nasal congestion and otalgia severity on the 0-10 scale and log whether unilateral or bilateral obstruction is present.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "If suit or helmet donning is required within 4 hours, administer approved nasal decongestant spray/oral agent to prevent tympanic membrane perforation during rapid repressurization.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Review cabin environmental telemetry: verify habitat relative humidity > 40% and check particulate/HEPA recirculation status.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Implement cabin droplet hygiene protocols: sanitize shared sleep quarters, headsets, and microphone wind-screens to prevent transmission to crewmates.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "If re-entry G-transition is imminent, coordinate with Flight Dynamics to slow capsule repressurization rate if operational envelope permits.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    }
+  ]
+}
