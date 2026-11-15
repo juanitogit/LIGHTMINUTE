@@ -1,5 +1,11 @@
 # Preregistration · synthetic core-temperature sensitivity
 
+**Status: NOT DELIVERED (2026-11-15).** The parent gate required tasks 1–4 to be
+verified first. T2b (literature direction) is NOT DONE and the MMASH calibration
+gate fails on the shipped engine, so this optional task is not executed, not
+committed and not cited. The file and any local script/results are kept only as
+an unregistered draft for a later run.
+
 Question: can a training-only circadian and activity adjustment reduce false high-temperature flags while preserving detection of an injected elevation?
 
 Design decisions below are synthetic assumptions for a software experiment. The NASA HRP information request motivated 24-hour observation across activities. It does not specify the inputs, model or thresholds used here. [NASA RFI, opened November 14, 2026 Bogotá](https://www.nasa.gov/help-nasa-find-practical-ways-to-monitor-astronaut-body-temperature-in-low-earth-orbit/)

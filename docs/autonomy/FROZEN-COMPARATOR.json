@@ -73,6 +73,6 @@
     "co2_ppm": "one-sided rule has no range width; demo-parameter",
     "headache_score": "one-sided rule has no range width; demo-parameter"
   },
-  "frozen_at": "2026-11-14T20:44:54.059908+00:00",
-  "source_revision": "a4cb4ccd6188d9e068e63ac8a9e26fe9658b48f3"
+  "frozen_at": "2026-11-15T02:30:47.667103+00:00",
+  "source_revision": "6deea70c734d368e4dc4e1b614005c27177d9c75"
 }

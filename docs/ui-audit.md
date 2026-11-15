@@ -9,11 +9,11 @@ Código activo: `project/`. La copia `tether-a3/` es anterior. Se conservaron lo
 
 | Área | Resultado |
 |---|---|
-| Motor, API, simulación y verificador | `python scripts/run_tests.py`: **78/78**. La nueva regresión falló antes del arreglo y pasó después. |
+| Motor, API, simulación y verificador | `python scripts/run_tests.py`: **111/111**. La nueva regresión falló antes del arreglo y pasó después. |
 | Ataques a Decision Cards | `PYTHONPATH=services/engine python -m tether_engine.llm.redteam`: **30/30** rechazados. |
 | Auditoría JS/Python | `node apps/ground-console/src/audit.test.mjs`: **8/8**. |
 | Validación | `python ml/validation/run_all.py`: regeneró informe, resultados y panel; tuning/report seeds separados. |
-| Factor de olvido | `python ml/diagnostics/forgetting_drift.py`: cobertura a 2.000 updates **95 %**; variante antigua **16 %**. MMASH **93,4 %** frente a **21,6 %**. |
+| Factor de olvido | `python ml/diagnostics/forgetting_drift.py`: cobertura a 2.000 updates **95 %**; variante antigua **16 %**. MMASH **93,4 %** frente a **21,6 %** (medición previa a FI-13; con la guarda actual la cobertura es 66,37 %, ver `ml/proxy/RESULTS.md`). |
 | NOAA | `ingest.verify_snapshot`: checksum y **2.288 filas** coinciden; panel de **286 puntos**, `real-public`, S0 y fecha de archivo visibles. |
 | TypeScript y producción | `npm run build`: correcto; JS principal 306,68 kB / 95,64 kB gzip. |
 | Navegador | `npm run test:e2e`: **12 grupos**; resultados en [browser-results.json](qa/browser-results.json). |
@@ -96,7 +96,7 @@ si una parte sigue sin verificarse.
 | Board.md | **A3** — re-verificar los paneles de validación y radiación con los JSON que publicó A5 | Verificado | E2E abre Radiación y Validación con los JSON publicados. |
 | Board.md | Ensayo del demo: plan B (`LLM_PROVIDER=none`) y plan A (con clave) | Parcial | API con LLM_PROVIDER=none y fallback pasan; DeepSeek real sin ejecutar. |
 | Board.md | `agents/OWNERS.json`: registrar `vault/` para que `check_ownership.py --overlaps` quede limpio | Verificado | python scripts/check_ownership.py --overlaps: OK. |
-| Board.md | Evidencia OSDR (bloqueada por 404) y revisión clínica de umbrales y protocolos | Pendiente | Requiere acción externa, nueva capacidad o validación experta. |
+| Board.md | Evidencia OSDR y revisión clínica de umbrales y protocolos | Parcial | OSD-575 procesado (79/287, exploratorio); dirección con la literatura NOT DONE; la revisión clínica sigue pendiente de validación experta. |
 | Board.md | Página de validación dentro de la app | Verificado | E2E verifica dos cohortes y ocho filas comparativas. |
 | Board.md | Firmado y consentimiento real del envío a tierra | Pendiente | Requiere acción externa, nueva capacidad o validación experta. |
 | Board.md | Persistencia multi-sesión | Pendiente | Requiere acción externa, nueva capacidad o validación experta. |

@@ -20,7 +20,7 @@ Status as of 2026-11-14. ✅ done · ⚠️ pending · ❓ must confirm on the e
 | Limitations section | ✅ | README, project description, model card |
 | Team names and roles | ⚠️ | fill in before submitting |
 | Offline demo fallback rehearsed | ✅ | `pitch/demo-3min.md` (no network needed) |
-| Engine tests and tablet build on the merged tree | ✅ | 78/78 tests, `npm run build` OK (2026-11-14) |
+| Engine tests and tablet build on the working tree | ✅ | 111/111 tests, `npm run build` OK (2026-11-15) |
 | Judging guide + Terms read (2026 text) | ❓ | confirm eligibility, AI disclosure and repo-public rules for this edition |
 | Local submission cutoff confirmed | ❓ | the vault still lists it as unconfirmed |
 | Submitted ≥3 h before cutoff | ⚠️ | plan the freeze 4 h out, video 3 h out |

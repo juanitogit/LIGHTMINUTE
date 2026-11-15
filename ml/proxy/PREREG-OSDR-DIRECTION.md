@@ -1,5 +1,12 @@
 # Follow-up registration · Inspiration4 serum directions
 
+**Status: NOT DONE (2026-11-15).** This registration requires freezing the
+published comparison signs *before* inspecting new numerical results. The CMP
+values were already inspected in the v1 analysis, so that ordering can no
+longer be guaranteed in this cycle. No concordance is computed or claimed; a
+future attempt needs a fresh registration and a reviewer who has not seen the
+CMP directions.
+
 The original OSD-575 analysis has already been published. This follow-up tests reproducibility on the same participants. Prior aggregate results were known. The original time-box overrun remains part of the record.
 
 Question: for all OSD-575 CMP analytes with corresponding human Inspiration4 serum/plasma chemistry in Siew et al., DOI 10.1038/s41467-024-49212-1 (and its publisher-provided source data), does the observed group direction agree at the same return visit against the pooled personal preflight reference? Cover every reported visit and all matching analytes; do not select on agreement. Reject animal, ISS, JAXA, urine and omics measurements. Any specimen terminology difference must be disclosed.

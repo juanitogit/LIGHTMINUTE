@@ -76,7 +76,7 @@ Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not
 
 | Area | What works | Verified by |
 |---|---|---|
-| **N-of-1 engine** | Per-person conjugate Bayesian baseline (NIG + Student-t), winsorised robust updates, two-sided CUSUM, directional **syndrome** score, three-lens verdicts, crew attribution with 2-day persistence, QC that drops impossible readings before any update | `python scripts/run_tests.py` → **78/78** (nof1, syndrome, lenses, crew/ground/space, pipeline, simulate, qc, verifier, api, llm) |
+| **N-of-1 engine** | Per-person conjugate Bayesian baseline (NIG + Student-t), winsorised robust updates, two-sided CUSUM, directional **syndrome** score, three-lens verdicts, crew attribution with 2-day persistence, QC that drops impossible readings before any update | `python scripts/run_tests.py` → **111/111** (nof1, syndrome, lenses, crew/ground/space, pipeline, simulate, qc, verifier, api, llm) |
 | **Scenarios** | 3 scripted scenarios × `strong`/`mild`, 24 days, 4 crew with roles (CMO/CDR/MS1/MS2), 6 indicators (`rest_hr`, `temp_c`, `sleep_h`, `pvt_ms`, `co2_ppm`, `headache_score`), sensor dropouts, hazards, deterministic by `(name, variant, seed, days)` | `python scripts/export_demo_json.py --all`; `apps/crew-tablet/public/data/scenario-*.json` + `scenario-index.json` |
 | **API** | `GET /api/health`, `GET /api/scenarios`, `GET /api/scenario/{name}`, `POST /api/card`, `GET /api/llm-stats`; scenarios come from `pipeline.run_scenario` when importable, else the static JSON; CORS restricted to localhost | uvicorn smoke: `/api/scenario/cmo_fever` → `source: engine`, 24 days, 6 indicators; `POST /api/card` day 15 crew A → `level: act`, `card_source: template` |
 | **Decision Cards** | One byte-stable system prefix (rules + whole KB + thresholds/syndromes with their status) so DeepSeek disk caching hits; verify → one retry with the error list → deterministic template fallback | `test_llm`: rejection→fallback, retry feeds errors back, prefix bytes identical across calls, injection stays in the *user* message, `LLM_PROVIDER=none` → zero network |
@@ -95,7 +95,7 @@ Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not
 | Area | Limit |
 |---|---|
 | **LLM path** | **No live DeepSeek call has ever been executed** (no key in the build environment). Request shape, `response_format: json_object`, effort tiers and cache-hit accounting are implemented but unverified against the real API. Everything is covered by a fake client; templates are always the fallback. |
-| **Real-data evidence** | MMASH proxy (22 healthy adults, per-minute HR) tests **interval honesty, not detection**: no labelled events, so no recall or delay can be claimed from it. OSDR / Inspiration4 was attempted and the endpoints returned 404 during the event — documented in the data card, nothing quoted. |
+| **Real-data evidence** | MMASH proxy (22 healthy adults, per-minute HR) tests **interval honesty, not detection**: no labelled events, so no recall or delay can be claimed from it. OSDR / Inspiration4 was processed from the unrestricted OSD-575 CMP table (4 participants, 79/287 postflight values outside preflight bands, exploratory only); literature-direction concordance is NOT DONE. |
 | **Mild scenarios** | Deliberately weak: `cmo_fever` mild reaches `act` only on some seeds, `sep_sleep_loss` mild mostly stays `watch`. Do not present mild as "detected". |
 | **Radiation panel** | Verified in the production build: archived NOAA flux plot, `real-public` label, retrieval time and source. One day, one satellite; S0. Flux is not absorbed dose and this is not live telemetry. |
 | **Validation panels** | Verified with the published JSON: both crew cohorts, four detectors, calibration and missing-data/baseline tables. These are synthetic benchmarks, not clinical validation. |
@@ -146,8 +146,10 @@ healthy series: 100 % coverage at 23 updates, 83 % at 200, 56 % at 500, **16 % a
 MMASH per-minute HR: **21.6 %** (nominal 95 %).
 
 It is fixed on `main`: `alpha` is now discounted toward its prior value, which pins `df` around
-52 instead of letting it grow. Re-measured with the shipped model: **100 % / 97 % / 95 % / 95 %**
-at those four stream lengths and **93.4 %** on the real MMASH minutes. Every table in this
+52 instead of letting it grow. Re-measured before the FI-13 guard: **100 % / 97 % / 95 % / 95 %**
+at those four stream lengths and **93.4 %** on the real MMASH minutes (93.15 % in the preregistered
+study). The FI-13 guard now lowers that real-minute coverage to **66.37 %**, a calibration
+regression documented in [`ml/proxy/RESULTS.md`](ml/proxy/RESULTS.md). Every table in this
 README, in `docs/validation.md` and in the tablet's `validation.json` was regenerated after the
 fix, and `tests/test_nof1.py` now fails if coverage collapses again. The old rule stays as
 `LegacyUndiscountedBaseline` in `ml/diagnostics/forgetting_drift.py`, so the before/after remains
@@ -195,7 +197,7 @@ flowchart LR
 
 ```bash
 cp .env.example .env          # optional: DEEPSEEK_API_KEY; LLM_PROVIDER=none works with no key
-python scripts/run_tests.py   # 78/78, no network, no pytest required
+python scripts/run_tests.py   # 111/111, no network, no pytest required
 
 # engine + API on :8000
 cd services/engine && uvicorn tether_engine.api.main:app --port 8000
@@ -253,7 +255,7 @@ Each scenario also ships a `mild` variant for honest "we missed it" demos.
 ## Tests
 
 ```bash
-python scripts/run_tests.py                       # 78/78 — engine, pipeline, QC, verifier, API, LLM
+python scripts/run_tests.py                       # 111/111 — engine, pipeline, QC, verifier, API, LLM
 node apps/ground-console/src/audit.test.mjs       # 8/8 — JS hash chain == Python vectors
 PYTHONPATH=services/engine python -m tether_engine.llm.redteam   # 30/30 adversarial cards rejected
 cd apps/crew-tablet && npm run build              # tsc -b && vite build
@@ -289,10 +291,13 @@ defect section of [`docs/model-card.md`](docs/model-card.md) before quoting any 
 | **real-public** | NOAA SWPC GOES proton flux (`public/data/radiation.json`, snapshot with sha256) |
 | **proxy** | MMASH 1.0.0 wearable HR, 22 healthy adults (ODbL 1.0, aggregate results only) |
 
-The MMASH run is a coverage test of the same engine code, not a detection result: the shipped
-model covers 93.4 % of real minutes inside the nominal 95 % band, and it covered 21.6 % before
-the `alpha` fix — which is how that defect was found.
-OSDR / Inspiration4 was attempted; the endpoints returned 404 and nothing is quoted from it.
+The MMASH run is a coverage test of the same engine code, not a detection result. Before the
+FI-13 guard the model covered 93.4 % of real minutes inside the nominal 95 % band (93.15 % in
+the preregistered study), and 21.6 % before the `alpha` fix — which is how that defect was found.
+With the FI-13 guard the shipped engine covers 66.37 %, below the preregistered 90–98 % tolerance;
+that is a shipping blocker, not a detection claim.
+OSD-575 was processed from the unrestricted CMP table: 4 participants, 79/287 postflight values
+outside preflight bands, exploratory only. Directional concordance with the literature is NOT DONE.
 
 ---
 

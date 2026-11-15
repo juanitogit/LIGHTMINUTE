@@ -54,12 +54,15 @@ labelled synthetic — values are never invented and presented as real.
 | Patel et al. 2020, "Red risks for a journey to the red planet" | <https://pmc.ncbi.nlm.nih.gov/articles/PMC7645687> | verified (page read) | priority risks (radiation, SANS, behavioral, nutrition) |
 | HRP core-temperature RFI | <https://www.nasa.gov/help-nasa-find-practical-ways-to-monitor-astronaut-body-temperature-in-low-earth-orbit/> | verified (page read) | 24 h core-temperature rationale |
 | HRP Artemis II Data Methodology Challenge winners | <https://www.nasa.gov/hrp/winners-of-nasa-hrps-artemis-ii-data-methodology-challenge/> | verified (page read) | the small-sample / N-of-1 argument |
-| Inspiration4 (n=4) in NASA OSDR | <https://doi.org/10.1038/s41526-024-00393-5> | paper verified; **data not fetched** | why n=4 methods matter |
+| Inspiration4 (n=4) in NASA OSDR | <https://doi.org/10.1038/s41526-024-00393-5> | paper verified; **unrestricted OSD-575 CMP processed** | exploratory postflight bands (79/287); direction NOT DONE |
 
-**OSDR was not used.** The GLOpenAPI endpoints tried during the event returned 404
-(`osdr.nasa.gov/geode-py/ws/api/studies`, `/osdr/data/osd/api`). No OSDR dataset was
-downloaded, no numbers from it are quoted, and no prior is claimed to come from it.
-`services/engine/tether_engine/ingest/` is written so a snapshot can be added later.
+**OSDR was used, exploratorily.** The GLOpenAPI endpoints tried during the event returned 404
+(`osdr.nasa.gov/geode-py/ws/api/studies`, `/osdr/data/osd/api`), but the unrestricted OSD-575
+transformed CMP CSV was available and processed: 4 participants, 19 analytes, 79/287 postflight
+values outside personal preflight bands. That is not validation: baselines have three preflight
+samples, no clinical sensitivity is claimed, and directional concordance with Siew et al. is
+NOT DONE because the published signs were not frozen before the numerical values were seen.
+`services/engine/tether_engine/ingest/` remains written so a snapshot can be added later.
 
 ## Not used, and deliberately left unverified
 - **NASA-STD-3001** reference ranges and career dose limits — not opened, so no limit is

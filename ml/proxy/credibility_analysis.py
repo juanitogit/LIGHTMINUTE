@@ -309,7 +309,10 @@ def plot(result: dict) -> None:
 def main() -> None:
     before = sha(ROOT / "services/engine/tether_engine/bayes/nof1.py")
     result = {"started_official_access_utc": START_UTC, "analysis_started_at": stamp(),
+              "analysis_round": "v2 (post-fix engine)",
+              "preregistration": "PREREG-MMASH-v2.md (uncommitted working copy); v1 in 2fea48f",
               "preregistration_commit": "2fea48f",
+              "repo_revision": subprocess.check_output(["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip(),
               "environment": {"python": platform.python_version(), "numpy": np.__version__, "scipy": scipy.__version__},
               "engine_commit": subprocess.check_output(["git","log","-1","--format=%H","--","services/engine/tether_engine/bayes/nof1.py"],cwd=ROOT,text=True).strip(),
               "engine_source_sha256": before,

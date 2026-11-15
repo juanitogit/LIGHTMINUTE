@@ -1,15 +1,18 @@
 {
   "started_official_access_utc": "2026-11-14T20:35:00+00:00",
-  "analysis_started_at": "2026-11-15T00:26:35.149842+00:00",
+  "analysis_started_at": "2026-11-15T02:31:40.854398+00:00",
+  "analysis_round": "v2 (post-fix engine)",
+  "preregistration": "PREREG-MMASH-v2.md (uncommitted working copy); v1 in 2fea48f",
   "preregistration_commit": "2fea48f",
+  "repo_revision": "6deea70c734d368e4dc4e1b614005c27177d9c75",
   "environment": {
     "python": "3.14.3",
     "numpy": "2.5.4",
     "scipy": "1.18.1",
     "matplotlib": "3.11.2"
   },
-  "engine_commit": "e0c1fb52303b77103f9843cfb52cfdf383a460c7",
-  "engine_source_sha256": "402aa251b0205e8cb2c03d8fb0da2204570d938aca879ce762b64d0253c200b0",
+  "engine_commit": "05533eada4d620a7289e50b6810f9c027f51d9a9",
+  "engine_source_sha256": "cd932b9be189d0c6f0c63f3f073a4789eda4107ce882b17ab8ffbb7f56e0c8d5",
   "mmash": {
     "label": "proxy",
     "synthetic": false,
@@ -20,21 +23,21 @@
     "pooled": {
       "raw": {
         "report_n": 23488,
-        "covered": 21879,
-        "coverage": 0.9314969346049047,
-        "outside_band_flags_per_observed_person_day": 98.64441416893733,
-        "median_of_person_median_widths_bpm": 29.53011621211235,
-        "median_person_lag1_correlation": 0.7816609196360522,
-        "calibration_gate_pass": true
+        "covered": 15590,
+        "coverage": 0.6637431880108992,
+        "outside_band_flags_per_observed_person_day": 484.2098092643052,
+        "median_of_person_median_widths_bpm": 28.69385756021806,
+        "median_person_lag1_correlation": 0.881209466139228,
+        "calibration_gate_pass": false
       },
       "circadian_residual": {
         "report_n": 23488,
-        "covered": 22320,
-        "coverage": 0.9502724795640327,
-        "outside_band_flags_per_observed_person_day": 71.60762942779292,
-        "median_of_person_median_widths_bpm": 35.743369160904216,
-        "median_person_lag1_correlation": 0.8536519883629707,
-        "calibration_gate_pass": true
+        "covered": 13197,
+        "coverage": 0.5618613760217984,
+        "outside_band_flags_per_observed_person_day": 630.9196185286104,
+        "median_of_person_median_widths_bpm": 33.56407154698256,
+        "median_person_lag1_correlation": 0.9476778771604192,
+        "calibration_gate_pass": false
       }
     },
     "context_helpful_by_preregistered_rule": false,
@@ -63,41 +66,41 @@
         ],
         "raw": {
           "report_n": 1121,
-          "covered": 1051,
-          "coverage": 0.9375557537912578,
-          "outside_band_flags_per_observed_person_day": 89.91971454058876,
-          "median_width_bpm": 37.54419325310732,
-          "mean_width_bpm": 41.60433052531368,
-          "lag1_innovation_correlation": 0.7710226668835086,
+          "covered": 589,
+          "coverage": 0.5254237288135594,
+          "outside_band_flags_per_observed_person_day": 683.3898305084746,
+          "median_width_bpm": 31.072677761015143,
+          "mean_width_bpm": 31.072677761015143,
+          "lag1_innovation_correlation": 0.8914561779792202,
           "training_sd_bpm": 14.91089260685331,
           "annotation_strata": {
             "sleep_interval": {
               "n": 375,
-              "covered": 362
+              "covered": 203
             },
             "other": {
               "n": 746,
-              "covered": 689
+              "covered": 386
             }
           }
         },
         "circadian_residual": {
           "report_n": 1121,
-          "covered": 1101,
-          "coverage": 0.9821587867975022,
-          "outside_band_flags_per_observed_person_day": 25.69134701159679,
-          "median_width_bpm": 113.56017154012977,
-          "mean_width_bpm": 116.1236339174843,
-          "lag1_innovation_correlation": 0.9707126422346426,
+          "covered": 39,
+          "coverage": 0.03479036574487065,
+          "outside_band_flags_per_observed_person_day": 1389.9018733273863,
+          "median_width_bpm": 27.272261007273435,
+          "mean_width_bpm": 27.27226100727344,
+          "lag1_innovation_correlation": 0.9972511538881754,
           "training_sd_bpm": 10.746804455672304,
           "annotation_strata": {
             "sleep_interval": {
               "n": 375,
-              "covered": 367
+              "covered": 0
             },
             "other": {
               "n": 746,
-              "covered": 734
+              "covered": 39
             }
           }
         }
@@ -126,41 +129,41 @@
         ],
         "raw": {
           "report_n": 1029,
-          "covered": 960,
-          "coverage": 0.9329446064139941,
-          "outside_band_flags_per_observed_person_day": 96.5597667638484,
-          "median_width_bpm": 39.08120216397029,
-          "mean_width_bpm": 42.82723185308776,
-          "lag1_innovation_correlation": 0.7922991723885958,
+          "covered": 727,
+          "coverage": 0.706511175898931,
+          "outside_band_flags_per_observed_person_day": 422.62390670553935,
+          "median_width_bpm": 37.13472938670953,
+          "mean_width_bpm": 35.91859183256394,
+          "lag1_innovation_correlation": 0.8890366552371424,
           "training_sd_bpm": 8.937767639663445,
           "annotation_strata": {
             "sleep_interval": {
               "n": 223,
-              "covered": 203
+              "covered": 24
             },
             "other": {
               "n": 806,
-              "covered": 757
+              "covered": 703
             }
           }
         },
         "circadian_residual": {
           "report_n": 1029,
-          "covered": 969,
-          "coverage": 0.9416909620991254,
-          "outside_band_flags_per_observed_person_day": 83.96501457725948,
-          "median_width_bpm": 52.394044452937294,
-          "mean_width_bpm": 53.26415247292183,
-          "lag1_innovation_correlation": 0.8533102910595473,
+          "covered": 460,
+          "coverage": 0.44703595724003886,
+          "outside_band_flags_per_observed_person_day": 796.268221574344,
+          "median_width_bpm": 49.79143728307967,
+          "mean_width_bpm": 47.29877606054227,
+          "lag1_innovation_correlation": 0.9663241773474472,
           "training_sd_bpm": 8.768031355165375,
           "annotation_strata": {
             "sleep_interval": {
               "n": 223,
-              "covered": 203
+              "covered": 3
             },
             "other": {
               "n": 806,
-              "covered": 766
+              "covered": 457
             }
           }
         }
@@ -189,12 +192,12 @@
         ],
         "raw": {
           "report_n": 1116,
-          "covered": 1025,
-          "coverage": 0.9184587813620072,
-          "outside_band_flags_per_observed_person_day": 117.41935483870968,
-          "median_width_bpm": 43.73437975549493,
-          "mean_width_bpm": 42.06101902733636,
-          "lag1_innovation_correlation": 0.9150289475819705,
+          "covered": 622,
+          "coverage": 0.557347670250896,
+          "outside_band_flags_per_observed_person_day": 637.4193548387096,
+          "median_width_bpm": 36.43900579438417,
+          "mean_width_bpm": 34.46150821884912,
+          "lag1_innovation_correlation": 0.9611248127871512,
           "training_sd_bpm": 6.826104390792522,
           "annotation_strata": {
             "sleep_interval": {
@@ -203,18 +206,18 @@
             },
             "other": {
               "n": 1116,
-              "covered": 1025
+              "covered": 622
             }
           }
         },
         "circadian_residual": {
           "report_n": 1116,
-          "covered": 1043,
-          "coverage": 0.9345878136200717,
-          "outside_band_flags_per_observed_person_day": 94.19354838709677,
-          "median_width_bpm": 44.95880892468618,
-          "mean_width_bpm": 44.816279415083045,
-          "lag1_innovation_correlation": 0.9166018826339926,
+          "covered": 755,
+          "coverage": 0.6765232974910395,
+          "outside_band_flags_per_observed_person_day": 465.80645161290323,
+          "median_width_bpm": 45.112520773628944,
+          "mean_width_bpm": 42.53812670444936,
+          "lag1_innovation_correlation": 0.9696445529424289,
           "training_sd_bpm": 6.489140977107603,
           "annotation_strata": {
             "sleep_interval": {
@@ -223,7 +226,7 @@
             },
             "other": {
               "n": 1116,
-              "covered": 1043
+              "covered": 755
             }
           }
         }
@@ -252,12 +255,12 @@
         ],
         "raw": {
           "report_n": 1086,
-          "covered": 1029,
-          "coverage": 0.9475138121546961,
-          "outside_band_flags_per_observed_person_day": 75.58011049723757,
-          "median_width_bpm": 29.646609543655657,
-          "mean_width_bpm": 30.567787775394347,
-          "lag1_innovation_correlation": 0.7505369379530276,
+          "covered": 960,
+          "coverage": 0.8839779005524862,
+          "outside_band_flags_per_observed_person_day": 167.0718232044199,
+          "median_width_bpm": 27.974092239867076,
+          "mean_width_bpm": 27.96668350785656,
+          "lag1_innovation_correlation": 0.8073726435282242,
           "training_sd_bpm": 8.030928564750216,
           "annotation_strata": {
             "sleep_interval": {
@@ -266,18 +269,18 @@
             },
             "other": {
               "n": 801,
-              "covered": 754
+              "covered": 685
             }
           }
         },
         "circadian_residual": {
           "report_n": 1086,
-          "covered": 1033,
-          "coverage": 0.9511970534069981,
-          "outside_band_flags_per_observed_person_day": 70.27624309392266,
-          "median_width_bpm": 31.446185021470708,
-          "mean_width_bpm": 32.561037274904585,
-          "lag1_innovation_correlation": 0.7709788564244239,
+          "covered": 960,
+          "coverage": 0.8839779005524862,
+          "outside_band_flags_per_observed_person_day": 167.0718232044199,
+          "median_width_bpm": 29.392522637820854,
+          "mean_width_bpm": 29.883548934709424,
+          "lag1_innovation_correlation": 0.8324263972753068,
           "training_sd_bpm": 7.286484141791197,
           "annotation_strata": {
             "sleep_interval": {
@@ -286,7 +289,7 @@
             },
             "other": {
               "n": 801,
-              "covered": 756
+              "covered": 683
             }
           }
         }
@@ -315,12 +318,12 @@
         ],
         "raw": {
           "report_n": 1080,
-          "covered": 1005,
-          "coverage": 0.9305555555555556,
-          "outside_band_flags_per_observed_person_day": 100.0,
-          "median_width_bpm": 35.10838964149367,
-          "mean_width_bpm": 32.56397341791282,
-          "lag1_innovation_correlation": 0.7266803243823554,
+          "covered": 911,
+          "coverage": 0.8435185185185186,
+          "outside_band_flags_per_observed_person_day": 225.33333333333334,
+          "median_width_bpm": 26.021759486574894,
+          "mean_width_bpm": 30.27107693666545,
+          "lag1_innovation_correlation": 0.7966756065824581,
           "training_sd_bpm": 12.610854391441858,
           "annotation_strata": {
             "sleep_interval": {
@@ -329,18 +332,18 @@
             },
             "other": {
               "n": 1080,
-              "covered": 1005
+              "covered": 911
             }
           }
         },
         "circadian_residual": {
           "report_n": 1080,
-          "covered": 1009,
-          "coverage": 0.9342592592592592,
-          "outside_band_flags_per_observed_person_day": 94.66666666666667,
-          "median_width_bpm": 36.0029846171001,
-          "mean_width_bpm": 34.22452650564726,
-          "lag1_innovation_correlation": 0.7515284950324959,
+          "covered": 1004,
+          "coverage": 0.9296296296296296,
+          "outside_band_flags_per_observed_person_day": 101.33333333333333,
+          "median_width_bpm": 35.70760658542892,
+          "mean_width_bpm": 34.001192368669095,
+          "lag1_innovation_correlation": 0.7575303445341036,
           "training_sd_bpm": 11.487010329578743,
           "annotation_strata": {
             "sleep_interval": {
@@ -349,7 +352,7 @@
             },
             "other": {
               "n": 1080,
-              "covered": 1009
+              "covered": 1004
             }
           }
         }
@@ -378,41 +381,41 @@
         ],
         "raw": {
           "report_n": 1116,
-          "covered": 1047,
-          "coverage": 0.9381720430107527,
-          "outside_band_flags_per_observed_person_day": 89.03225806451613,
-          "median_width_bpm": 32.438091369127164,
-          "mean_width_bpm": 33.34031666937431,
-          "lag1_innovation_correlation": 0.7670464158655083,
+          "covered": 1005,
+          "coverage": 0.9005376344086021,
+          "outside_band_flags_per_observed_person_day": 143.2258064516129,
+          "median_width_bpm": 31.70703505418359,
+          "mean_width_bpm": 31.849870050695817,
+          "lag1_innovation_correlation": 0.8246863122927645,
           "training_sd_bpm": 10.02728767632913,
           "annotation_strata": {
             "sleep_interval": {
               "n": 392,
-              "covered": 375
+              "covered": 374
             },
             "other": {
               "n": 724,
-              "covered": 672
+              "covered": 631
             }
           }
         },
         "circadian_residual": {
           "report_n": 1116,
-          "covered": 1040,
-          "coverage": 0.931899641577061,
-          "outside_band_flags_per_observed_person_day": 98.06451612903226,
-          "median_width_bpm": 35.07890158858385,
-          "mean_width_bpm": 37.09408869886559,
-          "lag1_innovation_correlation": 0.7767285266683145,
+          "covered": 696,
+          "coverage": 0.6236559139784946,
+          "outside_band_flags_per_observed_person_day": 541.9354838709677,
+          "median_width_bpm": 35.468582707024225,
+          "mean_width_bpm": 35.401439843876936,
+          "lag1_innovation_correlation": 0.9307021626827784,
           "training_sd_bpm": 9.771253707308343,
           "annotation_strata": {
             "sleep_interval": {
               "n": 392,
-              "covered": 377
+              "covered": 191
             },
             "other": {
               "n": 724,
-              "covered": 663
+              "covered": 505
             }
           }
         }
@@ -441,41 +444,41 @@
         ],
         "raw": {
           "report_n": 1128,
-          "covered": 1051,
-          "coverage": 0.9317375886524822,
-          "outside_band_flags_per_observed_person_day": 98.29787234042553,
-          "median_width_bpm": 26.745730722678136,
-          "mean_width_bpm": 27.184928172869995,
-          "lag1_innovation_correlation": 0.663736621157875,
+          "covered": 529,
+          "coverage": 0.46897163120567376,
+          "outside_band_flags_per_observed_person_day": 764.6808510638298,
+          "median_width_bpm": 30.772579126314753,
+          "mean_width_bpm": 30.774215008341745,
+          "lag1_innovation_correlation": 0.8632971723039334,
           "training_sd_bpm": 10.768825792003755,
           "annotation_strata": {
             "sleep_interval": {
               "n": 419,
-              "covered": 391
+              "covered": 28
             },
             "other": {
               "n": 709,
-              "covered": 660
+              "covered": 501
             }
           }
         },
         "circadian_residual": {
           "report_n": 1128,
-          "covered": 1077,
-          "coverage": 0.9547872340425532,
-          "outside_band_flags_per_observed_person_day": 65.1063829787234,
-          "median_width_bpm": 35.104249629218586,
-          "mean_width_bpm": 35.317932354413905,
-          "lag1_innovation_correlation": 0.7492057704011431,
+          "covered": 654,
+          "coverage": 0.5797872340425532,
+          "outside_band_flags_per_observed_person_day": 605.1063829787234,
+          "median_width_bpm": 35.70512346791659,
+          "mean_width_bpm": 36.566816622302355,
+          "lag1_innovation_correlation": 0.9511604040222708,
           "training_sd_bpm": 10.475714189504279,
           "annotation_strata": {
             "sleep_interval": {
               "n": 419,
-              "covered": 411
+              "covered": 260
             },
             "other": {
               "n": 709,
-              "covered": 666
+              "covered": 394
             }
           }
         }
@@ -505,12 +508,12 @@
         ],
         "raw": {
           "report_n": 657,
-          "covered": 627,
-          "coverage": 0.954337899543379,
-          "outside_band_flags_per_observed_person_day": 65.75342465753425,
-          "median_width_bpm": 35.84873008574414,
-          "mean_width_bpm": 35.53120302200699,
-          "lag1_innovation_correlation": 0.8150745072424014,
+          "covered": 546,
+          "coverage": 0.8310502283105022,
+          "outside_band_flags_per_observed_person_day": 243.2876712328767,
+          "median_width_bpm": 30.154842503843383,
+          "mean_width_bpm": 31.303176974667316,
+          "lag1_innovation_correlation": 0.8683850876601867,
           "training_sd_bpm": 6.881822922232721,
           "annotation_strata": {
             "sleep_interval": {
@@ -519,18 +522,18 @@
             },
             "other": {
               "n": 657,
-              "covered": 627
+              "covered": 546
             }
           }
         },
         "circadian_residual": {
           "report_n": 657,
-          "covered": 629,
-          "coverage": 0.9573820395738204,
-          "outside_band_flags_per_observed_person_day": 61.36986301369863,
-          "median_width_bpm": 32.84294439376875,
-          "mean_width_bpm": 36.182439854619815,
-          "lag1_innovation_correlation": 0.8007736469327297,
+          "covered": 568,
+          "coverage": 0.8645357686453576,
+          "outside_band_flags_per_observed_person_day": 195.06849315068493,
+          "median_width_bpm": 31.96446573962342,
+          "mean_width_bpm": 33.71909228769593,
+          "lag1_innovation_correlation": 0.8631574490933249,
           "training_sd_bpm": 6.236691078803086,
           "annotation_strata": {
             "sleep_interval": {
@@ -539,7 +542,7 @@
             },
             "other": {
               "n": 657,
-              "covered": 629
+              "covered": 568
             }
           }
         }
@@ -569,12 +572,12 @@
         ],
         "raw": {
           "report_n": 647,
-          "covered": 594,
-          "coverage": 0.9180834621329211,
-          "outside_band_flags_per_observed_person_day": 117.95981452859351,
-          "median_width_bpm": 37.59018120299306,
-          "mean_width_bpm": 67.08835720148608,
-          "lag1_innovation_correlation": 0.9248757166546372,
+          "covered": 368,
+          "coverage": 0.5687789799072643,
+          "outside_band_flags_per_observed_person_day": 620.9582689335394,
+          "median_width_bpm": 26.615421490091933,
+          "mean_width_bpm": 26.615421490091933,
+          "lag1_innovation_correlation": 0.9578239652051882,
           "training_sd_bpm": 7.646724696994674,
           "annotation_strata": {
             "sleep_interval": {
@@ -583,18 +586,18 @@
             },
             "other": {
               "n": 647,
-              "covered": 594
+              "covered": 368
             }
           }
         },
         "circadian_residual": {
           "report_n": 647,
-          "covered": 588,
-          "coverage": 0.9088098918083463,
-          "outside_band_flags_per_observed_person_day": 131.31375579598145,
-          "median_width_bpm": 46.360980900554715,
-          "mean_width_bpm": 76.25637801001449,
-          "lag1_innovation_correlation": 0.9248808938793601,
+          "covered": 77,
+          "coverage": 0.11901081916537867,
+          "outside_band_flags_per_observed_person_day": 1268.6244204018546,
+          "median_width_bpm": 27.17206662091982,
+          "mean_width_bpm": 27.172066620919818,
+          "lag1_innovation_correlation": 0.9826039641489411,
           "training_sd_bpm": 7.592473505995946,
           "annotation_strata": {
             "sleep_interval": {
@@ -603,7 +606,7 @@
             },
             "other": {
               "n": 647,
-              "covered": 588
+              "covered": 77
             }
           }
         }
@@ -632,41 +635,41 @@
         ],
         "raw": {
           "report_n": 980,
-          "covered": 911,
-          "coverage": 0.9295918367346939,
-          "outside_band_flags_per_observed_person_day": 101.38775510204081,
-          "median_width_bpm": 26.57358254215816,
-          "mean_width_bpm": 28.9543610334575,
-          "lag1_innovation_correlation": 0.6621670670483831,
+          "covered": 603,
+          "coverage": 0.6153061224489796,
+          "outside_band_flags_per_observed_person_day": 553.9591836734694,
+          "median_width_bpm": 15.806962249174518,
+          "mean_width_bpm": 19.728030038662457,
+          "lag1_innovation_correlation": 0.7557724902755769,
           "training_sd_bpm": 15.38827280288204,
           "annotation_strata": {
             "sleep_interval": {
               "n": 171,
-              "covered": 156
+              "covered": 10
             },
             "other": {
               "n": 809,
-              "covered": 755
+              "covered": 593
             }
           }
         },
         "circadian_residual": {
           "report_n": 980,
-          "covered": 950,
-          "coverage": 0.9693877551020408,
-          "outside_band_flags_per_observed_person_day": 44.08163265306123,
-          "median_width_bpm": 92.73003665822942,
-          "mean_width_bpm": 88.70977399445071,
-          "lag1_innovation_correlation": 0.963154678129898,
+          "covered": 8,
+          "coverage": 0.00816326530612245,
+          "outside_band_flags_per_observed_person_day": 1428.2448979591836,
+          "median_width_bpm": 47.97219983801169,
+          "mean_width_bpm": 47.87111786985074,
+          "lag1_innovation_correlation": 0.9957556113927156,
           "training_sd_bpm": 11.812778110560151,
           "annotation_strata": {
             "sleep_interval": {
               "n": 171,
-              "covered": 167
+              "covered": 0
             },
             "other": {
               "n": 809,
-              "covered": 783
+              "covered": 8
             }
           }
         }
@@ -713,12 +716,12 @@
         },
         "circadian_residual": {
           "report_n": 1144,
-          "covered": 1116,
-          "coverage": 0.9755244755244755,
-          "outside_band_flags_per_observed_person_day": 35.24475524475525,
-          "median_width_bpm": 60.71907347210624,
-          "mean_width_bpm": 58.23150374278503,
-          "lag1_innovation_correlation": 0.922833550566245,
+          "covered": 290,
+          "coverage": 0.2534965034965035,
+          "outside_band_flags_per_observed_person_day": 1074.9650349650349,
+          "median_width_bpm": 37.25176424551941,
+          "mean_width_bpm": 36.97726393713949,
+          "lag1_innovation_correlation": 0.9929800666959177,
           "training_sd_bpm": 9.472185380150753,
           "annotation_strata": {
             "sleep_interval": {
@@ -727,7 +730,7 @@
             },
             "other": {
               "n": 1144,
-              "covered": 1116
+              "covered": 290
             }
           }
         }
@@ -756,41 +759,41 @@
         ],
         "raw": {
           "report_n": 1134,
-          "covered": 1050,
-          "coverage": 0.9259259259259259,
-          "outside_band_flags_per_observed_person_day": 106.66666666666667,
-          "median_width_bpm": 23.016751007110837,
-          "mean_width_bpm": 27.136233720020673,
-          "lag1_innovation_correlation": 0.9289403126143033,
+          "covered": 429,
+          "coverage": 0.3783068783068783,
+          "outside_band_flags_per_observed_person_day": 895.2380952380952,
+          "median_width_bpm": 14.823802270954303,
+          "mean_width_bpm": 14.823802270954305,
+          "lag1_innovation_correlation": 0.965211542328275,
           "training_sd_bpm": 7.179694457801868,
           "annotation_strata": {
             "sleep_interval": {
               "n": 364,
-              "covered": 352
+              "covered": 1
             },
             "other": {
               "n": 770,
-              "covered": 698
+              "covered": 428
             }
           }
         },
         "circadian_residual": {
           "report_n": 1134,
-          "covered": 1085,
-          "coverage": 0.9567901234567902,
-          "outside_band_flags_per_observed_person_day": 62.22222222222222,
-          "median_width_bpm": 35.483753704708334,
-          "mean_width_bpm": 42.09243487397599,
-          "lag1_innovation_correlation": 0.9500616249417843,
+          "covered": 99,
+          "coverage": 0.0873015873015873,
+          "outside_band_flags_per_observed_person_day": 1314.2857142857142,
+          "median_width_bpm": 17.59245912640892,
+          "mean_width_bpm": 17.592459126408922,
+          "lag1_innovation_correlation": 0.9914345897214363,
           "training_sd_bpm": 6.817556586819662,
           "annotation_strata": {
             "sleep_interval": {
               "n": 364,
-              "covered": 351
+              "covered": 0
             },
             "other": {
               "n": 770,
-              "covered": 734
+              "covered": 99
             }
           }
         }
@@ -819,12 +822,12 @@
         ],
         "raw": {
           "report_n": 1116,
-          "covered": 1033,
-          "coverage": 0.9256272401433692,
-          "outside_band_flags_per_observed_person_day": 107.09677419354838,
-          "median_width_bpm": 29.097761960573564,
-          "mean_width_bpm": 28.540666132426544,
-          "lag1_innovation_correlation": 0.7477807647227487,
+          "covered": 449,
+          "coverage": 0.40232974910394265,
+          "outside_band_flags_per_observed_person_day": 860.6451612903226,
+          "median_width_bpm": 27.128048801079558,
+          "mean_width_bpm": 27.128048801079558,
+          "lag1_innovation_correlation": 0.9127895637195712,
           "training_sd_bpm": 7.317289962078096,
           "annotation_strata": {
             "sleep_interval": {
@@ -833,7 +836,7 @@
             },
             "other": {
               "n": 1116,
-              "covered": 1033
+              "covered": 449
             }
           }
         },
@@ -882,12 +885,12 @@
         ],
         "raw": {
           "report_n": 1117,
-          "covered": 1043,
-          "coverage": 0.9337511190689346,
-          "outside_band_flags_per_observed_person_day": 95.3983885407341,
-          "median_width_bpm": 18.171696547992177,
-          "mean_width_bpm": 21.237154615056983,
-          "lag1_innovation_correlation": 0.8388384584688299,
+          "covered": 966,
+          "coverage": 0.864816472694718,
+          "outside_band_flags_per_observed_person_day": 194.6642793196061,
+          "median_width_bpm": 17.168079059963446,
+          "mean_width_bpm": 17.524873763068936,
+          "lag1_innovation_correlation": 0.9317358678555581,
           "training_sd_bpm": 10.706427268268646,
           "annotation_strata": {
             "sleep_interval": {
@@ -896,18 +899,18 @@
             },
             "other": {
               "n": 730,
-              "covered": 670
+              "covered": 593
             }
           }
         },
         "circadian_residual": {
           "report_n": 1117,
-          "covered": 1085,
-          "coverage": 0.9713518352730528,
-          "outside_band_flags_per_observed_person_day": 41.25335720680394,
+          "covered": 995,
+          "coverage": 0.8907788719785139,
+          "outside_band_flags_per_observed_person_day": 157.27842435094,
           "median_width_bpm": 29.295033253715616,
-          "mean_width_bpm": 32.51094872416588,
-          "lag1_innovation_correlation": 0.9144968825256491,
+          "mean_width_bpm": 28.49723125310999,
+          "lag1_innovation_correlation": 0.9665128901958364,
           "training_sd_bpm": 9.582629512141082,
           "annotation_strata": {
             "sleep_interval": {
@@ -916,7 +919,7 @@
             },
             "other": {
               "n": 730,
-              "covered": 707
+              "covered": 617
             }
           }
         }
@@ -945,12 +948,12 @@
         ],
         "raw": {
           "report_n": 1194,
-          "covered": 1128,
-          "coverage": 0.9447236180904522,
-          "outside_band_flags_per_observed_person_day": 79.59798994974874,
+          "covered": 1046,
+          "coverage": 0.8760469011725294,
+          "outside_band_flags_per_observed_person_day": 178.4924623115578,
           "median_width_bpm": 35.04683393840615,
-          "mean_width_bpm": 46.565868953617596,
-          "lag1_innovation_correlation": 0.8465298355839532,
+          "mean_width_bpm": 38.32381756762751,
+          "lag1_innovation_correlation": 0.9228927310126367,
           "training_sd_bpm": 8.276253426246523,
           "annotation_strata": {
             "sleep_interval": {
@@ -959,7 +962,7 @@
             },
             "other": {
               "n": 938,
-              "covered": 877
+              "covered": 795
             }
           }
         },
@@ -1008,41 +1011,41 @@
         ],
         "raw": {
           "report_n": 1148,
-          "covered": 1061,
-          "coverage": 0.9242160278745645,
-          "outside_band_flags_per_observed_person_day": 109.12891986062718,
-          "median_width_bpm": 22.46739407392742,
-          "mean_width_bpm": 25.47858285257397,
-          "lag1_innovation_correlation": 0.8344803816199294,
+          "covered": 514,
+          "coverage": 0.44773519163763065,
+          "outside_band_flags_per_observed_person_day": 795.2613240418118,
+          "median_width_bpm": 18.868168606291903,
+          "mean_width_bpm": 23.009869090853527,
+          "lag1_innovation_correlation": 0.9365649463592316,
           "training_sd_bpm": 8.263268452704402,
           "annotation_strata": {
             "sleep_interval": {
               "n": 444,
-              "covered": 429
+              "covered": 6
             },
             "other": {
               "n": 704,
-              "covered": 632
+              "covered": 508
             }
           }
         },
         "circadian_residual": {
           "report_n": 1148,
-          "covered": 1095,
-          "coverage": 0.9538327526132404,
-          "outside_band_flags_per_observed_person_day": 66.4808362369338,
-          "median_width_bpm": 44.121730444094446,
-          "mean_width_bpm": 43.98744945101301,
-          "lag1_innovation_correlation": 0.8942963094226706,
+          "covered": 145,
+          "coverage": 0.12630662020905922,
+          "outside_band_flags_per_observed_person_day": 1258.1184668989547,
+          "median_width_bpm": 21.172729746857254,
+          "mean_width_bpm": 21.17272974685725,
+          "lag1_innovation_correlation": 0.9864663815953986,
           "training_sd_bpm": 7.196132364671449,
           "annotation_strata": {
             "sleep_interval": {
               "n": 444,
-              "covered": 440
+              "covered": 104
             },
             "other": {
               "n": 704,
-              "covered": 655
+              "covered": 41
             }
           }
         }
@@ -1071,32 +1074,32 @@
         ],
         "raw": {
           "report_n": 1125,
-          "covered": 1041,
-          "coverage": 0.9253333333333333,
-          "outside_band_flags_per_observed_person_day": 107.52,
-          "median_width_bpm": 37.569097999381405,
-          "mean_width_bpm": 43.32370150546796,
-          "lag1_innovation_correlation": 0.8397911382437678,
+          "covered": 465,
+          "coverage": 0.41333333333333333,
+          "outside_band_flags_per_observed_person_day": 844.8,
+          "median_width_bpm": 31.801341417874426,
+          "mean_width_bpm": 32.105830373082284,
+          "lag1_innovation_correlation": 0.9441869030601793,
           "training_sd_bpm": 10.440111518258062,
           "annotation_strata": {
             "sleep_interval": {
               "n": 352,
-              "covered": 331
+              "covered": 2
             },
             "other": {
               "n": 773,
-              "covered": 710
+              "covered": 463
             }
           }
         },
         "circadian_residual": {
           "report_n": 1125,
-          "covered": 1070,
-          "coverage": 0.9511111111111111,
-          "outside_band_flags_per_observed_person_day": 70.4,
+          "covered": 1068,
+          "coverage": 0.9493333333333334,
+          "outside_band_flags_per_observed_person_day": 72.96,
           "median_width_bpm": 43.265248387751505,
-          "mean_width_bpm": 48.91848076702809,
-          "lag1_innovation_correlation": 0.8539936856663941,
+          "mean_width_bpm": 48.342762959533594,
+          "lag1_innovation_correlation": 0.8535896421879151,
           "training_sd_bpm": 10.10279953595402,
           "annotation_strata": {
             "sleep_interval": {
@@ -1105,7 +1108,7 @@
             },
             "other": {
               "n": 773,
-              "covered": 719
+              "covered": 717
             }
           }
         }
@@ -1134,41 +1137,41 @@
         ],
         "raw": {
           "report_n": 1108,
-          "covered": 1028,
-          "coverage": 0.927797833935018,
-          "outside_band_flags_per_observed_person_day": 103.971119133574,
-          "median_width_bpm": 26.98180858814132,
-          "mean_width_bpm": 30.950621457651128,
-          "lag1_innovation_correlation": 0.751372528894872,
+          "covered": 567,
+          "coverage": 0.5117328519855595,
+          "outside_band_flags_per_observed_person_day": 703.1046931407942,
+          "median_width_bpm": 17.257710290544907,
+          "mean_width_bpm": 17.257710290544903,
+          "lag1_innovation_correlation": 0.8022657194571573,
           "training_sd_bpm": 9.07989844964997,
           "annotation_strata": {
             "sleep_interval": {
               "n": 313,
-              "covered": 292
+              "covered": 25
             },
             "other": {
               "n": 795,
-              "covered": 736
+              "covered": 542
             }
           }
         },
         "circadian_residual": {
           "report_n": 1108,
-          "covered": 1029,
-          "coverage": 0.9287003610108303,
-          "outside_band_flags_per_observed_person_day": 102.67148014440433,
-          "median_width_bpm": 28.69472870781948,
-          "mean_width_bpm": 32.25516083431806,
-          "lag1_innovation_correlation": 0.7714080582491256,
+          "covered": 533,
+          "coverage": 0.48104693140794225,
+          "outside_band_flags_per_observed_person_day": 747.2924187725632,
+          "median_width_bpm": 27.811169865798988,
+          "mean_width_bpm": 27.764628674793524,
+          "lag1_innovation_correlation": 0.8968977307906154,
           "training_sd_bpm": 8.727409275128386,
           "annotation_strata": {
             "sleep_interval": {
               "n": 313,
-              "covered": 292
+              "covered": 14
             },
             "other": {
               "n": 795,
-              "covered": 737
+              "covered": 519
             }
           }
         }
@@ -1197,12 +1200,12 @@
         ],
         "raw": {
           "report_n": 1128,
-          "covered": 1037,
-          "coverage": 0.9193262411347518,
-          "outside_band_flags_per_observed_person_day": 116.17021276595744,
-          "median_width_bpm": 24.08004285367599,
-          "mean_width_bpm": 24.03952586672206,
-          "lag1_innovation_correlation": 0.8224294979436219,
+          "covered": 1021,
+          "coverage": 0.9051418439716312,
+          "outside_band_flags_per_observed_person_day": 136.59574468085106,
+          "median_width_bpm": 22.682800203147522,
+          "mean_width_bpm": 22.73718569062013,
+          "lag1_innovation_correlation": 0.8693753417197514,
           "training_sd_bpm": 7.255045861371176,
           "annotation_strata": {
             "sleep_interval": {
@@ -1211,18 +1214,18 @@
             },
             "other": {
               "n": 1128,
-              "covered": 1037
+              "covered": 1021
             }
           }
         },
         "circadian_residual": {
           "report_n": 1128,
-          "covered": 1088,
-          "coverage": 0.9645390070921985,
-          "outside_band_flags_per_observed_person_day": 51.06382978723404,
-          "median_width_bpm": 41.52301785181744,
-          "mean_width_bpm": 41.63699269400243,
-          "lag1_innovation_correlation": 0.9128458974938222,
+          "covered": 366,
+          "coverage": 0.324468085106383,
+          "outside_band_flags_per_observed_person_day": 972.7659574468086,
+          "median_width_bpm": 33.808465426725924,
+          "mean_width_bpm": 34.23306151209094,
+          "lag1_innovation_correlation": 0.9894722582039853,
           "training_sd_bpm": 6.280269599177669,
           "annotation_strata": {
             "sleep_interval": {
@@ -1231,7 +1234,7 @@
             },
             "other": {
               "n": 1128,
-              "covered": 1088
+              "covered": 366
             }
           }
         }
@@ -1260,41 +1263,41 @@
         ],
         "raw": {
           "report_n": 1087,
-          "covered": 1016,
-          "coverage": 0.9346826126954921,
-          "outside_band_flags_per_observed_person_day": 94.05703771849126,
-          "median_width_bpm": 21.243935835151873,
-          "mean_width_bpm": 22.701105131497357,
-          "lag1_innovation_correlation": 0.7662828093846543,
+          "covered": 613,
+          "coverage": 0.5639374425022999,
+          "outside_band_flags_per_observed_person_day": 627.9300827966881,
+          "median_width_bpm": 29.506992068499194,
+          "mean_width_bpm": 28.236430271468468,
+          "lag1_innovation_correlation": 0.8897673687255557,
           "training_sd_bpm": 10.809004105215942,
           "annotation_strata": {
             "sleep_interval": {
               "n": 385,
-              "covered": 345
+              "covered": 29
             },
             "other": {
               "n": 702,
-              "covered": 671
+              "covered": 584
             }
           }
         },
         "circadian_residual": {
           "report_n": 1087,
-          "covered": 1030,
-          "coverage": 0.9475620975160993,
-          "outside_band_flags_per_observed_person_day": 75.51057957681692,
-          "median_width_bpm": 24.619152784205127,
-          "mean_width_bpm": 25.629387320180914,
-          "lag1_innovation_correlation": 0.7690759820474468,
+          "covered": 653,
+          "coverage": 0.6007359705611776,
+          "outside_band_flags_per_observed_person_day": 574.9402023919043,
+          "median_width_bpm": 27.357361486690344,
+          "mean_width_bpm": 27.06763954465318,
+          "lag1_innovation_correlation": 0.9441953502985676,
           "training_sd_bpm": 10.519326926430168,
           "annotation_strata": {
             "sleep_interval": {
               "n": 385,
-              "covered": 364
+              "covered": 7
             },
             "other": {
               "n": 702,
-              "covered": 666
+              "covered": 646
             }
           }
         }
@@ -1323,32 +1326,32 @@
         ],
         "raw": {
           "report_n": 1110,
-          "covered": 1026,
-          "coverage": 0.9243243243243243,
-          "outside_band_flags_per_observed_person_day": 108.97297297297297,
-          "median_width_bpm": 30.04528452127569,
-          "mean_width_bpm": 32.45350757440195,
-          "lag1_innovation_correlation": 0.816088364822915,
+          "covered": 878,
+          "coverage": 0.790990990990991,
+          "outside_band_flags_per_observed_person_day": 300.97297297297297,
+          "median_width_bpm": 32.10053820807647,
+          "mean_width_bpm": 34.1139216197092,
+          "lag1_innovation_correlation": 0.8733822770413137,
           "training_sd_bpm": 8.586054926480983,
           "annotation_strata": {
             "sleep_interval": {
               "n": 297,
-              "covered": 291
+              "covered": 175
             },
             "other": {
               "n": 813,
-              "covered": 735
+              "covered": 703
             }
           }
         },
         "circadian_residual": {
           "report_n": 1110,
-          "covered": 1051,
-          "coverage": 0.9468468468468468,
-          "outside_band_flags_per_observed_person_day": 76.54054054054055,
-          "median_width_bpm": 34.49430838220014,
-          "mean_width_bpm": 36.74941692680139,
-          "lag1_innovation_correlation": 0.8499004657856468,
+          "covered": 995,
+          "coverage": 0.8963963963963963,
+          "outside_band_flags_per_observed_person_day": 149.1891891891892,
+          "median_width_bpm": 33.319677667239205,
+          "mean_width_bpm": 33.19088652830555,
+          "lag1_innovation_correlation": 0.9116640293241025,
           "training_sd_bpm": 8.322525804508393,
           "annotation_strata": {
             "sleep_interval": {
@@ -1357,7 +1360,7 @@
             },
             "other": {
               "n": 813,
-              "covered": 763
+              "covered": 707
             }
           }
         }
@@ -1386,41 +1389,41 @@
         ],
         "raw": {
           "report_n": 1117,
-          "covered": 1033,
-          "coverage": 0.9247985675917636,
-          "outside_band_flags_per_observed_person_day": 108.29006266786034,
-          "median_width_bpm": 24.437536189950436,
-          "mean_width_bpm": 25.974472676919248,
-          "lag1_innovation_correlation": 0.7037924062967184,
+          "covered": 699,
+          "coverage": 0.6257833482542524,
+          "outside_band_flags_per_observed_person_day": 538.8719785138765,
+          "median_width_bpm": 21.221263672538498,
+          "mean_width_bpm": 23.99974618321912,
+          "lag1_innovation_correlation": 0.8458295005099726,
           "training_sd_bpm": 4.219678317078222,
           "annotation_strata": {
             "sleep_interval": {
               "n": 351,
-              "covered": 336
+              "covered": 13
             },
             "other": {
               "n": 766,
-              "covered": 697
+              "covered": 686
             }
           }
         },
         "circadian_residual": {
           "report_n": 1117,
-          "covered": 1044,
-          "coverage": 0.9346463742166518,
-          "outside_band_flags_per_observed_person_day": 94.10922112802149,
-          "median_width_bpm": 26.86775654885702,
-          "mean_width_bpm": 28.06501318043573,
-          "lag1_innovation_correlation": 0.7188984221804701,
+          "covered": 644,
+          "coverage": 0.576544315129812,
+          "outside_band_flags_per_observed_person_day": 609.7761862130707,
+          "median_width_bpm": 21.91655443181242,
+          "mean_width_bpm": 25.111122449847684,
+          "lag1_innovation_correlation": 0.9191530817656228,
           "training_sd_bpm": 4.137681641266655,
           "annotation_strata": {
             "sleep_interval": {
               "n": 351,
-              "covered": 340
+              "covered": 4
             },
             "other": {
               "n": 766,
-              "covered": 704
+              "covered": 640
             }
           }
         }
@@ -6643,6 +6646,6 @@
     "literature_direction_concordance": "NOT DONE: no preregistered indicator-specific directional comparison; no concordance claim.",
     "interpretation": "Sparse pre-flight empirical-Bayes exploration, not calibrated sensitivity/coverage or clinical detection. Post-flight does not update baseline."
   },
-  "ended_at": "2026-11-15T00:26:46.065086+00:00",
+  "ended_at": "2026-11-15T02:32:06.929398+00:00",
   "engine_unchanged_during_run": true
 }

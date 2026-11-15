@@ -39,7 +39,8 @@ Run: `python ml/proxy/mmash.py` · report: `ml/proxy/README.md`.
 
 | Condition | 95% coverage (nominal 95%) |
 |---|---|
-| Shipped model, one baseline per person over the whole day | **93.4%** |
+| Model before the FI-13 guard, one baseline per person over the whole day | **93.4%** |
+| Shipped model with the FI-13 guard | **66.37%** (preregistered 90–98% tolerance failed) |
 | Same stream with the pre-fix update rule (kept in `ml/diagnostics`) | 21.6% |
 | One baseline per (person, hour of day) | 94.0% |
 | Night − afternoon median HR | −24 bpm |
@@ -57,7 +58,9 @@ This dataset has no labelled events, so it supports **no** recall or delay claim
    HR: **21.6%**. The fix discounts `alpha` toward its prior value
    (`alpha <- alpha0 + (alpha - alpha0)*lam + 0.5`), which puts the fixed point at
    `alpha0 + 0.5/(1-lam)` — df ≈ 52 instead of unbounded. Re-measured after the fix:
-   **100% / 97% / 95% / 95%** at 23 / 200 / 500 / 2000 updates and **93.4%** on MMASH.
+   **100% / 97% / 95% / 95%** at 23 / 200 / 500 / 2000 updates and **93.4%** on MMASH,
+   all measured before the FI-13 guard. That guard now lowers MMASH coverage to **66.37%**
+   (see `ml/proxy/RESULTS.md`); it is a shipping blocker, not a detection result.
    `ml/diagnostics/forgetting_drift.py` keeps the old rule as `LegacyUndiscountedBaseline`
    so the defect stays reproducible, and `tests/test_nof1.py` fails if coverage collapses
    again. **What this changes:** every table above was regenerated with the fixed model;

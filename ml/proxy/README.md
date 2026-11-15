@@ -3,8 +3,11 @@
 `python ml/proxy/mmash.py` (needs `python scripts/fetch_mmash.py` first).
 
 ## What is run
-`tether_engine.bayes.BaselineModel`, **unchanged**: the same code path the engine
-uses on board. Input is real per-minute heart rate from MMASH 1.0.0 (PhysioNet):
+`tether_engine.bayes.BaselineModel`: the same code path the engine uses on board.
+
+**The table below predates the FI-13 guard.** It is kept as the pre-guard reference;
+the shipped engine is measured by `credibility_analysis.py` in
+[`RESULTS.md`](RESULTS.md). Do not quote 93.4% as current shipped behavior. Input is real per-minute heart rate from MMASH 1.0.0 (PhysioNet):
 22 healthy adults, ~24 h each, median Actigraph HR per clock minute, zero readings dropped.
 
 No detection accuracy is claimed here. MMASH has one day per person and no labelled
@@ -16,7 +19,7 @@ real values?**
 
 | Condition | 95% interval coverage | Minutes scored | Nominal |
 |---|---|---|---|
-| Shipped model, one baseline per person, whole day | **93.4%** | 29,937 | 95% |
+| Model before the FI-13 guard, one baseline per person, whole day | **93.4%** | 29,937 | 95% |
 | One baseline per (person, hour of day) | 94.0% | 25,137 | 95% |
 | Same stream, pre-fix update rule (kept in `ml/diagnostics`) | 21.6% | 29,937 | 95% |
 
@@ -31,8 +34,10 @@ wrong, and `ml/diagnostics/forgetting_drift.py` shows why:
   hundred updates the Student-t collapses into a very narrow Gaussian.
 - A *flat* synthetic series reproduces the collapse exactly (100% coverage at 23 updates,
   83% at 200, 56% at 500, 16% at 2000), so the rhythm is not the cause.
-- Discounting `alpha` like the other two statistics fixes it: the engine ships that rule
-  now, and the same script measures **93.4%** on MMASH and **95%** at 2000 updates.
+- Discounting `alpha` like the other two statistics fixes it: the engine ships that rule,
+  and the same script measured **93.4%** on MMASH and **95%** at 2000 updates before the
+  FI-13 guard. With that guard the preregistered analysis measures **66.37%** on its
+  23,488-minute report split (different preprocessing) and fails the 90–98% tolerance.
 - The hourly variant looked healthy even before the fix (90.4%) mainly because each hour
   bucket holds only ~21 updates — it resets the drift, it does not diagnose it. It reads
   94.0% with the fix.
