@@ -2159,3 +2159,15 @@ usa los estilos de la paginaen el simulador,los actuales no corresponden,dame un
 
 ---
 
+## Prompt 32 — Simulación de los 6 Casos de Investigación Clínica Real como Escenarios del Aplicativo
+- **Fecha y Hora (UTC):** `2026-11-15T18:50:00Z`
+- **Modelo de IA utilizado:** `Claude Sonnet 4.6 (Thinking)`
+- **Propósito:** *Implementar los 6 casos de estudio clínicos reales de astronautas descritos en `docs/investigacion_salud_astronautas.md` como escenarios seleccionables en el ScenarioBar de la aplicación. Cada caso genera datos sintéticos deterministas (browser-engine) con indicadores clínicos específicos, tarjetas de decisión, referencias a evidencia del NASA HRP (citadas en `kb/evidence.yaml`) y protocolos de acción vinculados (`kb/protocols/`). La arquitectura garantiza que el test de contrato del backend (`test_scenarios_lists_the_three_contract_names`, 125/125) no se rompa: los escenarios `case_*` son interceptados en el frontend antes de llegar al API. Se crea `src/lib/investigationScenarios.ts` y se modifica `src/lib/api.ts` para agregar los 6 casos al selector y cargarlos como origin `browser-engine`.*
+
+### Contenido del Prompt:
+```text
+Quiero que agreges en lo que tiene docs/investigacion_salud_astronautas.md en la perte del esccenario esos casos que aparecen en ese md simule cada uno de los casos, si falta un simulador agregalo cumpliendo con el mismo diseño de aplicativ, y fuentes verificas y confiables. debes cumplir con la misma reglas del aplicativo, cumpliendo las mismas normas, dale contexto del caso, fuentes, referencias de ese caso, lo debes implemtar, que no afecte el resto del aplicativo. Al finalizar el anterior, modifica, agregando ese prompt a docs/prompts/prompt-antygravity.md. Depues de realizarlo, dame un reporte de los cambios diciendo que hiciste, como lo hiciste.
+```
+
+---
+
