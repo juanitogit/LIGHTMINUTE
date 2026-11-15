@@ -27,7 +27,10 @@ Groq is configured per environment, never in the bundle:
 - Local: `GROQ_API_KEY` in `.env`, served by `POST /api/visor/answer` in the engine.
 - Pages: `npx wrangler pages secret put GROQ_API_KEY --project-name lightminute`, plus the
   non-secret `GROQ_MODEL` / `GROQ_BASE_URL` in `wrangler.toml` under `[vars]`. The Pages
-  Function `functions/api/visor/answer.ts` proxies the call.
+  Function `functions/api/visor/answer.ts` proxies the call. Pages only runs a Function
+  for paths listed in `public/_routes.json`, so `/api/visor/*` must stay in its `include`
+  list; otherwise the host answers `405` and the visor silently falls back to the
+  deterministic sentence.
 
 Without a key the visor still answers from the page's fields with a deterministic sentence and
 says so. Earth link now works with no API at all: the login, the delay and the consent filter
