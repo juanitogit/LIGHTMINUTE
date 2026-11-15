@@ -40,6 +40,9 @@ jobs:
       - name: Property-based verifier invariants
         run: python tests/property/test_verifier_properties.py
 
+      - name: NASA snapshot provenance and integrity
+        run: python tests/test_nasa_data_provenance.py
+
       - name: Adaptive conformal research contracts
         run: python ml/proxy/test_adaptive_conformal.py
 
