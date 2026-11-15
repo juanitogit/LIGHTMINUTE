@@ -1,4 +1,5 @@
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
@@ -6,6 +7,55 @@ import { defineConfig } from "vite";
 import { googleAuthPlugin } from "./server/vite-auth";
 
 const here = dirname(fileURLToPath(import.meta.url));
+
+function offlineBundle() {
+  return {
+    name: "lightminute-offline-bundle",
+    apply: "build" as const,
+    closeBundle() {
+      const root = resolve(here, "dist");
+      const runtime = resolve(here, "node_modules/pyodide");
+      const target = join(root, "assets/pyodide");
+      mkdirSync(target, {recursive:true});
+      const packageLock = JSON.parse(readFileSync(join(runtime,"pyodide-lock.json"),"utf8")) as {packages:Record<string,{file_name:string;sha256:string}>};
+      for (const name of ["numpy","scipy"]) {
+        const pkg=packageLock.packages[name];
+        if(!pkg)throw new Error(`Missing Pyodide package metadata: ${name}`);
+        const wheel=join(target,pkg.file_name);
+        if(!existsSync(wheel) || createHash("sha256").update(readFileSync(wheel)).digest("hex")!==pkg.sha256) throw new Error(`Missing or invalid Pyodide wheel: ${name}`);
+      }
+      for (const name of ["pyodide.mjs", "pyodide.asm.mjs", "pyodide.asm.wasm", "pyodide-lock.json", "python_stdlib.zip"]) {
+        copyFileSync(join(runtime,name),join(target,name));
+      }
+      const files: string[] = [];
+      function walk(dir: string, prefix = "") {
+        for (const entry of readdirSync(dir, {withFileTypes: true})) {
+          const name = prefix + entry.name;
+          if (entry.isDirectory()) walk(join(dir, entry.name), name + "/");
+          else if (entry.isFile() && name !== "sw.js") files.push(name);
+        }
+      }
+      walk(root); files.sort();
+      const digest = createHash("sha256");
+      for (const file of files) { digest.update(file); digest.update(readFileSync(join(root, file))); }
+      const version = digest.digest("hex").slice(0, 16);
+      const serviceWorker = `const CACHE=${JSON.stringify("lightminute-static-" + version)};
+const ASSETS=${JSON.stringify(files.map(file => "./" + file))};
+self.addEventListener("install", event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS))));
+self.addEventListener("activate", event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith("lightminute-static-") && key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim())));
+self.addEventListener("fetch", event => {
+  const request = event.request, url = new URL(request.url);
+  if (request.method !== "GET" || url.origin !== self.location.origin || url.pathname.includes("/api/")) return;
+  if (request.mode === "navigate") {
+    event.respondWith(fetch(request).catch(() => caches.open(CACHE).then(cache => cache.match("./index.html"))));
+  } else {
+    event.respondWith(caches.match(request, {ignoreSearch: true}).then(hit => hit || fetch(request)));
+  }
+});\n`;
+      writeFileSync(join(root, "sw.js"), serviceWorker);
+    },
+  };
+}
 const protocolRunnerPath = resolve(here, "../../packages/protocol-runner/index.js");
 const protocolStylesPath = resolve(here, "../../packages/protocol-runner/style.css");
 const protocolsDir = resolve(here, "../../kb/protocols");
@@ -115,7 +165,7 @@ const apiProxy = {
 
 export default defineConfig({
   base: "./",
-  plugins: [react(), protocolRunnerPlugin(), googleAuthPlugin(resolve(here, "../.."))],
+  plugins: [react(), protocolRunnerPlugin(), googleAuthPlugin(resolve(here, "../..")), offlineBundle()],
   resolve: {
     alias: {
       "@ui-kit": uiKitPath,
@@ -129,5 +179,6 @@ export default defineConfig({
     proxy: apiProxy,
   },
   preview: { port: 4173, proxy: apiProxy },
+  worker: {format:"es"},
   build: { target: "es2022", outDir: "dist", sourcemap: false },
 });

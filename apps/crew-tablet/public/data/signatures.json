@@ -1,0 +1,14 @@
+{
+  "algorithm": "Ed25519",
+  "publicKey": "MCowBQYDK2VwAyEAmNFKgV3OETOPDxL71RKya7ubCtJG7EvyopjQ/mduH5c=",
+  "signatures": {
+    "data/scenario-cmo_fever-mild.json": "m3PH9xS47iwJau2OJNJEth6bRGDCeMAiGZCMBo9lBy8bSoEyWw9fg4NEtXskh7D4kYlAndRehmKYzZ9sPCvRDQ==",
+    "data/scenario-cmo_fever.json": "rkTz16mjNwisB15kDQX21P2n4qyLGjXJF6sK9VYwsvR5LskaFF91Kv4lEIqo3ukVdFIv+7Nl++VS5SLTPVUpBA==",
+    "data/scenario-co2_creep-mild.json": "0RHOfeebIJua0ba0CdzmK5ESz3NLD+Nh1K5eyiBMVMn+suiF88qUThIzE9GJUtnqHF2lNSyEYpE1n8FmGURNBQ==",
+    "data/scenario-co2_creep.json": "hJ8Mthw+ZiBYuUUFBk+f26VBtMgtniElLbWhZrFH0EOKnxfqa9ic5E0R5Sv9kHX7mF2/IqNsJk7Yrb1R9tZaCA==",
+    "data/scenario-index.json": "+64zG6fzCs0prG+qdSsDCuC8bEq1yaScxZMdC6NgXV30UZncXvZx0rnFRdlKK978uUUlJnG2PTS4QowcXyReCw==",
+    "data/scenario-sep_sleep_loss-mild.json": "4pBz9j4I0VP+xLqF1SsGh5geEVmNEVo68hd9Ij9o8GMmuS21j5Qn+3WXF/EifKnv2EcSLCxbxW0UkmFrNASCBQ==",
+    "data/scenario-sep_sleep_loss.json": "Z51NK7hTedEoyYmWQfy2z7dQJHpd6Js2+WfCMDUNOFSmj9HWLVsCt2jPrdNRBL0GwWjDGLfCuX0vvoULAaX6Bw==",
+    "demo-data.json": "rkTz16mjNwisB15kDQX21P2n4qyLGjXJF6sK9VYwsvR5LskaFF91Kv4lEIqo3ukVdFIv+7Nl++VS5SLTPVUpBA=="
+  }
+}

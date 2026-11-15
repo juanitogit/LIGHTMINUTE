@@ -106,7 +106,7 @@ export interface ScenarioDoc {
   days: ScenarioDay[];
 }
 
-export type ScenarioOrigin = "api" | "scenario-file" | "demo-data";
+export type ScenarioOrigin = "api" | "scenario-file" | "demo-data" | "browser-engine";
 
 export interface LoadedScenario {
   doc: ScenarioDoc;

@@ -5,6 +5,7 @@ import { Icon } from "../components/Icon";
 import { LevelBadge, Panel } from "../components/primitives";
 import { SyndromeStrip, SYNDROME_ALERT_Z } from "../components/SyndromeStrip";
 import { generatePersonalBaselinePdf } from "../lib/baselinePdfGenerator";
+import { downloadFhirExample } from "../lib/fhirExport";
 import { earthIsDemoParameter, earthRangeText, earthRule } from "../lib/earth";
 import { fmt, fmtRange, humanise, unitLabel } from "../lib/format";
 import {
@@ -114,6 +115,7 @@ export function Why({
           <CrewSelector crewIds={crewIds} crew={crewId} onCrew={onCrew} />
           {role ? <span className="chip chip--quiet">{role}</span> : null}
           {member ? <LevelBadge level={member.level} /> : null}
+          {member ? <button type="button" className="btn btn--secondary" onClick={() => downloadFhirExample(member.indicators, crewId, dayNumber)} title="Synthetic FHIR-style example; acquisition date unavailable">Export FHIR example</button> : null}
           {reading ? (
             <button
               type="button"

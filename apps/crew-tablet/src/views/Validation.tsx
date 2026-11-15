@@ -197,6 +197,7 @@ export function Validation() {
         </div>
         <DataNotice label="SYNTHETIC CREW" />
       </header>
+      <p className="small"><a href={`${import.meta.env.BASE_URL}verify-audit.html`}>Verify a signed audit file</a></p>
 
       {phase === "loading" ? (
         <Panel>

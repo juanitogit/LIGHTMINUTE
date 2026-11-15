@@ -8,6 +8,7 @@ import { tmpdir } from "node:os";
 import { dirname, extname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
+import { createHash, generateKeyPairSync, sign } from "node:crypto";
 
 const app = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const repo = resolve(app, "../..");
@@ -22,7 +23,8 @@ await mkdir(screenshots, { recursive: true });
 const results = [], errors = [];
 let failure = null;
 let apiOnline = false;
-const mime = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png" };
+let tamperStatic = false;
+const mime = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".wasm": "application/wasm", ".css": "text/css", ".json": "application/json", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".png": "image/png" };
 const server = createServer(async (req, res) => {
   const pathname = decodeURIComponent(new URL(req.url, "http://localhost").pathname);
   if (pathname.startsWith("/api/")) {
@@ -44,7 +46,7 @@ const server = createServer(async (req, res) => {
   const rel = pathname.slice(prefix.length) || "index.html";
   const file = resolve(dir, rel.endsWith("/") ? `${rel}index.html` : rel);
   if (!file.startsWith(dir + sep) || rel.split("/").some((p) => p.startsWith("."))) {res.writeHead(403).end();return;}
-  try { const data = await readFile(file); res.writeHead(200, {"Content-Type":mime[extname(file)] ?? "application/octet-stream"}); res.end(data); }
+  try { const data = await readFile(file); res.writeHead(200, {"Content-Type":mime[extname(file)] ?? "application/octet-stream"}); res.end(tamperStatic && (pathname === "/data/scenario-cmo_fever.json" || pathname === "/demo-data.json") ? Buffer.concat([data,Buffer.from(" ")]) : data); }
   catch {res.writeHead(404).end();}
 });
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
@@ -64,6 +66,12 @@ let api;
 const record = (name, detail = "passed") => {results.push({name, detail});console.log("PASS", name);};
 const context = await browser.newContext({ viewport:{width:1440,height:1000}, reducedMotion:"reduce" });
 const page = await context.newPage();
+if (process.env.LIGHTMINUTE_TEST_BROWSER_ENGINE === "1") await page.addInitScript(() => {
+  const NativeWorker = window.Worker;
+  window.Worker = class extends NativeWorker {
+    constructor(...args) { super(...args); this.addEventListener("message", event => { if (event.data?.ok) window.__lightminuteEngineResult = event.data.data; }); }
+  };
+});
 page.on("pageerror", (e) => errors.push(e.message));
 const goto = async (view = "glance", scenario = "cmo_fever", day = 16) => {
   await page.goto(`${base}/#scenario=${scenario}&crew=A&day=${day}&view=${view}`);
@@ -79,12 +87,108 @@ const capture = async (name) => {
   await page.screenshot({path:resolve(screenshots, `${name}.png`),fullPage: name !== "07-mobile"});
 };
 try {
+  const offlineContext = await browser.newContext({viewport:{width:1024,height:900}});
+  const offlinePage = await offlineContext.newPage();
+  await offlinePage.goto(`${base}/#scenario=cmo_fever&crew=A&day=16&view=glance`);
+  await offlinePage.evaluate(async () => { await navigator.serviceWorker.ready; });
+  await offlinePage.reload();
+  await offlinePage.locator(".signal-row").first().waitFor();
+  await offlineContext.setOffline(true);
+  await offlinePage.reload();
+  await expect(offlinePage.locator(".signal-row")).toHaveCount(6);
+  await expect(offlinePage.locator(".statusbar")).toContainText(/offline/i);
+  if (process.env.LIGHTMINUTE_TEST_BROWSER_ENGINE === "1") {
+    await offlinePage.getByRole("button",{name:"Run engine on this device"}).click();
+    await expect(offlinePage.getByRole("button",{name:"Run engine on this device"})).toBeEnabled({timeout:180000});
+    if (await offlinePage.locator(".engine-local-control [role=alert]").count()) throw Error(await offlinePage.locator(".engine-local-control [role=alert]").innerText());
+    await expect(offlinePage.locator(".statusbar")).toContainText("on-device Python engine",{timeout:10000});
+    record("Python engine generates a synthetic scenario with the network disabled");
+  }
+  await offlineContext.close();
+  record("Installed service worker loads cached synthetic scenario after network loss");
+  const voiceContext = await browser.newContext();
+  await voiceContext.addInitScript(() => {
+    window.SpeechRecognition = class {
+      start() { this.onresult({results:[[{transcript:"Synthetic voice note"}]]}); this.onend(); }
+      stop() {} abort() {}
+    };
+  });
+  const voicePage = await voiceContext.newPage();
+  await voicePage.goto(`${base}/#scenario=cmo_fever&crew=A&day=16&view=today`);
+  await voicePage.getByRole("button",{name:"Dictate note",exact:true}).click();
+  await expect(voicePage.getByRole("textbox",{name:"Demonstration check-in note"})).toHaveValue("Synthetic voice note");
+  await voiceContext.close();
+  record("Voice-note control inserts a synthetic transcript with a mocked browser recognizer");
+  const sensorContext = await browser.newContext();
+  await sensorContext.addInitScript(() => {
+    const characteristic = new EventTarget();
+    characteristic.startNotifications = async () => {setTimeout(()=>{characteristic.value=new DataView(Uint8Array.from([0,72]).buffer);characteristic.dispatchEvent(new Event("characteristicvaluechanged"));},30);return characteristic;};
+    characteristic.stopNotifications = async()=>characteristic;
+    const device = new EventTarget();device.name="Mock sensor";
+    device.gatt={connected:true,connect:async()=>({getPrimaryService:async()=>({getCharacteristic:async()=>characteristic})}),disconnect:()=>{device.gatt.connected=false;device.dispatchEvent(new Event("gattserverdisconnected"));}};
+    Object.defineProperty(navigator,"bluetooth",{value:{requestDevice:async()=>device},configurable:true});
+  });
+  const sensorPage=await sensorContext.newPage();
+  await sensorPage.goto(`${base}/#scenario=cmo_fever&crew=A&day=16&view=today`);
+  await sensorPage.getByRole("button",{name:"Connect Bluetooth device"}).click();
+  await expect(sensorPage.getByRole("status").filter({hasText:"72 beats/min"})).toBeVisible();
+  await sensorPage.getByRole("button",{name:"Disconnect device"}).click();
+  await expect(sensorPage.getByRole("status").filter({hasText:"Disconnected"})).toBeVisible();
+  await sensorContext.close();
+  record("Bluetooth mock connects, decodes a notification and disconnects");
+  tamperStatic = true;
+  const tamperContext = await browser.newContext({serviceWorkers:"block"});
+  const tamperPage = await tamperContext.newPage();
+  await tamperPage.goto(`${base}/#scenario=cmo_fever&crew=A&day=16&view=glance`);
+  await expect(tamperPage.getByText("Scenario signature invalid",{exact:false})).toBeVisible();
+  assert.equal(await tamperPage.locator(".signal-row").count(),0);
+  await tamperContext.close();tamperStatic = false;
+  record("Ed25519 verification rejects modified synthetic scenario bytes");
+  const auditContext=await browser.newContext();
+  const auditPage=await auditContext.newPage();
+  await auditPage.goto(`${base}/verify-audit.html`);
+  const pair=generateKeyPairSync("ed25519"), pub=pair.publicKey.export({type:"spki",format:"der"});
+  const auditPayload=Buffer.from('{"synthetic":true,"entries":[]}');
+  const envelope={algorithm:"Ed25519",publicKey:pub.toString("base64"),payload:auditPayload.toString("base64"),signature:sign(null,auditPayload,pair.privateKey).toString("base64")};
+  await auditPage.locator("#file").setInputFiles({name:"audit.json",mimeType:"application/json",buffer:Buffer.from(JSON.stringify(envelope))});
+  await auditPage.locator("#fingerprint").fill(createHash("sha256").update(pub).digest("hex"));
+  await auditPage.getByRole("button",{name:"Verify signature"}).click();
+  await expect(auditPage.getByRole("status")).toContainText("Fingerprint matches");
+  envelope.payload=Buffer.from('{"synthetic":true,"entries":[1]}').toString("base64");
+  await auditPage.locator("#file").setInputFiles({name:"audit-tampered.json",mimeType:"application/json",buffer:Buffer.from(JSON.stringify(envelope))});
+  await auditPage.getByRole("button",{name:"Verify signature"}).click();
+  await expect(auditPage.getByRole("status")).toContainText("Signature invalid");
+  await auditContext.close();
+  record("Audit signature verification detects tampering and checks an independently supplied key fingerprint");
   await goto(); await page.locator(".signal-row").first().waitFor();
   assert.equal(await page.title(), "LIGHTMINUTE — crew tablet");
   assert.equal(await page.locator(".signal-row").count(), 6);
   assert.equal(await page.locator(".crew-row").count(), 4);
   assert.match(await page.locator(".statusbar").innerText(), /offline/);
   record("Static fallback, six indicators, four crew and LIGHTMINUTE branding");
+  if (process.env.LIGHTMINUTE_TEST_BROWSER_ENGINE === "1") {
+    await page.getByRole("button",{name:"Run engine on this device"}).click();
+    await expect(page.getByRole("button",{name:"Run engine on this device"})).toBeEnabled({timeout:180000});
+    if (await page.locator(".engine-local-control [role=alert]").count()) throw Error(await page.locator(".engine-local-control [role=alert]").innerText());
+    await expect(page.locator(".statusbar")).toContainText("on-device Python engine",{timeout:180000});
+    assert.equal(await page.locator(".signal-row").count(),6);
+    const actual=await page.evaluate(()=>window.__lightminuteEngineResult);
+    const expected=JSON.parse(await readFile(resolve(app,"public/data/scenario-cmo_fever.json"),"utf8"));
+    for(let i=0;i<expected.days.length;i++) for(const crew of Object.keys(expected.days[i].crew)) {
+      const a=actual.days[i].crew[crew], b=expected.days[i].crew[crew];
+      assert.equal(a.level,b.level,`Level day ${i+1} crew ${crew}`);
+      for(const key of Object.keys(b.indicators)) {
+        assert(a.indicators[key],`Missing ${key} day ${i+1} crew ${crew}`);
+        for(const field of ["value","baseline","z"]) assert(Math.abs(a.indicators[key][field]-b.indicators[key][field])<0.011,`${field} ${key} day ${i+1} crew ${crew}`);
+        for(const index of [0,1]) assert(Math.abs(a.indicators[key].ci95[index]-b.indicators[key].ci95[index])<0.011,`ci95 ${key} day ${i+1} crew ${crew}`);
+        assert(Math.abs(a.indicators[key].p-b.indicators[key].p)<1e-6,`probability ${key} day ${i+1} crew ${crew}`);
+        assert.deepEqual(a.indicators[key].lens,b.indicators[key].lens,`lens ${key} day ${i+1} crew ${crew}`);
+        assert.equal(a.indicators[key].change_pending,b.indicators[key].change_pending,`pending ${key} day ${i+1} crew ${crew}`);
+        assert.equal(a.indicators[key].unresolved_change,b.indicators[key].unresolved_change,`unresolved ${key} day ${i+1} crew ${crew}`);
+      }
+    }
+    record("Real Python engine generates a synthetic scenario in a browser worker");
+  }
   await expect(page.locator(".human-viewer")).toHaveAttribute("data-model-status","ready",{timeout:30000});
   assert.equal(await page.locator(".human-canvas").count(),1);
   const position = await page.locator(".human-landmark").first().getAttribute("style");
@@ -158,7 +262,7 @@ try {
   await note.fill("Synthetic integration check-in");
   await page.getByLabel("I confirm that this note",{exact:false}).check();
   await page.getByRole("button",{name:"Save check-in",exact:true}).click();
-  await expect(page.getByRole("status")).toContainText("Saved on this device");
+  await expect(page.getByRole("status").filter({hasText:"Saved on this device"})).toBeVisible();
   await page.reload();
   await expect(note).toHaveValue("Synthetic integration check-in");
   await goto("today","cmo_fever",17);
@@ -284,7 +388,7 @@ try {
   }
   assert.deepEqual(errors,[],"Uncaught browser errors");
 } catch (error) {
-  failure = {message:error.message,stack:error.stack};
+  failure = {message:error.message,stack:error.stack,url:page.url(),main:await page.locator("main").innerText().catch(()=>"")};
   throw error;
 } finally {
   await writeFile(resolve(output,"browser-results.json"),JSON.stringify({status:failure ? "failed" : "passed",executed_at:new Date().toISOString(),checks:results,uncaught_errors:errors,failure},null,2)+"\n");

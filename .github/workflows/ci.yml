@@ -29,13 +29,19 @@ jobs:
       - name: Install runtime dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install numpy scipy "fastapi>=0.110" uvicorn "pydantic>=2" httpx "openai>=1.50" ruff "psycopg[binary]>=3.2,<4" "python-dotenv>=1,<2"
+          python -m pip install numpy scipy "fastapi>=0.110" uvicorn "pydantic>=2" httpx "openai>=1.50" ruff "psycopg[binary]>=3.2,<4" "python-dotenv>=1,<2" "hypothesis>=6,<7"
 
       - name: Python lint
         run: ruff check services/engine
 
       - name: Unit tests (dependency-free runner)
         run: python scripts/run_tests.py
+
+      - name: Property-based verifier invariants
+        run: python tests/property/test_verifier_properties.py
+
+      - name: Adaptive conformal research contracts
+        run: python ml/proxy/test_adaptive_conformal.py
 
       - name: Offline researcher CLI contracts
         run: python tools/researcher/test_researcher.py
@@ -90,6 +96,10 @@ jobs:
         working-directory: apps/crew-tablet
         run: npm run build
 
+      - name: FHIR and Bluetooth packet tests
+        working-directory: apps/crew-tablet
+        run: npx tsx --test scripts/fhirExport.test.ts scripts/heartRate.test.ts
+
       - name: Physiology simulator regression tests
         working-directory: apps/crew-tablet
         run: npm run test:physiology
@@ -118,6 +128,7 @@ jobs:
         working-directory: apps/crew-tablet
         env:
           LIGHTMINUTE_SKIP_API: "1"
+          LIGHTMINUTE_TEST_BROWSER_ENGINE: "1"
         run: npm run test:e2e
 
       - name: Browser screenshots and verification results

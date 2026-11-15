@@ -5,7 +5,7 @@ requires-python = ">=3.11"
 dependencies = ["numpy", "scipy", "fastapi", "uvicorn", "pydantic>=2", "httpx", "openai>=1.50", "duckdb", "psycopg[binary]>=3.2,<4", "python-dotenv>=1,<2"]
 
 [project.optional-dependencies]
-dev = ["pytest", "ruff", "mypy"]
+dev = ["pytest", "ruff", "mypy", "hypothesis>=6,<7"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

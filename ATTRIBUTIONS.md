@@ -30,6 +30,7 @@ aggregate results are published. Attribution: data courtesy of the MMASH authors
 ## Facts and framing (cited, not redistributed)
 
 - NASA Human Research Program, risks overview — <https://www.nasa.gov/hrp/risks>
+- Pyodide 314.0.8 — https://github.com/pyodide/pyodide, MPL-2.0. Its WebAssembly distribution includes CPython and third-party dependencies. The locally supplied NumPy and SciPy wheels retain their upstream license notices inside the wheels; see `docs/supply-chain/OFFLINE-Y-FIRMAS.md` for provenance and verification.
 - Patel et al., "Red risks for a journey to the red planet", npj Microgravity (2020) — <https://pmc.ncbi.nlm.nih.gov/articles/PMC7645687>
 - NASA HRP, 24-hour core body temperature RFI — <https://www.nasa.gov/help-nasa-find-practical-ways-to-monitor-astronaut-body-temperature-in-low-earth-orbit/>
 - NASA HRP, Artemis II Data Methodology Challenge winners — <https://www.nasa.gov/hrp/winners-of-nasa-hrps-artemis-ii-data-methodology-challenge/>

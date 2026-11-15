@@ -4,6 +4,9 @@
 ![LIGHTMINUTE official mission identity](apps/crew-tablet/public/assets/lightminute-official.png)
 
 Current design: [Apple HIG inspired workspace and anatomical 3D](docs/native-design.md).
+Offline engine, signed data and optional device features: [operation and limitations](docs/supply-chain/OFFLINE-Y-FIRMAS.md).
+The optional Bluetooth display handles a real, user-selected pulse reading only in browser memory;
+it remains separate from the synthetic scenarios and is not uploaded to the decision engine.
 Reference feature audit: [coverage and remaining gaps](docs/reference-coverage.md).
 
 Current verification: [audit and remaining delivery items](docs/ui-audit.md) · [Obsidian connection](docs/Obsidian.md) · [demo runbook](docs/demo-runbook.md).

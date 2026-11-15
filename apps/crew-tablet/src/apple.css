@@ -69,6 +69,10 @@ input[type="range"] { height:30px; }
 input[type="range"]::-webkit-slider-runnable-track { height:2px; background:var(--line-strong); }
 input[type="range"]::-webkit-slider-thumb { margin-top:-5px; width:12px; height:12px; background:var(--accent); border:0; box-shadow:none; }
 .mobile-notice { display:none; }
+.engine-local-control { display:flex; align-items:center; flex-wrap:wrap; gap:8px 18px; padding:10px 32px; border-bottom:1px solid var(--line); }
+.engine-local-control p { margin:0; }
+.engine-local-control [role="alert"] { color:var(--danger, #b42318); }
+@media (max-width: 600px) { .engine-local-control { padding:10px 18px; } }
 .micro { font-size:10px; letter-spacing:.075em; font-weight:500; }
 .mono { font-size:.92em; }
 .small { font-size:12px; }

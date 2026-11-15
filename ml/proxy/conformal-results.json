@@ -1,0 +1,47 @@
+{
+  "label": "synthetic, exploratory, not a clinical model",
+  "timestamp_utc": "2026-11-15T04:29:55.725558+00:00",
+  "seeds": "30000\u201330099",
+  "results": {
+    "fixed": {
+      "all": {
+        "n": 90000,
+        "covered": 84806,
+        "coverage": 0.9422888888888888,
+        "mean_width": 6.041569875750081
+      },
+      "before": {
+        "n": 40000,
+        "covered": 38045,
+        "coverage": 0.951125,
+        "mean_width": 4.015206168013222
+      },
+      "after": {
+        "n": 50000,
+        "covered": 46761,
+        "coverage": 0.93522,
+        "mean_width": 7.662660841939578
+      }
+    },
+    "adaptive": {
+      "all": {
+        "n": 90000,
+        "covered": 85526,
+        "coverage": 0.9502888888888888,
+        "mean_width": 6.399325827381734
+      },
+      "before": {
+        "n": 40000,
+        "covered": 38059,
+        "coverage": 0.951475,
+        "mean_width": 4.079301197975846
+      },
+      "after": {
+        "n": 50000,
+        "covered": 47467,
+        "coverage": 0.94934,
+        "mean_width": 8.25534553090629
+      }
+    }
+  }
+}

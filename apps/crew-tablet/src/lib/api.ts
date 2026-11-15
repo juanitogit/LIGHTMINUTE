@@ -7,6 +7,7 @@
  * and clearly labels when it had to fall back.
  */
 import { titleFromName } from "./format";
+import { verifySignedJson } from "./verifySigned";
 import type {
   ApiHealth,
   CardResponse,
@@ -138,9 +139,8 @@ export async function loadScenarioIndex(): Promise<ScenarioListResult> {
   }
 
   try {
-    const body = await fetchJson<{ scenarios?: ScenarioSummary[] } | ScenarioSummary[]>(
-      staticUrl("data/scenario-index.json"),
-      STATIC_TIMEOUT_MS,
+    const body = await verifySignedJson<{ scenarios?: ScenarioSummary[] } | ScenarioSummary[]>(
+      "data/scenario-index.json", BASE, STATIC_TIMEOUT_MS,
     );
     const list = Array.isArray(body) ? body : body.scenarios;
     if (Array.isArray(list) && list.length > 0) {
@@ -193,26 +193,23 @@ export async function loadScenario(name: string): Promise<LoadedScenario> {
   }
 
   try {
-    const raw = await fetchJson<ScenarioDoc>(
-      staticUrl(`data/scenario-${encoded}.json`),
-      STATIC_TIMEOUT_MS,
-    );
+    const raw = await verifySignedJson<ScenarioDoc>(`data/scenario-${encoded}.json`, BASE, STATIC_TIMEOUT_MS);
     return {
       doc: asScenarioDoc(raw, name, true),
       origin: "scenario-file",
       degraded: false,
-      originLabel: "static scenario file",
+      originLabel: "static scenario file · signature verified",
     };
   } catch {
     /* Last resort: the scaffold demo file. */
   }
 
-  const raw = await fetchJson<ScenarioDoc>(staticUrl("demo-data.json"), STATIC_TIMEOUT_MS);
+  const raw = await verifySignedJson<ScenarioDoc>("demo-data.json", BASE, STATIC_TIMEOUT_MS);
   return {
     doc: asScenarioDoc(raw, name, true),
     origin: "demo-data",
     degraded: true,
-    originLabel: "demo-data.json · static fallback",
+    originLabel: "demo-data.json · signed static fallback",
   };
 }
 

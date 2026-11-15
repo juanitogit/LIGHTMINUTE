@@ -125,7 +125,7 @@ export function App() {
     scenario: scenarioName,
     crew,
     day,
-    enabled: apiOnline && state.view === "act" && Boolean(member?.card),
+    enabled: apiOnline && scenario.data?.origin !== "browser-engine" && state.view === "act" && Boolean(member?.card),
   });
 
   const card: DecisionCard | undefined =
@@ -201,7 +201,7 @@ export function App() {
     health === undefined
       ? "checking engine API…"
       : health === null
-        ? "engine API offline · static JSON"
+        ? scenario.data?.origin === "browser-engine" ? "engine API offline · on-device engine" : "engine API offline · static JSON"
         : `engine API online${
             health.llm_provider && health.llm_provider !== "none"
               ? ` · ${health.llm_provider} ${health.llm_model ?? ""}`.trim()
@@ -281,10 +281,11 @@ export function App() {
           playing={playing}
           onTogglePlay={() => setPlaying((value) => !value)}
         />
+        <div className="engine-local-control"><button type="button" className="btn" disabled={scenario.computing || scenario.phase !== "ready"} onClick={scenario.runOnDevice}>{scenario.computing ? "Preparing on-device engine…" : "Run engine on this device"}</button><p className="small muted">Runs the synthetic scenario locally. Offline setup downloads Python, 3D models and scenario files to this device.</p>{scenario.computing?<p role="status">{scenario.computeProgress}</p>:null}{scenario.computeError?<p role="alert">{scenario.computeError}</p>:null}</div>
         <div className="mobile-notice">
           <Chip tone="warn">SYNTHETIC DATA</Chip>
           <Chip tone="quiet">not a medical device</Chip>
-          {health === null ? <Chip tone="quiet">static JSON · API off</Chip> : null}
+          {health === null ? <Chip tone="quiet">{scenario.data?.origin === "browser-engine" ? "on-device engine · API off" : "static JSON · API off"}</Chip> : null}
         </div>
       </div>
       <main id="main" className="main" tabIndex={-1}>
