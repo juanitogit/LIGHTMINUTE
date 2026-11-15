@@ -8,6 +8,11 @@
  */
 import { titleFromName } from "./format";
 import { verifySignedJson } from "./verifySigned";
+import {
+  buildInvestigationScenario,
+  isInvestigationScenario,
+  INVESTIGATION_SUMMARIES,
+} from "./investigationScenarios";
 import type {
   ApiHealth,
   CardResponse,
@@ -131,7 +136,10 @@ export async function loadScenarioIndex(): Promise<ScenarioListResult> {
         API_TIMEOUT_MS,
       );
       if (Array.isArray(body.scenarios) && body.scenarios.length > 0) {
-        return { scenarios: body.scenarios, source: "api" };
+        return {
+          scenarios: [...body.scenarios, ...INVESTIGATION_SUMMARIES],
+          source: "api",
+        };
       }
     } catch {
       /* API down: try the published index. */
@@ -144,13 +152,19 @@ export async function loadScenarioIndex(): Promise<ScenarioListResult> {
     );
     const list = Array.isArray(body) ? body : body.scenarios;
     if (Array.isArray(list) && list.length > 0) {
-      return { scenarios: list, source: "index" };
+      return {
+        scenarios: [...list, ...INVESTIGATION_SUMMARIES],
+        source: "index",
+      };
     }
   } catch {
     /* No index yet: A1 may not have published it. */
   }
 
-  return { scenarios: FALLBACK_SCENARIOS, source: "defaults" };
+  return {
+    scenarios: [...FALLBACK_SCENARIOS, ...INVESTIGATION_SUMMARIES],
+    source: "defaults",
+  };
 }
 
 export async function loadHealth(): Promise<ApiHealth | null> {
@@ -169,6 +183,18 @@ export async function loadHealth(): Promise<ApiHealth | null> {
  * caller can show a real error instead of an empty dashboard.
  */
 export async function loadScenario(name: string): Promise<LoadedScenario> {
+  // Investigation case scenarios are generated entirely in the browser.
+  // They never go to the API, so the backend contract (3 names) is preserved.
+  if (isInvestigationScenario(name)) {
+    const doc = buildInvestigationScenario(name);
+    return {
+      doc,
+      origin: "browser-engine",
+      degraded: false,
+      originLabel: "caso clínico investigado · NASA HRP evidence · datos sintéticos",
+    };
+  }
+
   const encoded = encodeURIComponent(name);
 
   if (!apiDisabled) {

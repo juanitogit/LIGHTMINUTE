@@ -53,13 +53,28 @@ geometry and textures are third-party assets bundled under
 |---|---|---|
 | `panorama.jpg` — 360° view from Husband Hill, Mars Exploration Rover Spirit | NASA/JPL/MSSS, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:MarsPanorama.jpg) | Public domain (NASA/JPL) |
 | `ground/cracked_red_ground_*` — colour, normal and ARM maps (1K) | [Poly Haven](https://polyhaven.com/a/cracked_red_ground) | CC0 1.0 |
-| `rocks/moon_rock_01`, `rocks/moon_rock_04`, `rocks/rock_07`, `rocks/namaqualand_boulder_02` — photogrammetry boulders (1K glTF) | [Poly Haven](https://polyhaven.com/models) | CC0 1.0 |
+| `../surface/rocks/moon_rock_01`, `moon_rock_04`, `rock_07`, `namaqualand_boulder_02` — photogrammetry boulders (1K glTF), shared by both surfaces | [Poly Haven](https://polyhaven.com/models) | CC0 1.0 |
 
 Poly Haven assets are CC0 and need no attribution; they are credited here because
 the project only ships assets it can name. The terrain relief, dust, lighting and
 camera sway are generated in `apps/crew-tablet/src/views/MarsScene.tsx` — the
 scene is a reconstruction, **not** a photograph of the crew's actual location,
 and it carries no operational meaning.
+
+## Lunar surface view
+
+The **Entorno Lunar** page renders the same helmet HUD over a lunar surface built
+from these assets (bundled in `apps/crew-tablet/public/assets/moon/`):
+
+| Asset | Source | License |
+|---|---|---|
+| `panorama.jpg` — Apollo 11, Tranquility Base 360° surface panorama (JSC2007-E-045375, original 32 454 × 2 554 px, resized to 8 192 px wide) | NASA, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Apollo_11_Tranquility_Base_panoramic_(JSC2007-E-045375).jpg) | Public domain (NASA) |
+| `ground/regolith_diff_1k.jpg` — grey regolith, derived from Poly Haven "Rocky Terrain" by desaturation | [Poly Haven](https://polyhaven.com/a/rocky_terrain) | CC0 1.0 |
+| `ground/rocky_terrain_nor_gl_1k.jpg` — normal map | [Poly Haven](https://polyhaven.com/a/rocky_terrain) | CC0 1.0 |
+
+The scene is a reconstruction with a synthetic Sun angle and rock placement. It
+is not a photograph of any crew's real location and carries no operational
+meaning.
 
 ## Facts and framing (cited, not redistributed)
 
