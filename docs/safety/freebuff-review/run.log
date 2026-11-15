@@ -1,0 +1,26 @@
+PASS FI-01 Invented number in facts
+FAIL FI-02 Invented number outside facts field
+PASS FI-03 LLM lowers urgency
+PASS FI-04 Nonexistent citation
+PASS FI-05 Prompt injection in free text
+PASS FI-06 LLM transport unavailable
+ERROR FI-07 LLM client initialization unavailable
+PASS FI-08 NaN sensor reading
+PASS FI-09 Impossible physiological value
+FAIL FI-10 Dropout must not quote stale HR as current
+FAIL FI-11 Stuck-value sensor detection
+PASS FI-12 Bound single outlier influence on baseline
+FAIL FI-13 Prolonged illness must not become an unflagged normal
+PASS FI-14 Insufficient days retain learning phase
+FAIL FI-15 Duplicate delivery retry must be idempotent
+PASS FI-16 Out-of-order arrivals retain separate records
+PASS FI-17 Communication delay hides undelivered messages
+PASS FI-18 Storage/transport loss is not acknowledged as delivered
+PASS FI-19 Structured behavioral consent filter
+FAIL FI-20 Behavioral text hidden inside allowed fields
+PASS FI-21 Audit entry tampering
+PASS FI-22 Unknown mission profile rejected
+FAIL FI-23 Mission context matches scenario
+PASS FI-24 Engine outage is explicitly labelled static
+FAIL FI-25 Static fallback must not rename another scenario
+18/27 safe-behavior assertions passed
