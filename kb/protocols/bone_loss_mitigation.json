@@ -1,0 +1,41 @@
+{
+  "id": "bone_loss_mitigation",
+  "title": "Bone Loss & Resistive Countermeasure Protocol",
+  "trigger_patterns": [
+    "ARED mechanical resistive training volume falls below minimum protective threshold (< 8,000 kg*reps/day)",
+    "Urinary calcium excretion biomarker indicates elevated osteoclastic bone resorption",
+    "Long-duration mission phase (Mission Day > 60) musculoskeletal deconditioning alert"
+  ],
+  "steps": [
+    {
+      "text": "Review weekly ARED (Advanced Resistive Exercise Device) telemetry: audit cumulative mechanical load, peak eccentric ground reaction forces, and session completion rate.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "If a deficit is detected, schedule targeted compensatory resistive sessions prioritizing axial loading exercises (deadlifts, squats, heel raises with maximum tolerable load bar settings).",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Perform point-of-care urinary biomarker strip test for urinary calcium concentration to detect active bone mineral leaching.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "If urinary calcium is elevated (> 7.5 mmol/L), increase daily hydration target to at least 2.8 L/day to prevent calcium oxalate nephrolithiasis (spaceflight kidney stone formation).",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Audit daily nutritional logs: confirm 800-1000 IU Vitamin D3 supplementation and balanced calcium intake without excessive protein-induced hypercalciuria.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Document musculoskeletal countermeasure adherence and transmit weekly structural integrity log to ground biomechanics team.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    }
+  ]
+}

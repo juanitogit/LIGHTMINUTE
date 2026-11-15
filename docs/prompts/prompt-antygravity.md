@@ -1,10 +1,10 @@
 # Registro de Prompts de la Sesión — LIGHTMINUTE (Antigravity)
 
-Este documento contiene **todos los prompts tal cual fueron escritos** durante la sesión de trabajo en el proyecto LIGHTMINUTE, junto con el **modelo de Inteligencia Artificial** utilizado para procesar cada solicitud.
+Este documento contiene **todos los prompts tal cual fueron escritos** durante la sesión de trabajo en el proyecto LIGHTMINUTE, junto con el **modelo de Inteligencia Artificial** utilizado para procesar cada solicitud y una sección dedicada que explica el **propósito de cada prompt**.
 
 ## Metadatos de la Sesión
 - **ID de Conversación:** `e1ace435-8848-4fdb-8725-cc9235df7fa7`
-- **Total de Prompts / Interacciones:** 25
+- **Total de Prompts / Interacciones:** 26
 - **Modelos de IA Empleados:**
   - `Gemini 3.8 Flash (Medium)`
   - `Claude Sonnet 4.6 (Thinking)`
@@ -13,37 +13,74 @@ Este documento contiene **todos los prompts tal cual fueron escritos** durante l
 
 ## Índice de Prompts
 
-1. [Prompt #1 (Paso 0) — Gemini 3.8 Flash (Medium)](#prompt-1--paso-0) — *"analiza la carpeta organs, y necesito que me hagas un archivo md de licenci..."*
-2. [Prompt #2 (Paso 85) — Gemini 3.8 Flash (Medium)](#prompt-2--paso-85) — *"Analiza el proyecto completo usando rea quiero que me digas en que apartado..."*
-3. [Prompt #3 (Paso 114) — Gemini 3.8 Flash (Medium)](#prompt-3--paso-114) — *"necesito que corrigas esos errores del punto 4 que encontrase por completo,..."*
-4. [Prompt #4 (Paso 165) — Gemini 3.8 Flash (Medium)](#prompt-4--paso-165) — *"hay otro problema que quiero solucioanr, cuando hago zoom al simulador del..."*
-5. [Prompt #5 (Paso 188) — Gemini 3.8 Flash (Medium)](#prompt-5--paso-188) — *"# PROMPT — DESARROLLO DEL MODELO MATEMÁTICO FISIOLÓGICO DE ÓRGANOS PARA LIG..."*
-6. [Prompt #6 (Paso 280) — Claude Sonnet 4.6 (Thinking)](#prompt-6--paso-280) — *"termine de realizar lo pedido. Al final dame el reporte de los cambios..."*
-7. [Prompt #7 (Paso 387) — Gemini 3.8 Flash (Medium)](#prompt-7--paso-387) — *"continue..."*
-8. [Prompt #8 (Paso 397) — Gemini 3.8 Flash (Medium)](#prompt-8--paso-397) — *"continue, termine de realizar lo pedido. Al final dame el reporte de los ca..."*
-9. [Prompt #9 (Paso 432) — Gemini 3.8 Flash (Medium)](#prompt-9--paso-432) — *"# PROMPT — CORRECCIÓN DEL SIMULADOR ANATÓMICO 3D Y VISUALIZACIÓN FISIOLÓGIC..."*
-10. [Prompt #10 (Paso 475) — Gemini 3.8 Flash (Medium)](#prompt-10--paso-475) — *"[Aprobación de Plan de Implementación]..."*
-11. [Prompt #11 (Paso 559) — Gemini 3.8 Flash (Medium)](#prompt-11--paso-559) — *"con esos cambios realizados quiero que me des un archivod md dentro de docs..."*
-12. [Prompt #12 (Paso 585) — Claude Sonnet 4.6 (Thinking)](#prompt-12--paso-585) — *"# LIGHTMINUTE — Investigación de sensores fisiológicos y prototipos HTML  #..."*
-13. [Prompt #13 (Paso 593) — Gemini 3.8 Flash (Medium)](#prompt-13--paso-593) — *"continue..."*
-14. [Prompt #14 (Paso 634) — Gemini 3.8 Flash (Medium)](#prompt-14--paso-634) — *"continue..."*
-15. [Prompt #15 (Paso 667) — Gemini 3.8 Flash (Medium)](#prompt-15--paso-667) — *"Necesito que hagas lo siguiente en el apartado de http://localhost:5173/#sc..."*
-16. [Prompt #16 (Paso 768) — Gemini 3.8 Flash (Medium)](#prompt-16--paso-768) — *"Implementar un sistema de selección interactiva de órganos 3D mediante Rayc..."*
-17. [Prompt #17 (Paso 903) — Claude Sonnet 4.6 (Thinking)](#prompt-17--paso-903) — *"continue..."*
-18. [Prompt #18 (Paso 928) — Claude Sonnet 4.6 (Thinking)](#prompt-18--paso-928) — *"An error occurred in the <BodyModel3D> component. Consider adding an error..."*
-19. [Prompt #19 (Paso 949) — Claude Sonnet 4.6 (Thinking)](#prompt-19--paso-949) — *"continue..."*
-20. [Prompt #20 (Paso 982) — Claude Sonnet 4.6 (Thinking)](#prompt-20--paso-982) — *"el panel quedo muy arriba, y no se ve muy bien corrigelo, ademas agrega un..."*
-21. [Prompt #21 (Paso 997) — Gemini 3.8 Flash (Medium)](#prompt-21--paso-997) — *"continue..."*
-22. [Prompt #22 (Paso 1083) — Gemini 3.8 Flash (Medium)](#prompt-22--paso-1083) — *"An error occurred in the <div> component. Consider adding an error boundary..."*
-23. [Prompt #23 (Paso 1147) — Gemini 3.8 Flash (Medium)](#prompt-23--paso-1147) — *"Quiero que dentro de docs creas una carpete de prompts dentro de ellas vas..."*
-24. [Prompt #24 (Paso 1152) — Gemini 3.8 Flash (Medium)](#prompt-24--paso-1152) — *"Quiero que dentro de docs creas una carpete de prompts dentro de ellas vas..."*
-25. [Prompt #25 (Paso 1160) — Gemini 3.8 Flash (Medium)](#prompt-25--paso-1160) — *"Quiero que analisis todo el proyecto en busca de uso de datos y recursos de..."*
+1. [Prompt #1 (Paso 0) — Gemini 3.8 Flash (Medium)](#prompt-1--paso-0) — *"Auditoría de Licencias GLB (NIH 3D / HuBMAP)"*
+2. [Prompt #2 (Paso 85) — Gemini 3.8 Flash (Medium)](#prompt-2--paso-85) — *"Exploración Arquitectónica del Simulador 3D"*
+3. [Prompt #3 (Paso 114) — Gemini 3.8 Flash (Medium)](#prompt-3--paso-114) — *"Corrección de Errores Iniciales de Renderizado 3D"*
+4. [Prompt #4 (Paso 165) — Gemini 3.8 Flash (Medium)](#prompt-4--paso-165) — *"Desbloqueo de Zoom y Navegación Multiescala"*
+5. [Prompt #5 (Paso 188) — Gemini 3.8 Flash (Medium)](#prompt-5--paso-188) — *"Desarrollo del Motor Fisiológico Bio-Matemático"*
+6. [Prompt #6 (Paso 280) — Claude Sonnet 4.6 (Thinking)](#prompt-6--paso-280) — *"Consolidación y Reporte del Motor Fisiológico"*
+7. [Prompt #7 (Paso 387) — Gemini 3.8 Flash (Medium)](#prompt-7--paso-387) — *"Continuación de Pipeline de Integración"*
+8. [Prompt #8 (Paso 397) — Gemini 3.8 Flash (Medium)](#prompt-8--paso-397) — *"Finalización de Verificación del Motor"*
+9. [Prompt #9 (Paso 432) — Gemini 3.8 Flash (Medium)](#prompt-9--paso-432) — *"Diagnóstico y Corrección Integral del Simulador 3D"*
+10. [Prompt #10 (Paso 475) — Gemini 3.8 Flash (Medium)](#prompt-10--paso-475) — *"Aprobación de Implementation Plan"*
+11. [Prompt #11 (Paso 559) — Gemini 3.8 Flash (Medium)](#prompt-11--paso-559) — *"Documentación Maestra del Modelo Matemático"*
+12. [Prompt #12 (Paso 585) — Claude Sonnet 4.6 (Thinking)](#prompt-12--paso-585) — *"Investigación de Sensores y Prototipado HTML"*
+13. [Prompt #13 (Paso 593) — Gemini 3.8 Flash (Medium)](#prompt-13--paso-593) — *"Continuación de Desarrollo de Prototipos HTML"*
+14. [Prompt #14 (Paso 634) — Gemini 3.8 Flash (Medium)](#prompt-14--paso-634) — *"Finalización de la Suite de Prototipos"*
+15. [Prompt #15 (Paso 667) — Gemini 3.8 Flash (Medium)](#prompt-15--paso-667) — *"Generador Profesional de Reportes Médicos PDF"*
+16. [Prompt #16 (Paso 768) — Gemini 3.8 Flash (Medium)](#prompt-16--paso-768) — *"Selección Interactiva de Órganos por Raycasting"*
+17. [Prompt #17 (Paso 903) — Claude Sonnet 4.6 (Thinking)](#prompt-17--paso-903) — *"Continuación del Cajón Lateral de Órganos"*
+18. [Prompt #18 (Paso 928) — Claude Sonnet 4.6 (Thinking)](#prompt-18--paso-928) — *"Corrección de Fallo de Renderizado en BodyModel3D"*
+19. [Prompt #19 (Paso 949) — Claude Sonnet 4.6 (Thinking)](#prompt-19--paso-949) — *"Continuación de Verificación de Tipos"*
+20. [Prompt #20 (Paso 982) — Claude Sonnet 4.6 (Thinking)](#prompt-20--paso-982) — *"Ajuste de Posición, Botones de Cierre y Holograma 3D"*
+21. [Prompt #21 (Paso 997) — Gemini 3.8 Flash (Medium)](#prompt-21--paso-997) — *"Continuación de Montaje del Holograma"*
+22. [Prompt #22 (Paso 1083) — Gemini 3.8 Flash (Medium)](#prompt-22--paso-1083) — *"Resolución de Conflicto DOM y Blindaje con ErrorBoundary"*
+23. [Prompt #23 (Paso 1147) — Gemini 3.8 Flash (Medium)](#prompt-23--paso-1147) — *"Creación Inicial de Registro de Prompts"*
+24. [Prompt #24 (Paso 1152) — Gemini 3.8 Flash (Medium)](#prompt-24--paso-1152) — *"Inclusión de Modelos de IA en el Registro"*
+25. [Prompt #25 (Paso 1160) — Gemini 3.8 Flash (Medium)](#prompt-25--paso-1160) — *"Auditoría de Datos, Recursos y Herramientas de NASA"*
+26. [Prompt #26 (Paso 1175) — Gemini 3.8 Flash (Medium)](#prompt-26--paso-1175) — *"Evaluación de Casos Reales de Salud Espacial y Propósitos de Sesión"*
+
+---
+
+## Propósito y Objetivo de Cada Prompt
+
+A continuación se detalla la finalidad de ingeniería, contexto técnico y objetivo de cada una de las solicitudes realizadas a lo largo de esta sesión de trabajo:
+
+| # | Paso | Modelo de IA | Hito / Tarea | Propósito y Objetivo Técnico |
+| :---: | :---: | :--- | :--- | :--- |
+| **1** | 0 | `Gemini 3.8 Flash (Medium)` | **Auditoría de Licencias GLB (NIH 3D / HuBMAP)** | Analizar la carpeta `organs/`, verificar las URLs de NIH 3D y generar el documento de licencias y créditos bajo Creative Commons CC BY 4.0 para proteger la trazabilidad legal del proyecto. |
+| **2** | 85 | `Gemini 3.8 Flash (Medium)` | **Exploración Arquitectónica del Simulador 3D** | Realizar un análisis estático profundo del proyecto con REA para localizar e inspeccionar el componente del simulador anatómico humano 3D (`BodyModel3D.tsx`) y su interacción con los modelos tridimensionales. |
+| **3** | 114 | `Gemini 3.8 Flash (Medium)` | **Corrección de Errores Iniciales de Renderizado 3D** | Subsanar fallas de posicionamiento, cinemática y cámara en el simulador anatómico, manteniendo las restricciones estrictas de no realizar commits ni pushes. |
+| **4** | 165 | `Gemini 3.8 Flash (Medium)` | **Desbloqueo de Zoom y Navegación Multiescala** | Modificar los controles de órbita y cámara en `BodyModel3D.tsx` para permitir acercamiento y paneo en cualquier región del cuerpo (cabeza, tórax, abdomen, piernas) y no solo en un único punto focal. |
+| **5** | 188 | `Gemini 3.8 Flash (Medium)` | **Desarrollo del Motor Fisiológico Bio-Matemático** | Implementar el modelo matemático fisiológico con ecuaciones diferenciales ordinarias (ODE), acoplando hemodinámica cardiovascular, intercambio respiratorio, termorregulación y función renal sin dependencias de LLM. |
+| **6** | 280 | `Claude Sonnet 4.6 (Thinking)` | **Consolidación y Reporte del Motor Fisiológico** | Terminar la integración de los adaptadores 3D del modelo matemático en el cliente web y entregar un informe de cambios y verificación de las ecuaciones fisiológicas. |
+| **7** | 387 | `Gemini 3.8 Flash (Medium)` | **Continuación de Pipeline de Integración** | Comando `continue` para procesar y avanzar en la exportación de fixtures y scripts de prueba tras el límite de contexto del modelo. |
+| **8** | 397 | `Gemini 3.8 Flash (Medium)` | **Finalización de Verificación del Motor** | Comando `continue` para completar las validaciones numéricas y generar el reporte final de integración del simulador. |
+| **9** | 432 | `Gemini 3.8 Flash (Medium)` | **Diagnóstico y Corrección Integral del Simulador 3D** | Corregir tres problemas clave: órganos con amplitudes de oscilación desmesuradas que salían del cuerpo, imposibilidad de seleccionar órganos con el ratón y desalineación entre referencias anatómicas masculina y femenina. |
+| **10** | 475 | `Gemini 3.8 Flash (Medium)` | **Aprobación de Implementation Plan** | Aprobación interactiva por parte del usuario del plan de trabajo estructurado (`implementation_plan.md`) para proceder a la refactorización segura del código. |
+| **11** | 559 | `Gemini 3.8 Flash (Medium)` | **Documentación Maestra del Modelo Matemático** | Redactar `docs/modelo-matematico-fisiologico.md` detallando las formulaciones matemáticas, parámetros cinéticos, propósitos y ubicación de cada archivo en el repositorio. |
+| **12** | 585 | `Claude Sonnet 4.6 (Thinking)` | **Investigación de Sensores y Prototipado HTML** | Investigar sensores biomédicos para misiones espaciales y desarrollar 7 simuladores independientes en HTML/CSS/JS puro (`simulator-prototypes/`) junto con los informes de priorización técnica. |
+| **13** | 593 | `Gemini 3.8 Flash (Medium)` | **Continuación de Desarrollo de Prototipos HTML** | Comando `continue` para proseguir con la construcción de los prototipos de visualización biomédica aislados. |
+| **14** | 634 | `Gemini 3.8 Flash (Medium)` | **Finalización de la Suite de Prototipos** | Comando `continue` para culminar la redacción de `SENSOR_RESEARCH_LIGHTMINUTE.md` y `PROTOTYPES_REVIEW_LIGHTMINUTE.md`. |
+| **15** | 667 | `Gemini 3.8 Flash (Medium)` | **Generador Profesional de Reportes Médicos PDF** | Crear un generador de PDF nativo en TypeScript (`baselinePdfGenerator.ts`) dentro del módulo Personal Baseline (`Why.tsx`), con diagramas, curvas estadísticas, formato profesional en inglés y botón de descarga. |
+| **16** | 768 | `Gemini 3.8 Flash (Medium)` | **Selección Interactiva de Órganos por Raycasting** | Implementar selección 3D mediante Raycaster en `BodyModel3D.tsx` que abre un cajón lateral contextual (`OrganStatsPanel.tsx`) con telemetría de órganos, gráficas temporales y correlación con anomalías personales. |
+| **17** | 903 | `Claude Sonnet 4.6 (Thinking)` | **Continuación del Cajón Lateral de Órganos** | Comando `continue` para avanzar en el ensamblaje visual y lógico del componente `OrganStatsPanel.tsx`. |
+| **18** | 928 | `Claude Sonnet 4.6 (Thinking)` | **Corrección de Fallo de Renderizado en BodyModel3D** | Diagnosticar y corregir el error de renderizado en React causado por el cálculo asíncrono de centroides (`useMemo`) y arrays vacíos en `Math.min(...)` dentro del renderizado SVG. |
+| **19** | 949 | `Claude Sonnet 4.6 (Thinking)` | **Continuación de Verificación de Tipos** | Comando `continue` para unificar el tipado de retorno de puntos temporales y asegurar compilación limpia en TypeScript. |
+| **20** | 982 | `Claude Sonnet 4.6 (Thinking)` | **Ajuste de Posición, Botones de Cierre y Holograma 3D** | Corregir la elevación del panel desplazado arriba mediante `position: fixed`, agregar botones sticky de cierre en cabecera y pie, y construir un visor holográfico 3D interactivo con modelos GLB. |
+| **21** | 997 | `Gemini 3.8 Flash (Medium)` | **Continuación de Montaje del Holograma** | Comando `continue` para completar la incorporación de modelos GLB y ajustes de Three.js en el cliente. |
+| **22** | 1083 | `Gemini 3.8 Flash (Medium)` | **Resolución de Conflicto DOM y Blindaje con ErrorBoundary** | Corregir el error catastrófico en el componente `<div>` eliminando `innerHTML = ""`, utilizando un `<canvas>` nativo gestionado por React e implementando `ErrorBoundary.tsx` para aislar cualquier fallo en 3D. |
+| **23** | 1147 | `Gemini 3.8 Flash (Medium)` | **Creación Inicial de Registro de Prompts** | Crear la carpeta `docs/prompts/` y el archivo `prompt-antygravity.md` para resguardar todos los requerimientos de la sesión. |
+| **24** | 1152 | `Gemini 3.8 Flash (Medium)` | **Inclusión de Modelos de IA en el Registro** | Ajustar el archivo `prompt-antygravity.md` para mapear de manera estricta el modelo de IA específico (`Gemini 3.8 Flash` o `Claude Sonnet 4.6`) responsable de cada prompt. |
+| **25** | 1160 | `Gemini 3.8 Flash (Medium)` | **Auditoría de Datos, Recursos y Herramientas de NASA** | Analizar exhaustivamente todo el proyecto para documentar el uso de DONKI, HRP, Artemis II, OSDR, NOAA y librerías abiertas, plasmándolo en `docs/recursos-nasa.md` y actualizando el registro de prompts. |
+| **26** | 1175 | `Gemini 3.8 Flash (Medium)` | **Evaluación de Casos Reales de Salud Espacial y Propósitos de Sesión** | Evaluar si el proyecto previene o resuelve los 6 casos médicos de `investigacion_salud_astronautas.md`, proponer mejoras de ingeniería aeroespacial para casos no cubiertos y detallar el propósito de cada prompt en este registro. |
 
 ---
 
 ## Prompt 1 — Paso 0
 - **Fecha y Hora (UTC):** `2026-11-14T20:38:46Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Analizar la carpeta `organs/`, verificar las URLs de NIH 3D y generar el documento de licencias y créditos bajo Creative Commons CC BY 4.0 para proteger la trazabilidad legal del proyecto.*
 
 ### Contenido del Prompt:
 ```text
@@ -115,9 +152,12 @@ entre en  cada url para licencias y autores
 
 ---
 
+---
+
 ## Prompt 2 — Paso 85
 - **Fecha y Hora (UTC):** `2026-11-14T20:52:23Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Realizar un análisis estático profundo del proyecto con REA para localizar e inspeccionar el componente del simulador anatómico humano 3D (`BodyModel3D.tsx`) y su interacción con los modelos tridimensionales.*
 
 ### Contenido del Prompt:
 ```text
@@ -172,9 +212,12 @@ solo analiza el proyecto y su estrucutrua de carpetas no modifques codigo, no ha
 
 ---
 
+---
+
 ## Prompt 3 — Paso 114
 - **Fecha y Hora (UTC):** `2026-11-14T20:56:12Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Subsanar fallas de posicionamiento, cinemática y cámara en el simulador anatómico, manteniendo las restricciones estrictas de no realizar commits ni pushes.*
 
 ### Contenido del Prompt:
 ```text
@@ -183,9 +226,12 @@ necesito que corrigas esos errores del punto 4 que encontrase por completo, corr
 
 ---
 
+---
+
 ## Prompt 4 — Paso 165
 - **Fecha y Hora (UTC):** `2026-11-14T21:09:56Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Modificar los controles de órbita y cámara en `BodyModel3D.tsx` para permitir acercamiento y paneo en cualquier región del cuerpo (cabeza, tórax, abdomen, piernas) y no solo en un único punto focal.*
 
 ### Contenido del Prompt:
 ```text
@@ -194,9 +240,12 @@ hay otro problema que quiero solucioanr, cuando hago zoom al simulador del cuerp
 
 ---
 
+---
+
 ## Prompt 5 — Paso 188
 - **Fecha y Hora (UTC):** `2026-11-14T21:20:42Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Implementar el modelo matemático fisiológico con ecuaciones diferenciales ordinarias (ODE), acoplando hemodinámica cardiovascular, intercambio respiratorio, termorregulación y función renal sin dependencias de LLM.*
 
 ### Contenido del Prompt:
 ```text
@@ -824,9 +873,12 @@ Al terminar, presenta:
 
 ---
 
+---
+
 ## Prompt 6 — Paso 280
 - **Fecha y Hora (UTC):** `2026-11-14T21:33:45Z`
 - **Modelo de IA utilizado:** `Claude Sonnet 4.6 (Thinking)`
+- **Propósito:** *Terminar la integración de los adaptadores 3D del modelo matemático en el cliente web y entregar un informe de cambios y verificación de las ecuaciones fisiológicas.*
 
 ### Contenido del Prompt:
 ```text
@@ -835,9 +887,12 @@ termine de realizar lo pedido. Al final dame el reporte de los cambios
 
 ---
 
+---
+
 ## Prompt 7 — Paso 387
 - **Fecha y Hora (UTC):** `2026-11-14T21:44:45Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Comando `continue` para procesar y avanzar en la exportación de fixtures y scripts de prueba tras el límite de contexto del modelo.*
 
 ### Contenido del Prompt:
 ```text
@@ -846,9 +901,12 @@ continue
 
 ---
 
+---
+
 ## Prompt 8 — Paso 397
 - **Fecha y Hora (UTC):** `2026-11-14T22:00:04Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Comando `continue` para completar las validaciones numéricas y generar el reporte final de integración del simulador.*
 
 ### Contenido del Prompt:
 ```text
@@ -857,9 +915,12 @@ continue, termine de realizar lo pedido. Al final dame el reporte de los cambios
 
 ---
 
+---
+
 ## Prompt 9 — Paso 432
 - **Fecha y Hora (UTC):** `2026-11-14T23:04:31Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Corregir tres problemas clave: órganos con amplitudes de oscilación desmesuradas que salían del cuerpo, imposibilidad de seleccionar órganos con el ratón y desalineación entre referencias anatómicas masculina y femenina.*
 
 ### Contenido del Prompt:
 ```text
@@ -1510,9 +1571,13 @@ Realiza cambios mínimos, justificados, comprobables y aislados. Al finalizar da
 
 ---
 
+---
+
 ## Prompt 10 — Paso 475
 - **Fecha y Hora (UTC):** `2026-11-14T23:09:17Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Aprobación interactiva por parte del usuario del plan de trabajo estructurado (`implementation_plan.md`) para proceder a la refactorización segura del código.*
+
 - **Nota:** *El usuario aprobó interactivamente el plan de implementación.*
 
 ### Contenido del Prompt:
@@ -1522,9 +1587,12 @@ Realiza cambios mínimos, justificados, comprobables y aislados. Al finalizar da
 
 ---
 
+---
+
 ## Prompt 11 — Paso 559
 - **Fecha y Hora (UTC):** `2026-11-14T23:25:59Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Redactar `docs/modelo-matematico-fisiologico.md` detallando las formulaciones matemáticas, parámetros cinéticos, propósitos y ubicación de cada archivo en el repositorio.*
 
 ### Contenido del Prompt:
 ```text
@@ -1533,9 +1601,12 @@ con esos cambios realizados quiero que me des un archivod md dentro de docs sobr
 
 ---
 
+---
+
 ## Prompt 12 — Paso 585
 - **Fecha y Hora (UTC):** `2026-11-14T23:50:40Z`
 - **Modelo de IA utilizado:** `Claude Sonnet 4.6 (Thinking)`
+- **Propósito:** *Investigar sensores biomédicos para misiones espaciales y desarrollar 7 simuladores independientes en HTML/CSS/JS puro (`simulator-prototypes/`) junto con los informes de priorización técnica.*
 
 ### Contenido del Prompt:
 ```text
@@ -1813,20 +1884,26 @@ Al terminar, deben existir:
 
 ---
 
+---
+
 ## Prompt 13 — Paso 593
 - **Fecha y Hora (UTC):** `2026-11-14T23:52:29Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Comando `continue` para proseguir con la construcción de los prototipos de visualización biomédica aislados.*
 
 ### Contenido del Prompt:
 ```text
 continue
 ```
+
+---
 
 ---
 
 ## Prompt 14 — Paso 634
 - **Fecha y Hora (UTC):** `2026-11-15T00:12:17Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Comando `continue` para culminar la redacción de `SENSOR_RESEARCH_LIGHTMINUTE.md` y `PROTOTYPES_REVIEW_LIGHTMINUTE.md`.*
 
 ### Contenido del Prompt:
 ```text
@@ -1835,9 +1912,12 @@ continue
 
 ---
 
+---
+
 ## Prompt 15 — Paso 667
 - **Fecha y Hora (UTC):** `2026-11-15T01:55:23Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Crear un generador de PDF nativo en TypeScript (`baselinePdfGenerator.ts`) dentro del módulo Personal Baseline (`Why.tsx`), con diagramas, curvas estadísticas, formato profesional en inglés y botón de descarga.*
 
 ### Contenido del Prompt:
 ```text
@@ -1846,9 +1926,12 @@ Necesito que hagas lo siguiente en el apartado de http://localhost:5173/#scenari
 
 ---
 
+---
+
 ## Prompt 16 — Paso 768
 - **Fecha y Hora (UTC):** `2026-11-15T03:45:26Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Implementar selección 3D mediante Raycaster en `BodyModel3D.tsx` que abre un cajón lateral contextual (`OrganStatsPanel.tsx`) con telemetría de órganos, gráficas temporales y correlación con anomalías personales.*
 
 ### Contenido del Prompt:
 ```text
@@ -1857,9 +1940,12 @@ Implementar un sistema de selección interactiva de órganos 3D mediante Raycast
 
 ---
 
+---
+
 ## Prompt 17 — Paso 903
 - **Fecha y Hora (UTC):** `2026-11-15T03:55:08Z`
 - **Modelo de IA utilizado:** `Claude Sonnet 4.6 (Thinking)`
+- **Propósito:** *Comando `continue` para avanzar en el ensamblaje visual y lógico del componente `OrganStatsPanel.tsx`.*
 
 ### Contenido del Prompt:
 ```text
@@ -1868,9 +1954,12 @@ continue
 
 ---
 
+---
+
 ## Prompt 18 — Paso 928
 - **Fecha y Hora (UTC):** `2026-11-15T04:03:08Z`
 - **Modelo de IA utilizado:** `Claude Sonnet 4.6 (Thinking)`
+- **Propósito:** *Diagnosticar y corregir el error de renderizado en React causado por el cálculo asíncrono de centroides (`useMemo`) y arrays vacíos en `Math.min(...)` dentro del renderizado SVG.*
 
 ### Contenido del Prompt:
 ```text
@@ -1880,9 +1969,12 @@ no muestra el organo al darle click con sus estadisticas corrige
 
 ---
 
+---
+
 ## Prompt 19 — Paso 949
 - **Fecha y Hora (UTC):** `2026-11-15T04:04:31Z`
 - **Modelo de IA utilizado:** `Claude Sonnet 4.6 (Thinking)`
+- **Propósito:** *Comando `continue` para unificar el tipado de retorno de puntos temporales y asegurar compilación limpia en TypeScript.*
 
 ### Contenido del Prompt:
 ```text
@@ -1891,9 +1983,13 @@ continue
 
 ---
 
+---
+
 ## Prompt 20 — Paso 982
 - **Fecha y Hora (UTC):** `2026-11-15T04:11:38Z`
 - **Modelo de IA utilizado:** `Claude Sonnet 4.6 (Thinking)`
+- **Propósito:** *Corregir la elevación del panel desplazado arriba mediante `position: fixed`, agregar botones sticky de cierre en cabecera y pie, y construir un visor holográfico 3D interactivo con modelos GLB.*
+
 - **Archivos adjuntos:** `/home/pablo/.gemini/antigravity/brain/e1ace435-8848-4fdb-8725-cc9235df7fa7/.user_uploaded/media_1794715849094.png`
 
 ### Contenido del Prompt:
@@ -1903,9 +1999,12 @@ el panel quedo muy arriba, y no se ve muy bien corrigelo, ademas agrega un boton
 
 ---
 
+---
+
 ## Prompt 21 — Paso 997
 - **Fecha y Hora (UTC):** `2026-11-15T04:12:57Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Comando `continue` para completar la incorporación de modelos GLB y ajustes de Three.js en el cliente.*
 
 ### Contenido del Prompt:
 ```text
@@ -1914,9 +2013,12 @@ continue
 
 ---
 
+---
+
 ## Prompt 22 — Paso 1083
 - **Fecha y Hora (UTC):** `2026-11-15T04:24:06Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Corregir el error catastrófico en el componente `<div>` eliminando `innerHTML = ""`, utilizando un `<canvas>` nativo gestionado por React e implementando `ErrorBoundary.tsx` para aislar cualquier fallo en 3D.*
 
 ### Contenido del Prompt:
 ```text
@@ -1926,9 +2028,12 @@ se volvio a dar este error, corrigelo y mirar si hay posibles errores en esto
 
 ---
 
+---
+
 ## Prompt 23 — Paso 1147
 - **Fecha y Hora (UTC):** `2026-11-15T14:06:46Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Crear la carpeta `docs/prompts/` y el archivo `prompt-antygravity.md` para resguardar todos los requerimientos de la sesión.*
 
 ### Contenido del Prompt:
 ```text
@@ -1937,9 +2042,12 @@ Quiero que dentro de docs creas una carpete de prompts dentro de ellas vas a cre
 
 ---
 
+---
+
 ## Prompt 24 — Paso 1152
 - **Fecha y Hora (UTC):** `2026-11-15T14:07:22Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Ajustar el archivo `prompt-antygravity.md` para mapear de manera estricta el modelo de IA específico (`Gemini 3.8 Flash` o `Claude Sonnet 4.6`) responsable de cada prompt.*
 
 ### Contenido del Prompt:
 ```text
@@ -1948,9 +2056,12 @@ Quiero que dentro de docs creas una carpete de prompts dentro de ellas vas a cre
 
 ---
 
+---
+
 ## Prompt 25 — Paso 1160
 - **Fecha y Hora (UTC):** `2026-11-15T14:35:43Z`
 - **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Analizar exhaustivamente todo el proyecto para documentar el uso de DONKI, HRP, Artemis II, OSDR, NOAA y librerías abiertas, plasmándolo en `docs/recursos-nasa.md` y actualizando el registro de prompts.*
 
 ### Contenido del Prompt:
 ```text
@@ -1965,6 +2076,34 @@ Qué recurso, conjunto de datos o herramienta de NASA utilizó.
 
 Deben incluir las fuentes utilizadas, incluso si son abiertas o gratuitas: datos, código, textos, imágenes, herramientas y otros materiales.
 crea dentro de docs un archivo md llamado recursos-nasa.md donde debes realizar lo que te pedi. busca todos los recursos de nasa usados.  Al terminar agrege este prompt dentro edl archivo destinado prompt-antygravity.md, agrega el prompt usado tal cual esta escrito. AL finalizar todo dame el reporte de lo que hiciste
+```
+
+---
+
+---
+
+## Prompt 26 — Paso 1175
+- **Fecha y Hora (UTC):** `2026-11-15T15:41:53Z`
+- **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Evaluar si el proyecto previene o resuelve los 6 casos médicos de `investigacion_salud_astronautas.md`, proponer mejoras de ingeniería aeroespacial para casos no cubiertos y detallar el propósito de cada prompt en este registro.*
+
+### Contenido del Prompt:
+```text
+Dentro de la carpeta docs se encuentra un archivo md llamado: investigacion_salud_astronautas.md, donde hay diversos casos de astronautas sobre diversos afectacion que tuvieron, necesito saber si el proyecto puede resolver cada uno de estos casos. Por el momento solo me vas a dar el reporte sobre si halla a prevenir esos casos o no lo hace, en caso contrario dame las correciones que puedo realizar para resuelve esos casos y casos similares relacioandas a esas misiones espaciales de la NASA. Al finalizar esto modificares prompt-antygravity.md agregando este prompt, ademas, lo otro que vas a hacer en ese md es teniendo en cuenta todo lo de esta sesion y los prompts usandos colocar un apartado donde pongas el proposito de cada prompt. Al finalizar todo esto dame el reporte de lo que hiciste con lo pedido.
+```
+
+---
+
+---
+
+## Prompt 27 — Paso 1205
+- **Fecha y Hora (UTC):** `2026-11-15T15:50:46Z`
+- **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Implementar las correcciones ingenieriles y médicas para los Casos 1 a 6 de `docs/investigacion_salud_astronautas.md` (SANS, Trombosis Yugular, Infección/Barotrauma en Apolo 7, Síndrome de Adaptación Espacial en Apolo 8, Pérdida de Masa Ósea y Desmineralización, Estrés y Confinamiento en Salyut/Mir) incorporando nuevos protocolos en `kb/protocols/`, expandiendo umbrales y metadatos en `kb/thresholds.json`, `meta.ts` y citas de evidencia en `kb/evidence.yaml`, respetando la regla absoluta de no ejecutar commit, push ni merge.*
+
+### Contenido del Prompt:
+```text
+Quiero que realices las correciones de 1 a 6 de los casos de estudio Real propuestas siguiendo la logica de proyecto, desarrollo, arquitectura y como se esta viniendo trabajando. Al finalizar dame un reporte de los cambios, en donde los hiciste, que hiciste exactamente, como se usan. Una cosa importante a tener en cuenta es que el proyecto se actualiza constantemente cuando yo presione fetch origin y traiga los cambios realizados, tu los detectes y analisis esos cambios para evitar problemas en el codigo tu me lo tienes que avisar. No vas a realizar push, commit o merge eso lo hago yo por aparte.
 ```
 
 ---
