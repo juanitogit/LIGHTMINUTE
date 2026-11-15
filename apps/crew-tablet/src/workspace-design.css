@@ -94,3 +94,13 @@ body { background: var(--bg-deep); font-family: var(--font-sans); font-size: 14p
   .topbar, .scenariobar { padding-inline: 18px; }
   .view { padding-inline: 18px; }
 }
+/* Source provenance is readable independently of the selected scenario. */
+.data-sources { max-width: 880px; }
+.data-sources section { padding: 24px 0; border-top: 1px solid var(--line); }
+.data-sources section h2 { margin: 0 0 12px; }
+.data-sources section p { line-height: 1.6; margin: 10px 0; }
+.data-sources dl { display: grid; grid-template-columns: minmax(110px, 160px) minmax(0, 1fr); gap: 12px 24px; margin: 20px 0; }
+.data-sources dt { color: var(--muted); }
+.data-sources dd { margin: 0; line-height: 1.5; min-width: 0; }
+.data-sources a { overflow-wrap: anywhere; }
+@media (max-width: 520px) { .data-sources dl { grid-template-columns: 1fr; gap: 4px; } .data-sources dd { margin-bottom: 12px; } }

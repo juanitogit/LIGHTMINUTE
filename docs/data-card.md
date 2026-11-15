@@ -23,8 +23,9 @@ labelled synthetic — values are never invented and presented as real.
 - **Base URL and auth.** `https://ccmc.gsfc.nasa.gov/DONKI/WS/get/{SEP|FLR|CME|GST}` with
   `startDate` / `endDate` in `YYYY-MM-DD` (UTC). Live checks returned HTTP 200 with no
   `api_key` parameter. DONKI is a CCMC service and does **not** use the api.nasa.gov key;
-  no key is sent, stored, or required. The api.nasa.gov catalog did not list DONKI in the
-  version read during the event; the CCMC documentation is authoritative for this endpoint.
+  no key is sent, stored, or required. The api.nasa.gov catalog also lists DONKI with a
+  separate keyed gateway; access to that gateway was not tested. The CCMC documentation
+  is authoritative for the keyless endpoint used by this project.
 - **Range limit.** The service rejects windows over 60 days with
   `API Error: Date range cannot exceed 60 days`. `scripts/fetch_nasa.py` therefore splits
   the 90-day window into 60-day chunks and merges them by event id.
@@ -63,6 +64,20 @@ values outside personal preflight bands. That is not validation: baselines have 
 samples, no clinical sensitivity is claimed, and directional concordance with Siew et al. is
 NOT DONE because the published signs were not frozen before the numerical values were seen.
 `services/engine/tether_engine/ingest/` remains written so a snapshot can be added later.
+
+### NASA data provenance review (accessed 2026-11-15)
+
+| Source | Accessed | Use | What it does not show |
+|---|---|---|---|
+| [NASA OSD-575](https://osdr.nasa.gov/bio/repo/data/studies/OSD-575): SpaceX Inspiration4 Blood Serum Metabolic Panel and Immune/Cardiac Cytokine Arrays (Comprehensive Metabolic Panel and Multiplex) | Public transformed CMP file retrieved 2026-11-14T20:45:48Z; provenance in `ml/proxy/credibility-provenance.json`; SHA-256 `5eb1e7f025dd8443a9e70111e62bc32afae3432753024489c5c013e401d709d9` confirmed against the source again 2026-11-15 | Exploratory postflight research on public biomedical data from four private astronauts; labelled `real-public` | Not synthetic crew telemetry or clinical validation; sparse baseline, no directional-concordance claim |
+| [NASA DONKI](https://ccmc.gsfc.nasa.gov/DONKI/api/) | Existing build-time CCMC snapshots, retrieved 2026-11-14; hashes in `data/snapshots/manifest.json` | Historical space-weather event context | Not an individual dose, forecast or clinical event |
+| [NOAA GOES](https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json) | Existing build-time snapshot, retrieved 2026-11-14; hash in `data/snapshots/manifest.json` | Historical solar proton context | Not an individual radiation dose |
+
+Data are courtesy of the NASA Open Science Data Repository (https://osdr.nasa.gov/bio/repo). NASA's [OSDR FAQ](https://science.nasa.gov/reference/osdr-faq/) provides this acknowledgement and dataset citation guidance. NASA's [OSD-575 metadata API](https://visualization.osdr.nasa.gov/biodata/api/v2/dataset/OSD-575/?format=json) identifies the accession, serum material and Inspiration4 study. OSD-569 metadata was inspected historically but its blood-count dataset was not used.
+
+NASA's [LSAH archive](https://nlsp.nasa.gov/search/data/details/eb851add-81e9-5827-9915-7e8ea717185c?dataType=EXPERIMENTS) identifies restricted records available by request; NASA describes the [LSDA/LSAH request process](https://www.nasa.gov/wp-content/uploads/2015/05/hrp_retrospective_data_request_study_information_package_guidelines_final.pdf). No LSAH or restricted LSDA records were used. Public OSD-575 is nevertheless human biomedical research data: a blanket claim that no astronaut biomedical or clinical measurements were used would be misleading.
+
+RadLab's [official API](https://visualization.osdr.nasa.gov/radlab/gui/data-api/) responded to an illustrative historical ISS query on 2026-11-15. Integration was abandoned for this branch: instrument-specific redistribution terms were not independently verified, and the available query does not establish a recent window. No RadLab snapshot, model input or dose series was added.
 
 ## Not used, and deliberately left unverified
 - **NASA-STD-3001** reference ranges and career dose limits — not opened, so no limit is
