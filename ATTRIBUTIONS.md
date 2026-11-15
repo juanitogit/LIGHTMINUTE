@@ -42,6 +42,25 @@ Reference: Rossi et al., *Multilevel Monitoring of Activity and Sleep in Healthy
 Used as a **proxy** for interval calibration only; the archive is a checksummed snapshot and only
 aggregate results are published. Attribution: data courtesy of the MMASH authors via PhysioNet.
 
+## EVA visor scene (Mars surface)
+
+The helmet view in **Visor EVA** is a WebGL scene, not a painted backdrop. Its
+geometry and textures are third-party assets bundled under
+`apps/crew-tablet/public/assets/mars/` and re-fetched with
+`apps/crew-tablet/scripts/fetch-mars-assets.py`.
+
+| Asset | Source | License |
+|---|---|---|
+| `panorama.jpg` — 360° view from Husband Hill, Mars Exploration Rover Spirit | NASA/JPL/MSSS, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:MarsPanorama.jpg) | Public domain (NASA/JPL) |
+| `ground/cracked_red_ground_*` — colour, normal and ARM maps (1K) | [Poly Haven](https://polyhaven.com/a/cracked_red_ground) | CC0 1.0 |
+| `rocks/moon_rock_01`, `rocks/moon_rock_04`, `rocks/rock_07`, `rocks/namaqualand_boulder_02` — photogrammetry boulders (1K glTF) | [Poly Haven](https://polyhaven.com/models) | CC0 1.0 |
+
+Poly Haven assets are CC0 and need no attribution; they are credited here because
+the project only ships assets it can name. The terrain relief, dust, lighting and
+camera sway are generated in `apps/crew-tablet/src/views/MarsScene.tsx` — the
+scene is a reconstruction, **not** a photograph of the crew's actual location,
+and it carries no operational meaning.
+
 ## Facts and framing (cited, not redistributed)
 
 - NASA Human Research Program, risks overview — <https://www.nasa.gov/hrp/risks>

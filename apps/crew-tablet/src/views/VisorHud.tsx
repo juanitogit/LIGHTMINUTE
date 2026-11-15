@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { LoadedScenario } from "../lib/types";
-import { MoonEnvironmentView } from "./MoonEnvironment";
+import { MarsScene } from "./MarsScene";
 import { Icon } from "../components/Icon";
 import { Chip, LevelBadge } from "../components/primitives";
 import "../hud-visor.css";
@@ -14,7 +14,6 @@ interface VisorHudProps {
   onDay: (day: number) => void;
   maxDay: number;
   onOpenTablet: () => void;
-  onOpenMoon: () => void;
 }
 
 const CREW_NAMES: Record<string, string> = {
@@ -33,7 +32,6 @@ export function VisorHud({
   onDay,
   maxDay,
   onOpenTablet,
-  onOpenMoon,
 }: VisorHudProps) {
   const [solarShield, setSolarShield] = useState(true);
   const [autoPlay, setAutoPlay] = useState(false);
@@ -119,15 +117,10 @@ export function VisorHud({
           <p className="micro">LIGHTMINUTE / VISOR EXTRAVEHICULAR (EVA)</p>
           <h1>Visor EVA (HUD de Casco)</h1>
           <p className="viewhead__sub">
-            Simulación de visualización integrada en casco de traje lunar xEMU / Artemis. Constantes vitales sobre el terreno, escaneo orgánico fisiológico y supervisión sin retardo.
+            Simulación de visualización integrada en el casco de un traje de superficie marciana. Constantes vitales sobre el terreno real de Marte, escaneo orgánico fisiológico y supervisión sin retardo.
           </p>
         </div>
         <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-          {onOpenMoon ? (
-            <button type="button" className="btn" onClick={onOpenMoon}>
-              <Icon name="moon" size={16} /> Entorno Lunar 3D
-            </button>
-          ) : null}
           {onOpenTablet ? (
             <button type="button" className="btn" onClick={onOpenTablet}>
               <Icon name="overview" size={16} /> Volver a resumen
@@ -220,9 +213,9 @@ export function VisorHud({
         </div>
 
         <div className={`visor-viewport ${isFullscreen ? "is-fullscreen" : ""} ${levelClass} ${isAlarm ? "alarm" : ""}`}>
-          {/* 1. Background Lunar Surface */}
-          <div className="hud-moon-bg">
-            <MoonEnvironmentView embedded={true} scenario={scenario} dayNumber={dayNumber} />
+          {/* 1. Real Mars surface (NASA panorama + 3D ground, rocks and dust) */}
+          <div className="hud-scene-bg">
+            <MarsScene />
           </div>
 
           {/* 2. Amber/Gold Solar Shield Visor Optical Coating */}

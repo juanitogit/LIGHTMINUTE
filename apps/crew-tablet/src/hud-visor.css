@@ -41,6 +41,7 @@
 /* Simulator Canvas Viewport Frame */
 .visor-viewport {
   position: relative;
+  container-type: size;
   width: 100%;
   aspect-ratio: 16 / 9;
   min-height: 520px;
@@ -72,14 +73,24 @@
 .visor-viewport.l1 { --c: var(--hud-yellow); }
 .visor-viewport.l2 { --c: var(--hud-red); }
 
-/* Background container: renders the Moon SVG directly */
-.hud-moon-bg {
+/* Background container: the WebGL Mars scene renders into this box */
+.hud-scene-bg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   z-index: 0;
   pointer-events: none;
+  overflow: hidden;
+  background: linear-gradient(180deg, #b8814f 0%, #c99467 46%, #9c5a35 100%);
+}
+
+.hud-scene-bg canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 /* Visor filter: gold / amber EVA solar shield optics */
@@ -88,8 +99,8 @@
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  backdrop-filter: sepia(0.68) contrast(1.12) saturate(1.3) brightness(0.94) hue-rotate(-10deg);
-  -webkit-backdrop-filter: sepia(0.68) contrast(1.12) saturate(1.3) brightness(0.94) hue-rotate(-10deg);
+  backdrop-filter: sepia(0.45) contrast(1.1) saturate(1.25) brightness(0.96) hue-rotate(-6deg);
+  -webkit-backdrop-filter: sepia(0.45) contrast(1.1) saturate(1.25) brightness(0.96) hue-rotate(-6deg);
   background:
     linear-gradient(120deg, transparent 22%, rgba(255, 215, 105, 0.08) 30%, rgba(255, 175, 45, 0.12) 36%, transparent 44%),
     linear-gradient(112deg, transparent 58%, rgba(255, 195, 60, 0.05) 64%, transparent 72%),
@@ -157,8 +168,8 @@
 .hud-corner {
   position: absolute;
   bottom: 0;
-  width: min(32vw, 440px);
-  height: min(34vh, 240px);
+  width: min(32cqw, 440px);
+  height: min(34cqh, 240px);
   z-index: 4;
   pointer-events: none;
 }
@@ -168,8 +179,8 @@
 .hud-tc {
   position: absolute;
   top: 0;
-  width: min(20vw, 260px);
-  height: min(14vh, 120px);
+  width: min(20cqw, 260px);
+  height: min(14cqh, 120px);
   z-index: 4;
   pointer-events: none;
 }
@@ -181,7 +192,7 @@
   left: 50%;
   top: 0;
   transform: translateX(-50%);
-  width: min(60vw, 820px);
+  width: min(60cqw, 820px);
   aspect-ratio: 760/96;
   z-index: 5;
 }
@@ -281,8 +292,8 @@
 
 /* DIAL: global integrity — top left */
 #hud-dial {
-  left: 3.2vw;
-  top: 3.4vh;
+  left: 3.2cqw;
+  top: 3.4cqh;
   width: 104px;
 }
 #hud-dial text {
@@ -291,8 +302,8 @@
 }
 
 #hud-dial-label {
-  left: 3.2vw;
-  top: calc(3.4vh + 112px);
+  left: 3.2cqw;
+  top: calc(3.4cqh + 112px);
   font-size: 8px;
   opacity: 0.6;
   letter-spacing: 0.12em;
@@ -302,8 +313,8 @@
 
 /* SPACE WEATHER — top right */
 #hud-rad {
-  right: 3.4vw;
-  top: 3.5vh;
+  right: 3.4cqw;
+  top: 3.5cqh;
   text-align: right;
   font-size: 10px;
   line-height: 1.9;
@@ -362,16 +373,16 @@
 /* LATERAL RULERS */
 .hud-ruler {
   position: absolute;
-  top: 26vh;
-  height: 42vh;
+  top: 26cqh;
+  height: 42cqh;
   width: 130px;
   display: flex;
   gap: 6px;
   z-index: 5;
 }
 
-.hud-ruler.L { left: 1.6vw; }
-.hud-ruler.R { right: 1.6vw; flex-direction: row-reverse; text-align: right; }
+.hud-ruler.L { left: 1.6cqw; }
+.hud-ruler.R { right: 1.6cqw; flex-direction: row-reverse; text-align: right; }
 
 .hud-rt {
   position: absolute;
@@ -469,14 +480,14 @@
   font-size: 10px;
   text-align: center;
   color: var(--c);
-  max-width: 60vw;
+  max-width: 60cqw;
   opacity: 0.9;
 }
 
 /* BOTTOM-LEFT VITALS CARD */
 #hud-bl {
-  left: 3.2vw;
-  bottom: 5vh;
+  left: 3.2cqw;
+  bottom: 5cqh;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -589,8 +600,8 @@
 
 /* BOTTOM-RIGHT BODY SCANNER CARD */
 #hud-br {
-  right: 3.2vw;
-  bottom: 5vh;
+  right: 3.2cqw;
+  bottom: 5cqh;
   display: flex;
   align-items: flex-end;
   gap: 16px;
