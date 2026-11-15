@@ -15,14 +15,15 @@ URL; they run locally only.
 
 - **Demo:** live URL, scenario `cmo_fever`, crew **A**, mission day **16** — the Earth lens says
   `Normal`, the personal lens says `Unusual for you`, and the card cites the pattern.
-- **Demo video:** not recorded yet; the 2026 Project Submission Guide caps the demo at **30 s of
-  video or 7 slides**.
+- **Demo format:** the [2026 Project Submission Guide](https://spaceappschallenge.org/resources/)
+  allows **30 s of video or 7 slides**. No video is recorded yet, so judge from the live URL above.
 - **Evidence:** [`docs/validation.md`](docs/validation.md) (synthetic), [`ml/proxy/CADENCE-CHECK.md`](ml/proxy/CADENCE-CHECK.md)
   (real public proxy, exploratory), [`docs/model-card.md`](docs/model-card.md) (the defect we found and fixed).
 - **Limitations:** synthetic crews, no clinical validation, no live LLM call in this repository,
   no Python API on the public URL — see [Status](#status-what-works-what-is-partial-what-is-missing).
-- **NASA data:** OSD-575 (exploratory, n=4) and historical DONKI/SWPC snapshots; no restricted
-  astronaut records. Credits in [`ATTRIBUTIONS.md`](ATTRIBUTIONS.md).
+- **NASA data:** OSD-575 (exploratory, n=4), NOAA SWPC proton flux and NASA DONKI event
+  snapshots, all retrieved 2026-11-14; no restricted astronaut records. Credits in
+  [`ATTRIBUTIONS.md`](ATTRIBUTIONS.md).
 
 Current design: [Apple HIG inspired workspace and anatomical 3D](docs/native-design.md).
 Offline engine, signed data and optional device features: [offline operation and limits](docs/supply-chain/OFFLINE-Y-FIRMAS.md) (Spanish); dependency inventory: [supply-chain snapshot](docs/supply-chain/README.md).
@@ -114,8 +115,8 @@ Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not
 | **Protocols** | 3 dose-free protocols (`fever_like_syndrome`, `co2_headache_cluster`, `post_eva_orthostatic`); every unsourced step marked `demo-wording`; steps point at the onboard medical protocol | `kb/protocols/*.json`, badge visible in both mounts |
 | **Ground console** | Static, no build: crew levels, sparklines against the personal band, delayed message queue from `ground_message` + `routing`, consent tiers (behavioural off by default), ISS/Moon/Mars light-delay timeline, tamper-evident chain viewer | Browser: 4 crew cards, 16 sparklines, day-15 queue, "symptoms withheld", tamper flagged at entry #1 |
 | **Audit chain** | SHA-256 hash chain, same canonical JSON as the Python engine, viewer names the first tampered entry | JS ↔ Python vectors identical, **8/8** (`node apps/ground-console/src/audit.test.mjs`) |
-| **Real NOAA snapshot** | `scripts/fetch_noaa.py` writes an immutable snapshot + manifest (url, retrieved_at, sha256, rows, license) and derives `public/data/radiation.json`; `ingest.verify_snapshot()` checks sha256 and row count | Real run 2026-11-14T14:38:16Z, 2 288 rows, S-scale 0 (quiet Sun) |
-| **Validation harness** | Four detectors at an equal false-alarm budget, plus interval calibration, missing-reading robustness and baseline-length sensitivity | `python ml/validation/run_all.py` → `docs/validation.md`, `ml/validation/results.json`, `public/data/validation.json` (~2.5 min) |
+| **Real NOAA snapshot** | `scripts/fetch_noaa.py` writes an immutable snapshot + manifest (url, retrieved_at, sha256, rows, license) and derives `apps/crew-tablet/public/data/radiation.json`; `ingest.verify_snapshot()` checks sha256 and row count | Real run 2026-11-14T14:38:16Z, 2 288 rows, S-scale 0 (quiet Sun) |
+| **Validation harness** | Four detectors at an equal false-alarm budget, plus interval calibration, missing-reading robustness and baseline-length sensitivity | `python ml/validation/run_all.py` → `docs/validation.md`, `ml/validation/results.json`, `apps/crew-tablet/public/data/validation.json` (~2.5 min) |
 | **CI** | GitHub Actions on every push to `main` and on PRs: lint, the 125-test suite, property-based verifier invariants, snapshot provenance, conformal and researcher contracts, vault and ownership checks, 30 red-team cases, an API smoke test with no key, and the tablet build | [`.github/workflows/ci.yml`](.github/workflows/ci.yml); current status in [Actions](https://github.com/juanitogit/LIGHTMINUTE/actions/workflows/ci.yml) — the run history is the source of truth, not a number in this file |
 
 ### 🟡 Partial — usable, but read the limit
@@ -135,7 +136,7 @@ Legend: ✅ works and was exercised · 🟡 works with a stated limit · ⛔ not
 
 ### ⛔ Missing
 
-- Submission assets: the demo (**≤30 s video or 7 slides**, per the 2026 Project Submission Guide), the public video URL and a team/roles section. Screenshots are in `docs/screenshots/`; the existing `pitch/video-script-60s.md` has to be cut to 30 s.
+- Submission assets: the demo (**≤30 s video or 7 slides**, per the [2026 Project Submission Guide](https://spaceappschallenge.org/resources/)) — no video recorded yet, and `pitch/video-script-60s.md` is still the 60-second cut — plus its public URL and a team/roles section. Screenshots are in `docs/screenshots/`.
 - Prospective validation on real crew data, and literature-direction concordance for OSD-575 (exploratory, n=4, no concordance claimed).
 - Vision / voice input endpoints, provider-side web search, production auth and multi-crew sessions remain outside the prototype scope.
 - Expert clinical review of thresholds and protocol steps, and regulatory classification work.
@@ -315,7 +316,7 @@ defect section of [`docs/model-card.md`](docs/model-card.md) before quoting any 
 | Label | What it is |
 |---|---|
 | **synthetic** | The crew, scenarios and benchmark tables — our own simulator |
-| **real-public** | NOAA SWPC GOES proton flux (`public/data/radiation.json`, snapshot with sha256); NASA OSDR OSD-575 serum chemistry (CC0-1.0, exploratory) |
+| **real-public** | NOAA SWPC GOES proton flux (`data/snapshots/goes-protons-20261114T143816Z.json`, retrieved 2026-11-14, sha256 in the manifest); NASA DONKI CME/FLR/GST/SEP events, 2026-08-16 → 2026-11-14 (`data/snapshots/nasa-donki-*.json`, retrieved 2026-11-14, NASA open data); NASA OSDR OSD-575 serum chemistry (CC0-1.0, exploratory) |
 | **proxy** | MMASH 1.0.0 wearable HR, 22 healthy adults (ODbL 1.0, aggregate results only) |
 
 The MMASH run is a coverage test of the same engine code, not a detection result. Before the
