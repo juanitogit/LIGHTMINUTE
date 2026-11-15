@@ -1,6 +1,6 @@
 # Real-interface fault injection
 
-Run UTC: 2026-11-15T03:08:57.139557+00:00. Revision: `37ae8af2f17aeeb7efad23e7d111c10d6e6ae6a7`.
+Run UTC: 2026-11-15T03:39:57.708512+00:00. Revision: `6db4f80f5ab7580ae9d7df3b18a60d289a2b996e`.
 Command: `.venv/Scripts/python.exe tests/fault_injection/run.py`. Raw evidence: [JSON](fault-injection-results.json).
 Result: **27/27 assertions passed**. Every injected fault produced the expected safe behavior; this is bounded synthetic evidence, not certification.
 
@@ -18,7 +18,7 @@ Result: **27/27 assertions passed**. Every injected fault produced the expected 
 | FI-10 Dropout must not quote stale HR as current | `missing_hr_freshness` | PASS | {"what_changed": "No current HR reading; last reading 1 day ago; combined score -0.6."} |
 | FI-11 Stuck-value sensor detection | `stuck_sensor` | PASS | {"stuck_flag": true} |
 | FI-12 Bound single outlier influence on baseline | `robust_outlier` | PASS | {"robust_baseline": 70.10568798353297, "ordinary_baseline": 76.75325488488119} |
-| FI-13 Prolonged illness must not become an unflagged normal | `prolonged_baseline_contamination` | PASS | {"initial_p": 6.735853962835537e-12, "final_p": 1.4105058958316988e-09} |
+| FI-13 Prolonged illness must not become an unflagged normal | `prolonged_baseline_contamination` | PASS | {"initial_p": 6.7358539628355474e-12, "final_p": 1.4105058958316965e-09} |
 | FI-14 Insufficient days retain learning phase | `learning_phase` | PASS | {"learning_entries": 24} |
 | FI-15 Duplicate delivery retry must be idempotent | `duplicate_message` | PASS | {"same_id": true} |
 | FI-16 Out-of-order arrivals retain separate records | `reordered_messages` | PASS | {"visible_before": 1, "visible_after": 2, "scope": "no command-order or exactly-once guarantee"} |

@@ -1,5 +1,12 @@
 # LIGHTMINUTE · checklist de revisión y evidencia
 
+**Revisión tras sincronizar `6db4f80`.** `python tests/fault_injection/run.py` pasó 27/27
+aserciones después de instalar `psycopg[binary]`, ejecutar `npm ci` y reconstruir la tablet.
+La primera ejecución usó un build anterior y carecía de psycopg; esos errores de entorno se
+resolvieron antes de la repetición. Ver [resultados actuales](safety/fault-injection-results.md).
+La regresión de calibración MMASH descrita abajo sigue abierta; esta repetición de seguridad no
+demuestra que haya desaparecido. No se recibió aún la hora límite local ni una decisión go/no-go.
+
 **Estado local.** Se revisaron los commits de FreeBuff y la actualización remota `046cd2f`. El panel de órganos mostraba mediciones sintéticas como reales y fabricaba una curva de siete días a partir de un dato. Se retiró la curva, se corrigieron las etiquetas, se agregó la suite fisiológica a CI y se recuperó la indicación explícita de archivo histórico en NOAA. Los nueve hallazgos de seguridad se corrigieron y ambos estudios preinscritos se repitieron sobre el motor corregido (`6deea70`); esa repetición encontró una regresión de calibración que bloquea el envío de FI-13 tal como está.
 
 | Entrega | Estado | Evidencia y límites |

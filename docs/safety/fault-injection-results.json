@@ -1,6 +1,6 @@
 {
-  "utc": "2026-11-15T03:08:57.139557+00:00",
-  "engine_revision": "37ae8af2f17aeeb7efad23e7d111c10d6e6ae6a7",
+  "utc": "2026-11-15T03:39:57.708512+00:00",
+  "engine_revision": "6db4f80f5ab7580ae9d7df3b18a60d289a2b996e",
   "command": ".venv/Scripts/python.exe tests/fault_injection/run.py",
   "label": "synthetic",
   "results": [
@@ -170,8 +170,8 @@
       "evidence": "tests/fault_injection/run.py::prolonged_baseline_contamination",
       "status": "PASS",
       "observation": {
-        "initial_p": 6.735853962835537e-12,
-        "final_p": 1.4105058958316988e-09
+        "initial_p": 6.7358539628355474e-12,
+        "final_p": 1.4105058958316965e-09
       }
     },
     {
