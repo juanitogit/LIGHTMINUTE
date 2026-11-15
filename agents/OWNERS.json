@@ -96,6 +96,8 @@
       "docs/validation.md",
       "docs/data-card.md",
       "docs/model-card.md",
+      "docs/modelo-matematico-fisiologico.md",
+      "docs/credibility-summary.md",
       "apps/crew-tablet/public/data/validation.json",
       "apps/crew-tablet/public/data/radiation.json",
       "handoff/a5.md",
