@@ -1,5 +1,10 @@
 # LIGHTMINUTE · checklist de revisión y evidencia
 
+**Auditoría adicional:** los preregistros v2 de MMASH y autonomía se incorporaron en el mismo
+commit que sus resultados; no hay evidencia Git de un commit anterior a la ejecución. Las cifras
+v2 se deben presentar como análisis confirmatorios no ciegos, con esa limitación explícita.
+La revisión de integridad, herramienta y CI está en [revisión de evidencia](safety/revision-evidencia-2026-11-14.md).
+
 **Revisión tras sincronizar `6db4f80`.** `python tests/fault_injection/run.py` pasó 27/27
 aserciones después de instalar `psycopg[binary]`, ejecutar `npm ci` y reconstruir la tablet.
 La primera ejecución usó un build anterior y carecía de psycopg; esos errores de entorno se
