@@ -416,8 +416,12 @@ try {
     await capture("02-personal-baseline");
     await page.getByRole("button", { name: "Actions", exact: true }).click();
     await page.locator(".checklist").waitFor();
-    for (const box of await page.locator(".checklist input").all())
-        await box.check();
+    for (const box of await page.locator(".checklist input").all()) {
+        await expect(box).toBeEnabled();
+        if (!(await box.isChecked()))
+            await box.click();
+        await expect(box).toBeChecked();
+    }
     assert.match(await page.locator(".act__steps").innerText(), /All steps checked/);
     await page.getByRole("button", { name: "Simulate send to ground", exact: true }).click();
     assert.equal(await page.getByRole("button", { name: "Sent (simulated)", exact: true }).isDisabled(), true);
