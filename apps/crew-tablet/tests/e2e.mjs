@@ -305,7 +305,9 @@ async function main() {
     });
 
     await test("missing optional radiation and validation files have honest empty states", async () => {
-      const isolated = await browser.newContext();
+      // This test mocks network responses; a previously installed service worker
+      // can serve cached snapshots before Playwright's routes see the request.
+      const isolated = await browser.newContext({ serviceWorkers: "block" });
       const probe = await isolated.newPage();
       probe.__base = base;
       await probe.route("**/data/radiation.json", (route) => route.fulfill({ json: {} }));
