@@ -10,7 +10,7 @@ Everything on screen is real engine output from `apps/crew-tablet/prototype/thre
 | 0:08–0:18 | Three-lens screen, day 10. All three lenses read normal. | "LIGHTMINUTE learns each astronaut's own normal. Not the average of four people — one person's baseline, with an honest confidence band." |
 | 0:18–0:30 | Drag the day slider to 15 → 16. Earth lens still "Normal 68.5 bpm"; personal lens flips to "Unusual for you". Pattern banner: `hidden_in_range`. | "Day sixteen. His heart rate is perfectly normal for the population. It is not normal for him. A fixed range stays silent exactly here." |
 | 0:30–0:40 | Syndrome chart crosses the 2.33 line while no single indicator leaves its band. Card appears: level `act`, three "do now" steps. | "No single signal crossed a line. Four weak signals moved together — that is the early warning." |
-| 0:40–0:50 | Split screen: validation table (71% vs 18%, 27% vs 100%) and model card line "21.6% → 93.4%, defect found and fixed". | "Seventy-one percent detection on mild changes where a population rule finds eighteen. And when real data broke our own intervals, we published the defect and the fix." |
+| 0:40–0:50 | Show the labelled evidence table in `project-description.md`. | "Our results separate simulation from real wearable data. The improved interval result is exploratory and needs independent testing." |
 | 0:50–0:60 | Card with ground message and countdown "Mars, ~11 min one-way"; then logo + repo URL. | "Action on board first, a self-contained message to Earth second. LIGHTMINUTE — decision support for crews that cannot wait." |
 
 ## Shot list / exact actions
@@ -27,6 +27,6 @@ No network is required at any point, so there is no "live data" risk in this scr
 ## Claims you may say (and may not)
 - ✅ "normal for the population, unusual for him" (matches `lens.pattern = hidden_in_range`).
 - ✅ "71% vs 18% on mild changes at the same false-alarm budget" (`docs/validation.md`).
-- ✅ "our 95% interval covered 21.6% of real minutes before the fix; the shipped model reads
-  93.4%" (`ml/proxy/README.md`).
+- ✅ The timestamp-aware MMASH repetition is exploratory and reused previously examined data (`ml/proxy/CADENCE-CHECK.md`).
+- ❌ A demonstrated time advantage over Earth: the conservative autonomy analysis did not establish one.
 - ❌ "detects illness", "clinically validated", "medical grade", any percentage of diagnostic accuracy.

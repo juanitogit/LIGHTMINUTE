@@ -29,8 +29,10 @@ Title: *71% vs 18% — and where we lose.*
 
 ## 5 — Honesty as a feature
 Title: *Our own model was wrong. We published it.*
-- Real wearable data: our 95% interval covered 21.6% of minutes.
-- Cause found (forgetting factor), fixed in the engine and re-measured: 93.4%.
+- Use the labelled MMASH row in `project-description.md`: the timestamp-aware repetition
+  used data already seen and requires independent evaluation.
+- The earlier synthetic autonomy analysis found no conservative time advantage over the
+  simulated Earth response; source revision `6deea70`.
 - Not a medical device · synthetic only · every limitation in the model card.
 
 ## 6 — Relevance and next

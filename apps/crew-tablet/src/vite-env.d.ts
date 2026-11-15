@@ -1,5 +1,11 @@
 /// <reference types="vite/client" />
 
+declare const __LIGHTMINUTE_ENGINE_MANIFEST__: {
+  cache: string;
+  total: number;
+  files: {name:string; size:number; sha256:string}[];
+};
+
 interface ImportMetaEnv {
   /** Optional absolute API origin. Empty means same-origin (Vite proxy in dev). */
   readonly VITE_API_BASE?: string;

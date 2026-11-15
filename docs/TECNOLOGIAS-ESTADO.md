@@ -5,7 +5,7 @@ local y las pruebas realizadas; no implica que esté publicado o validado clíni
 
 | Capacidad | Estado | Evidencia y límite |
 |---|---|---|
-| PWA y uso sin conexión | Implementado | Service worker precarga el build y el test de navegador recarga el escenario sin red. Primera instalación requiere conexión y almacenamiento. La API no se guarda offline. |
+| PWA y uso sin conexión | Implementado | Service worker precarga el núcleo, no el motor ni modelos 3D grandes; estos se descargan al solicitarse. Solo los recursos ya preparados están disponibles sin red. La API no se guarda offline. |
 | Motor en navegador | Implementado mediante botón | Python real del repositorio, Pyodide, NumPy y SciPy locales en worker. Prueba offline y comparación con la exportación de referencia para escenario sintético. Al iniciar, la app sigue mostrando JSON firmado hasta elegir ejecutar el motor. |
 | Propiedades | Implementado | Hypothesis cubre la prohibición de bajar urgencia y de inventar números en el titular. No prueba todos los campos o posibles ataques. |
 | SBOM y auditoría | Implementado como instantánea | CycloneDX npm, auditorías npm/pip en `docs/supply-chain/`. Python no tiene lock de dependencias; resultados cambian con el tiempo. |
@@ -21,10 +21,10 @@ en `docs/supply-chain/OFFLINE-Y-FIRMAS.md`. Datos sensibles o credenciales no se
 incluyen en el repositorio. Los escenarios y modelos clínicos siguen siendo de
 demostración, y el modo conformal no se presenta como práctica médica.
 
-Verificación local: `python scripts/run_tests.py` pasó 119/119; el navegador
+Verificación local anterior: el navegador
 pasó 24 grupos incluyendo la API local y el motor Pyodide. La repetición para
 el build offline posterior pasó 22 grupos con API omitida. También pasaron 8
 pruebas de la CLI de investigación, 3 conformales, 2 de FHIR/Bluetooth y las
-propiedades del verificador. `npm run test:auth` y `npm run test:physiology`
-pasaron; auditoría de Obsidian y ownership sin problemas. El último test de
+propiedades del verificador y la suite fisiológica. Auditoría de Obsidian y
+ownership sin problemas. Google OAuth fue retirado. El último test de
 hardware usa un emulador del navegador, no una banda física.

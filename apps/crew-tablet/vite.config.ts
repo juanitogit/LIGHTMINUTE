@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -6,6 +6,19 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 const here = dirname(fileURLToPath(import.meta.url));
+const runtimeDir = resolve(here, "node_modules/pyodide");
+const runtimeNames = ["pyodide.mjs", "pyodide.asm.mjs", "pyodide.asm.wasm", "pyodide-lock.json", "python_stdlib.zip"];
+const lock = JSON.parse(readFileSync(join(runtimeDir, "pyodide-lock.json"), "utf8")) as {packages:Record<string,{file_name:string;sha256:string}>};
+const engineAssets = [...runtimeNames.map(name => ({name, path:join(runtimeDir, name)})), ...["numpy", "scipy"].map(name => {
+  const pkg = lock.packages[name];
+  if (!pkg) throw new Error(`Missing Pyodide package metadata: ${name}`);
+  return {name:pkg.file_name, path:resolve(here, "public/assets/pyodide", pkg.file_name)};
+})].map(({name,path}) => {
+  const bytes = readFileSync(path);
+  return {name, size:bytes.byteLength, sha256:createHash("sha256").update(bytes).digest("hex")};
+});
+const engineVersion = createHash("sha256").update(JSON.stringify(engineAssets)).digest("hex").slice(0,16);
+const engineManifest = {cache:`lightminute-engine-${engineVersion}`, files:engineAssets, total:engineAssets.reduce((sum, file) => sum + file.size, 0)};
 
 function offlineBundle() {
   return {
@@ -13,7 +26,7 @@ function offlineBundle() {
     apply: "build" as const,
     closeBundle() {
       const root = resolve(here, "dist");
-      const runtime = resolve(here, "node_modules/pyodide");
+      const runtime = runtimeDir;
       const target = join(root, "assets/pyodide");
       mkdirSync(target, {recursive:true});
       const packageLock = JSON.parse(readFileSync(join(runtime,"pyodide-lock.json"),"utf8")) as {packages:Record<string,{file_name:string;sha256:string}>};
@@ -35,13 +48,16 @@ function offlineBundle() {
         }
       }
       walk(root); files.sort();
+      for (const file of files) {
+        if (statSync(join(root, file)).size > 25 * 1024 * 1024) throw new Error(`Cloudflare Pages asset exceeds 25 MiB: ${file}`);
+      }
       const digest = createHash("sha256");
       for (const file of files) { digest.update(file); digest.update(readFileSync(join(root, file))); }
       const version = digest.digest("hex").slice(0, 16);
       const serviceWorker = `const CACHE=${JSON.stringify("lightminute-static-" + version)};
-const ASSETS=${JSON.stringify(files.slice().sort((a,b) => Number(!a.startsWith("assets/pyodide/")) - Number(!b.startsWith("assets/pyodide/"))).map(file => "./" + file))};
-// Limit parallel downloads so first installation does not saturate the connection
-// while the user starts the on-device engine. A failed asset still fails install.
+const ENGINE_CACHE=${JSON.stringify(engineManifest.cache)};
+const ASSETS=${JSON.stringify(files.filter(file => !file.startsWith("assets/pyodide/") && !/\.(glb|bin)$/i.test(file)).map(file => "./" + file))};
+// Large scientific packages and 3D models are downloaded only when requested.
 self.addEventListener("install", event => event.waitUntil((async () => {
   const cache = await caches.open(CACHE);
   let next = 0;
@@ -49,14 +65,22 @@ self.addEventListener("install", event => event.waitUntil((async () => {
     while (next < ASSETS.length) await cache.add(ASSETS[next++]);
   }));
 })()));
-self.addEventListener("activate", event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith("lightminute-static-") && key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim())));
+self.addEventListener("activate", event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => (key.startsWith("lightminute-static-") && key !== CACHE) || (key.startsWith("lightminute-engine-") && key !== ENGINE_CACHE)).map(key => caches.delete(key)))).then(() => self.clients.claim())));
 self.addEventListener("fetch", event => {
   const request = event.request, url = new URL(request.url);
   if (request.method !== "GET" || url.origin !== self.location.origin || url.pathname.includes("/api/")) return;
   if (request.mode === "navigate") {
     event.respondWith(fetch(request).catch(() => caches.open(CACHE).then(cache => cache.match("./index.html"))));
   } else {
-    event.respondWith(caches.match(request, {ignoreSearch: true}).then(hit => hit || fetch(request)));
+    event.respondWith(caches.match(request, {ignoreSearch: true}).then(async hit => {
+      if (hit) return hit;
+      const response = await fetch(request);
+      if (response.ok && /\\.(glb|bin)$/i.test(url.pathname)) {
+        const cache = await caches.open(CACHE);
+        event.waitUntil(cache.put(request, response.clone()));
+      }
+      return response;
+    }));
   }
 });\n`;
       writeFileSync(join(root, "sw.js"), serviceWorker);
@@ -172,6 +196,7 @@ const apiProxy = {
 
 export default defineConfig({
   base: "./",
+  define: {__LIGHTMINUTE_ENGINE_MANIFEST__: JSON.stringify(engineManifest)},
   plugins: [react(), protocolRunnerPlugin(), offlineBundle()],
   resolve: {
     alias: {

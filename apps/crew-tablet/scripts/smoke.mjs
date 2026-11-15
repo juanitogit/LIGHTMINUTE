@@ -24,9 +24,11 @@ const results = [], errors = [];
 let failure = null;
 let apiOnline = false;
 let tamperStatic = false;
+let runtimeRequests = 0;
 const mime = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".wasm": "application/wasm", ".css": "text/css", ".json": "application/json", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".png": "image/png" };
 const server = createServer(async (req, res) => {
   const pathname = decodeURIComponent(new URL(req.url, "http://localhost").pathname);
+  if (pathname.startsWith("/assets/pyodide/")) runtimeRequests++;
   if (pathname.startsWith("/api/")) {
     if (!apiOnline) { res.writeHead(503).end(); return; }
     try {
@@ -93,6 +95,14 @@ try {
   await offlinePage.evaluate(async () => { await navigator.serviceWorker.ready; });
   await offlinePage.reload();
   await offlinePage.locator(".signal-row").first().waitFor();
+  assert.equal(runtimeRequests, 0, "Pyodide must not download during first visit or service-worker installation");
+  if (process.env.LIGHTMINUTE_TEST_BROWSER_ENGINE === "1") {
+    await offlinePage.getByRole("button",{name:"Run engine on this device"}).click();
+    await expect(offlinePage.locator(".engine-local-control [role=status]")).toContainText(/Preparing Python: .* MiB/);
+    await expect(offlinePage.getByRole("button",{name:"Run engine on this device"})).toBeEnabled({timeout:180000});
+    if (await offlinePage.locator(".engine-local-control [role=alert]").count()) throw Error(await offlinePage.locator(".engine-local-control [role=alert]").innerText());
+    assert(runtimeRequests > 0, "Pyodide download must start after the user requests the engine");
+  }
   await offlineContext.setOffline(true);
   await offlinePage.reload();
   await expect(offlinePage.locator(".signal-row")).toHaveCount(6);

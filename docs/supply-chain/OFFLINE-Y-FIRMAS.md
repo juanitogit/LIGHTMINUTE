@@ -1,27 +1,26 @@
 # Operación offline, motor y firmas
 
-El build genera un service worker con un caché versionado de archivos públicos.
-El primer uso necesita descargar la aplicación; después de completarse la
-instalación se puede recargar el escenario sintético sin red. Las rutas `/api/`
-no se guardan en caché: las comunicaciones y el backend siguen necesitando su
-servidor. El almacenamiento del navegador puede ser limitado o eliminado.
-Tras integrar los modelos de órganos del remoto, `dist/` ocupa 96.677.713 bytes
-antes de compresión en esta revisión; varía por build. La descarga y el espacio
-necesarios son significativos para una conexión limitada.
-Una comprobación en producción con conexión lenta superó el límite anterior de
-dos minutos durante la descarga de Pyodide. El instalador ahora limita a tres las
-descargas simultáneas y prioriza el runtime; el motor espera hasta diez minutos.
-Esto reduce la competencia de descargas, pero no garantiza terminar en redes
-lentas. En la prueba pública del despliegue `3104a5d`, Chromium completó la
-ejecución sintética en aproximadamente 341 segundos desde el primer uso; el
-resultado apareció etiquetado como motor Python local. La duración depende de
-la conexión y del dispositivo.
+El service worker precarga la aplicación esencial y los escenarios, pero no
+Pyodide ni los modelos 3D grandes. En esta revisión el conjunto precargado es de
+unos 5,17 MiB sin comprimir. Los modelos 3D se descargan cuando se utilizan y se
+guardan para usos posteriores sin red; no se promete que un modelo nunca abierto
+esté disponible offline. Las rutas `/api/` no se guardan en caché. El navegador
+puede limitar o borrar su almacenamiento.
+
+El motor se descarga solo cuando el usuario pulsa su botón; la interfaz muestra
+el tamaño total y el avance en MiB. Se comprueba el tamaño y SHA-256 de cada
+archivo antes de guardarlo. Tras completar la preparación en línea, el motor
+puede ejecutarse offline. Si una descarga falla, los archivos terminados pueden
+reutilizarse al reintentar. El build completo sigue ocupando alrededor de 97 MB
+en el servidor, no descargados íntegramente al entrar. Usuarios con un service
+worker anterior pueden necesitar cerrar las pestañas antiguas para actualizar.
 
 El botón de ejecución local inicia en un worker el mismo código Python del motor
 con Pyodide, NumPy y SciPy locales. El escenario generado es sintético, usa la
 variante fuerte y la semilla 0; los archivos de respaldo no son el motor. La
-primera instalación contiene también el runtime y los paquetes científicos.
-`LIGHTMINUTE_TEST_BROWSER_ENGINE=1 npm run test:e2e` prueba ejecución sin red y
+preparación opcional obtiene el runtime y los paquetes científicos.
+`LIGHTMINUTE_TEST_BROWSER_ENGINE=1 npm run test:e2e` comprueba que no se descargan
+antes del botón, prepara el motor en línea y prueba ejecución sin red y
 compara lecturas, referencias, intervalos, probabilidades, lentes y niveles de los días y tripulantes frente a los
 archivos exportados por Python. Pequeñas diferencias numéricas usan tolerancia;
 no es prueba de equivalencia para entradas o versiones arbitrarias.

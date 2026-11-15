@@ -32,9 +32,10 @@ writes prose and can never change a number or lower the level. The product is co
 Open `docs/validation.md` (still image is fine, do not scroll live):
 - 71% vs 18% mild recall at the same false-alarm budget.
 - Heterogeneous crew: population rule 27% on strong effects, personal methods 89–100%.
-- Then the honest bit: "on real wearable data our interval covered 21.6% of minutes. We found
-  the defect in our own model, fixed it in the engine, re-ran everything: 93.4%, and every
-  table on screen is from the fixed build."
+- For real wearable data, use the separate MMASH row in `project-description.md`: the
+  timestamp-aware result is exploratory, reused known data and needs independent evaluation.
+- The earlier synthetic autonomy analysis did not demonstrate a time advantage over the
+  simulated Earth response; see `docs/autonomy/RESULTS.md` (revision `6deea70`).
 
 ## 2:50–3:00 — Close
 "Three lenses, coordinated-shift warning, cited cards, and a validation page that admits what

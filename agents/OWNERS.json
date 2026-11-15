@@ -112,7 +112,8 @@
       "licencias-modelos-organos.md",
       "handoff/credibility.md",
       "tools/researcher/",
-      "services/engine/tests/test_space_weather_snapshot.py"
+      "services/engine/tests/test_space_weather_snapshot.py",
+      "services/engine/tests/test_snapshots.py"
     ]
   },
   "A6": {
@@ -139,6 +140,7 @@
       "docs/seo-deploy.md",
       "docs/supply-chain/",
       "docs/TECNOLOGIAS-ESTADO.md",
+      "docs/AUDITORIA-INTEGRAL-2026-11-15.md",
       "docs/ESTADO-REAL-LIGHTMINUTE.md",
       "docs/avances/",
       "docs/pruebas/",

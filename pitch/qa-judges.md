@@ -41,20 +41,17 @@ It buys power in that direction and is blind in others; CUSUM and the z-score re
 direction-agnostic. Every table states this.
 
 **8. How do you know your 95% intervals mean anything?**
-We measured it: 95% pooled coverage on healthy synthetic days (n=11,040), and we measured it
-again on real wearable data where it failed — 21.6%. That failure is on the slide, with the fix.
+The evidence table in `project-description.md` separates synthetic coverage from the public
+wearable-data proxy. The timestamp-aware repetition reused known data and is exploratory.
 
 **9. What was the 21.6% about?**
-Our own defect: the forgetting factor discounted the mean and variance statistics but not the
-degrees of freedom, so after a few hundred updates the interval collapsed. We found it with a
-real dataset, reproduced it on flat synthetic data, then fixed it in the engine: `alpha` is now
-discounted too, which pins df around 52 instead of letting it grow. Re-measured: 93.4% on the
-same real data, 95% at 2,000 updates, and a regression test fails if it ever collapses again.
+That was a historical forgetting-factor defect. A later guard caused a separate calibration
+regression; the timestamp-aware follow-up used the same examined data and is not independent.
+See `ml/proxy/RESULTS.md` and `ml/proxy/CADENCE-CHECK.md`.
 
 **10. So is your validation invalid?**
-No, but its scope is stated. The reported tables use daily updates (~23 per crew member), where
-coverage is 95–100%. The defect bit at high update counts, i.e. minute-level streaming; it is
-fixed, and every table quoted here was regenerated after the fix.
+Its scope is limited: simulator results and exploratory wearable-data analyses cannot establish
+clinical performance. Independent evaluation of the current approach remains necessary.
 
 **11. What happens if the LLM is down, or the vehicle has no link?**
 Nothing breaks. The engine sets every number and level, cards fall back to deterministic
