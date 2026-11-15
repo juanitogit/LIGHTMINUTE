@@ -83,3 +83,103 @@ def test_sessions_and_messages_survive_router_recreation_and_logout_revokes():
         assert client.get("/api/mission/state",headers=headers).status_code == 401
     finally:
         directory.cleanup()
+
+
+def _consent_sentinel_state(payload):
+    client, now, directory = _client()
+    try:
+        crew, ground = _login(client), _login(client, "flight_surgeon")
+        assert client.post("/api/mission/messages", headers=crew, json=payload).status_code == 200
+        now[0] += 2000
+        return client.get("/api/mission/state", headers=ground).json()
+    finally:
+        directory.cleanup()
+
+
+def test_withheld_behavioral_consent_blocks_free_text_and_nested_vitals_text():
+    base = {"crew": "A", "profile": "iss", "consent": {"vitals": True, "behavioral": False}}
+    state = _consent_sentinel_state({**base, "text": "SENTINEL-FREE-TEXT",
+                                     "report": {"vitals": {"rest_hr": 70, "note": "SENTINEL-NESTED", "SENTINEL-KEY": 1}}})
+    assert "SENTINEL" not in str(state["messages"])
+    assert state["messages"][0]["report"] == {"vitals": {"rest_hr": 70}}
+
+
+def test_free_text_is_delivered_when_behavioral_consent_is_given():
+    state = _consent_sentinel_state({"crew": "A", "profile": "iss", "text": "SENTINEL-FREE-TEXT",
+                                     "consent": {"vitals": True, "behavioral": True}})
+    assert state["messages"][0]["text"] == "SENTINEL-FREE-TEXT"
+
+
+def test_ground_replies_are_not_subject_to_crew_consent():
+    client, now, directory = _client()
+    try:
+        crew, ground = _login(client), _login(client, "flight_surgeon")
+        assert client.post("/api/mission/messages", headers=ground, json={"crew": "A", "text": "Reply text", "profile": "iss"}).status_code == 200
+        now[0] += 2000
+        assert client.get("/api/mission/state", headers=crew).json()["messages"][0]["text"] == "Reply text"
+    finally:
+        directory.cleanup()
+
+
+def _idem_post(client, headers, key, **overrides):
+    payload = {"crew": "A", "text": "Synthetic retry", "profile": "iss", **overrides}
+    return client.post("/api/mission/messages", headers={**headers, "Idempotency-Key": key}, json=payload)
+
+
+def test_idempotent_retry_returns_same_message_and_inserts_no_second_row():
+    client, now, directory = _client()
+    try:
+        crew, ground = _login(client), _login(client, "flight_surgeon")
+        first = _idem_post(client, crew, "k1")
+        now[0] += 5
+        second = _idem_post(client, crew, "k1")
+        assert first.status_code == second.status_code == 200
+        assert first.json() == second.json()
+        now[0] += 2000
+        assert len(client.get("/api/mission/state", headers=ground).json()["messages"]) == 1
+        # Without the header every post is a new message.
+        plain = {"crew": "A", "text": "Synthetic retry", "profile": "iss"}
+        assert client.post("/api/mission/messages", headers=crew, json=plain).json()["id"] != \
+            client.post("/api/mission/messages", headers=crew, json=plain).json()["id"]
+    finally:
+        directory.cleanup()
+
+
+def test_idempotency_key_reused_with_different_payload_conflicts_and_is_sender_scoped():
+    client, _, directory = _client()
+    try:
+        a, b = _login(client), _login(client, "crew", "B")
+        first = _idem_post(client, a, "k1")
+        assert _idem_post(client, a, "k1", text="Different synthetic text").status_code == 409
+        # Another sender may use the same key value independently.
+        other = _idem_post(client, b, "k1", crew="B")
+        assert other.status_code == 200 and other.json()["id"] != first.json()["id"]
+    finally:
+        directory.cleanup()
+
+
+def test_database_created_before_idempotency_column_is_migrated():
+    import sqlite3
+
+    from tether_engine.api.mission_link import create_router
+    with tempfile.TemporaryDirectory() as directory:
+        path = Path(directory) / "old.sqlite"
+        old = sqlite3.connect(path)
+        old.execute("CREATE TABLE messages(id TEXT PRIMARY KEY,crew TEXT,direction TEXT,text TEXT,report TEXT,consent TEXT,profile TEXT,sent REAL,arrival REAL)")
+        old.commit(); old.close()
+        app = FastAPI()
+        app.include_router(create_router(path, clock=lambda: 1000.0))
+        client = TestClient(app)
+        crew = _login(client)
+        assert _idem_post(client, crew, "k1").json()["id"] == _idem_post(client, crew, "k1").json()["id"]
+
+
+def test_symptom_note_is_withheld_when_behavioral_consent_is_off():
+    report = {"vitals": {"rest_hr": 70}, "symptoms": {"cough": 2, "note": "SENTINEL-SYMPTOM-NOTE"}}
+    off = _consent_sentinel_state({"crew": "A", "profile": "iss", "text": "x", "report": report,
+                                   "consent": {"vitals": True, "symptoms": True, "behavioral": False}})
+    assert "SENTINEL" not in str(off["messages"])
+    assert off["messages"][0]["report"] == {"vitals": {"rest_hr": 70}, "symptoms": {"cough": 2}}
+    on = _consent_sentinel_state({"crew": "A", "profile": "iss", "text": "x", "report": report,
+                                  "consent": {"vitals": True, "symptoms": True, "behavioral": True}})
+    assert on["messages"][0]["report"]["symptoms"]["note"] == "SENTINEL-SYMPTOM-NOTE"

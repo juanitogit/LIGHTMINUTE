@@ -244,3 +244,52 @@ def test_kb_prefix_contains_every_rule_and_its_status():
         assert entry["id"] in prefix
     assert "demo-parameter" in prefix and "unverified" in prefix
     assert "HRP-RISKS-OVERVIEW" in kb_ids()
+
+def test_client_initialization_failure_falls_back_to_template():
+    # FI-07: provider construction shares the transport-failure contract.
+    from unittest.mock import patch
+
+    from tether_engine.protocols.templates import template_card
+
+    stats.reset()
+    with env(LLM_PROVIDER="deepseek", DEEPSEEK_API_KEY="test-key"), patch(
+            "tether_engine.llm.deepseek_client.make_client",
+            side_effect=RuntimeError("injected initialization failure")):
+        out = card_service.get_card("cmo_fever", "A", 15)
+    assert out["card_source"] == "template"
+    assert out["verifier_errors"] == ["llm_error: RuntimeError"]
+    assert out["card"] == template_card(FACTS)
+    assert out["usage"]["calls"] == 0
+    snap = stats.snapshot()
+    assert snap["fallbacks"] == 1 and snap["template_cards"] == 1
+
+
+def test_mission_context_follows_scenario_delay_profile():
+    # FI-23: the lunar case must never be described to the model as a Mars transit.
+    from tether_engine.ground.delay import PROFILES
+
+    moon = card_service.build_mission_context({"delay_profile": "moon"})
+    mars = card_service.build_mission_context({"delay_profile": "mars"})
+    iss = card_service.build_mission_context({"delay_profile": "iss"})
+    assert "mars" not in json.dumps(moon).lower()
+    assert moon["one_way_delay_minutes"] == round(PROFILES["moon"][1] / 60.0, 2)
+    assert mars["one_way_delay_minutes"] == PROFILES["mars"][1] / 60.0 == 22.0
+    assert "mars" in mars["phase"] and iss["one_way_delay_minutes"] == 0.0
+    for ctx in (moon, mars, iss):
+        assert ctx["synthetic"] is True and ctx["not_a_medical_device"] is True
+
+
+def test_unknown_delay_profile_is_not_defaulted_to_mars():
+    for doc in ({}, {"delay_profile": "invented"}):
+        ctx = card_service.build_mission_context(doc)
+        assert ctx["one_way_delay_minutes"] is None
+        assert "mars" not in json.dumps(ctx).lower()
+
+
+def test_case_payload_carries_per_scenario_mission_context():
+    for profile, needle in (("moon", "lunar"), ("mars", "mars")):
+        doc = {**DEMO, "delay_profile": profile}
+        payload = card_service.build_case_payload(doc, ENTRY, FACTS, "A", 15, frozenset(kb_ids()))
+        text = json.dumps(payload["case"]["mission_context"]).lower()
+        assert needle in text
+        assert ("mars" in text) == (profile == "mars")

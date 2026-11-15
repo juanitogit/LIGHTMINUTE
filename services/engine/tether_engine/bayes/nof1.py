@@ -28,6 +28,13 @@ class NIG:
     beta: float
 
 
+# Unresolved-change guard. DEMO POLICY PARAMETERS, not validated statistics:
+# chosen so a +10 shift (~15 predictive sd) trips it while ordinary noise
+# (|z| > 3 happens ~0.3% of the time) almost never does.
+UNRESOLVED_Z = 3.0     # |z| above this counts as a departure from the level
+UNRESOLVED_RUN = 3     # consecutive departures before the change is declared unresolved
+
+
 class BaselineModel:
     def __init__(self, prior_mean: float, prior_sd: float,
                  prior_n: float = 3.0, prior_var_n: float = 0.5,
@@ -36,6 +43,12 @@ class BaselineModel:
         # prior_var_n: pseudo-observations backing the prior VARIANCE; kept
         # small on purpose so a wide population sd does not make the model lazy.
         self.lam, self.min_sd, self.n_seen = lam, min_sd, 0
+        # Unresolved-change state: once set, the baseline stops learning so a
+        # prolonged illness or sensor offset cannot silently become "normal".
+        # Only an explicit rebaseline() (an operator decision) clears it.
+        self.unresolved_change = False
+        self.held_n = 0          # readings not absorbed while unresolved
+        self._run = 0            # consecutive departures from the level
         alpha = 1.0 + prior_var_n / 2.0
         # alpha0 is the floor alpha is discounted back toward; see update().
         self.alpha0 = alpha
@@ -56,9 +69,14 @@ class BaselineModel:
         z = (x - loc) / scale
         lo, hi = stats.t.interval(0.95, df, loc=loc, scale=scale)
         return {"z": z, "p_two_sided": 2.0 * stats.t.sf(abs(z), df),
-                "ci95": (lo, hi), "baseline": loc, "df": df, "n_seen": self.n_seen}
+                "ci95": (lo, hi), "baseline": loc, "df": df, "n_seen": self.n_seen,
+                "unresolved_change": self.unresolved_change}
 
     def update(self, x: float) -> None:
+        if self.unresolved_change:
+            # Frozen: absorbing readings here would let the change become normal.
+            self.held_n += 1
+            return
         p, lam = self.post, self.lam
         k0, b0 = p.kappa * lam, p.beta * lam            # forget old evidence
         k1 = k0 + 1.0
@@ -78,13 +96,37 @@ class BaselineModel:
 
 def _robust_update(self, x: float, clip: float = 3.0) -> None:
     """Winsorized update: an anomalous point may not drag the baseline toward
-    itself (otherwise the model 'learns' the illness within a few days)."""
+    itself (otherwise the model 'learns' the illness within a few days).
+
+    A run of UNRESOLVED_RUN consecutive departures (|z| > UNRESOLVED_Z) is a
+    sustained change, not an outlier: winsorizing alone would still absorb it
+    (~3 sd per day), so the state is set and the baseline stops moving.
+    """
     loc, scale, _ = self.predictive()
     z = (x - loc) / scale
+    if self.unresolved_change:
+        self.held_n += 1
+        return
+    self._run = self._run + 1 if abs(z) > UNRESOLVED_Z else 0
+    if self._run >= UNRESOLVED_RUN:
+        self.unresolved_change = True
+        self.held_n += 1
+        return
     self.update(loc + max(-clip, min(clip, z)) * scale)
 
 
+def _rebaseline(self, x: float | None = None) -> None:
+    """Operator decision that a new level is the normal. Clears the unresolved
+    state; nothing does this automatically. If x is given, the level is reset
+    to x (spread and evidence count are kept)."""
+    self.unresolved_change, self._run, self.held_n = False, 0, 0
+    if x is not None:
+        p = self.post
+        self.post = NIG(mu0=float(x), kappa=p.kappa, alpha=p.alpha, beta=p.beta)
+
+
 BaselineModel.robust_update = _robust_update
+BaselineModel.rebaseline = _rebaseline
 
 
 class CUSUM:

@@ -22,7 +22,7 @@ from .ground.delay import PROFILES, triage_routing
 from .lenses import three_lens
 from .protocols.templates import syndrome_level, template_card
 from .protocols.thresholds import load_thresholds
-from .qc.basic import clean_readings, log_drops
+from .qc.basic import clean_readings, is_stuck, log_drops
 from .simulate.scenarios import (
     DEFAULT_DAYS,
     DEFAULT_VARIANT,
@@ -63,12 +63,18 @@ def run_scenario(name: str, seed: int = 0, days: int = DEFAULT_DAYS,
     }
     syndromes = {cid: SyndromeScore([signs[s] for s in signs]) for cid in sc["crew"]}
     last_hr: dict[str, dict] = {}
+    last_hr_day: dict[str, int] = {}
+    # Per-crew daily history (None = missing) for the stuck-value rule (FI-11).
+    history: dict[str, dict[str, list[float | None]]] = {
+        cid: {n: [] for n in INDICATORS} for cid in sc["crew"]
+    }
     attribution = PersistentAttribution(required_days=2)
 
     out_days = []
     for day in sc["days"]:
         zdirs: dict[str, float] = {}
         crew_out: dict[str, dict] = {}
+        stuck_today: dict[str, list[str]] = {}
         dropped = total = 0
 
         for cid, cday in day["crew"].items():
@@ -77,6 +83,8 @@ def run_scenario(name: str, seed: int = 0, days: int = DEFAULT_DAYS,
                 log_drops(issues, day["day"], cid)
             dropped += len(issues)
             total += len(cday.get("indicators") or {})
+            for n in INDICATORS:
+                history[cid][n].append(cleaned.get(n))
 
             ind: dict[str, dict] = {}
             for n in INDICATORS:
@@ -99,6 +107,13 @@ def run_scenario(name: str, seed: int = 0, days: int = DEFAULT_DAYS,
                 }
                 model.robust_update(cleaned[n])           # winsorized: no self-learning
 
+            # Stuck-value flag (FI-11): informational only. It is written to the
+            # indicator and day QC so the console can show it; it does not touch
+            # `level`, the syndrome score or the baseline update.
+            stuck = [n for n in INDICATORS if is_stuck(history[cid][n])]
+            if stuck:
+                stuck_today[cid] = stuck
+
             # A missing indicator contributes no evidence (z = 0), it does not
             # crash the fusion or silently reuse yesterday's number.
             zvec = [ind[s]["z"] if s in ind else 0.0 for s in signs]
@@ -109,31 +124,50 @@ def run_scenario(name: str, seed: int = 0, days: int = DEFAULT_DAYS,
             if mature:
                 zdirs[cid] = sy["z_dir"]
 
-            hr = ind.get("rest_hr")
-            if hr is not None:
-                last_hr[cid] = hr
-            hr = hr or last_hr.get(cid) or _prior_hr_facts()
+            # FI-10: sample freshness. A dropout today must never be presented as
+            # today's reading. We keep the last value only together with its age.
+            today_hr = ind.get("rest_hr")
+            if today_hr is not None:
+                last_hr[cid], last_hr_day[cid] = today_hr, day["day"]
+                hr_age: int | None = 0
+                hr = today_hr
+            elif cid in last_hr:
+                hr_age = day["day"] - last_hr_day[cid]
+                hr = last_hr[cid]
+            else:
+                hr_age = None                       # no reading yet in this scenario
+                hr = _prior_hr_facts()
+            numbers = {"hr_now": hr["value"], "hr_lo": hr["ci95"][0],
+                       "hr_hi": hr["ci95"][1], "z_dir": round(float(sy["z_dir"]), 1)}
+            if hr_age is not None:
+                numbers["hr_age_days"] = hr_age
             facts = {
                 "crew": cid, "level": level,
                 "confidence": "low" if not mature else "moderate",
-                "numbers": {"hr_now": hr["value"], "hr_lo": hr["ci95"][0],
-                            "hr_hi": hr["ci95"][1], "z_dir": round(float(sy["z_dir"]), 1)},
+                "numbers": numbers,
             }
             crew_out[cid] = {
                 "level": level,
                 "syndrome_z": round(float(sy["z_dir"]), 2),
                 "learning": not mature,
                 "indicators": ind,
+                "rest_hr_age_days": hr_age,
                 "card": template_card(facts),
                 "card_source": "template",
                 "routing": triage_routing(level, one_way_s),
             }
+            if hr_age != 0:
+                # Stale or prior value, kept with its age; never copied into `indicators`.
+                crew_out[cid]["last_rest_hr"] = hr
 
+        qc = {"dropped": dropped, "total": total}
+        if stuck_today:
+            qc["stuck"] = stuck_today
         out_days.append({
             "day": day["day"],
             "context": day["context"],
             "hazards": day["hazards"],
-            "qc": {"dropped": dropped, "total": total},
+            "qc": qc,
             "crew": crew_out,
             "attribution": attribution.step(zdirs),
         })

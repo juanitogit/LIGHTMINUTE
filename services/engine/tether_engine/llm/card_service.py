@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import os
 
+from ..ground.delay import PROFILES
 from ..protocols.templates import template_card
 from . import stats
 from .case_data import engine_facts, find_crew, load_scenario
@@ -20,12 +21,30 @@ from .verifier import verify_card
 DEFAULT_EFFORT = "high"
 FAST_EFFORT = "low"
 
-MISSION_CONTEXT = {
-    "phase": "mars_transit",
-    "delay_minutes": 11,
-    "synthetic": True,
-    "not_a_medical_device": True,
-}
+# Neutral phase labels per delay profile (tether_engine/ground/delay.py).
+_PHASES = {"iss": "low_earth_orbit", "moon": "lunar_mission", "mars": "mars_transit"}
+
+
+def build_mission_context(doc: dict) -> dict:
+    """Mission context for ONE scenario (FI-23).
+
+    A module constant described every scenario as a Mars transit. The delay is the
+    same worst-case one-way light-time the pipeline routes with. An unknown profile
+    is reported as unspecified rather than silently defaulted to Mars.
+    """
+    profile = doc.get("delay_profile")
+    if profile in PROFILES:
+        phase = _PHASES[profile]
+        one_way_min: float | None = round(PROFILES[profile][1] / 60.0, 2)
+    else:
+        phase, one_way_min = "unspecified", None
+    return {
+        "phase": phase,
+        "one_way_delay_minutes": one_way_min,
+        "synthetic": True,
+        "not_a_medical_device": True,
+    }
+
 
 RETRY_INSTRUCTION = (
     "The previous card was rejected by a deterministic verifier for the reasons listed in "
@@ -38,6 +57,8 @@ _NUMERIC_KEYS = {
     "card", "indicators", "level", "syndrome_z", "learning", "routing",
     "confidence", "hazards", "n_seen",
 }
+# Heart-rate values that are only ever current when hr_age_days == 0 (FI-10).
+HR_VALUE_KEYS = ("hr_now", "hr_lo", "hr_hi", "hr_base", "z_hr")
 
 
 # ---------------------------------------------------------------- provider ---
@@ -100,16 +121,21 @@ def _reported_text(entry: dict) -> dict:
 def build_case_payload(doc: dict, entry: dict, facts: dict, crew: str, day: int,
                        allowed: frozenset[str]) -> dict:
     """Case data goes LAST and is the only part that varies between calls."""
+    numbers = dict(facts["numbers"])
+    if numbers.get("hr_age_days") != 0:
+        # FI-10: a non-current HR value must not reach the model as a reading.
+        for key in HR_VALUE_KEYS:
+            numbers.pop(key, None)
     return {
         "case": {
             "crew_member": crew,
             "day": day,
             "scenario": doc.get("name"),
-            "mission_context": MISSION_CONTEXT,
+            "mission_context": build_mission_context(doc),
             "engine_facts": {
                 "level": facts["level"],
                 "confidence": facts["confidence"],
-                "numbers": facts["numbers"],
+                "numbers": numbers,
                 "indicators": facts["indicators"],
                 "syndrome_z": facts.get("syndrome_z"),
                 "learning": facts.get("learning"),
@@ -142,10 +168,19 @@ def get_card(scenario: str, crew: str, day: int, *, fast: bool = False,
         return {"card": fallback, "card_source": "template", "verifier_errors": [],
                 "usage": zero_usage(), "provider": "none", "effort": None, "attempts": 0}
 
-    from .deepseek_client import ask_json, make_client
-
-    cl = client if client is not None else make_client()
     effort = effort or (FAST_EFFORT if fast else DEFAULT_EFFORT)
+    # FI-07: building the provider client is part of the same trust boundary as the
+    # request itself, so an init/import failure must yield the template card too.
+    try:
+        from .deepseek_client import ask_json, make_client
+
+        cl = client if client is not None else make_client()
+    except Exception as exc:  # noqa: BLE001 -- third-party init boundary must preserve the verified fallback
+        reason = f"llm_error: {type(exc).__name__}"
+        stats.record(source="template", fallback=True, error=reason)
+        return {"card": fallback, "card_source": "template", "verifier_errors": [reason],
+                "usage": zero_usage(), "provider": provider_name(), "effort": effort,
+                "attempts": 0}
     allowed = kb_ids()
     prefix = system_prefix()                      # byte-identical for every call
     payload = build_case_payload(doc, entry, facts, crew, day, allowed)

@@ -10,7 +10,7 @@ def good():
             "why_it_matters": "Sustained rises can accompany infection or poor sleep.",
             "confidence": "moderate", "level": "act",
             "do_now": ["Re-measure after 5 min rest"], "monitor": ["Temperature"],
-            "escalate_if": ["Fever above threshold"], "ground_message": "HR +12 for 2d",
+            "escalate_if": ["Fever above threshold"], "ground_message": "HR 71 vs usual 58.9, rechecking",
             "citations": ["HRP-IMMUNE-01"]}
 
 
@@ -113,3 +113,36 @@ def test_all_redteam_cases_are_rejected():
     assert len(report) == 30
     missed = [r["id"] for r in report if not r["rejected"] or not r["expect_matched"]]
     assert not missed, f"red-team cases slipped through the verifier: {missed}"
+
+
+def test_invented_number_in_headline_rejected():
+    c = good(); c["headline"] = "Your heart rate is 999 bpm"
+    assert any("999" in e and "headline" in e for e in verify_card(c, engine_facts=FACTS, kb_ids=KB))
+
+
+def test_invented_number_in_why_it_matters_rejected():
+    c = good(); c["why_it_matters"] = "Rate of 140 suggests strain."
+    assert any("140" in e and "why_it_matters" in e for e in verify_card(c, engine_facts=FACTS, kb_ids=KB))
+
+
+def test_invented_number_in_ground_message_rejected():
+    # FI-02 hardening: Earth reads ground_message, so an invented figure must not pass.
+    c = good(); c["ground_message"] = "HR 140 for 3d, rechecking"
+    errs = verify_card(c, engine_facts=FACTS, kb_ids=KB)
+    assert any("140" in e and "ground_message" in e for e in errs)
+    assert any("3" in e and "ground_message" in e for e in errs)
+
+
+def test_engine_number_in_ground_message_is_allowed():
+    c = good(); c["ground_message"] = "HR 71 vs usual 58.9, rechecking"
+    assert verify_card(c, engine_facts=FACTS, kb_ids=KB) == []
+
+
+def test_procedural_number_in_do_now_stays_exempt():
+    c = good(); c["do_now"] = ["Re-measure after 5 min rest"]
+    assert verify_card(c, engine_facts=FACTS, kb_ids=KB) == []
+
+
+def test_engine_number_in_headline_is_allowed():
+    c = good(); c["headline"] = "Resting HR 71 is above your usual 58.9"
+    assert verify_card(c, engine_facts=FACTS, kb_ids=KB) == []

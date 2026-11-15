@@ -2,8 +2,32 @@ import math
 import random
 
 from tether_engine.bayes import BaselineModel, SyndromeScore
-from tether_engine.qc.basic import clean_readings, clean_value
+from tether_engine.qc.basic import (
+    STUCK_MIN_RUN,
+    clean_readings,
+    clean_value,
+    is_stuck,
+    trailing_run,
+)
 from tether_engine.simulate.scenarios import INDICATORS, generate, prior_stats
+
+
+def test_stuck_rule_needs_a_sustained_identical_run():
+    assert trailing_run([]) == 0
+    assert not is_stuck([60.0] * (STUCK_MIN_RUN - 1))
+    assert is_stuck([60.0] * STUCK_MIN_RUN)
+
+
+def test_stuck_rule_compares_at_sensor_resolution():
+    # 60.001 and 60.004 round to the same 0.01 reading; 60.02 does not.
+    assert trailing_run([58.0, 60.001, 60.004, 60.003, 60.0]) == 4
+    assert trailing_run([60.0, 60.0, 60.0, 60.0, 60.02]) == 1
+
+
+def test_missing_day_breaks_the_stuck_run_and_is_never_equal_to_a_value():
+    assert trailing_run([60.0] * 6 + [None]) == 0
+    assert trailing_run([60.0] * 4 + [None] + [60.0] * 4) == 4
+    assert not is_stuck([60.0] * 4 + [None] + [60.0] * 4)
 
 
 def test_clean_readings_drops_missing_nan_and_impossible():

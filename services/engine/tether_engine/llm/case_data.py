@@ -3,7 +3,9 @@
 Three sources, in this order (first that works wins):
  1. `tether_engine.pipeline.run_scenario(name, seed=0, days=24)`  (A1, real engine)
  2. `apps/crew-tablet/public/data/scenario-<name>.json`           (A1, static export)
- 3. `apps/crew-tablet/public/demo-data.json`                      (scaffold, degraded)
+ 3. `apps/crew-tablet/public/demo-data.json`                      (scaffold, degraded;
+                                                                  used only if its own
+                                                                  `scenario` equals the request)
 
 Everything here is read-only and side-effect free so the API and the card
 service see exactly the same numbers. Data is SYNTHETIC by contract.
@@ -67,9 +69,12 @@ def _load(name: str, seed: int, days: int) -> dict:
     if doc is None:
         doc, source = _read_json(data_dir() / f"scenario-{name}.json"), "scenario-file"
     if doc is None:
-        if name not in SCENARIO_NAMES:
-            raise ScenarioNotFound(f"unknown scenario: {name}")
-        doc, source = _read_json(public_dir() / "demo-data.json"), "demo-data"
+        # FI-25: demo-data.json is a single cmo_fever export. Serving it under any
+        # other requested name would mislabel another crew's data, so accept it only
+        # when its own `scenario` identity matches the request.
+        static = _read_json(public_dir() / "demo-data.json")
+        if isinstance(static, dict) and static.get("scenario") == name:
+            doc, source = static, "demo-data"
     if doc is None:
         raise ScenarioNotFound(f"no data source available for {name}")
     out = dict(doc)
@@ -120,16 +125,17 @@ def list_scenarios() -> list[dict]:
 
 
 def _band(entry: dict) -> dict:
-    """Resting-HR band, the number the deterministic template always quotes."""
-    ind = entry.get("indicators") or {}
-    hr = ind.get("rest_hr") or {}
+    """Resting-HR band the card quotes, with a freshness-aware source.
+
+    Today's reading if present; otherwise the last reading carried with its age
+    (`last_rest_hr`). It never falls back to another indicator: quoting temperature
+    as heart rate would be a silent mislabel (FI-10).
+    """
+    hr = (entry.get("indicators") or {}).get("rest_hr") or {}
     if hr.get("value") is not None:
         return hr
-    for name in INDICATORS:  # tolerate scenario files without rest_hr
-        cand = ind.get(name) or {}
-        if cand.get("value") is not None and cand.get("ci95"):
-            return cand
-    return {}
+    last = entry.get("last_rest_hr") or {}
+    return last if last.get("value") is not None else {}
 
 
 def engine_facts(entry: dict, crew: str, day: int) -> dict:
@@ -148,6 +154,9 @@ def engine_facts(entry: dict, crew: str, day: int) -> dict:
     put("hr_hi", ci[1] if len(ci) > 1 else None)
     put("hr_base", band.get("baseline"))
     put("z_hr", band.get("z"))
+    # Age of the HR value in days (0 = today). Absent when no reading exists at all.
+    hr_today = (ind.get("rest_hr") or {}).get("value") is not None
+    put("hr_age_days", 0 if hr_today else entry.get("rest_hr_age_days"))
     for short, name in (("temp", "temp_c"), ("sleep", "sleep_h"), ("pvt", "pvt_ms")):
         cur = ind.get(name) or {}
         put(f"{short}_now", cur.get("value"))

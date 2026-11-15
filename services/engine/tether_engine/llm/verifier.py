@@ -73,11 +73,26 @@ def verify_card(card: dict, *, engine_facts: dict, kb_ids: set[str]) -> list[str
         errs.append("medication dose language")
     # every number in what_changed must appear in the engine facts (as rounded strings)
     allowed: set[str] = set()
-    for value in engine_facts["numbers"].values():
+    numbers = engine_facts["numbers"]
+    stale_hr = "hr_age_days" in numbers and numbers["hr_age_days"] != 0
+    for key, value in numbers.items():
+        # FI-10: an HR value from an earlier day is not today's reading, so it may not
+        # be quoted as a current measurement. Its age (hr_age_days) stays allowed.
+        if stale_hr and key in ("hr_now", "hr_lo", "hr_hi", "hr_base", "z_hr"):
+            continue
         allowed |= _formats(value)
     for num in re.findall(r"\d+(?:\.\d+)?", str(card["what_changed"])):
         if num not in allowed:
             errs.append(f"number {num} not in engine facts")
+    # The headline, rationale and the message shown to Earth are read just as
+    # prominently (FI-02), so the same rule applies. do_now stays exempt: it
+    # legitimately carries procedural numbers ("re-measure after 5 min") that are
+    # not engine measurements, and we cannot tell them apart without weakening
+    # the measurement check.
+    for field in ("headline", "why_it_matters", "ground_message"):
+        for num in re.findall(r"\d+(?:\.\d+)?", str(card[field])):
+            if num not in allowed:
+                errs.append(f"number {num} in {field} not in engine facts")
     do_now = card["do_now"]
     if not isinstance(do_now, list) or not (1 <= len(do_now) <= 5):
         errs.append("do_now must have 1-5 steps")

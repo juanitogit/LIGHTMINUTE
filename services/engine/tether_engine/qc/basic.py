@@ -62,3 +62,34 @@ def log_drops(issues: list[dict], day: int, crew: str) -> None:
     for i in issues:
         log.info("qc drop day=%s crew=%s indicator=%s reason=%s value=%r",
                  day, crew, i["indicator"], i["reason"], i["value"])
+
+
+# Stuck-value (frozen sensor) rule, FI-11.
+# A channel is STUCK when its last STUCK_MIN_RUN consecutive daily readings are
+# identical after rounding to 0.01. Values are compared after rounding because
+# sensors report to a fixed resolution. Missing days (None) break the run, so a
+# dropout is never counted as "the same value".
+# STUCK_MIN_RUN = 5 is a DEMO PARAMETER, not a validated sensor specification:
+# it is unverified against real device behaviour and must not be presented as one.
+# The flag is informational only. It does not change the engine level or urgency.
+STUCK_MIN_RUN = 5
+
+
+def trailing_run(history: list[float | None]) -> int:
+    """Length of the run of identical readings that ends at the latest day.
+
+    Returns 0 when the latest day is missing. Never raises on odd input.
+    """
+    if not history or history[-1] is None:
+        return 0
+    last = round(float(history[-1]), 2)
+    run = 0
+    for x in reversed(history):
+        if x is None or round(float(x), 2) != last:
+            break
+        run += 1
+    return run
+
+
+def is_stuck(history: list[float | None], min_run: int = STUCK_MIN_RUN) -> bool:
+    return trailing_run(history) >= min_run

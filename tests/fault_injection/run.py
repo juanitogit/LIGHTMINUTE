@@ -344,13 +344,16 @@ def write_results():
     passed = sum(r["status"] == "PASS" for r in RESULTS)
     lines = ["# Real-interface fault injection", "", f"Run UTC: {metadata['utc']}. Revision: `{metadata['engine_revision']}`.",
              f"Command: `{metadata['command']}`. Raw evidence: [JSON](fault-injection-results.json).",
-             f"Result: **{passed}/{len(RESULTS)} assertions passed**. Failures are safety findings, not engine fixes.", "", "| Fault | Test | Result | Observation |", "|---|---|---|---|"]
+             (f"Result: **{passed}/{len(RESULTS)} assertions passed**. Every injected fault produced "
+              "the expected safe behavior; this is bounded synthetic evidence, not certification." if passed == len(RESULTS)
+              else f"Result: **{passed}/{len(RESULTS)} assertions passed**. Failures are safety findings, not engine fixes."),
+             "", "| Fault | Test | Result | Observation |", "|---|---|---|---|"]
     for r in RESULTS:
         observation = json.dumps(r["observation"], ensure_ascii=False).replace("|", "/").replace("\n", " ")
         lines.append(f"| {r['id']} {r['title']} | `{r['test']}` | {r['status']} | {observation} |")
     lines += ["", "## Limits", "These are bounded synthetic fault injections, not an exhaustive safety certification.",
               "Provider outputs are mocked; prompt-injection cases do not establish immunity to all model behavior.",
-              "Duplicate retry, long-term adaptation, free text consent and physical freshness need explicit controls.",
+              "Duplicate retry, long-term adaptation, free-text consent and physical freshness have explicit controls (FI-15, FI-13, FI-20, FI-10/11); their field behavior and hardware remain unverified.",
               "An unkeyed audit chain detects changed entries only while its trusted head is preserved; it is not a signature.",
               "Clinical correctness, sensor hardware integrity, compromised hosts, malicious administrators and real communications are unverified."]
     (out / "fault-injection-results.md").write_text("\n".join(lines) + "\n", encoding="utf-8")

@@ -65,3 +65,42 @@ def test_interval_stays_honest_after_many_updates():
         m.robust_update(x)
     assert covered / n >= 0.88            # nominal 95%; the defect gave ~0.20
     assert m.predictive()[2] < 80         # df must stop growing
+
+
+def test_sustained_shift_is_not_absorbed_into_baseline():
+    """FI-13: a prolonged +10 shift must stay flagged, not become normal."""
+    m = BaselineModel(70, 5)
+    for _ in range(20):
+        m.update(70)
+    assert m.surprise(80)["p_two_sided"] < 1e-6
+    for _ in range(60):
+        m.robust_update(80)
+    s = m.surprise(80)
+    assert s["p_two_sided"] < 0.05
+    assert s["unresolved_change"] is True
+    assert m.unresolved_change is True
+
+
+def test_healthy_noise_does_not_set_unresolved_change():
+    rnd = random.Random(5)
+    m = BaselineModel(prior_mean=58.0, prior_sd=2.0)
+    for _ in range(500):
+        m.robust_update(rnd.gauss(58.0, 2.0))
+    assert m.unresolved_change is False
+    assert m.held_n == 0
+
+
+def test_rebaseline_clears_state_and_healthy_readings_update_again():
+    m = BaselineModel(70, 5)
+    for _ in range(20):
+        m.update(70)
+    for _ in range(60):
+        m.robust_update(80)
+    assert m.unresolved_change is True
+    m.rebaseline()
+    assert m.unresolved_change is False
+    before, seen = m.predictive()[0], m.n_seen
+    m.robust_update(70.0)
+    assert m.unresolved_change is False
+    assert m.n_seen == seen + 1           # the healthy reading was absorbed
+    assert m.predictive()[0] != before
