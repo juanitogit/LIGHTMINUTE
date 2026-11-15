@@ -95,13 +95,17 @@ jobs:
         working-directory: apps/crew-tablet
         run: npm ci
 
+      - name: Check generated static JavaScript
+        working-directory: apps/crew-tablet
+        run: npx tsx scripts/build-static.ts --check
+
       - name: Typecheck and build
         working-directory: apps/crew-tablet
         run: npm run build
 
       - name: FHIR, Bluetooth and heart-motion tests
         working-directory: apps/crew-tablet
-        run: npx tsx --test scripts/fhirExport.test.ts scripts/heartRate.test.ts scripts/heartMotion.test.ts scripts/anatomyAlignment.test.ts
+        run: npx tsx --test scripts/fhirExport.test.ts scripts/heartRate.test.ts scripts/heartMotion.test.ts scripts/anatomyAlignment.test.ts scripts/startupComposition.test.ts
 
       - name: Physiology simulator regression tests
         working-directory: apps/crew-tablet

@@ -59,5 +59,9 @@ python apps/ground-console/data/make-sample.py
 cd apps/ground-console && node src/audit.test.mjs   # fixed vectors from audit.py
 ```
 
-`src/audit.js` is the ES module entry point (used by the test); `src/audit-core.js` is the
-classic-script twin that the page loads. Same file content, one implementation.
+The source is TypeScript in `src/main.ts`, `src/audit-core.ts`, `src/audit.ts`, and
+`src/audit.test.ts`. After changes, run `npm run build:static` from `apps/crew-tablet` to
+regenerate the committed browser/Node JavaScript. `src/audit.js` is the ES module entry
+point; `src/audit-core.js` is the classic-script build for `file://`. Opening the
+prebuilt console still needs no server or installation. `npm run typecheck:static` checks
+the TypeScript sources, and CI checks that generated output is current.

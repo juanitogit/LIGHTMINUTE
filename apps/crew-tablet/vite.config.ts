@@ -4,8 +4,21 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import ts from "typescript";
 
 const here = dirname(fileURLToPath(import.meta.url));
+function earlyThemePlugin() {
+  return {
+    name: "lightminute-early-theme",
+    transformIndexHtml(html: string) {
+      const marker = "<!-- LIGHTMINUTE_EARLY_THEME -->";
+      if (!html.includes(marker)) throw new Error("Missing early-theme placeholder");
+      const source = readFileSync(resolve(here, "src/earlyTheme.ts"), "utf8");
+      const js = ts.transpileModule(source, {compilerOptions:{target:ts.ScriptTarget.ES2022, module:ts.ModuleKind.None}}).outputText;
+      return html.replace(marker, `<script>${js.replace(/<\/script/gi, "<\\/script")}</script>`);
+    },
+  };
+}
 const runtimeDir = resolve(here, "node_modules/pyodide");
 const runtimeNames = ["pyodide.mjs", "pyodide.asm.mjs", "pyodide.asm.wasm", "pyodide-lock.json", "python_stdlib.zip"];
 const lock = JSON.parse(readFileSync(join(runtimeDir, "pyodide-lock.json"), "utf8")) as {packages:Record<string,{file_name:string;sha256:string}>};
@@ -198,7 +211,7 @@ const apiProxy = {
 export default defineConfig({
   base: "./",
   define: {__LIGHTMINUTE_ENGINE_MANIFEST__: JSON.stringify(engineManifest)},
-  plugins: [react(), protocolRunnerPlugin(), offlineBundle()],
+  plugins: [earlyThemePlugin(), react(), protocolRunnerPlugin(), offlineBundle()],
   resolve: {
     alias: {
       "@ui-kit": uiKitPath,

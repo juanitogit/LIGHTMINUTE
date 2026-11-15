@@ -1,9 +1,5 @@
-/* ES module entry point for src/audit-core.js (Node tests, bundlers, http).
- * The core is a classic script so file:// pages can load it without CORS. */
+/* Generated from apps/ground-console/src/audit.ts; edit the TypeScript source. */
 import "./audit-core.js";
-
 const audit = globalThis.LightminuteAudit;
-
-export const GENESIS = audit.GENESIS;
-export const { canonicalJson, sha256Hex, appendEntry, verifyChain, renderChainRows } = audit;
+export const { GENESIS, canonicalJson, sha256Hex, appendEntry, verifyChain, renderChainRows } = audit;
 export default audit;

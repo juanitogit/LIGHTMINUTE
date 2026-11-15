@@ -6,7 +6,9 @@
   "description": "LIGHTMINUTE crew tablet: Glance -> Why -> Act. Synthetic data only; not a medical device.",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/check-signatures.mjs && tsc -b && vite build",
+    "build": "npm run build:static && npm run typecheck:static && node scripts/check-signatures.mjs && tsc -b && vite build",
+    "build:static": "tsx scripts/build-static.ts",
+    "typecheck:static": "tsc -p tsconfig.static.json && tsc -p tsconfig.e2e.json",
     "preview": "vite preview",
     "typecheck": "tsc -b --pretty false",
     "test:e2e": "node scripts/smoke.mjs",

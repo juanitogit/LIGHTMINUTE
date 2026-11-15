@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "types": ["node"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": ["../ground-console/src/audit-core.ts", "../ground-console/src/audit-types.ts", "../ground-console/src/audit.ts", "../ground-console/src/audit.test.ts", "../ground-console/src/main.ts", "../../packages/protocol-runner/runner.ts", "../../packages/protocol-runner/index.ts", "../../packages/protocol-runner/demo.ts", "scripts/check-signatures.ts", "scripts/sign-audit.ts", "scripts/sign-scenarios.ts", "scripts/build-static.ts", "src/earlyTheme.ts", "src/verifyAuditPage.ts", "media/hyperframes/startup.ts"]
+}

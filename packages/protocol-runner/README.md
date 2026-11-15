@@ -70,5 +70,7 @@ changes.
 
 ## Tests
 
-No build step and no dependencies. `node --check index.js` plus the ground-console
-audit test cover the JS that has logic in it.
+The runnable JavaScript files are generated from `runner.ts` and `index.ts`. After editing
+those sources, run `npm run build:static` and `npm run typecheck:static` in
+`apps/crew-tablet`. The committed outputs still run directly from `file://` without an
+installation. The browser integration suite exercises both module and classic-script paths.

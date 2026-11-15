@@ -73,31 +73,6 @@
 </script>
 
 <script src="runner.js"></script>
-<script>
-  /* Classic scripts so this page works from file://, where module imports are blocked.
-     ES module consumers use `import { mountProtocolRunner } from "./index.js"`. */
-  const mountProtocolRunner = globalThis.TetherProtocolRunner.mountProtocolRunner;
-  const list = document.querySelector("#log");
-  const protocol = JSON.parse(document.querySelector("#fever-protocol").textContent);
-
-  function row(text) {
-    const li = document.createElement("li");
-    li.textContent = text;
-    list.append(li);
-  }
-
-  mountProtocolRunner(document.querySelector("#runner"), {
-    protocol,
-    onStep: (payload) => {
-      row(`${new Date(payload.tsMs).toLocaleTimeString()} · step ${payload.stepIndex + 1} · ${payload.status}`);
-      console.log("onStep", payload);
-    },
-    onDone: (summary) => {
-      const cannot = summary.steps.filter((s) => s.status === "cannot").length;
-      row(`finished · completed=${summary.completed} · ${cannot} not possible · ${Math.round(summary.totalMs / 1000)}s`);
-      console.log("onDone", summary);
-    },
-  });
-</script>
+<script src="demo.js"></script>
 </body>
 </html>

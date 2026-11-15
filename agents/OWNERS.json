@@ -59,6 +59,7 @@
       "apps/crew-tablet/public/_headers",
       "apps/crew-tablet/public/manifest.webmanifest",
       "apps/crew-tablet/public/verify-audit.html",
+      "apps/crew-tablet/public/verify-audit.js",
       "apps/crew-tablet/public/robots.txt",
       "apps/crew-tablet/public/sitemap.xml",
       "apps/crew-tablet/public/data/signatures.json",
@@ -78,6 +79,7 @@
       "apps/crew-tablet/public/data/space-weather.json",
       "organs/",
       "simulator-prototypes/",
+      "HUD-Visor/",
       "handoff/freebuff-checklist.md"
     ]
   },

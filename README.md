@@ -144,8 +144,8 @@ reproducible. Full write-up: [`docs/model-card.md`](docs/model-card.md).
 | **API** | FastAPI 0.128, uvicorn, Pydantic 2 | Five endpoints, typed bodies, automatic OpenAPI, template cards with `LLM_PROVIDER=none`. |
 | **LLM** | DeepSeek **V4.1 Flash** (`deepseek-flash`, OpenAI-compatible) — optional | 1M context + disk caching means the whole cited KB is cache-stuffed in the system prefix: no vector DB, no RAG infra; case data goes last. Effort `high` for cards, `low` with `?fast=1`, `max` for red-teaming. |
 | **Crew tablet** | React 19, TypeScript 5.9 (strict), Vite 7 | Typed payloads straight from the data contract; virtual modules inline `kb/protocols` and thresholds at build time. Charts are hand-written SVG — no chart library. |
-| **Protocol runner** | Vanilla ES module + classic-script build | Framework-free as required; embeddable in React *and* openable from `file://` (browsers block module imports there). |
-| **Ground console** | Vanilla JS + SVG, SubtleCrypto | Static, no build step, works offline; the audit chain verifies in the browser. |
+| **Protocol runner** | TypeScript source, generated ES module and classic script | Framework-free; embeddable in React and openable from `file://`. |
+| **Ground console** | TypeScript source, SVG and SubtleCrypto | Generated static browser scripts work offline; the audit chain verifies in the browser. |
 | **Data** | JSON scenario exports + `data/synthetic/` + `data/snapshots/` | Deterministic by seed (~350 KB per scenario) so any front end can fall back to a file; immutable snapshots carry sha256 + license. |
 | **Knowledge** | `kb/evidence.yaml`, `kb/thresholds.json`, `kb/syndromes.json`, `kb/protocols/` | Every claim cites an id with a `status` (`verified` / `demo-parameter` / `unverified`); nothing unlabelled reaches the UI. |
 | **Tooling** | `scripts/run_tests.py` (dependency-free), `node --check`, `make`, `gh` | Tests run with system Python — no pytest install needed. |
@@ -232,6 +232,19 @@ Each scenario also ships a `mild` variant for honest "we missed it" demos.
 ---
 
 ## Tests
+
+The console, protocol runner, signature scripts and browser tests are maintained as
+TypeScript. From `apps/crew-tablet`, `npm run build:static` generates the JavaScript
+needed by browsers and Node, and `npm run typecheck:static` checks those sources.
+Generated files are identified as such in `.gitattributes`; HTML and CSS remain the
+actual markup and styles consumed by the browser. Older standalone simulator and HUD
+prototypes still contain inline JavaScript and have not been migrated.
+
+The Bash helpers in `scripts/` support development, not the deployed app:
+`check_all.sh` runs the repository checks and validation; `link-skills.sh` copies the
+local agent skills to the supported agent directories (replacing matching copies); `setup_worktrees.sh` creates
+isolated agent worktrees; and `merge_agents.sh` checks ownership and merges selected
+agent branches. Review the last two before running them because they modify Git state.
 
 ```bash
 python scripts/run_tests.py                       # 111/111 — engine, pipeline, QC, verifier, API, LLM

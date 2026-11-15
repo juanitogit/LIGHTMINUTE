@@ -3,3 +3,20 @@ apps/crew-tablet/public/data/scenario-*.json text eol=lf
 apps/crew-tablet/public/demo-data.json text eol=lf
 # Snapshot manifests hash the exact downloaded bytes; keep them stable on Windows.
 data/snapshots/*.json text eol=lf
+# Ground-console JavaScript is generated from the checked TypeScript source.
+apps/ground-console/src/audit-core.js linguist-generated
+apps/ground-console/src/audit.js linguist-generated
+apps/ground-console/src/audit.test.mjs linguist-generated
+apps/ground-console/src/main.js linguist-generated
+apps/ground-console/data/sample-scenario.js linguist-generated
+packages/protocol-runner/runner.js linguist-generated
+packages/protocol-runner/index.js linguist-generated
+packages/protocol-runner/demo.js linguist-generated
+apps/crew-tablet/scripts/check-signatures.mjs linguist-generated
+apps/crew-tablet/scripts/sign-audit.mjs linguist-generated
+apps/crew-tablet/scripts/sign-scenarios.mjs linguist-generated
+apps/crew-tablet/scripts/smoke.mjs linguist-generated
+apps/crew-tablet/tests/e2e.mjs linguist-generated
+tests/fault_injection/browser.mjs linguist-generated
+apps/crew-tablet/public/verify-audit.js linguist-generated
+apps/crew-tablet/media/hyperframes/startup.js linguist-generated

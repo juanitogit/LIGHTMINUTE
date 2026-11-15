@@ -1,7 +1,5 @@
-/* ES module entry point. The implementation lives in runner.js so that the
- * same code can also be loaded with a classic <script> from file://, where
- * browsers block ES module imports (origin "null"). */
+/* Generated from packages/protocol-runner/index.ts; edit the TypeScript source. */
 import "./runner.js";
-
-export const mountProtocolRunner = globalThis.TetherProtocolRunner.mountProtocolRunner;
+const runner = globalThis.TetherProtocolRunner;
+export const mountProtocolRunner = runner.mountProtocolRunner;
 export default mountProtocolRunner;

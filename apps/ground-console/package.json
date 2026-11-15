@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Static ground console for LIGHTMINUTE. No build step, no dependencies.",
+  "description": "Static ground console for LIGHTMINUTE; browser scripts generated from TypeScript.",
   "scripts": {
     "test": "node src/audit.test.mjs"
   }

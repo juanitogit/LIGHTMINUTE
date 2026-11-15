@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.static.json",
+  "compilerOptions": {"noUncheckedIndexedAccess": false},
+  "include": ["scripts/smoke.ts", "tests/e2e.ts", "../../tests/fault_injection/browser.ts"]
+}
