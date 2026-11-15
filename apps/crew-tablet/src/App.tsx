@@ -34,6 +34,7 @@ const VIEW_LABELS: { id: View; label: string; detail: string; icon: IconName }[]
   { id: "earth", label: "Earth link", detail: "Earth", icon: "earth" },
   { id: "validation", label: "Evidence & validation", detail: "Data", icon: "chart" },
   { id: "checkin", label: "PVT & daily log", detail: "Local", icon: "watch" },
+  { id: "moon", label: "Entorno Lunar", detail: "Superficie", icon: "moon" },
   { id: "visor", label: "Visor EVA (HUD)", detail: "HUD", icon: "visor" },
 ];
 
@@ -58,6 +59,14 @@ export function App() {
   const [health, setHealth] = useState<ApiHealth | null | undefined>(undefined);
   const [theme, setTheme] = useState<"dark" | "light">(readStoredTheme);
   const [playing, setPlaying] = useState(false);
+
+  // Each view starts at the top. Without this the next view inherits the previous
+  // scroll offset and the helmet frame opens mid-way, with its cards cut off.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [state.view]);
 
   useEffect(() => {
     let alive = true;
@@ -397,6 +406,25 @@ export function App() {
         {/* Local-only tools: they must work even when no scenario loads. */}
         {state.view === "checkin" ? <CheckIn /> : null}
         {state.view === "sources" ? <DataSources /> : null}
+        {state.view === "moon" ? (
+          <VisorHud
+            scenario={scenario.data}
+            dayNumber={day}
+            crewId={crew}
+            crewIds={crewIds}
+            onCrew={goCrew}
+            onDay={(next) => update({ day: next })}
+            maxDay={maxDay}
+            onOpenTablet={() => goView("glance")}
+            body="moon"
+            hideControls
+            heading={{
+              micro: "LIGHTMINUTE / ENTORNO LUNAR",
+              title: "Entorno Lunar (Visor)",
+              sub: "La misma proyección de casco, sobre la superficie lunar: panorama real de Apollo 11 en Tranquility Base, regolito con relieve y rocas escaneadas. Cielo sin atmósfera, sombras duras y ningún polvo en suspensión.",
+            }}
+          />
+        ) : null}
         {state.view === "visor" ? (
           <VisorHud
             scenario={scenario.data}

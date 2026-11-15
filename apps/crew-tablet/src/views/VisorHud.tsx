@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { LoadedScenario } from "../lib/types";
-import { MarsScene } from "./MarsScene";
+import { SurfaceScene, type SurfaceBody } from "./SurfaceScene";
 import { Icon } from "../components/Icon";
 import { Chip, LevelBadge } from "../components/primitives";
 import "../hud-visor.css";
@@ -14,6 +14,11 @@ interface VisorHudProps {
   onDay: (day: number) => void;
   maxDay: number;
   onOpenTablet: () => void;
+  /** Which surface the helmet is looking at. */
+  body?: SurfaceBody;
+  /** The lunar page reuses the whole HUD without the mission controls. */
+  hideControls?: boolean;
+  heading?: { micro: string; title: string; sub: string };
 }
 
 const CREW_NAMES: Record<string, string> = {
@@ -32,6 +37,9 @@ export function VisorHud({
   onDay,
   maxDay,
   onOpenTablet,
+  body = "mars",
+  hideControls = false,
+  heading,
 }: VisorHudProps) {
   const [solarShield, setSolarShield] = useState(true);
   const [autoPlay, setAutoPlay] = useState(false);
@@ -114,10 +122,11 @@ export function VisorHud({
     <div className="view visor-view">
       <header className="viewhead">
         <div>
-          <p className="micro">LIGHTMINUTE / VISOR EXTRAVEHICULAR (EVA)</p>
-          <h1>Visor EVA (HUD de Casco)</h1>
+          <p className="micro">{heading?.micro ?? "LIGHTMINUTE / VISOR EXTRAVEHICULAR (EVA)"}</p>
+          <h1>{heading?.title ?? "Visor EVA (HUD de Casco)"}</h1>
           <p className="viewhead__sub">
-            Simulación de visualización integrada en el casco de un traje de superficie marciana. Constantes vitales sobre el terreno real de Marte, escaneo orgánico fisiológico y supervisión sin retardo.
+            {heading?.sub ??
+              "Simulación de visualización integrada en el casco de un traje de superficie marciana. Constantes vitales sobre el terreno real de Marte, escaneo orgánico fisiológico y supervisión sin retardo."}
           </p>
         </div>
         <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
@@ -137,6 +146,7 @@ export function VisorHud({
       </header>
 
       {/* Simulator Interactive Controls */}
+      {hideControls ? null : (
       <section className="panel">
         <div className="visor-controls-grid">
           {/* Crew Selector */}
@@ -199,6 +209,7 @@ export function VisorHud({
           </div>
         </div>
       </section>
+      )}
 
       {/* Main Helmet HUD Stage */}
       <section className="panel">
@@ -215,11 +226,11 @@ export function VisorHud({
         <div className={`visor-viewport ${isFullscreen ? "is-fullscreen" : ""} ${levelClass} ${isAlarm ? "alarm" : ""}`}>
           {/* 1. Real Mars surface (NASA panorama + 3D ground, rocks and dust) */}
           <div className="hud-scene-bg">
-            <MarsScene />
+            <SurfaceScene body={body} />
           </div>
 
           {/* 2. Amber/Gold Solar Shield Visor Optical Coating */}
-          <div className={`hud-visor-filter ${solarShield ? "" : "is-disabled"}`} />
+          <div className={`hud-visor-filter ${solarShield && body === "mars" ? "" : "is-disabled"}`} />
 
           {/* 3. Vignette and Emergency Alarm Glow */}
           <div className="hud-vignette" />

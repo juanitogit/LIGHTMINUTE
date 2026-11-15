@@ -42,10 +42,12 @@
 .visor-viewport {
   position: relative;
   container-type: size;
-  width: 100%;
+  /* Never taller than the window: the frame shrinks instead of being cut off. */
+  width: min(100%, calc(58vh * 16 / 9));
+  margin-inline: auto;
   aspect-ratio: 16 / 9;
-  min-height: 520px;
-  max-height: 700px;
+  min-height: 220px;
+  max-height: 58vh;
   background: #000;
   border-radius: var(--radius);
   border: 1px solid var(--line);
@@ -303,7 +305,7 @@
 
 #hud-dial-label {
   left: 3.2cqw;
-  top: calc(3.4cqh + 112px);
+  top: calc(3.4cqh + 102px);
   font-size: 8px;
   opacity: 0.6;
   letter-spacing: 0.12em;
@@ -373,7 +375,7 @@
 /* LATERAL RULERS */
 .hud-ruler {
   position: absolute;
-  top: 26cqh;
+  top: 33cqh;
   height: 42cqh;
   width: 130px;
   display: flex;
@@ -486,15 +488,16 @@
 
 /* BOTTOM-LEFT VITALS CARD */
 #hud-bl {
-  left: 3.2cqw;
-  bottom: 5cqh;
+  left: 4.2cqw;
+  bottom: 6.5cqh;
   display: flex;
   flex-direction: column;
   gap: 0;
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.45));
   border: 1px solid var(--hud-a2);
   padding: 10px 12px;
-  min-width: 210px;
+  min-width: min(210px, 32cqw);
+  max-width: 34cqw;
   position: absolute;
   z-index: 5;
 }
@@ -535,7 +538,7 @@
   align-items: center;
   gap: 10px;
   color: var(--c);
-  padding: 7px 0;
+  padding: clamp(3px, 0.9cqh, 7px) 0;
   border-bottom: 1px solid var(--hud-a3);
   position: relative;
 }
@@ -560,7 +563,7 @@
 
 .hud-row b {
   font-weight: 400;
-  font-size: 18px;
+  font-size: clamp(12px, 1.65cqw, 18px);
   line-height: 1;
   text-shadow: 0 0 6px var(--c);
 }
@@ -600,8 +603,8 @@
 
 /* BOTTOM-RIGHT BODY SCANNER CARD */
 #hud-br {
-  right: 3.2cqw;
-  bottom: 5cqh;
+  right: 4.2cqw;
+  bottom: 6.5cqh;
   display: flex;
   align-items: flex-end;
   gap: 16px;
@@ -635,7 +638,7 @@
 }
 
 #hud-br .n {
-  font-size: 30px;
+  font-size: clamp(20px, 2.8cqw, 30px);
   line-height: 1;
   text-align: right;
   color: var(--c);
@@ -662,7 +665,7 @@
 .hud-seg {
   display: flex;
   gap: 3px;
-  width: 150px;
+  width: clamp(90px, 13cqw, 150px);
   margin-top: 8px;
 }
 
@@ -674,8 +677,8 @@
 }
 
 .hud-body {
-  width: 70px;
-  height: 138px;
+  width: clamp(48px, 6.4cqw, 70px);
+  height: clamp(96px, 13cqh, 138px);
   flex: none;
 }
 

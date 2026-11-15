@@ -2,48 +2,111 @@ import { useEffect, useRef } from "react";
 import type * as Three from "three";
 
 /**
- * The view out of a helmet on Mars, built from real assets instead of painted
- * gradients:
+ * First-person surface view for the helmet, built from real assets instead of
+ * painted gradients:
  *
- *  - far distance: NASA/JPL Spirit's 360° panorama of Husband Hill (public domain)
- *  - ground: Poly Haven "Cracked Red Ground" 1K set (CC0), colour + normal + ARM
- *  - boulders: four Poly Haven photogrammetry rocks (CC0), cloned with shadows
- *  - grit: instanced pebbles filling the space between them
+ *   Mars  — NASA/JPL Spirit 360° panorama, Poly Haven CC0 "Cracked Red Ground",
+ *           four photogrammetry boulders, dust haze and a butterscotch sky.
+ *   Moon  — NASA Apollo 11 Tranquility Base panorama (32 454 px original),
+ *           Poly Haven CC0 "Dark Rock", the same scanned rocks, black sky with
+ *           stars, no atmosphere and hard, unfiltered sunlight.
  *
  * A low Sun with a real shadow map does most of the work: rocks throw long
  * shadows across the regolith, which is what makes the panorama read as depth.
  *
- * Asset provenance lives in scripts/fetch-mars-assets.py; licence notes in
- * ATTRIBUTIONS.md.
+ * Assets: apps/crew-tablet/scripts/fetch-mars-assets.py
+ * Licences: ATTRIBUTIONS.md
  */
 const BASE = import.meta.env.BASE_URL;
-const PANORAMA = `${BASE}assets/mars/panorama.jpg`;
-const GROUND_DIFF = `${BASE}assets/mars/ground/cracked_red_ground_diff_1k.jpg`;
-const GROUND_NORMAL = `${BASE}assets/mars/ground/cracked_red_ground_nor_gl_1k.jpg`;
-const GROUND_ARM = `${BASE}assets/mars/ground/cracked_red_ground_arm_1k.jpg`;
+
+export type SurfaceBody = "mars" | "moon";
+
+interface SurfaceConfig {
+  panorama: string;
+  groundDiffuse: string;
+  groundNormal: string;
+  groundArm?: string;
+  fog: { color: number; density: number };
+  sky: { top: number; horizon: number; below: number };
+  sun: { color: number; intensity: number; position: [number, number, number] };
+  hemi: { sky: number; ground: number; intensity: number };
+  /** Base RGB for the large-scale ground albedo variation. */
+  albedo: [number, number, number];
+  albedoSpread: [number, number, number];
+  rockTint: number;
+  dust: boolean;
+  stars: boolean;
+  exposure: number;
+  /** Vertical extent of the panorama band, in metres at panoRadius. */
+  panoHeight: number;
+  /** Turn the panorama so its stitching/artefact edge sits behind the camera. */
+  panoRotation: number;
+  normalScale: number;
+}
+
+const ROCKS = [
+  "rocks/moon_rock_01/moon_rock_01_1k.gltf",
+  "rocks/rock_07/rock_07_1k.gltf",
+  "rocks/moon_rock_04/moon_rock_04_1k.gltf",
+  "rocks/namaqualand_boulder_02/namaqualand_boulder_02_1k.gltf",
+];
 
 interface RockDef {
   path: string;
   count: number;
-  min: number;
-  max: number;
   size: [number, number];
 }
 
-const ROCKS: RockDef[] = [
-  { path: `${BASE}assets/mars/rocks/moon_rock_01/moon_rock_01_1k.gltf`, count: 16, min: 2.5, max: 18, size: [0.7, 2.4] },
-  { path: `${BASE}assets/mars/rocks/rock_07/rock_07_1k.gltf`, count: 12, min: 3, max: 24, size: [0.6, 2.6] },
-  { path: `${BASE}assets/mars/rocks/moon_rock_04/moon_rock_04_1k.gltf`, count: 14, min: 2, max: 15, size: [0.45, 1.8] },
-  {
-    path: `${BASE}assets/mars/rocks/namaqualand_boulder_02/namaqualand_boulder_02_1k.gltf`,
-    count: 5,
-    min: 6,
-    max: 28,
-    size: [2.4, 5],
-  },
+const ROCK_LAYOUT: RockDef[] = [
+  { path: ROCKS[0] as string, count: 16, size: [0.7, 2.4] },
+  { path: ROCKS[1] as string, count: 12, size: [0.6, 2.6] },
+  { path: ROCKS[2] as string, count: 14, size: [0.45, 1.8] },
+  { path: ROCKS[3] as string, count: 5, size: [2.4, 5] },
 ];
 
-/** One dune field for both the mesh and rock placement, so nothing floats. */
+const CONFIG: Record<SurfaceBody, SurfaceConfig> = {
+  mars: {
+    panorama: `${BASE}assets/mars/panorama.jpg`,
+    groundDiffuse: `${BASE}assets/mars/ground/cracked_red_ground_diff_1k.jpg`,
+    groundNormal: `${BASE}assets/mars/ground/cracked_red_ground_nor_gl_1k.jpg`,
+    groundArm: `${BASE}assets/mars/ground/cracked_red_ground_arm_1k.jpg`,
+    fog: { color: 0xc79263, density: 0.0034 },
+    sky: { top: 0x8c5733, horizon: 0xd7a377, below: 0xb37c52 },
+    sun: { color: 0xffdcb2, intensity: 3.4, position: [-52, 16, 26] },
+    hemi: { sky: 0xe3bc93, ground: 0x5c3320, intensity: 0.9 },
+    albedo: [0.62, 0.4, 0.3],
+    albedoSpread: [0.34, 0.26, 0.2],
+    rockTint: 0xd39a76,
+    dust: true,
+    stars: false,
+    exposure: 1.08,
+    panoHeight: 150,
+    panoRotation: 0,
+    normalScale: 0.4,
+  },
+  moon: {
+    panorama: `${BASE}assets/moon/panorama.jpg`,
+    groundDiffuse: `${BASE}assets/moon/ground/regolith_diff_1k.jpg`,
+    groundNormal: `${BASE}assets/moon/ground/rocky_terrain_nor_gl_1k.jpg`,
+    // Airless: almost no haze, a black sky, and sunlight straight out of the Sun.
+    fog: { color: 0x8d8d90, density: 0.0016 },
+    sky: { top: 0x000000, horizon: 0x030304, below: 0x050506 },
+    sun: { color: 0xffffff, intensity: 3.0, position: [-42, 58, 30] },
+    hemi: { sky: 0xd6d6da, ground: 0x2a2a2a, intensity: 0.55 },
+    albedo: [0.92, 0.92, 0.94],
+    albedoSpread: [0.2, 0.2, 0.21],
+    rockTint: 0xb4b4b8,
+    dust: false,
+    stars: true,
+    exposure: 1.16,
+    panoHeight: 110,
+    // Apollo mosaics end on a badly stitched frame; keep it out of sight.
+    panoRotation: 0.2,
+    normalScale: 0.22,
+  },
+};
+
+/** One dune/crater field for both the mesh and rock placement. */
 function terrainHeight(x: number, z: number): number {
   const d = Math.hypot(x, z);
   const base =
@@ -55,12 +118,15 @@ function terrainHeight(x: number, z: number): number {
   return base * Math.min(1, d / 16) - 0.05;
 }
 
-export function MarsScene({ className }: { className?: string }) {
+export function SurfaceScene({ body = "mars", className }: { body?: SurfaceBody; className?: string }) {
   const hostRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef(body);
+  bodyRef.current = body;
 
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
+    const config = CONFIG[body];
 
     let disposed = false;
     let frame = 0;
@@ -73,17 +139,17 @@ export function MarsScene({ className }: { className?: string }) {
 
       const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
-      renderer.setClearColor(0xc08a5a, 1);
+      renderer.setClearColor(config.sky.horizon, 1);
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFShadowMap;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.08;
+      renderer.toneMappingExposure = config.exposure;
       const canvas = renderer.domElement;
       canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block";
       host.appendChild(canvas);
 
       const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0xc79263, 0.0034);
+      scene.fog = new THREE.FogExp2(config.fog.color, config.fog.density);
 
       const camera = new THREE.PerspectiveCamera(55, 16 / 9, 0.15, 1400);
       camera.position.set(0, 1.65, 0);
@@ -91,7 +157,7 @@ export function MarsScene({ className }: { className?: string }) {
       const loader = new THREE.TextureLoader();
       const anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
 
-      // ---- sky: thin butterscotch air -------------------------------------
+      // ---- sky -------------------------------------------------------------
       const sky = new THREE.Mesh(
         new THREE.SphereGeometry(700, 32, 16),
         new THREE.ShaderMaterial({
@@ -99,9 +165,9 @@ export function MarsScene({ className }: { className?: string }) {
           depthWrite: false,
           fog: false,
           uniforms: {
-            top: { value: new THREE.Color(0x8c5733) },
-            horizon: { value: new THREE.Color(0xd7a377) },
-            below: { value: new THREE.Color(0xb37c52) },
+            top: { value: new THREE.Color(config.sky.top) },
+            horizon: { value: new THREE.Color(config.sky.horizon) },
+            below: { value: new THREE.Color(config.sky.below) },
           },
           vertexShader: `
             varying float vH;
@@ -124,48 +190,73 @@ export function MarsScene({ className }: { className?: string }) {
       );
       scene.add(sky);
 
-      // ---- far distance: the real surface, wrapped 360 degrees -------------
+      // ---- far distance: the real surface, wrapped 360 degrees --------------
       const panoMat = new THREE.MeshBasicMaterial({ side: THREE.BackSide, toneMapped: false });
-      const pano = new THREE.Mesh(new THREE.CylinderGeometry(190, 190, 150, 128, 1, true), panoMat);
+      const pano = new THREE.Mesh(new THREE.CylinderGeometry(190, 190, config.panoHeight, 128, 1, true), panoMat);
       pano.position.y = 1.65;
       pano.renderOrder = -1;
       scene.add(pano);
-      loader.load(PANORAMA, (texture) => {
+      loader.load(config.panorama, (texture) => {
         texture.colorSpace = THREE.SRGBColorSpace;
         texture.anisotropy = anisotropy;
         texture.wrapS = THREE.RepeatWrapping;
         // We are inside the cylinder; flip so the panorama is not mirrored.
         texture.repeat.x = -1;
-        texture.offset.x = 1;
+        texture.offset.x = 1 + config.panoRotation;
         panoMat.map = texture;
         panoMat.needsUpdate = true;
       });
+
+      // ---- stars (airless bodies only) -------------------------------------
+      let starField: Three.Points | null = null;
+      if (config.stars) {
+        const count = 1400;
+        const positions = new Float32Array(count * 3);
+        for (let i = 0; i < count; i++) {
+          // Uniform points on a sphere: no clustering at the poles.
+          const u = Math.random() * 2 - 1;
+          const theta = Math.random() * Math.PI * 2;
+          const r = 640;
+          const s = Math.sqrt(1 - u * u);
+          positions[i * 3] = r * s * Math.cos(theta);
+          positions[i * 3 + 1] = Math.abs(r * u) * 0.6 + 8;
+          positions[i * 3 + 2] = r * s * Math.sin(theta);
+        }
+        const starGeo = new THREE.BufferGeometry();
+        starGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+        starField = new THREE.Points(
+          starGeo,
+          new THREE.PointsMaterial({ color: 0xffffff, size: 1.6, sizeAttenuation: false, fog: false }),
+        );
+        scene.add(starField);
+      }
 
       // ---- ground ----------------------------------------------------------
       const groundGeo = new THREE.CircleGeometry(184, 260, 0, Math.PI * 2);
       groundGeo.rotateX(-Math.PI / 2);
       const posAttr = groundGeo.attributes.position as Three.BufferAttribute;
       const colors = new Float32Array(posAttr.count * 3);
-      const tint = new THREE.Color();
+      const [ar, ag, ab] = config.albedo;
+      const [sr, sg, sb] = config.albedoSpread;
       for (let i = 0; i < posAttr.count; i++) {
         const x = posAttr.getX(i);
         const z = posAttr.getZ(i);
         posAttr.setY(i, terrainHeight(x, z));
-        // Large-scale albedo: pale dust seas against darker basalt gravel.
+        // Large-scale albedo: paler dust against darker gravel/basalt.
         const n = 0.5 + 0.5 * Math.sin(x * 0.021 + 1.7) * Math.cos(z * 0.017 - 0.4);
-        tint.setRGB(0.62 + n * 0.34, 0.4 + n * 0.26, 0.3 + n * 0.2);
-        colors[i * 3] = tint.r;
-        colors[i * 3 + 1] = tint.g;
-        colors[i * 3 + 2] = tint.b;
+        colors[i * 3] = ar + n * sr;
+        colors[i * 3 + 1] = ag + n * sg;
+        colors[i * 3 + 2] = ab + n * sb;
       }
       groundGeo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
       groundGeo.computeVertexNormals();
 
-      const diff = loader.load(GROUND_DIFF);
+      const diff = loader.load(config.groundDiffuse);
       diff.colorSpace = THREE.SRGBColorSpace;
-      const normal = loader.load(GROUND_NORMAL);
-      const arm = loader.load(GROUND_ARM);
+      const normal = loader.load(config.groundNormal);
+      const arm = config.groundArm ? loader.load(config.groundArm) : null;
       for (const tex of [diff, normal, arm]) {
+        if (!tex) continue;
         tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
         tex.repeat.set(14, 14);
         tex.anisotropy = anisotropy;
@@ -176,9 +267,9 @@ export function MarsScene({ className }: { className?: string }) {
         new THREE.MeshStandardMaterial({
           map: diff,
           normalMap: normal,
-          normalScale: new THREE.Vector2(0.4, 0.4),
-          // Only the roughness channel: its metal channel is what made dust look wet.
-          roughnessMap: arm,
+          normalScale: new THREE.Vector2(config.normalScale, config.normalScale),
+          // Only the roughness channel when present: its metal channel made dust look wet.
+          ...(arm ? { roughnessMap: arm } : {}),
           vertexColors: true,
           roughness: 1,
           metalness: 0,
@@ -188,9 +279,9 @@ export function MarsScene({ className }: { className?: string }) {
       ground.receiveShadow = true;
       scene.add(ground);
 
-      // ---- light: a small, low, distant Sun -------------------------------
-      const sunPos = new THREE.Vector3(-52, 16, 26);
-      const sun = new THREE.DirectionalLight(0xffdcb2, 3.4);
+      // ---- light -----------------------------------------------------------
+      const sunPos = new THREE.Vector3(...config.sun.position);
+      const sun = new THREE.DirectionalLight(config.sun.color, config.sun.intensity);
       sun.position.copy(sunPos);
       sun.castShadow = true;
       sun.shadow.mapSize.set(2048, 2048);
@@ -203,7 +294,7 @@ export function MarsScene({ className }: { className?: string }) {
       sun.shadow.bias = -0.0005;
       sun.shadow.normalBias = 0.03;
       scene.add(sun);
-      scene.add(new THREE.HemisphereLight(0xe3bc93, 0x5c3320, 0.9));
+      scene.add(new THREE.HemisphereLight(config.hemi.sky, config.hemi.ground, config.hemi.intensity));
 
       const sunDisc = new THREE.Mesh(
         new THREE.CircleGeometry(3.2, 32),
@@ -226,22 +317,10 @@ export function MarsScene({ className }: { className?: string }) {
       const rockGroup = new THREE.Group();
       scene.add(rockGroup);
 
-      const placeOnGround = (object: Three.Object3D, size: number) => {
-        const angle = rand() * Math.PI * 2;
-        const dist = 3 + Math.pow(rand(), 0.75) * 40;
-        const x = Math.cos(angle) * dist;
-        const z = Math.sin(angle) * dist;
-        object.rotation.set(rand() * 0.5, rand() * Math.PI * 2, rand() * 0.4);
-        // Sink a little into the regolith so the base is not a visible ring.
-        object.position.set(x, terrainHeight(x, z) - size * 0.12, z);
-      };
-
-      // Rust tint: the scans are Earth-grey, Mars dust is not.
-      const rockTint = new THREE.Color(0xd39a76);
-
-      for (const def of ROCKS) {
+      const rockTint = new THREE.Color(config.rockTint);
+      for (const def of ROCK_LAYOUT) {
         gltfLoader.load(
-          def.path,
+          `${BASE}assets/${body}/${def.path}`,
           (gltf) => {
             if (disposed) return;
             const source = gltf.scene;
@@ -263,7 +342,13 @@ export function MarsScene({ className }: { className?: string }) {
                 material.color = rockTint.clone().multiplyScalar(0.75 + rand() * 0.35);
                 mesh.material = material;
               });
-              placeOnGround(clone, size);
+              const angle = rand() * Math.PI * 2;
+              const dist = 3 + Math.pow(rand(), 0.75) * 40;
+              const x = Math.cos(angle) * dist;
+              const z = Math.sin(angle) * dist;
+              clone.rotation.set(rand() * 0.5, rand() * Math.PI * 2, rand() * 0.4);
+              // Sink a little into the regolith so the base is not a visible ring.
+              clone.position.set(x, terrainHeight(x, z) - size * 0.12, z);
               rockGroup.add(clone);
             }
           },
@@ -274,10 +359,10 @@ export function MarsScene({ className }: { className?: string }) {
         );
       }
 
-      // Grit between the scans: cheap instances so the ground never looks swept.
+      // Grit between the scans so the ground never looks swept.
       const gritMesh = new THREE.InstancedMesh(
         new THREE.DodecahedronGeometry(1, 0),
-        new THREE.MeshStandardMaterial({ color: 0x8a5232, roughness: 0.95, flatShading: true }),
+        new THREE.MeshStandardMaterial({ color: config.rockTint, roughness: 0.95, flatShading: true }),
         320,
       );
       gritMesh.castShadow = true;
@@ -303,21 +388,24 @@ export function MarsScene({ className }: { className?: string }) {
       gritMesh.instanceMatrix.needsUpdate = true;
       scene.add(gritMesh);
 
-      // ---- airborne dust ---------------------------------------------------
-      const dustCount = 360;
-      const dustGeo = new THREE.BufferGeometry();
-      const dustPos = new Float32Array(dustCount * 3);
-      for (let i = 0; i < dustCount; i++) {
-        dustPos[i * 3] = (rand() - 0.5) * 55;
-        dustPos[i * 3 + 1] = rand() * 8 + 0.3;
-        dustPos[i * 3 + 2] = (rand() - 0.5) * 55;
+      // ---- airborne dust (atmosphere only) ---------------------------------
+      let dust: Three.Points | null = null;
+      if (config.dust) {
+        const dustCount = 360;
+        const dustGeo = new THREE.BufferGeometry();
+        const dustPos = new Float32Array(dustCount * 3);
+        for (let i = 0; i < dustCount; i++) {
+          dustPos[i * 3] = (rand() - 0.5) * 55;
+          dustPos[i * 3 + 1] = rand() * 8 + 0.3;
+          dustPos[i * 3 + 2] = (rand() - 0.5) * 55;
+        }
+        dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPos, 3));
+        dust = new THREE.Points(
+          dustGeo,
+          new THREE.PointsMaterial({ color: 0xf0d3b0, size: 0.045, transparent: true, opacity: 0.5, depthWrite: false }),
+        );
+        scene.add(dust);
       }
-      dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPos, 3));
-      const dust = new THREE.Points(
-        dustGeo,
-        new THREE.PointsMaterial({ color: 0xf0d3b0, size: 0.045, transparent: true, opacity: 0.5, depthWrite: false }),
-      );
-      scene.add(dust);
 
       // ---- sizing ----------------------------------------------------------
       let lastW = 0;
@@ -346,7 +434,7 @@ export function MarsScene({ className }: { className?: string }) {
 
       const render = () => {
         const t = clock.getElapsedTime();
-        // Belt and braces: layout can change without the observer firing (fullscreen).
+        // Layout can change without the observer firing (fullscreen).
         resize();
         if (!reduced) {
           // Someone standing in a suit: slow sway, never perfectly still.
@@ -355,7 +443,8 @@ export function MarsScene({ className }: { className?: string }) {
           camera.rotation.y = Math.sin(t * 0.09) * 0.14;
           camera.rotation.x = Math.sin(t * 0.21) * 0.01 - 0.02;
           camera.rotation.z = Math.sin(t * 0.17) * 0.005;
-          dust.rotation.y = t * 0.004;
+          if (dust) dust.rotation.y = t * 0.004;
+          if (starField) starField.rotation.y = t * 0.002;
         }
         if (running) renderer.render(scene, camera);
         frame = requestAnimationFrame(render);
@@ -373,20 +462,22 @@ export function MarsScene({ className }: { className?: string }) {
           if (Array.isArray(material)) material.forEach((m) => m.dispose());
           else material?.dispose();
         });
-        for (const tex of [diff, normal, arm]) tex.dispose();
+        diff.dispose();
+        normal.dispose();
+        arm?.dispose();
         panoMat.map?.dispose();
         renderer.dispose();
         canvas.remove();
       };
     })().catch(() => {
-      // No WebGL: the amber gradients behind the canvas still read as a helmet.
+      // No WebGL: the gradients behind the canvas still read as a helmet.
     });
 
     return () => {
       disposed = true;
       teardown?.();
     };
-  }, []);
+  }, [body]);
 
   return (
     <div
