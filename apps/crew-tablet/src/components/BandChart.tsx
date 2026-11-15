@@ -3,6 +3,7 @@ import { earthRangeText, type EarthRuleView } from "../lib/earth";
 import { fmt } from "../lib/format";
 import type { IndicatorMeta } from "../lib/meta";
 import type { Reading } from "../lib/types";
+import { AnimatedPolyline } from "./AnimatedPolyline";
 
 const W = 560;
 const H = 210;
@@ -213,7 +214,7 @@ export function BandChart({
           />
         ) : null}
 
-        <polyline key={`${selectedDay}-${valueLine}`} points={valueLine} pathLength={1} className="value-line chart-stroke" />
+        <AnimatedPolyline points={valueLine} className="value-line chart-continuous" />
 
         <line
           x1={selectedX}

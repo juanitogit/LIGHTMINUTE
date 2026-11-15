@@ -5,6 +5,7 @@ import "../../../packages/ui-kit/tokens.css";
 import "./styles.css";
 import "./apple.css";
 import "./workspace-design.css";
+import "./organ-panel.css";
 import { App } from "./App";
 
 if (import.meta.env.PROD && "serviceWorker" in navigator) {

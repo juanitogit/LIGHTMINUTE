@@ -69,11 +69,9 @@ body { background: var(--bg-deep); font-family: var(--font-sans); font-size: 14p
 }
 @media (prefers-reduced-motion: no-preference) {
   @keyframes workspace-enter { from { opacity: .75; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes chart-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
   @keyframes chart-bar-in { from { transform: scaleX(.02); opacity: .4; } to { transform: scaleX(1); opacity: 1; } }
   @keyframes metric-arrive { from { opacity: .45; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
   .view { animation: workspace-enter 300ms var(--workspace-ease); }
-  .chart-stroke { stroke-dasharray: 1; animation: chart-draw 650ms var(--workspace-ease) both; }
   .benchmark-track > span { transform-origin: left center; animation: chart-bar-in 550ms var(--workspace-ease) both; }
   .metric-change { display: inline-block; font-variant-numeric: tabular-nums; animation: metric-arrive 260ms var(--workspace-ease); }
   .today-dot, .today-halo, .syndrome-dot { transition: cx 300ms var(--workspace-ease), cy 300ms var(--workspace-ease), fill 180ms var(--workspace-ease); }

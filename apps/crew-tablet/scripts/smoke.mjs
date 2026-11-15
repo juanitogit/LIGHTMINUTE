@@ -133,13 +133,19 @@ try {
   await motionPage.waitForFunction(() => window.__startupPointerEvents !== undefined);
   assert.equal(await motionPage.evaluate(()=>window.__startupPointerEvents),"none");
   await expect(motionPage.locator(".startup-motion")).toHaveCount(0,{timeout:8000});
-  await motionPage.locator(".signal-spark .chart-stroke").first().waitFor();
-  assert.equal(await motionPage.locator(".signal-spark .chart-stroke").first().evaluate(el=>getComputedStyle(el).animationName),"chart-draw");
-  const oldPoints=await motionPage.locator(".signal-spark .chart-stroke").first().getAttribute("points");
+  const motionLine = motionPage.locator(".signal-spark .chart-continuous").first();
+  await motionLine.waitFor();
+  assert.equal(await motionLine.evaluate(el=>getComputedStyle(el).animationName),"none");
+  await motionLine.evaluate(el=>el.setAttribute("data-persistent-line","yes"));
+  const oldPoints=await motionLine.getAttribute("points");
   await motionPage.locator(".crew-row").nth(1).click();
-  await expect(motionPage.locator(".signal-spark .chart-stroke").first()).not.toHaveAttribute("points",oldPoints);
+  await expect(motionLine).not.toHaveAttribute("points",oldPoints);
+  await expect(motionLine).toHaveAttribute("data-persistent-line","yes");
+  await motionPage.locator(".crew-row").first().click();
+  await expect(motionLine).toHaveAttribute("points",oldPoints);
+  await expect(motionLine).toHaveAttribute("data-persistent-line","yes");
   await motionContext.close();
-  record("Startup motion clears without blocking input and chart redraws for a new crew member");
+  record("Startup clears without blocking input and chart transitions preserve the line across rapid changes");
   const voiceContext = await browser.newContext();
   await voiceContext.addInitScript(() => {
     window.SpeechRecognition = class {
@@ -196,7 +202,7 @@ try {
   record("Audit signature verification detects tampering and checks an independently supplied key fingerprint");
   await goto(); await page.locator(".signal-row").first().waitFor();
   assert.equal(await page.locator(".startup-motion").count(),0, "Reduced motion must skip startup video");
-  assert.equal(await page.locator(".signal-spark .chart-stroke").first().evaluate(el=>getComputedStyle(el).animationName),"none");
+  assert.equal(await page.locator(".signal-spark .chart-continuous").first().evaluate(el=>getComputedStyle(el).animationName),"none");
   assert.equal(await page.getByText("MISSION LM-01").count(),0);
   assert.equal(await page.title(), "LIGHTMINUTE — crew tablet");
   assert.equal(await page.locator(".signal-row").count(), 6);
