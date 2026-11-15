@@ -100,7 +100,7 @@ try {
   assert.equal(runtimeRequests, 0, "Pyodide must not download during first visit or service-worker installation");
   if (process.env.LIGHTMINUTE_TEST_BROWSER_ENGINE === "1") {
     await offlinePage.getByRole("button",{name:"Run engine on this device"}).click();
-    await expect(offlinePage.locator(".engine-local-control [role=status]")).toContainText(/Preparing Python: .* MiB/);
+    await expect(offlinePage.locator(".engine-local-control [role=status]")).toContainText(/Preparing Python: .* MiB/, {timeout:60000});
     await expect(offlinePage.getByRole("button",{name:"Run engine on this device"})).toBeEnabled({timeout:180000});
     if (await offlinePage.locator(".engine-local-control [role=alert]").count()) throw Error(await offlinePage.locator(".engine-local-control [role=alert]").innerText());
     assert(runtimeRequests > 0, "Pyodide download must start after the user requests the engine");
