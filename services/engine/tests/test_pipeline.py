@@ -13,7 +13,7 @@ PATTERNS = {"hidden_in_range", "expected_for_you", "space_adapted_normal",
 CARD_KEYS = {"level", "headline", "what_changed", "why_it_matters", "confidence",
              "do_now", "monitor", "escalate_if", "ground_message", "citations"}
 IND_KEYS = {"value", "baseline", "ci95", "z", "p", "n_seen", "unit",
-            "hrp_risk", "hazard", "lens"}
+            "hrp_risk", "hazard", "lens", "change_pending", "unresolved_change", "pending_z", "pending_p"}
 
 
 def _hash(payload) -> str:
@@ -56,6 +56,34 @@ def test_learning_state_is_visible_at_the_start():
     first = d["days"][0]["crew"]["A"]
     assert first["learning"] is True and first["level"] == "info"
     assert d["days"][-1]["crew"]["A"]["learning"] is False
+
+
+def test_pipeline_updates_use_mission_day_timestamps():
+    from unittest.mock import patch
+
+    from tether_engine.bayes import BaselineModel
+    original = BaselineModel.robust_update
+    observed = []
+
+    def capture(model, value, *args, **kwargs):
+        observed.append(kwargs.get("observed_at"))
+        return original(model, value, *args, **kwargs)
+
+    with patch.object(BaselineModel, "robust_update", capture):
+        result = run_scenario("cmo_fever", seed=0, days=10)
+    assert observed and all(isinstance(t, (int, float)) for t in observed)
+    assert all(t % 86400 == 0 for t in observed)
+    readings = [r for d in result["days"] for c in d["crew"].values() for r in c["indicators"].values()]
+    assert readings and all("change_pending" in r and "unresolved_change" in r for r in readings)
+
+
+def test_pending_shift_does_not_silently_reduce_decision_surprise():
+    from tether_engine.pipeline import _decision_surprise
+    sample = {"z": 0.2, "p_two_sided": 0.8, "n_seen": 14, "change_pending": True,
+              "pending_z": 4.0, "pending_p_two_sided": 0.0001}
+    chosen = _decision_surprise(sample)
+    assert chosen["z"] == 4.0 and chosen["p_two_sided"] == 0.0001
+    assert sample["z"] == 0.2
 
 
 def test_strong_variants_reach_act_within_five_days_of_onset():

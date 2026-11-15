@@ -40,6 +40,14 @@ class AdapterContract(unittest.TestCase):
         return analyze(path, subject="person", time="time", indicators=["hr", "sleep"],
                        signs=signs, label="synthetic")
 
+    def test_timestamped_guard_exposes_pending_change(self):
+        rows = [["A", f"2026-01-01T00:{i:02d}:00Z", 70 if i < 7 else 90, 8] for i in range(12)]
+        report = analyze(self.fixture(rows), subject="person", time="time", indicators=["hr"],
+                         label="synthetic", timestamped_guard=True)
+        scored = [row for row in report["readings"] if row["status"] == "scored"]
+        self.assertTrue(any(row["change_pending"] for row in scored))
+        self.assertTrue(any(row["pending_p_two_sided"] is not None for row in scored))
+
     def test_golden_predictions_match_direct_engine_calls(self):
         rows = self.series()
         result = self.run_adapter(rows, {"hr": 1, "sleep": -1})

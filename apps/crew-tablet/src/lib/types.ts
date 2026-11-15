@@ -20,6 +20,10 @@ export interface Reading {
   z?: number;
   p?: number;
   n_seen?: number;
+  change_pending?: boolean;
+  unresolved_change?: boolean;
+  pending_z?: number | null;
+  pending_p?: number | null;
   unit: string;
   hrp_risk: string;
   hazard: string;

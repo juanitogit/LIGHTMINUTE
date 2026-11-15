@@ -39,7 +39,7 @@ export function EarthLink({scenario,crewId,dayNumber}:{scenario:LoadedScenario;c
     const target=session?.role==="crew"?session.crew:crew;
     const member=scenario.doc.days.find(d=>d.day===dayNumber)?.crew[target];
     const readings=member?.indicators??{};
-    const select=(keys:string[])=>Object.fromEntries(keys.filter(key=>readings[key]).map(key=>[key,{value:readings[key]!.value,unit:readings[key]!.unit}]));
+    const select=(keys:string[])=>Object.fromEntries(keys.filter(key=>readings[key]).map(key=>[key,readings[key]!.value]));
     const report={vitals:select(["rest_hr","temp_c"]),symptoms:select(["headache_score"]),behavioral:select(["sleep_h","pvt_ms"])};
     await request("messages","POST",{crew:target,text,profile,day:dayNumber,report,consent:{vitals,symptoms,behavioral}});
     setText("");setNotice("Saved to the local mission queue. Delivery follows the selected one-way delay.");await refresh();

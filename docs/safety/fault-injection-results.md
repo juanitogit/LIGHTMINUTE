@@ -1,6 +1,6 @@
 # Real-interface fault injection
 
-Run UTC: 2026-11-15T03:39:57.708512+00:00. Revision: `6db4f80f5ab7580ae9d7df3b18a60d289a2b996e`.
+Run UTC: 2026-11-15T03:59:57.389620+00:00. Revision: `575889f947ac8fcbc2e09f4beee0c9b422f9fc75`.
 Command: `.venv/Scripts/python.exe tests/fault_injection/run.py`. Raw evidence: [JSON](fault-injection-results.json).
 Result: **27/27 assertions passed**. Every injected fault produced the expected safe behavior; this is bounded synthetic evidence, not certification.
 

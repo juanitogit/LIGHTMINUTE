@@ -136,6 +136,11 @@ export function Why({
           ) : null}
         </div>
       </header>
+      {reading?.change_pending || reading?.unresolved_change ? (
+        <p className="callout callout--warn" role="status">
+          {reading.unresolved_change ? "Sustained change unresolved." : "A change from the prior baseline is being monitored."} The adaptive band can move while a change is pending; it does not establish that the reading is typical. Review the current action steps and onboard procedure.
+        </p>
+      ) : null}
 
       {pdfNotice ? (
         <div

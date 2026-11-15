@@ -1,5 +1,18 @@
 # LIGHTMINUTE · checklist de revisión y evidencia
 
+**Cobertura con marcas de tiempo:** un modo explícito de guardia por tiempo
+alcanzó 21.879/23.488 (93,15 %) en la repetición exploratoria de MMASH; sin
+embargo, los datos ya eran conocidos. El pipeline sintético diario ahora pasa el
+tiempo de misión, conserva la evidencia de referencia y muestra cambios pendientes.
+La CLI de investigación lo ofrece mediante `--timestamped-guard`. Los riesgos están en
+[`ml/proxy/CADENCE-CHECK.md`](../ml/proxy/CADENCE-CHECK.md). Los resultados v2
+de 66,37 % corresponden a la ruta anterior sin marcas temporales.
+
+**Chequeo nuevo:** se corrigió el cómputo de desviaciones en sentidos opuestos;
+el resultado exploratorio de MMASH siguió en 66,37 %. La cobertura continúa
+fallando y la frecuencia de observación sigue sin modelarse. Detalle y límites:
+[`ml/proxy/DIRECTION-CHECK.md`](../ml/proxy/DIRECTION-CHECK.md).
+
 **Auditoría adicional:** los preregistros v2 de MMASH y autonomía se incorporaron en el mismo
 commit que sus resultados; no hay evidencia Git de un commit anterior a la ejecución. Las cifras
 v2 se deben presentar como análisis confirmatorios no ciegos, con esa limitación explícita.

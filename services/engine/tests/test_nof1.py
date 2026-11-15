@@ -1,3 +1,4 @@
+import math
 import random
 
 from tether_engine.bayes import CUSUM, BaselineModel
@@ -88,6 +89,74 @@ def test_healthy_noise_does_not_set_unresolved_change():
         m.robust_update(rnd.gauss(58.0, 2.0))
     assert m.unresolved_change is False
     assert m.held_n == 0
+
+
+def test_alternating_departures_do_not_count_as_sustained_shift():
+    """Opposite-direction excursions are not a persistent change in level."""
+    model = BaselineModel(prior_mean=70.0, prior_sd=5.0)
+    for _ in range(20):
+        model.update(70.0)
+    for value in (90.0, 50.0, 90.0):
+        model.robust_update(value)
+    assert model.unresolved_change is False
+
+
+def test_sustained_downward_shift_remains_unresolved():
+    model = BaselineModel(prior_mean=70.0, prior_sd=5.0)
+    for _ in range(20):
+        model.update(70.0)
+    for _ in range(60):
+        model.robust_update(60.0)
+    assert model.unresolved_change is True
+    assert model.surprise(60.0)["p_two_sided"] < 0.05
+
+
+def test_timestamped_persistent_shift_keeps_anchor_and_requires_elapsed_time():
+    model = BaselineModel(70, 5)
+    for _ in range(20):
+        model.update(70)
+    for minute in range(24 * 60):
+        model.robust_update(80, observed_at=float(minute * 60))
+    assert not model.unresolved_change
+    assert model.surprise(80)["change_pending"]
+    assert model.surprise(80)["pending_p_two_sided"] < .05
+    for minute in range(24 * 60, 2 * 24 * 60 + 1):
+        model.robust_update(80, observed_at=float(minute * 60))
+    assert model.unresolved_change
+    assert model.surprise(80)["p_two_sided"] < .05
+
+
+def test_timestamp_rejects_invalid_and_unordered_without_mutating_model():
+    model = BaselineModel(70, 5)
+    model.robust_update(70, observed_at=100.0)
+    before = model.predictive(), model.n_seen
+    for time in (100.0, 99.0, math.nan, math.inf):
+        try:
+            model.robust_update(70, observed_at=time)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("Invalid or unordered timestamp accepted")
+        assert (model.predictive(), model.n_seen) == before
+
+
+def test_timestamped_change_with_long_gap_is_not_assumed_continuous():
+    model = BaselineModel(70, 5)
+    for _ in range(20):
+        model.update(70)
+    model.robust_update(80, observed_at=0.0)
+    model.robust_update(80, observed_at=3 * 86400.0)
+    assert not model.unresolved_change
+
+
+def test_timestamped_candidate_clears_when_values_return_to_reference():
+    model = BaselineModel(70, 5)
+    for _ in range(20):
+        model.update(70)
+    model.robust_update(80, observed_at=0.0)
+    assert model.surprise(80)["change_pending"] is True
+    model.robust_update(70, observed_at=60.0)
+    assert model.surprise(70)["change_pending"] is False
 
 
 def test_rebaseline_clears_state_and_healthy_readings_update_again():

@@ -31,6 +31,13 @@ SHA-256, engine commit/file hashes and quality flags. `readings.csv` is long-for
 (subject × time × indicator); `syndromes.csv` contains optional combined scores.
 See [WALKTHROUGH.md](WALKTHROUGH.md) for interpretation without a notebook.
 
+For exploratory high-frequency observations, opt into `--timestamped-guard`.
+The output includes `change_pending`, `pending_z`, `pending_p_two_sided` and
+`unresolved_change`; a pending shift must not be interpreted as normal merely
+because the adaptive baseline catches up. The elapsed-time policy and its
+limitations are documented in `ml/proxy/CADENCE-CHECK.md`. This mode is not
+clinically validated, and gaps over one day reset the candidate.
+
 ## Input contract
 
 - UTF-8 CSV, one row per subject/time, with distinct subject/time/indicator columns.
