@@ -164,6 +164,7 @@ try {
   assert.equal(await page.title(), "LIGHTMINUTE — crew tablet");
   assert.equal(await page.locator(".signal-row").count(), 6);
   assert.equal(await page.locator(".crew-row").count(), 4);
+  assert.equal(await page.getByRole("button", {name: /sign in with google/i}).count(), 0);
   assert.match(await page.locator(".statusbar").innerText(), /offline/);
   record("Static fallback, six indicators, four crew and LIGHTMINUTE branding");
   if (process.env.LIGHTMINUTE_TEST_BROWSER_ENGINE === "1") {

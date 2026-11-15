@@ -1,5 +1,8 @@
 # Google sign-in: localhost and Cloudflare Pages
 
+> Historical record only: Google sign-in was removed on 2026-11-15. These
+> instructions no longer describe the application or its deployment.
+
 Google OAuth runs on the server. The browser never receives the client secret,
 Google access token or refresh token. Scopes are limited to `openid email profile`.
 

@@ -14,7 +14,6 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "services/engine"))
 os.environ["LLM_PROVIDER"] = "none"
-os.environ["DATABASE_URL"] = ""
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from tether_engine import pipeline

@@ -12,11 +12,9 @@
     "test:e2e": "node scripts/smoke.mjs",
     "test:e2e:browser": "node tests/e2e.mjs",
     "test:physiology": "tsx src/physiology/__tests__/physiology.test.ts",
-    "test:auth": "tsx --test server/google.test.ts",
     "cf:deploy": "npm run build && wrangler pages deploy dist --project-name lightminute --branch main"
   },
   "dependencies": {
-    "jose": "^6.2.17",
     "pyodide": "314.0.8",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

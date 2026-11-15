@@ -1,12 +1,15 @@
 ---
 tags: [architecture, auth, google, cloudflare]
-status: decided
-updated: 2026-11-14
+status: superseded
+updated: 2026-11-15
 sources:
   - https://developers.google.com/identity/protocols/oauth2/web-server
   - https://developers.cloudflare.com/pages/functions/routing/
 ---
 # ADR-008 Google OAuth en Pages y localhost
+
+**Reemplazado:** el propietario retiró Google OAuth y Neon el 15-nov-2026.
+Véase [[ADR-009 Retiro de Google y Neon]]. El texto inferior es histórico.
 
 El propietario solicitó vincular Google en localhost:5173 y lightminute.pages.dev.
 La identidad Google usa un único manejador de servidor, ejecutado por Vite en

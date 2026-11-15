@@ -7,7 +7,9 @@ when this API is unreachable - every response here is reproducible from it.
 """
 from __future__ import annotations
 
-import psycopg
+from pathlib import Path
+
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -27,8 +29,10 @@ from ..llm.case_data import (
 )
 from ..llm.deepseek_client import MODEL
 from ..llm.stats import snapshot
-from .database import DatabaseNotConfigured, check_connection
 from .mission_link import router as mission_link_router
+
+# Keep existing local DeepSeek configuration behavior independently of storage.
+load_dotenv(Path(__file__).resolve().parents[4] / ".env", override=False)
 
 VERSION = "0.1.0"
 
@@ -87,20 +91,6 @@ def health() -> dict:
 @app.get("/api/scenarios")
 def scenarios() -> dict:
     return {"synthetic": True, "scenarios": list_scenarios()}
-
-
-@app.get("/api/database/health", tags=["Database"])
-def database_health() -> dict:
-    """Readiness only: never return connection parameters or raw driver errors."""
-    try:
-        connected = check_connection()
-    except DatabaseNotConfigured:
-        raise HTTPException(status_code=503, detail="Database is not configured") from None
-    except psycopg.Error:
-        raise HTTPException(status_code=503, detail="Database connection unavailable") from None
-    if not connected:
-        raise HTTPException(status_code=503, detail="Database connection unavailable")
-    return {"status": "ok", "provider": "neon", "connected": True}
 
 
 @app.get("/api/scenario/{name}")

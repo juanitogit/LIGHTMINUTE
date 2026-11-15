@@ -4,7 +4,6 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import { googleAuthPlugin } from "./server/vite-auth";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -173,7 +172,7 @@ const apiProxy = {
 
 export default defineConfig({
   base: "./",
-  plugins: [react(), protocolRunnerPlugin(), googleAuthPlugin(resolve(here, "../..")), offlineBundle()],
+  plugins: [react(), protocolRunnerPlugin(), offlineBundle()],
   resolve: {
     alias: {
       "@ui-kit": uiKitPath,

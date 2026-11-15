@@ -8,6 +8,10 @@ from tether_engine.api.main import app
 CLIENT = TestClient(app)
 
 
+def test_removed_neon_readiness_endpoint_is_not_exposed():
+    assert CLIENT.get("/api/database/health").status_code == 404
+
+
 @contextmanager
 def env(**values):
     old = {k: os.environ.get(k) for k in values}

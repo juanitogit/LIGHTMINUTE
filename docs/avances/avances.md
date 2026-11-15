@@ -41,7 +41,6 @@ La interfaz principal es una tablet React con tres vistas — **Glance → Why �
 | Cliente LLM | OpenAI SDK (compatible) | 3.51.0 | Llamadas a DeepSeek con formato JSON |
 | LLM | DeepSeek V4.1 Flash (`deepseek-flash`) | Opcional | Redacta la explicación de la Decision Card; nunca decide |
 | Base de datos de misión | SQLite | Integrado | Sesiones, mensajes y ejecuciones de protocolo del enlace de misión |
-| Base de datos de despliegue | PostgreSQL / Neon + psycopg | 3.3.9 | Readiness y conexión de producción para el backend |
 | Frontend | React | 19.1.1 | Interfaz de la tablet por componentes y estado |
 | Tipado frontend | TypeScript (strict) | 5.9.2 | Contratos tipados entre datos y UI |
 | Bundler | Vite | 7.x | Build, dev server, proxy `/api`, módulos virtuales |
@@ -53,8 +52,7 @@ La interfaz principal es una tablet React con tres vistas — **Glance → Why �
 | Estilos | CSS con design tokens | — | Tema claro/oscuro, modo rojo nocturno, accesibilidad |
 | Datos | JSON, JSON Schema, YAML | — | Escenarios, contratos, KB citada y snapshots |
 | Automatización | Make, Bash, GitHub Actions | — | Setup, test, lint, validación y CI |
-| Despliegue frontend | Cloudflare Pages + Pages Functions + Wrangler | 4.162.0 | Hosting estático y rutas OAuth del servidor |
-| Autenticación | Google OAuth 2.0 + JWT (`jose`) | — | Inicio de sesión opcional; no asigna roles médicos |
+| Despliegue frontend | Cloudflare Pages + Wrangler | 4.162.0 | Hosting estático |
 | Control de versiones | Git + GitHub | — | Ramas por agente, merges, CI |
 
 ### 2.2 Dependencias declaradas y su papel
@@ -62,7 +60,7 @@ La interfaz principal es una tablet React con tres vistas — **Glance → Why �
 - **`numpy`, `scipy`**: núcleo matemático del motor. No se usa un framework de deep learning: con cuatro astronautas se prioriza explicabilidad sobre parámetros.
 - **`fastapi`, `uvicorn`, `pydantic`**: API de cinco endpoints y contratos tipados.
 - **`openai`**: cliente HTTP compatible con DeepSeek; permite cambiar de proveedor sin reescribir la capa de tarjetas.
-- **`psycopg`, `python-dotenv`**: conexión server-only a Neon/Postgres y carga de variables de entorno.
+- **`python-dotenv`**: carga la configuración local del backend desde `.env` sin sobrescribir variables del entorno.
 - **`duckdb`**: declarada en `pyproject.toml`; el código actual no la usa de forma activa. Se mantiene como dependencia del entorno de análisis.
 - **`httpx`**: cliente HTTP para pruebas y llamadas internas.
 - **`pytest`, `ruff`, `mypy`**: pruebas, lint y tipado del lado Python.
@@ -153,7 +151,6 @@ flowchart TB
     ENG["tether_engine\nbayes · qc · lenses · crew\nground · hazards · protocols"]
     LLM["Capa LLM\ncard_service · verifier\ndeepseek_client · kb · stats"]
     DB[("SQLite misión\nsesiones · mensajes · runs")]
-    PG[("PostgreSQL / Neon\nreadiness de producción")]
   end
 
   subgraph Datos["Datos y conocimiento"]
@@ -165,8 +162,7 @@ flowchart TB
 
   subgraph Externo["Servicios externos — opcionales"]
     DS["DeepSeek API\nOpenAI-compatible"]
-    GOOG["Google OAuth"]
-    CF["Cloudflare Pages\nFunctions + secrets"]
+    CF["Cloudflare Pages"]
   end
 
   TAB -->|"HTTP /api, timeout 2.5 s"| API
@@ -177,12 +173,10 @@ flowchart TB
   API --> LLM
   LLM -->|"solo si hay clave"| DS
   API --> DB
-  API --> PG
   LLM --> KBD
   ENG --> SYN
   ENG --> SNAP
   LLM --> PUB
-  TAB -->|"OAuth"| GOOG
   TAB --> CF
 ```
 
@@ -216,9 +210,7 @@ flowchart LR
 
   subgraph Prod["Producción hackathon"]
     PAGES["Cloudflare Pages\nlightminute.pages.dev\ndist/ estático"]
-    FUNC["Pages Functions\n/api/auth/google/*"]
     HOST["Host del motor\nFastAPI + variables de entorno"]
-    NEON[("Neon PostgreSQL\nopcional")]
   end
 
   subgraph Offline["Modo offline / demo"]
@@ -228,9 +220,7 @@ flowchart LR
 
   DEV --> UV
   UV --> VENV
-  PAGES --> FUNC
   PAGES -->|"si hay API"| HOST
-  HOST --> NEON
   PAGES -->|"fallback"| FILE
   STATIC --> FILE
 ```
@@ -442,9 +432,9 @@ La respuesta de `/api/card` incluye la tarjeta, su origen (`llm` o `template`), 
 
 ### 8.6 Despliegue
 
-- **Tablet**: Cloudflare Pages, build `npm ci && npm run build`, salida `dist/`. Las rutas OAuth viven en Pages Functions.
-- **Motor**: host pequeño o local con Uvicorn; variables de entorno para clave, proveedor, perfil de misión y base de datos.
-- **Base de datos**: Neon/PostgreSQL opcional para readiness; SQLite para el enlace de misión local.
+- **Tablet**: Cloudflare Pages, build `npm ci && npm run build`, salida `dist/`.
+- **Motor**: host pequeño o local con Uvicorn; variables de entorno para clave, proveedor y perfil de misión.
+- **Base de datos**: SQLite para el enlace de misión local.
 - **Consola de tierra**: archivos estáticos; no requiere build ni red.
 - **Modo demo**: JSON precalculado; ningún número se recalcula en el navegador.
 

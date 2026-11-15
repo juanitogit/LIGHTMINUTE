@@ -996,14 +996,7 @@ input[type="range"]::-webkit-slider-thumb { margin-top:-5px; width:12px; height:
 .anatomy-tools label { display:flex; flex-direction:column; gap:6px; font-size:11px; color:var(--muted); }
 .anatomy-tools select { min-height:44px; background:none; color:var(--ink); border:0; border-bottom:1px solid var(--line); border-radius:0; max-width:210px; }
 .sidebar { overflow-y:auto; }
-.google-account { position:relative; font-size:12px; min-width:0; }
-.google-account summary { cursor:pointer; max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:10px 4px; }
-.google-account__menu,.google-account__notice { position:absolute; right:0; top:100%; z-index:50; width:min(300px,calc(100vw - 24px)); padding:18px; background:var(--bg); color:var(--ink); border:1px solid var(--line); box-shadow:0 8px 25px #0002; overflow-wrap:anywhere; }
-.google-account__menu { display:grid; gap:10px; }
-.google-account__menu p { margin:0; }
-.google-account__notice { display:flex; align-items:center; gap:10px; }
-.google-account__notice button { background:none; color:inherit; border:0; font-size:20px; min-width:36px; min-height:36px; cursor:pointer; }
-@media(max-width:600px) { .topbar__tools { flex-wrap:wrap; justify-content:flex-end; } .google-account .btn { max-width:140px; white-space:normal; } }
+@media(max-width:600px) { .topbar__tools { flex-wrap:wrap; justify-content:flex-end; } }
 .mobile-more { display:none; }
 .workspace-form { display:grid; gap:18px; max-width:720px; }
 .workspace-form label { display:flex; flex-direction:column; gap:8px; }

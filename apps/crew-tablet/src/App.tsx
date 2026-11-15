@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { CrewSelector } from "./components/CrewSelector";
 import { Brand } from "./components/Brand";
-import { GoogleAccount } from "./components/GoogleAccount";
 import { Icon, type IconName } from "./components/Icon";
 import { Chip, DataNotice, EmptyState, Panel } from "./components/primitives";
 import { ScenarioBar } from "./components/ScenarioBar";
@@ -240,7 +239,6 @@ export function App() {
           <div className="topbar__breadcrumb"><span className="mobile-brand">LIGHTMINUTE</span><span>Crew health</span><span aria-hidden="true">/</span><b>{VIEW_LABELS.find((v) => v.id === state.view)?.label}</b></div>
 
           <div className="topbar__tools">
-            <GoogleAccount />
             <span className={`engine-badge ${health ? "is-online" : ""}`}><span className="status__dot" />{health ? "Engine connected" : health === undefined ? "Connecting…" : "Local simulation"}</span>
             <button
               type="button"
