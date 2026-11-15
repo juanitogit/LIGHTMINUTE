@@ -1,23 +1,225 @@
 [
- {"indicator":"rest_hr","unit":"bpm","hrp_risk":"cardiovascular","hazard":"altered_gravity",
-  "earth":{"low":60,"high":100,"status":"earth-standard","source":"standard adult resting range"},
-  "space":null},
- {"indicator":"temp_c","unit":"C","hrp_risk":"immune","hazard":"altered_gravity",
-  "earth":{"low":36.1,"high":37.5,"status":"earth-standard","source":"standard adult oral range (approx.)"},
-  "space":null,
-  "note":"NASA HRP is studying microgravity/exercise core-temperature behaviour; fill space lens from a verified source."},
- {"indicator":"sleep_h","unit":"h","hrp_risk":"behavioral","hazard":"isolation",
-  "earth":{"low":7.0,"high":9.0,"status":"earth-standard","source":"adult sleep recommendation (approx.)"},
-  "space":null},
- {"indicator":"pvt_ms","unit":"ms","hrp_risk":"behavioral","hazard":"closed_environment",
-  "earth":null,"space":null,
-  "note":"No fixed range: judge only against the person's own baseline."},
- {"indicator":"co2_ppm","unit":"ppm","hrp_risk":"behavioral","hazard":"closed_environment",
-  "earth":{"low":null,"high":5000,"status":"demo-parameter","source":"demo-parameter: demo ceiling only; NASA-STD-3001 cabin CO2 limits are NOT verified here (see docs/#verify)."},
-  "space":null,
-  "note":"Cabin-level hazard: attribution should be shared, not personal. The personal lens compares against the crew's own recent readings."},
- {"indicator":"headache_score","unit":"0-10","hrp_risk":"behavioral","hazard":"closed_environment",
-  "earth":{"low":null,"high":3,"status":"demo-parameter","source":"demo-parameter: self-reported daily headache (0-10), demo ceiling only."},
-  "space":null,
-  "note":"Self-report and subjective: context for the crew-level verdict, never a diagnosis."}
+  {
+    "indicator": "rest_hr",
+    "unit": "bpm",
+    "hrp_risk": "cardiovascular",
+    "hazard": "altered_gravity",
+    "earth": {
+      "low": 60,
+      "high": 100,
+      "status": "earth-standard",
+      "source": "standard adult resting range"
+    },
+    "space": null
+  },
+  {
+    "indicator": "temp_c",
+    "unit": "C",
+    "hrp_risk": "immune",
+    "hazard": "altered_gravity",
+    "earth": {
+      "low": 36.1,
+      "high": 37.5,
+      "status": "earth-standard",
+      "source": "standard adult oral range (approx.)"
+    },
+    "space": null,
+    "note": "NASA HRP is studying microgravity/exercise core-temperature behaviour; fill space lens from a verified source."
+  },
+  {
+    "indicator": "sleep_h",
+    "unit": "h",
+    "hrp_risk": "behavioral",
+    "hazard": "isolation",
+    "earth": {
+      "low": 7.0,
+      "high": 9.0,
+      "status": "earth-standard",
+      "source": "adult sleep recommendation (approx.)"
+    },
+    "space": null
+  },
+  {
+    "indicator": "pvt_ms",
+    "unit": "ms",
+    "hrp_risk": "behavioral",
+    "hazard": "closed_environment",
+    "earth": null,
+    "space": null,
+    "note": "No fixed range: judge only against the person's own baseline."
+  },
+  {
+    "indicator": "co2_ppm",
+    "unit": "ppm",
+    "hrp_risk": "behavioral",
+    "hazard": "closed_environment",
+    "earth": {
+      "low": null,
+      "high": 5000,
+      "status": "demo-parameter",
+      "source": "demo-parameter: demo ceiling only; NASA-STD-3001 cabin CO2 limits are NOT verified here (see docs/#verify)."
+    },
+    "space": null,
+    "note": "Cabin-level hazard: attribution should be shared, not personal. The personal lens compares against the crew's own recent readings."
+  },
+  {
+    "indicator": "headache_score",
+    "unit": "0-10",
+    "hrp_risk": "behavioral",
+    "hazard": "closed_environment",
+    "earth": {
+      "low": null,
+      "high": 3,
+      "status": "demo-parameter",
+      "source": "demo-parameter: self-reported daily headache (0-10), demo ceiling only."
+    },
+    "space": null,
+    "note": "Self-report and subjective: context for the crew-level verdict, never a diagnosis."
+  },
+  {
+    "indicator": "vision_near_delta",
+    "unit": "diopters",
+    "hrp_risk": "vision",
+    "hazard": "altered_gravity",
+    "earth": null,
+    "space": {
+      "low": -0.5,
+      "high": 0.5,
+      "status": "demo-parameter",
+      "source": "demo-parameter: acceptable refractive variation delta before SANS concern"
+    },
+    "note": "Refractive shift delta relative to pre-flight baseline in SANS."
+  },
+  {
+    "indicator": "onsd_mm",
+    "unit": "mm",
+    "hrp_risk": "vision",
+    "hazard": "altered_gravity",
+    "earth": {
+      "low": 4.0,
+      "high": 5.0,
+      "status": "earth-standard",
+      "source": "standard ocular ultrasound ONSD reference band"
+    },
+    "space": {
+      "low": null,
+      "high": 5.8,
+      "status": "demo-parameter",
+      "source": "demo-parameter: ultrasound optic nerve sheath diameter ceiling for elevated ICP"
+    },
+    "note": "Optic nerve sheath diameter measured 3mm posterior to globe."
+  },
+  {
+    "indicator": "jugular_flow_vel",
+    "unit": "cm/s",
+    "hrp_risk": "cardiovascular",
+    "hazard": "altered_gravity",
+    "earth": {
+      "low": 15.0,
+      "high": 60.0,
+      "status": "earth-standard",
+      "source": "standard Doppler internal jugular vein flow velocity"
+    },
+    "space": {
+      "low": 2.0,
+      "high": null,
+      "status": "demo-parameter",
+      "source": "demo-parameter: venous stagnation cutoff for thrombosis risk"
+    },
+    "note": "Doppler venous flow velocity in internal jugular vein."
+  },
+  {
+    "indicator": "d_dimer_ng_ml",
+    "unit": "ng/mL",
+    "hrp_risk": "cardiovascular",
+    "hazard": "altered_gravity",
+    "earth": {
+      "low": null,
+      "high": 500.0,
+      "status": "earth-standard",
+      "source": "standard clinical D-dimer exclusion cutoff"
+    },
+    "space": null,
+    "note": "Biomarker of fibrin degradation and thrombus turnover."
+  },
+  {
+    "indicator": "nasal_ear_score",
+    "unit": "0-10",
+    "hrp_risk": "immune",
+    "hazard": "closed_environment",
+    "earth": {
+      "low": null,
+      "high": 2.0,
+      "status": "demo-parameter",
+      "source": "demo-parameter: self-reported nasal congestion and ear fullness score"
+    },
+    "space": null,
+    "note": "Self-reported score for Eustachian tube dysfunction and barotrauma risk."
+  },
+  {
+    "indicator": "motion_sickness_score",
+    "unit": "0-10",
+    "hrp_risk": "sensorimotor",
+    "hazard": "altered_gravity",
+    "earth": {
+      "low": null,
+      "high": 1.0,
+      "status": "demo-parameter",
+      "source": "demo-parameter: Graybiel diagnostic motion sickness severity score"
+    },
+    "space": {
+      "low": null,
+      "high": 4.0,
+      "status": "demo-parameter",
+      "source": "demo-parameter: expected acute space adaptation range for MD 1-3"
+    },
+    "note": "Neuro-vestibular conflict score during initial spaceflight adaptation."
+  },
+  {
+    "indicator": "ared_load_kg",
+    "unit": "kg",
+    "hrp_risk": "bone",
+    "hazard": "altered_gravity",
+    "earth": null,
+    "space": {
+      "low": 8000.0,
+      "high": null,
+      "status": "demo-parameter",
+      "source": "demo-parameter: target daily cumulative resistive load on ARED"
+    },
+    "note": "Cumulative daily mechanical load volume on ARED."
+  },
+  {
+    "indicator": "urinary_calcium",
+    "unit": "mmol/L",
+    "hrp_risk": "bone",
+    "hazard": "altered_gravity",
+    "earth": {
+      "low": 1.0,
+      "high": 7.5,
+      "status": "earth-standard",
+      "source": "24h urinary calcium normal range (reference proxy)"
+    },
+    "space": {
+      "low": null,
+      "high": 9.5,
+      "status": "demo-parameter",
+      "source": "demo-parameter: threshold for hypercalciuria and renal stone risk"
+    },
+    "note": "Biomarker of osteoclast-mediated skeletal resorption in microgravity."
+  },
+  {
+    "indicator": "voice_stress_idx",
+    "unit": "0-1",
+    "hrp_risk": "behavioral",
+    "hazard": "isolation",
+    "earth": {
+      "low": null,
+      "high": 0.45,
+      "status": "demo-parameter",
+      "source": "demo-parameter: vocal acoustic prosody tension/monotony index"
+    },
+    "space": null,
+    "note": "Acoustic biomarker of psychological fatigue and emotional strain."
+  }
 ]

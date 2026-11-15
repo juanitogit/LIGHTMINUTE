@@ -32,4 +32,25 @@
   claim: Latent herpesvirus reactivation during spaceflight is typically subclinical; four of the eight known human herpesviruses have been detected in crew during flight, and in NASA's review only six astronauts with reactivation developed symptoms, all minor.
   source: https://www.nasa.gov/humans-in-space/nasa-investigates-how-dormant-viruses-behave-during-spaceflight
   status: verified
+- id: HRP-SANS-EVIDENCE
+  claim: Cephalad fluid shifts in microgravity cause optic disc edema, globe flattening, choroidal folds, and hyperopic refractive shifts (SANS), measurable by ocular ultrasound and fundoscopy.
+  source: https://www.nasa.gov/hrp/risks
+  status: verified
+- id: NEJM-JUGULAR-THROMBOSIS
+  claim: Internal jugular venous stasis and thrombosis occurred during long-duration ISS spaceflight, managed with anticoagulation and Doppler ultrasound surveillance.
+  source: https://doi.org/10.1056/NEJMc1905875
+  status: verified
+- id: HRP-SENSORIMOTOR-SAS
+  claim: Neuro-vestibular sensory conflict between otolith organs, semicircular canals and vision causes acute Space Adaptation Syndrome (SAS) during initial days of microgravity.
+  source: https://www.nasa.gov/hrp/risks
+  status: verified
+- id: HRP-OSTEOCLAST-BONE-LOSS
+  claim: Absence of mechanical loading in microgravity shifts skeletal remodeling toward osteoclastic bone resorption, increasing urinary calcium excretion and renal stone risk.
+  source: https://www.nasa.gov/hrp/risks
+  status: verified
+- id: HRP-BEHAVIORAL-CONFINEMENT
+  claim: Isolation, confinement, and communication latency elevate risks of interpersonal friction, mood degradation, and neurobehavioral performance decline on deep space missions.
+  source: https://www.nasa.gov/hrp/risks
+  status: verified
 # TODO (verify before use): NASA-STD-3001 Vol.1/2 ranges, career radiation limit (600 mSv per AURORA repo; confirm in NASA-STD-3001), CO2 exposure limits, symptom escalation SOPs.
+

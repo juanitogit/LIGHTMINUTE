@@ -1,0 +1,41 @@
+{
+  "id": "space_adaptation_syndrome",
+  "title": "Space Adaptation Syndrome (SAS) & Vestibular Protocol",
+  "trigger_patterns": [
+    "Crew reports nausea, cold sweating, stomach awareness, or spatial disorientation upon head motion",
+    "Graybiel motion sickness score exceeds individual baseline (> 2/10)",
+    "Acute mission phase (Mission Days 1-4) neuro-vestibular adaptation monitoring"
+  ],
+  "steps": [
+    {
+      "text": "Instruct affected crew member to immediately minimize rapid head and torso rotations, especially pitch and roll axes outside the visual field of reference.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Score current neuro-vestibular severity on the Graybiel motion sickness rating scale (0-10) and record in the personal log.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Anchor feet in crew quarters or sleep station restraint to provide solid somatosensory proprioceptive reference points.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Review onboard antiemetic options: consider promethazine or ondansetron per medical kit guidelines. Note: promethazine has strong sedative effects; restrict from piloting or airlock operations for 12 hours.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Initiate paced oral hydration with electrolyte solution (small frequent sips, 100 mL every 20 minutes) to counteract vomiting dehydration.",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    },
+    {
+      "text": "Temporarily reallocate high-cognitive or safety-critical mission tasks to crewmates until vestibular adaptation stabilizes (typically 48 to 72 hours post-orbital insertion).",
+      "source_status": "demo-wording",
+      "source": "LIGHTMINUTE demonstration protocol - not an operational NASA medical procedure"
+    }
+  ]
+}
