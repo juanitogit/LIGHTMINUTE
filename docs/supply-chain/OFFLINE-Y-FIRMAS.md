@@ -14,6 +14,9 @@ puede ejecutarse offline. Si una descarga falla, los archivos terminados pueden
 reutilizarse al reintentar. El build completo sigue ocupando alrededor de 97 MB
 en el servidor, no descargados íntegramente al entrar. Usuarios con un service
 worker anterior pueden necesitar cerrar las pestañas antiguas para actualizar.
+Cloudflare Pages redirige `/index.html` a `/`: la caché de navegación guarda la
+raíz sin redirección para que una recarga offline no falle. La prueba local
+reproduce esa redirección.
 
 El botón de ejecución local inicia en un worker el mismo código Python del motor
 con Pyodide, NumPy y SciPy locales. El escenario generado es sintético, usa la

@@ -28,6 +28,8 @@ let runtimeRequests = 0;
 const mime = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".wasm": "application/wasm", ".css": "text/css", ".json": "application/json", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".png": "image/png" };
 const server = createServer(async (req, res) => {
   const pathname = decodeURIComponent(new URL(req.url, "http://localhost").pathname);
+  // Cloudflare Pages redirects /index.html to /; cached navigations must use /.
+  if (pathname === "/index.html") {res.writeHead(308, {Location:"/"}).end(); return;}
   if (pathname.startsWith("/assets/pyodide/")) runtimeRequests++;
   if (pathname.startsWith("/api/")) {
     if (!apiOnline) { res.writeHead(503).end(); return; }

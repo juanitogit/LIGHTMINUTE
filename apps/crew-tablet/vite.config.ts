@@ -52,11 +52,12 @@ function offlineBundle() {
         if (statSync(join(root, file)).size > 25 * 1024 * 1024) throw new Error(`Cloudflare Pages asset exceeds 25 MiB: ${file}`);
       }
       const digest = createHash("sha256");
+      digest.update("navigation-root-v2");
       for (const file of files) { digest.update(file); digest.update(readFileSync(join(root, file))); }
       const version = digest.digest("hex").slice(0, 16);
       const serviceWorker = `const CACHE=${JSON.stringify("lightminute-static-" + version)};
 const ENGINE_CACHE=${JSON.stringify(engineManifest.cache)};
-const ASSETS=${JSON.stringify(files.filter(file => !file.startsWith("assets/pyodide/") && !/\.(glb|bin)$/i.test(file)).map(file => "./" + file))};
+const ASSETS=${JSON.stringify(files.filter(file => !file.startsWith("assets/pyodide/") && !/\.(glb|bin)$/i.test(file)).map(file => file === "index.html" ? "./" : "./" + file))};
 // Large scientific packages and 3D models are downloaded only when requested.
 self.addEventListener("install", event => event.waitUntil((async () => {
   const cache = await caches.open(CACHE);
@@ -70,7 +71,7 @@ self.addEventListener("fetch", event => {
   const request = event.request, url = new URL(request.url);
   if (request.method !== "GET" || url.origin !== self.location.origin || url.pathname.includes("/api/")) return;
   if (request.mode === "navigate") {
-    event.respondWith(fetch(request).catch(() => caches.open(CACHE).then(cache => cache.match("./index.html"))));
+    event.respondWith(fetch(request).catch(() => caches.open(CACHE).then(cache => cache.match("./"))));
   } else {
     event.respondWith(caches.match(request, {ignoreSearch: true}).then(async hit => {
       if (hit) return hit;
