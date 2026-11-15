@@ -4,7 +4,7 @@ Este documento contiene **todos los prompts tal cual fueron escritos** durante l
 
 ## Metadatos de la Sesión
 - **ID de Conversación:** `e1ace435-8848-4fdb-8725-cc9235df7fa7`
-- **Total de Prompts / Interacciones:** 24
+- **Total de Prompts / Interacciones:** 25
 - **Modelos de IA Empleados:**
   - `Gemini 3.8 Flash (Medium)`
   - `Claude Sonnet 4.6 (Thinking)`
@@ -37,6 +37,7 @@ Este documento contiene **todos los prompts tal cual fueron escritos** durante l
 22. [Prompt #22 (Paso 1083) — Gemini 3.8 Flash (Medium)](#prompt-22--paso-1083) — *"An error occurred in the <div> component. Consider adding an error boundary..."*
 23. [Prompt #23 (Paso 1147) — Gemini 3.8 Flash (Medium)](#prompt-23--paso-1147) — *"Quiero que dentro de docs creas una carpete de prompts dentro de ellas vas..."*
 24. [Prompt #24 (Paso 1152) — Gemini 3.8 Flash (Medium)](#prompt-24--paso-1152) — *"Quiero que dentro de docs creas una carpete de prompts dentro de ellas vas..."*
+25. [Prompt #25 (Paso 1160) — Gemini 3.8 Flash (Medium)](#prompt-25--paso-1160) — *"Quiero que analisis todo el proyecto en busca de uso de datos y recursos de..."*
 
 ---
 
@@ -1946,3 +1947,25 @@ Quiero que dentro de docs creas una carpete de prompts dentro de ellas vas a cre
 ```
 
 ---
+
+## Prompt 25 — Paso 1160
+- **Fecha y Hora (UTC):** `2026-11-15T14:35:43Z`
+- **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+
+### Contenido del Prompt:
+```text
+Quiero que analisis todo el proyecto en busca de uso de datos y recursos de NASA:
+Qué recurso, conjunto de datos o herramienta de NASA utilizó.
+
+·       Cómo incorporó ese recurso en el proyecto.
+
+·       De qué manera los datos o recursos de NASA inspiraron la solución.
+
+·       Qué otros recursos, herramientas o materiales utilizó.
+
+Deben incluir las fuentes utilizadas, incluso si son abiertas o gratuitas: datos, código, textos, imágenes, herramientas y otros materiales.
+crea dentro de docs un archivo md llamado recursos-nasa.md donde debes realizar lo que te pedi. busca todos los recursos de nasa usados.  Al terminar agrege este prompt dentro edl archivo destinado prompt-antygravity.md, agrega el prompt usado tal cual esta escrito. AL finalizar todo dame el reporte de lo que hiciste
+```
+
+---
+
