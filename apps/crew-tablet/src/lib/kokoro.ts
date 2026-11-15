@@ -69,7 +69,12 @@ export async function kokoroClip(text: string, onProgress?: (message: string) =>
   return { url: URL.createObjectURL(blob), mime: blob.type || "audio/wav" };
 }
 
-/** Browser speech engine, used for Spanish and as the fallback. */
+/**
+ * Browser speech engine, used for Spanish and as the fallback. Picks the best
+ * installed voice instead of the first one: the neural voices that ship with
+ * the system ("Natural", "Neural", "Online") sound far closer to a person than
+ * the legacy compact ones.
+ */
 export function browserSpeak(text: string, lang: SpeechLang, onEnd: () => void): boolean {
   if (!("speechSynthesis" in window)) return false;
   const synth = window.speechSynthesis;
@@ -77,12 +82,38 @@ export function browserSpeak(text: string, lang: SpeechLang, onEnd: () => void):
   const utterance = new SpeechSynthesisUtterance(text);
   const prefix = lang === "es" ? "es" : "en";
   utterance.lang = lang === "es" ? ES_LANGUAGE : "en-US";
-  const voice = synth.getVoices().find((candidate) => candidate.lang.toLowerCase().startsWith(prefix));
-  if (voice) utterance.voice = voice;
-  utterance.onend = onEnd;
-  utterance.onerror = onEnd;
-  synth.speak(utterance);
+  const voice = bestVoice(
+    synth.getVoices().filter((candidate) => candidate.lang.toLowerCase().startsWith(prefix)),
+    lang,
+  );
+  try {
+    if (voice) utterance.voice = voice;
+    utterance.onend = onEnd;
+    utterance.onerror = onEnd;
+    synth.speak(utterance);
+  } catch {
+    return false;
+  }
   return true;
+}
+
+function bestVoice(voices: SpeechSynthesisVoice[], lang: SpeechLang): SpeechSynthesisVoice | undefined {
+  const score = (voice: SpeechSynthesisVoice) => {
+    const name = voice.name.toLowerCase();
+    let value = 0;
+    if (/natural|neural|online/.test(name)) value += 6;
+    if (/google/.test(name)) value += 4;
+    if (!voice.localService) value += 1;
+    if (lang === "es" && voice.lang.toLowerCase().startsWith("es-es")) value += 1;
+    return value;
+  };
+  return [...voices].sort((a, b) => score(b) - score(a))[0];
+}
+
+// Chrome fills its voice list asynchronously; asking once at startup means the
+// first spoken answer already uses the best voice instead of the default one.
+if (typeof window !== "undefined" && "speechSynthesis" in window) {
+  window.speechSynthesis.getVoices();
 }
 
 export function stopBrowserSpeech() {

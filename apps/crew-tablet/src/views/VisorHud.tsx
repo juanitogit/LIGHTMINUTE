@@ -6,7 +6,7 @@ import { Chip, LevelBadge } from "../components/primitives";
 import { useDictation } from "../hooks/useDictation";
 import { useVisorSpeech } from "../hooks/useVisorSpeech";
 import { detectSpeechLang } from "../lib/kokoro";
-import { askVisorAssistant, localGroundedAnswer, snapshotSummary, type VisorSnapshot } from "../lib/visorAssistant";
+import { askVisorAssistant, localGroundedAnswer, type VisorSnapshot } from "../lib/visorAssistant";
 import "../hud-visor.css";
 
 interface VisorHudProps {
@@ -151,6 +151,7 @@ export function VisorHud({
   async function ask(text: string) {
     const clean = text.trim();
     if (!clean) return;
+    dictation.stop();
     setQuestion(clean);
     setAsking(true);
     setAnswer("");
@@ -172,6 +173,35 @@ export function VisorHud({
   }
 
   const dictation = useDictation((text) => void ask(text));
+  const [micOn, setMicOn] = useState(false);
+  const micBlocked = dictation.error === "not-allowed" || dictation.error === "service-not-allowed";
+
+  // Hands-free loop: listen, answer, speak, then listen again. The microphone
+  // stays closed while the assistant is thinking or talking, so the visor never
+  // hears its own voice.
+  useEffect(() => {
+    if (!micOn || !dictation.supported || micBlocked) return;
+    if (dictation.listening || asking || speech.status !== "idle") return;
+    const id = window.setTimeout(() => dictation.start(), 700);
+    return () => window.clearTimeout(id);
+  }, [micOn, dictation.supported, micBlocked, dictation.listening, asking, speech.status, dictation.start]);
+
+  // The microphone is the only control and starts on its own: the visor is
+  // meant to be used without looking at the screen.
+  useEffect(() => {
+    if (dictation.supported) setMicOn(true);
+  }, [dictation.supported]);
+
+  function toggleMic() {
+    if (micOn) {
+      setMicOn(false);
+      dictation.stop();
+      speech.stop();
+      return;
+    }
+    setMicOn(true);
+    dictation.start();
+  }
 
   return (
     <div className="view visor-view">
@@ -621,7 +651,7 @@ export function VisorHud({
         <div className="panel__head">
           <h2 id="visor-voice">Asistente de voz del visor</h2>
           <span className="small muted">
-            {speech.engine === "kokoro" ? "Kokoro TTS" : speech.engine === "browser" ? "Voz del sistema" : "Español/inglés automático"}
+            {speech.engine === "kokoro" ? "Kokoro TTS" : speech.engine === "browser" ? "Voz del navegador (español)" : "Español/inglés automático"}
           </span>
         </div>
         <p className="small muted">
@@ -629,33 +659,28 @@ export function VisorHud({
           El motor determinista decide los números; el asistente solo los explica, sin diagnóstico ni cifras nuevas.
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", alignItems: "center" }}>
-          <button type="button" className="btn" onClick={() => void speech.speak(snapshotSummary(snapshot))} disabled={speech.status !== "idle"}>
-            Escuchar resumen
+          <button
+            type="button"
+            className={`btn ${micOn ? "btn--primary" : ""}`}
+            onClick={toggleMic}
+            aria-pressed={micOn}
+            disabled={!dictation.supported}
+          >
+            {micOn ? (speech.status === "idle" ? "Micrófono activo · detener" : "Micrófono activo · altavoz") : "Activar micrófono"}
           </button>
-          {dictation.supported ? (
-            <button type="button" className="btn" onClick={() => (dictation.listening ? dictation.stop() : dictation.start())}>
-              {dictation.listening ? "Detener dictado" : "Preguntar por voz"}
-            </button>
-          ) : null}
-          {speech.status !== "idle" ? (
-            <button type="button" className="btn" onClick={speech.stop}>Detener voz</button>
-          ) : null}
           {speech.status === "preparing" ? <span className="small muted">Preparando Kokoro…</span> : null}
         </div>
         <p className="small muted">
-          Kokoro sintetiza inglés y la voz del sistema el español; el motor se elige solo según el texto.
-          La primera reproducción descarga el modelo en este equipo.
+          Habla: el visor responde en voz alta y vuelve a escuchar solo, sin pulsar nada más.
+          Kokoro sintetiza inglés; el español se lee con la mejor voz instalada en el navegador,
+          porque esta versión de Kokoro aún no incluye voces españolas.
         </p>
-        <form className="stack" onSubmit={(event) => { event.preventDefault(); void ask(question); }} style={{ marginTop: "14px" }}>
-          <label className="field">Pregunta al asistente
-            <input value={question} onChange={(event) => setQuestion(event.target.value)} maxLength={300} placeholder="¿Cómo está el CO₂ del traje hoy?" />
-          </label>
-          <button type="submit" className="btn btn--primary" disabled={asking || !question.trim()}>
-            {asking ? "Consultando…" : "Preguntar"}
-          </button>
-        </form>
+        {!dictation.supported ? (
+          <p className="small muted">Este navegador no ofrece dictado por voz; el asistente sigue explicando los valores de la página en pantalla.</p>
+        ) : null}
         {dictation.status ? <p className="small muted" role="status">{dictation.status}</p> : null}
         {speech.message ? <p className="small muted" role="status">{speech.message}</p> : null}
+        {question ? <p className="small muted">Has dicho: «{question}»</p> : null}
         {answer ? (
           <article style={{ marginTop: "14px" }}>
             <p className="micro">{answerSource}</p>
