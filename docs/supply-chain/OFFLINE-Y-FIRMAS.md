@@ -5,7 +5,9 @@ El primer uso necesita descargar la aplicación; después de completarse la
 instalación se puede recargar el escenario sintético sin red. Las rutas `/api/`
 no se guardan en caché: las comunicaciones y el backend siguen necesitando su
 servidor. El almacenamiento del navegador puede ser limitado o eliminado.
-En esta revisión `dist/` ocupa 54.441.780 bytes antes de compresión; varía por build.
+Tras integrar los modelos de órganos del remoto, `dist/` ocupa 96.677.713 bytes
+antes de compresión en esta revisión; varía por build. La descarga y el espacio
+necesarios son significativos para una conexión limitada.
 
 El botón de ejecución local inicia en un worker el mismo código Python del motor
 con Pyodide, NumPy y SciPy locales. El escenario generado es sintético, usa la
