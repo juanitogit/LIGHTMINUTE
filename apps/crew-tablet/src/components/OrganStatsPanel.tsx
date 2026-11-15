@@ -524,6 +524,7 @@ export interface OrganStatsPanelProps {
   position?: [number, number, number];
   availableOrgans?: string[];
   fallbackGeometry?: THREE.BufferGeometry;
+  geometryNote?: string;
   onClose: () => void;
   onFocusOrgan?: (name: string) => void;
   onSelectOrgan?: (name: string) => void;
@@ -538,7 +539,8 @@ export function OrganStatsPanel({
   readings,
   position,
   fallbackGeometry,
-  // availableOrgans — reserved for future organ-filter, unused at render time
+  geometryNote,
+  availableOrgans = [],
   onClose,
   onFocusOrgan,
   onSelectOrgan,
@@ -577,11 +579,11 @@ export function OrganStatsPanel({
   const classification = visualAttrs?.classification ?? "reference";
   const statusLabel =
     classification === "mild_strain"
-      ? "Mild Strain Detected"
+      ? "Simulated mild strain"
       : classification === "adapted_nominal"
-        ? "Adapted to Microgravity"
+        ? "Simulated adaptation"
         : classification === "sustained_deviation"
-          ? "Sustained Deviation"
+          ? "Simulated deviation"
           : "Anatomical Reference";
 
   // Temporal graph data
@@ -589,6 +591,13 @@ export function OrganStatsPanel({
     () => getOrganTimeSeries(normKey, missionDay, visualAttrs),
     [normKey, missionDay, visualAttrs]
   );
+  const trajectoryKey = normKey.includes("brain") ? "icp"
+    : normKey.includes("eye") ? "translaminar_diff"
+      : normKey.includes("lung") ? "alveolar_pco2"
+        : normKey.includes("liver") ? "core_temp"
+          : normKey.includes("kidney") ? "urine_output"
+            : /vertebral|spine/.test(normKey) ? "bmd_ratio" : null;
+  const hasTrajectory = trajectoryKey !== null && Number.isFinite(visualAttrs?.telemetry?.[trajectoryKey]?.value);
 
   // Cross-correlate personal baseline indicators from readings
   const matchingReadings = useMemo(() => {
@@ -757,6 +766,8 @@ export function OrganStatsPanel({
                 className={`organ-stats-panel__pill ${isActive ? "is-active" : ""}`}
                 onClick={() => onSelectOrgan?.(pill.id)}
                 aria-pressed={isActive}
+                disabled={!availableOrgans.some((name) => name.toLowerCase() === pill.id.toLowerCase())}
+                title={!availableOrgans.some((name) => name.toLowerCase() === pill.id.toLowerCase()) ? "Reference mesh unavailable for this body" : undefined}
               >
                 {pill.label}
               </button>
@@ -787,6 +798,7 @@ export function OrganStatsPanel({
             heartRateBpm={scenarioHeartRate(readings?.rest_hr)}
           />
         </ErrorBoundary>
+        {geometryNote ? <p className="small muted">{geometryNote}</p> : null}
       </section>
 
       {/* A single reading cannot establish a heart-rate trajectory. */}
@@ -794,14 +806,14 @@ export function OrganStatsPanel({
         <h4 className="organ-stats-panel__section-title">Selected synthetic heart rate</h4>
         <p>{scenarioHeartRate(readings?.rest_hr) !== null ? `${scenarioHeartRate(readings?.rest_hr)} bpm · mission day ${missionDay}` : "No heart-rate reading for this day."}</p>
         <p className="small muted">The animation follows this scenario reading. It is not live sensor telemetry.</p>
-      </section> : <section className="organ-stats-panel__section">
+      </section> : hasTrajectory ? <section className="organ-stats-panel__section">
         <div className="organ-stats-panel__chart-header">
           <div>
             <h4 className="organ-stats-panel__section-title">
               Temporal Trajectory · {timeSeries.variableName}
             </h4>
             <span className="organ-stats-panel__chart-sub">
-              Simulated flight curve · Mission Days 1–{timeSeries.points.length}
+              Illustrative simulated curve, not recorded history · Mission Days 1–{timeSeries.points.length}
             </span>
           </div>
           <div className="organ-stats-panel__chart-val-box">
@@ -910,7 +922,7 @@ export function OrganStatsPanel({
             </span>
           </div>
         </div>
-      </section>}
+      </section> : <section className="organ-stats-panel__section"><h4 className="organ-stats-panel__section-title">Trajectory unavailable</h4><p className="small muted">No modeled trajectory is available for this anatomical reference.</p></section>}
 
       {/* 5. Personal Baseline Anomaly Indicators (Cross-Correlation with Crew Readings) */}
       <section className="organ-stats-panel__section">

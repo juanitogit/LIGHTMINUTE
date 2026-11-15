@@ -54,6 +54,14 @@ The model is an illustrative human, not a scan of a crew member or a diagnostic 
 Landmarks only link existing personal-lens verdicts to the existing signal detail views.
 No measurements, urgency, thresholds, medical claims or source data are derived from the mesh.
 
+The female source has limited peripheral vasculature and no vertebral-column mesh. For visual
+completeness, the viewer aligns and scales the male-source peripheral vessels and spine to the female
+reference; these are explicitly labelled illustrative and are not sex-specific measurements. The
+male body and its lung inspector use scaled female-source lung surfaces where the original male lung
+mesh does not depict a useful surface. The inspector's eye is a clearly labelled illustration. Organ
+selectors use exact available mesh names; missing references are not replaced by generic geometry.
+Unmodelled references such as the uterus do not display an unrelated simulated vascular trajectory.
+
 ## Interaction and performance
 
 - Drag to rotate; keyboard-accessible rotate-left, rotate-right and front-reset controls provide an alternative.

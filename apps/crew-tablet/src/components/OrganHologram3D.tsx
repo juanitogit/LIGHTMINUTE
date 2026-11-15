@@ -40,7 +40,7 @@ export function OrganHologram3D({
   const [wireframe, setWireframe] = useState(false);
   const [autoRotate, setAutoRotate] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [assetType, setAssetType] = useState<"glb" | "geometry" | "procedural">("glb");
+  const [assetType, setAssetType] = useState<"glb" | "geometry" | "illustration" | "unavailable">("unavailable");
   const [theme, setTheme] = useState(() => document.documentElement.dataset.theme ?? "light");
 
   useEffect(() => {
@@ -120,14 +120,14 @@ export function OrganHologram3D({
     }
 
     // Lights
-    const ambientLight = new THREE.AmbientLight(0x0f2744, 1.4);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
     scene.add(ambientLight);
 
-    const dirLight1 = new THREE.DirectionalLight(holoColorHex, 2.2);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.2);
     dirLight1.position.set(2, 3, 3);
     scene.add(dirLight1);
 
-    const dirLight2 = new THREE.DirectionalLight(0x60a5fa, 1.2);
+    const dirLight2 = new THREE.DirectionalLight(0xc8d8ef, 0.8);
     dirLight2.position.set(-2, -1, -2);
     scene.add(dirLight2);
 
@@ -183,7 +183,7 @@ export function OrganHologram3D({
 
     // Keep references to update materials on wireframe toggle
     const holoMaterials: THREE.MeshStandardMaterial[] = [];
-    const wireMeshes: THREE.Mesh[] = [];
+    const ownedGeometries: THREE.BufferGeometry[] = [];
 
     // Reset angle handler
     resetAngleRef.current = () => {
@@ -197,7 +197,18 @@ export function OrganHologram3D({
       try {
         // The selected body's geometry preserves side, shape and reference
         // provenance. Standalone assets are used only when that mesh is absent.
-        if (glbFile && !fallbackGeometry?.attributes?.position) {
+        if (normName.includes("eyeball") || normName === "eyes") {
+          // An illustrative globe makes the iris visible; it is not an eye scan.
+          setAssetType("illustration");
+          const globe = new THREE.Mesh(new THREE.SphereGeometry(0.75, 48, 32), new THREE.MeshStandardMaterial({color: 0xf2ece8, roughness: 0.38}));
+          const iris = new THREE.Mesh(new THREE.CircleGeometry(0.25, 48), new THREE.MeshStandardMaterial({color: 0x65839b, roughness: 0.5, side: THREE.DoubleSide}));
+          iris.position.z = 0.752;
+          const pupil = new THREE.Mesh(new THREE.CircleGeometry(0.105, 48), new THREE.MeshStandardMaterial({color: 0x171e27, roughness: 0.4, side: THREE.DoubleSide}));
+          pupil.position.z = 0.754;
+          pivot.add(globe, iris, pupil);
+          ownedGeometries.push(globe.geometry, iris.geometry, pupil.geometry);
+          holoMaterials.push(globe.material, iris.material, pupil.material);
+        } else if (glbFile && !fallbackGeometry?.attributes?.position) {
           setAssetType("glb");
           const glbUrl = `${import.meta.env.BASE_URL}assets/organs/${glbFile}`;
 
@@ -232,18 +243,6 @@ export function OrganHologram3D({
               holoMaterials.push(holoMat);
               mesh.material = holoMat;
 
-              // Add subtle wireframe overlay
-              if (mesh.geometry) {
-                const wireMat = new THREE.MeshBasicMaterial({
-                  color: wireColorHex,
-                  wireframe: true,
-                  transparent: true,
-                  opacity: 0.3,
-                });
-                const wireClone = new THREE.Mesh(mesh.geometry, wireMat);
-                wireMeshes.push(wireClone);
-                mesh.add(wireClone);
-              }
             }
           });
 
@@ -266,7 +265,8 @@ export function OrganHologram3D({
           try {
             setAssetType("geometry");
             const geom = fallbackGeometry.clone();
-            geom.computeVertexNormals();
+            ownedGeometries.push(geom);
+            if (!geom.getAttribute("normal")) geom.computeVertexNormals();
 
             const holoMat = new THREE.MeshStandardMaterial({
               color: holoColorHex,
@@ -282,16 +282,6 @@ export function OrganHologram3D({
             holoMaterials.push(holoMat);
 
             const mesh = new THREE.Mesh(geom, holoMat);
-            const wireMat = new THREE.MeshBasicMaterial({
-              color: wireColorHex,
-              wireframe: true,
-              transparent: true,
-              opacity: 0.32,
-            });
-            const wireClone = new THREE.Mesh(geom, wireMat);
-            wireMeshes.push(wireClone);
-            mesh.add(wireClone);
-
             geom.computeBoundingBox();
             if (geom.boundingBox) {
               const center = new THREE.Vector3();
@@ -307,43 +297,19 @@ export function OrganHologram3D({
 
             pivot.add(mesh);
           } catch (geoErr) {
-            console.warn("Fallback geometry failed, using procedural proxy:", geoErr);
-            createProcedural();
+            console.warn("Anatomical reference geometry could not be displayed:", geoErr);
+            setAssetType("unavailable");
           }
         } else {
-          createProcedural();
+          setAssetType("unavailable");
         }
       } catch (err) {
-        console.warn("Could not load organ hologram model, using procedural proxy:", err);
-        createProcedural();
+        console.warn("Could not load organ reference model:", err);
+        if (!stopped) setAssetType("unavailable");
       } finally {
         if (!stopped) setLoading(false);
       }
     };
-
-    function createProcedural() {
-      setAssetType("procedural");
-      const geo = new THREE.IcosahedronGeometry(0.85, 3);
-      const holoMat = new THREE.MeshStandardMaterial({
-        color: holoColorHex,
-        emissive: holoColorHex,
-        emissiveIntensity: 0.5,
-        wireframe: wireframeRef.current,
-        transparent: true,
-        opacity: 0.8,
-      });
-      holoMaterials.push(holoMat);
-      const mesh = new THREE.Mesh(geo, holoMat);
-
-      const wireMat = new THREE.MeshBasicMaterial({
-        color: wireColorHex,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.3,
-      });
-      mesh.add(new THREE.Mesh(geo, wireMat));
-      pivot.add(mesh);
-    }
 
     loadModel();
 
@@ -396,9 +362,6 @@ export function OrganHologram3D({
         m.wireframe = wireframeRef.current;
         m.opacity = wireframeRef.current ? 0.15 : 0.82;
       });
-      wireMeshes.forEach((w) => {
-        w.visible = !wireframeRef.current;
-      });
 
       // Auto-rotation if enabled and not currently dragging
       if (!reducedMotion && autoRotateRef.current && !isDragging) {
@@ -438,19 +401,23 @@ export function OrganHologram3D({
       canvas.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", onPointerUp);
+      holoMaterials.forEach((material) => material.dispose());
+      ownedGeometries.forEach((geometry) => geometry.dispose());
+      ringGeo1.dispose(); ringGeo2.dispose(); ringMat1.dispose(); ringMat2.dispose();
+      axisGeoX.dispose(); axisGeoZ.dispose(); axisMat.dispose();
       renderer.dispose();
       scene.clear();
     };
-  }, [glbFile, fallbackGeometry, holoColorHex, wireColorHex]);
+  }, [glbFile, fallbackGeometry, holoColorHex, wireColorHex, normName]);
 
   return (
-    <div className="organ-hologram" aria-label={`3D reference model of ${organName}`}>
+    <div className="organ-hologram" aria-label={`3D reference model of ${organName}`} data-organ={normName} data-asset={assetType} data-geometry={fallbackGeometry?.name}>
       {/* Sci-fi HUD Header */}
       <div className="organ-hologram__hud-top">
         <div className="organ-hologram__badge">
           <span className="organ-hologram__pulse-dot" />
           <span className="organ-hologram__badge-text">
-            3D REFERENCE MODEL · {assetType === "glb" ? "GLB ASSET" : assetType === "geometry" ? "ANATOMY MESH" : "PROCEDURAL"}
+            3D REFERENCE MODEL · {assetType === "glb" ? "GLB ASSET" : assetType === "geometry" ? "ANATOMY MESH" : assetType === "illustration" ? "ILLUSTRATIVE EYE" : "UNAVAILABLE"}
           </span>
         </div>
 
@@ -519,6 +486,7 @@ export function OrganHologram3D({
             <span>Projecting holographic bio-mesh…</span>
           </div>
         ) : null}
+        {!loading && assetType === "unavailable" ? <div className="organ-hologram__loader" role="status">Reference model unavailable for this organ.</div> : null}
 
         {/* Scanline beam visual effect */}
         <div className="organ-hologram__scanbeam" aria-hidden="true" />

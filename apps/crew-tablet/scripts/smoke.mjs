@@ -276,6 +276,59 @@ try {
   await page.getByRole("combobox",{name:"Body systems",exact:true}).selectOption("all");
   await expect(page.locator(".human-viewer")).toHaveAttribute("data-model-status","ready",{timeout:30000});
   record("CC BY reference anatomy renders; male/female, systems, rotation, zoom and reset respond");
+  const anatomyContext = await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:"reduce"});
+  const anatomyPage = await anatomyContext.newPage();
+  const anatomyErrors = [];
+  anatomyPage.on("pageerror", error => anatomyErrors.push(error.message));
+  await anatomyPage.goto(`${base}/#scenario=cmo_fever&crew=A&day=16&view=glance`);
+  await expect(anatomyPage.locator(".human-viewer")).toHaveAttribute("data-model-status","ready",{timeout:30000});
+  for (const build of ["male","female"]) {
+    await anatomyPage.getByRole("combobox",{name:"Reference body"}).selectOption(build);
+    const canvas = anatomyPage.locator(".human-canvas");
+    await expect(canvas).toHaveAttribute("data-supplemental-vessels",String(build === "female"));
+    await expect(canvas).toHaveAttribute("data-supplemental-spine",String(build === "female"));
+    await expect(canvas).toHaveAttribute("data-registered-lungs",String(build === "male"));
+    const box = await canvas.boundingBox();
+    assert(box,"Anatomy canvas must have dimensions");
+    for (const y of [.28,.34,.4,.46,.52,.58,.64,.7]) {
+      for (const x of [.45,.48,.5,.52,.55]) {
+        await canvas.click({position:{x:box.width*x,y:box.height*y},force:true});
+        if (await anatomyPage.locator(".organ-stats-panel").count()) break;
+      }
+      if (await anatomyPage.locator(".organ-stats-panel").count()) break;
+    }
+    await expect(anatomyPage.locator(".organ-stats-panel")).toBeVisible();
+    const nav = anatomyPage.getByRole("navigation",{name:"Quick select organ"});
+    const model = anatomyPage.locator(".organ-hologram");
+    for (const [label,organ,geometry,kind] of [
+      ["Lungs",build === "male" ? "right lung" : "lungs","lungs","geometry"],
+      ["Eyes","left eyeball","left eyeball","illustration"],
+      ["Vessels","blood vessels","blood vessels","geometry"],
+      ["Spine","vertebral column","vertebral column","geometry"],
+      ["Heart","heart","heart","geometry"],
+    ]) {
+      await nav.getByRole("button",{name:label,exact:true}).click();
+      await expect(model).toHaveAttribute("data-organ",organ);
+      await expect(model).toHaveAttribute("data-geometry",geometry);
+      await expect(model).toHaveAttribute("data-asset",kind);
+    }
+    const wire = anatomyPage.getByRole("button",{name:"Toggle wireframe mode"});
+    await wire.click(); await expect(wire).toHaveAttribute("aria-pressed","true");
+    await wire.click(); await expect(wire).toHaveAttribute("aria-pressed","false");
+    if (build === "female") {
+      await expect(anatomyPage.getByText(/peripheral vessels and spine include scaled male-source/)).toBeVisible();
+      await nav.getByRole("button",{name:"Uterus",exact:true}).click();
+      await expect(model).toHaveAttribute("data-asset","glb",{timeout:30000});
+      await expect(model.locator(".organ-hologram__loader")).toHaveCount(0,{timeout:30000});
+      await expect(model).toHaveAttribute("data-asset","glb");
+      await expect(anatomyPage.getByText("Trajectory unavailable")).toBeVisible();
+      await expect(anatomyPage.getByText("Vascular Compliance Ratio")).toHaveCount(0);
+    }
+    await anatomyPage.locator(".organ-stats-panel__close-btn").click();
+  }
+  assert.deepEqual(anatomyErrors,[]);
+  await anatomyContext.close();
+  record("Both reference bodies select the right organs; female supplementary vessels and spine are disclosed");
   await page.getByRole("button",{name:"Front view",exact:true}).click();
   await page.waitForTimeout(700); // Allow the camera reset to finish before the reference capture.
   await capture("01-overview");
