@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIGHTMINUTE — Monitor Respiratorio y Capnografía Espacial</title>
+  <style>
+    :root {
+      --bg-dark: #070b14;
+      --panel-bg: #0f172a;
+      --panel-border: #1e293b;
+      --card-bg: #1e293b;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-purple: #a855f7;
+      --text-main: #f1f5f9;
+      --text-dim: #94a3b8;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding: 16px;
+    }
+    .disclaimer-banner {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--accent-red);
+      color: #fca5a5;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-align: center;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+    .header-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--panel-border);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      gap: 12px;
+    }
+    .header-title h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+    .badge-sim { background: #3b82f633; color: #60a5fa; border: 1px solid #3b82f666; }
+    .badge-est { background: #f59e0b33; color: #fbbf24; border: 1px solid #f59e0b66; }
+    .badge-deriv { background: #8b5cf633; color: #a78bfa; border: 1px solid #8b5cf666; }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+    }
+    @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+
+    .telemetry-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .screen-container {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+    canvas { display: block; width: 100%; height: 210px; }
+    .overlay-tag {
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-amber);
+      pointer-events: none;
+    }
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .metric-box {
+      background: var(--card-bg);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 10px;
+    }
+    .metric-label {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+    }
+    .metric-val {
+      font-size: 1.4rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: #fbbf24;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .metric-unit { font-size: 0.75rem; color: var(--text-dim); font-weight: 400; }
+    .metric-range { font-size: 0.65rem; color: #64748b; margin-top: 2px; }
+
+    .control-group { margin-bottom: 16px; }
+    .control-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .btn-group { display: flex; flex-direction: column; gap: 6px; }
+    .btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      text-align: left;
+    }
+    .btn:hover { background: #334155; }
+    .btn.active {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: var(--accent-amber);
+      color: #fde68a;
+      font-weight: 600;
+    }
+    input[type=range] {
+      width: 100%; height: 6px; background: #334155; border-radius: 3px; outline: none; -webkit-appearance: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent-amber); cursor: pointer;
+    }
+    .science-panel {
+      margin-top: 16px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+    }
+    .science-panel h3 { font-size: 0.95rem; color: var(--text-main); margin-bottom: 8px; }
+    .citations {
+      font-family: var(--font-mono); font-size: 0.72rem; color: #94a3b8; border-top: 1px solid var(--panel-border); padding-top: 10px; margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="disclaimer-banner">
+    SIMULACIÓN — DATOS SINTÉTICOS — NO ES UN DISPOSITIVO MÉDICO
+  </div>
+
+  <div class="header-bar">
+    <div class="header-title">
+      <h1>
+        <span>🫁</span> Monitor de Fisiología Respiratoria y Capnografía
+      </h1>
+      <span style="font-size: 0.8rem; color: var(--text-dim); margin-left: 8px;">
+        Órgano: Pulmones y Vía Aérea · Sensor Infrarrojo NDIR & Espectrometría Alveolar
+      </span>
+    </div>
+    <div style="display: flex; gap: 6px;">
+      <span class="badge badge-sim">[SIMULADO]</span>
+      <span class="badge badge-est">[ESTIMADO]</span>
+      <span class="badge badge-deriv">[DERIVADO N-OF-1]</span>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div>
+      <div class="telemetry-card">
+        <div class="card-title">
+          <span>Capnograma Alveolar Continuo (Presión Parcial CO2 Espirado PCO2)</span>
+          <span style="color: var(--accent-amber); font-family: var(--font-mono); font-size: 0.75rem;">● NDIR INFRARED 4.26 &mu;m</span>
+        </div>
+        <div class="screen-container">
+          <canvas id="capno-canvas" width="800" height="210"></canvas>
+          <div class="overlay-tag">FASE I (Espacio Muerto) &rarr; FASE II &rarr; FASE III (Meseta Alveolar PetCO2)</div>
+        </div>
+
+        <div class="card-title" style="margin-top: 14px;">
+          <span>Esfuerzo Toracoabdominal (Pletismografía de Inductancia RIP)</span>
+        </div>
+        <div class="screen-container">
+          <canvas id="rip-canvas" width="800" height="110"></canvas>
+          <div class="overlay-tag" style="color: #06b6d4;">BANDA TORÁCICA INDUCTIVA · FRECUENCIA RESPIRATORIA</div>
+        </div>
+
+        <div class="metrics-row">
+          <div class="metric-box">
+            <div class="metric-label">PetCO2 al Final Espiración</div>
+            <div class="metric-val" id="val-petco2">41.2 <span class="metric-unit">mmHg</span></div>
+            <div class="metric-range">Alveolar: 35.0 - 45.0 mmHg</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Frecuencia Respiratoria</div>
+            <div class="metric-val" id="val-rr" style="color: #06b6d4;">14 <span class="metric-unit">rpm</span></div>
+            <div class="metric-range">Patrón eupneico estable</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Saturación SpO2</div>
+            <div class="metric-val" id="val-spo2" style="color: #10b981;">98.2 <span class="metric-unit">%</span></div>
+            <div class="metric-range">Clip auricular óptico</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">ppCO2 Ambiental Cabina</div>
+            <div class="metric-val" id="val-ppco2" style="color: #f87171;">2.8 <span class="metric-unit">mmHg</span></div>
+            <div class="metric-range">Límite operativo ISS: &le; 3.0 mmHg</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="telemetry-card">
+        <div class="card-title">
+          <span>Escenarios Atmosféricos y Ventilatorios</span>
+        </div>
+        <div class="btn-group control-group">
+          <button class="btn active" onclick="setScenario('earth')">
+            <strong>1. Atmósfera Terrestre Nominal</strong><br>
+            <small style="color: var(--text-dim)">ppCO2 0.3 mmHg, PetCO2 38 mmHg, SpO2 99%</small>
+          </button>
+          <button class="btn" onclick="setScenario('iss_nominal')">
+            <strong>2. Cabina ISS Estándar (LEO)</strong><br>
+            <small style="color: var(--text-dim)">ppCO2 2.8 mmHg, PetCO2 42 mmHg, leve hipercapnia adaptada</small>
+          </button>
+          <button class="btn" onclick="setScenario('co2_pocket')">
+            <strong>3. Bolsón de CO2 Estancado (Fallo Ventilación)</strong><br>
+            <small style="color: var(--text-dim)">ppCO2 5.5 mmHg, PetCO2 52 mmHg, taquipnea refleja 22 rpm</small>
+          </button>
+          <button class="btn" onclick="setScenario('exercise')">
+            <strong>4. Entrenamiento Resistente ARED</strong><br>
+            <small style="color: var(--text-dim)">Hiperventilación activa, PetCO2 46 mmHg, fR 28 rpm</small>
+          </button>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>ppCO2 Ambiental Cabina (mmHg)</span>
+            <span id="slider-ppco2-val" style="color: var(--accent-red); font-family: var(--font-mono);">2.8 mmHg</span>
+          </div>
+          <input type="range" id="slider-ppco2" min="0" max="80" value="28" oninput="onManualCO2(this.value)">
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Frecuencia Ventilatoria (rpm)</span>
+            <span id="slider-rr-val" style="color: var(--accent-cyan); font-family: var(--font-mono);">14 rpm</span>
+          </div>
+          <input type="range" id="slider-rr" min="8" max="36" value="14" oninput="onManualRR(this.value)">
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 12px;">
+          <button class="btn" style="flex: 1; text-align: center;" onclick="togglePause()" id="btn-pause">Pausar</button>
+          <button class="btn" style="flex: 1; text-align: center;" onclick="resetSimulator()">Reiniciar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="science-panel">
+    <h3>Biofísica de la Ventilación en Gravedad Cero y Riesgo de CO2</h3>
+    <p>
+      En ausencia de empuje boyante natural de fluidos (gravedad cero), el gas caliente y cargado de CO2 expirado por el astronauta no asciende como en la Tierra. Si el flujo forzado de aire de los ventiladores se debilita (e.g. en el habitáculo de dormir cerrado), se forma un bolsón hipercapnia alrededor del rostro con inhalación repetida.
+    </p>
+    <ul>
+      <li><strong>Instrumentación en Vuelo:</strong> Analizador de gas alveolar <em>Airway Monitoring</em> de la ESA y analizador central de cabina (Major Constituent Analyzer - MCA) en ISS.</li>
+      <li><strong>Variables Medidas vs Derivadas:</strong> PetCO2 es absorbancia espectrofotométrica directa a 4.26 &mu;m. SpO2 es absorción óptica bicromática. El gradiente alvéolo-arterial de O2 es una derivación computacional.</li>
+      <li><strong>Riesgos Operacionales:</strong> Concentraciones de CO2 superiores a 3 mmHg provocan cefaleas vestibulares, vasodilatación cerebral con agravamiento de presión intracraneal y empeoramiento del síndrome neuro-ocular SANS.</li>
+    </ul>
+    <div class="citations">
+      <strong>Referencias Verificadas:</strong><br>
+      • Law et al., "In-flight carbon dioxide exposures and related symptoms in astronauts," NASA/TP-2014-217394.<br>
+      • Karlsson et al., "Airway Monitoring in space: measurement of exhaled nitric oxide and capnography," <em>npj Microgravity</em>, 2019.<br>
+      • Prisk et al., "Pulmonary function in microgravity," <em>J. Appl. Physiol.</em>, 2014.
+    </div>
+  </div>
+
+  <script>
+    let targetRR = 14;
+    let currentRR = 14;
+    let cabinPPCO2 = 2.8; // mmHg
+    let targetPetCO2 = 42.0;
+    let currentPetCO2 = 42.0;
+    let isPaused = false;
+    let lastTime = performance.now();
+    let respPhase = 0; // 0 to 2*PI
+
+    const capnoCanvas = document.getElementById('capno-canvas');
+    const capnoCtx = capnoCanvas.getContext('2d');
+    const ripCanvas = document.getElementById('rip-canvas');
+    const ripCtx = ripCanvas.getContext('2d');
+
+    const historyLen = 800;
+    const capnoBuffer = new Float32Array(historyLen).fill(0);
+    const ripBuffer = new Float32Array(historyLen).fill(0);
+    let bufIdx = 0;
+
+    // Fowler capnogram model: 4 phases
+    function evalCapnogram(phase, pet) {
+      // phase: 0 to 2*PI. 
+      // 0 to PI: Expiration. PI to 2*PI: Inspiration.
+      if (phase < Math.PI) {
+        // Expiration
+        const tExp = phase / Math.PI; // 0 to 1
+        if (tExp < 0.15) {
+          // Phase I: Dead space gas
+          return 0.5 + Math.random() * 0.2;
+        } else if (tExp < 0.35) {
+          // Phase II: Rapid upstroke
+          const u = (tExp - 0.15) / 0.20;
+          return pet * (0.1 + 0.75 * Math.sin(u * Math.PI / 2));
+        } else {
+          // Phase III: Alveolar plateau with positive slope alpha
+          const u = (tExp - 0.35) / 0.65;
+          return pet * (0.85 + 0.15 * u) + (Math.random() - 0.5) * 0.4;
+        }
+      } else {
+        // Inspiration: Rapid downstroke to near zero
+        const tInsp = (phase - Math.PI) / Math.PI; // 0 to 1
+        if (tInsp < 0.08) {
+          const u = tInsp / 0.08;
+          return pet * Math.cos(u * Math.PI / 2);
+        } else {
+          return 0.3 + Math.random() * 0.2;
+        }
+      }
+    }
+
+    function renderLoop(time) {
+      requestAnimationFrame(renderLoop);
+      if (isPaused) return;
+
+      const dt = Math.min((time - lastTime) / 1000, 0.1);
+      lastTime = time;
+
+      currentRR += (targetRR - currentRR) * 0.04;
+      currentPetCO2 += (targetPetCO2 - currentPetCO2) * 0.04;
+
+      const omega = (currentRR / 60) * 2 * Math.PI;
+      const samplesPerSec = 200;
+      const numSamples = Math.max(1, Math.round(dt * samplesPerSec));
+
+      for (let s = 0; s < numSamples; s++) {
+        respPhase += (omega / samplesPerSec);
+        if (respPhase >= 2 * Math.PI) respPhase -= 2 * Math.PI;
+
+        const capVal = evalCapnogram(respPhase, currentPetCO2);
+        const ripVal = Math.sin(respPhase);
+
+        capnoBuffer[bufIdx] = capVal;
+        ripBuffer[bufIdx] = ripVal;
+        bufIdx = (bufIdx + 1) % historyLen;
+      }
+
+      // Draw Capno
+      capnoCtx.fillStyle = '#020617';
+      capnoCtx.fillRect(0, 0, capnoCanvas.width, capnoCanvas.height);
+
+      // Grid (0 to 60 mmHg)
+      capnoCtx.strokeStyle = '#1e293b';
+      capnoCtx.lineWidth = 1;
+      capnoCtx.beginPath();
+      for (let y = 0; y <= 60; y += 15) {
+        const py = capnoCanvas.height - (y / 60) * (capnoCanvas.height - 30) - 20;
+        capnoCtx.moveTo(0, py); capnoCtx.lineTo(capnoCanvas.width, py);
+      }
+      capnoCtx.stroke();
+
+      // Capno trace with filled area
+      capnoCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+      capnoCtx.strokeStyle = '#f59e0b';
+      capnoCtx.lineWidth = 2;
+      capnoCtx.beginPath();
+
+      const baseY = capnoCanvas.height - 20;
+      capnoCtx.moveTo(0, baseY);
+
+      for (let i = 0; i < historyLen; i++) {
+        const idx = (bufIdx + i) % historyLen;
+        const x = (i / historyLen) * capnoCanvas.width;
+        const y = baseY - (capnoBuffer[idx] / 60) * (capnoCanvas.height - 40);
+        capnoCtx.lineTo(x, y);
+      }
+      capnoCtx.lineTo(capnoCanvas.width, baseY);
+      capnoCtx.closePath();
+      capnoCtx.fill();
+
+      // Line outline
+      capnoCtx.beginPath();
+      for (let i = 0; i < historyLen; i++) {
+        const idx = (bufIdx + i) % historyLen;
+        const x = (i / historyLen) * capnoCanvas.width;
+        const y = baseY - (capnoBuffer[idx] / 60) * (capnoCanvas.height - 40);
+        if (i === 0) capnoCtx.moveTo(x, y);
+        else capnoCtx.lineTo(x, y);
+      }
+      capnoCtx.stroke();
+
+      // Sweep bar
+      const sweepX = (bufIdx / historyLen) * capnoCanvas.width;
+      capnoCtx.fillStyle = 'rgba(2, 6, 23, 0.7)';
+      capnoCtx.fillRect(sweepX, 0, 16, capnoCanvas.height);
+
+      // Draw RIP
+      ripCtx.fillStyle = '#020617';
+      ripCtx.fillRect(0, 0, ripCanvas.width, ripCanvas.height);
+      ripCtx.strokeStyle = '#06b6d4';
+      ripCtx.lineWidth = 2;
+      ripCtx.beginPath();
+      const ripCenter = ripCanvas.height / 2;
+      for (let i = 0; i < historyLen; i++) {
+        const idx = (bufIdx + i) % historyLen;
+        const x = (i / historyLen) * ripCanvas.width;
+        const y = ripCenter - ripBuffer[idx] * (ripCanvas.height * 0.35);
+        if (i === 0) ripCtx.moveTo(x, y);
+        else ripCtx.lineTo(x, y);
+      }
+      ripCtx.stroke();
+      ripCtx.fillStyle = 'rgba(2, 6, 23, 0.7)';
+      ripCtx.fillRect(sweepX, 0, 16, ripCanvas.height);
+
+      // Readouts
+      document.getElementById('val-petco2').innerHTML = `${currentPetCO2.toFixed(1)} <span class="metric-unit">mmHg</span>`;
+      document.getElementById('val-rr').innerHTML = `${Math.round(currentRR)} <span class="metric-unit">rpm</span>`;
+      const estSpO2 = Math.min(99.4, Math.max(93.0, 99.0 - (cabinPPCO2 > 3.0 ? (cabinPPCO2 - 3.0) * 0.8 : 0))).toFixed(1);
+      document.getElementById('val-spo2').innerHTML = `${estSpO2} <span class="metric-unit">%</span>`;
+      document.getElementById('val-ppco2').innerHTML = `${cabinPPCO2.toFixed(1)} <span class="metric-unit">mmHg</span>`;
+    }
+
+    function setScenario(scen) {
+      const btns = document.querySelectorAll('.btn-group .btn');
+      btns.forEach(b => b.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      if (scen === 'earth') {
+        cabinPPCO2 = 0.3;
+        targetRR = 12;
+        targetPetCO2 = 38.0;
+      } else if (scen === 'iss_nominal') {
+        cabinPPCO2 = 2.8;
+        targetRR = 14;
+        targetPetCO2 = 42.5;
+      } else if (scen === 'co2_pocket') {
+        cabinPPCO2 = 5.5;
+        targetRR = 22;
+        targetPetCO2 = 51.5;
+      } else if (scen === 'exercise') {
+        cabinPPCO2 = 3.2;
+        targetRR = 28;
+        targetPetCO2 = 46.0;
+      }
+      document.getElementById('slider-ppco2').value = Math.round(cabinPPCO2 * 10);
+      document.getElementById('slider-ppco2-val').innerText = `${cabinPPCO2.toFixed(1)} mmHg`;
+      document.getElementById('slider-rr').value = targetRR;
+      document.getElementById('slider-rr-val').innerText = `${targetRR} rpm`;
+    }
+
+    function onManualCO2(val) {
+      cabinPPCO2 = parseFloat(val) / 10;
+      document.getElementById('slider-ppco2-val').innerText = `${cabinPPCO2.toFixed(1)} mmHg`;
+      targetPetCO2 = 38.0 + cabinPPCO2 * 1.8;
+    }
+
+    function onManualRR(val) {
+      targetRR = parseInt(val);
+      document.getElementById('slider-rr-val').innerText = `${targetRR} rpm`;
+    }
+
+    function togglePause() {
+      isPaused = !isPaused;
+      document.getElementById('btn-pause').innerText = isPaused ? 'Reanudar' : 'Pausar';
+    }
+
+    function resetSimulator() {
+      capnoBuffer.fill(0);
+      ripBuffer.fill(0);
+      setScenario('iss_nominal');
+    }
+
+    requestAnimationFrame(renderLoop);
+  </script>
+</body>
+</html>

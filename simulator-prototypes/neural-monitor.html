@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIGHTMINUTE — Monitor Neuro-Cognitivo y Electroencefalografía</title>
+  <style>
+    :root {
+      --bg-dark: #070b14;
+      --panel-bg: #0f172a;
+      --panel-border: #1e293b;
+      --card-bg: #1e293b;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-purple: #8b5cf6;
+      --accent-pink: #ec4899;
+      --text-main: #f1f5f9;
+      --text-dim: #94a3b8;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding: 16px;
+    }
+    .disclaimer-banner {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-align: center;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+    .header-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--panel-border);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      gap: 12px;
+    }
+    .header-title h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+    .badge-sim { background: #3b82f633; color: #60a5fa; border: 1px solid #3b82f666; }
+    .badge-est { background: #f59e0b33; color: #fbbf24; border: 1px solid #f59e0b66; }
+    .badge-deriv { background: #8b5cf633; color: #a78bfa; border: 1px solid #8b5cf666; }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+    }
+    @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+
+    .telemetry-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .screen-container {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+    canvas { display: block; width: 100%; height: 210px; }
+    .overlay-tag {
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-purple);
+      pointer-events: none;
+    }
+    .band-bars {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .band-card {
+      background: #0b1120;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 10px;
+      text-align: center;
+    }
+    .band-name { font-size: 0.75rem; font-weight: 700; font-family: var(--font-mono); }
+    .band-freq { font-size: 0.65rem; color: #64748b; margin-bottom: 6px; }
+    .band-pct { font-size: 1.2rem; font-weight: 700; font-family: var(--font-mono); }
+    .band-progress {
+      height: 4px;
+      background: #1e293b;
+      border-radius: 2px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+    .band-fill { height: 100%; transition: width 0.2s ease; }
+
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .metric-box {
+      background: var(--card-bg);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 10px;
+    }
+    .metric-label {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+    }
+    .metric-val {
+      font-size: 1.3rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: #a78bfa;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .metric-unit { font-size: 0.75rem; color: var(--text-dim); font-weight: 400; }
+    .metric-range { font-size: 0.65rem; color: #64748b; margin-top: 2px; }
+
+    .control-group { margin-bottom: 16px; }
+    .control-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .btn-group { display: flex; flex-direction: column; gap: 6px; }
+    .btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      text-align: left;
+    }
+    .btn:hover { background: #334155; }
+    .btn.active {
+      background: rgba(139, 92, 246, 0.2);
+      border-color: var(--accent-purple);
+      color: #c4b5fd;
+      font-weight: 600;
+    }
+    input[type=range] {
+      width: 100%; height: 6px; background: #334155; border-radius: 3px; outline: none; -webkit-appearance: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent-purple); cursor: pointer;
+    }
+    .science-panel {
+      margin-top: 16px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+    }
+    .science-panel h3 { font-size: 0.95rem; color: var(--text-main); margin-bottom: 8px; }
+    .citations {
+      font-family: var(--font-mono); font-size: 0.72rem; color: #94a3b8; border-top: 1px solid var(--panel-border); padding-top: 10px; margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="disclaimer-banner">
+    SIMULACIÓN — DATOS SINTÉTICOS — NO ES UN DISPOSITIVO MÉDICO
+  </div>
+
+  <div class="header-bar">
+    <div class="header-title">
+      <h1>
+        <span>🧠</span> Monitor Neuro-Cognitivo y Electroencefalografía Seca (Dry-EEG)
+      </h1>
+      <span style="font-size: 0.8rem; color: var(--text-dim); margin-left: 8px;">
+        Órgano: Cerebro / Corteza Cerebral · Potenciales Dipolares y Arquitectura de Ritmos
+      </span>
+    </div>
+    <div style="display: flex; gap: 6px;">
+      <span class="badge badge-sim">[SIMULADO]</span>
+      <span class="badge badge-est">[ESTIMADO]</span>
+      <span class="badge badge-deriv">[DERIVADO N-OF-1]</span>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div>
+      <div class="telemetry-card">
+        <div class="card-title">
+          <span>Trazado EEG Superficial Canal Frontocentral (Fz-Cz)</span>
+          <span style="color: var(--accent-purple); font-family: var(--font-mono); font-size: 0.75rem;">● BANDA PASANTE 0.5 - 35 Hz</span>
+        </div>
+        <div class="screen-container">
+          <canvas id="eeg-canvas" width="800" height="210"></canvas>
+          <div class="overlay-tag">ESCALA: 50 &mu;V/div · RESOLUCIÓN TEMPORAL 250 Hz</div>
+        </div>
+
+        <div class="band-bars">
+          <div class="band-card">
+            <div class="band-name" style="color: #60a5fa;">DELTA (&delta;)</div>
+            <div class="band-freq">0.5 - 4 Hz</div>
+            <div class="band-pct" id="pct-delta" style="color: #60a5fa;">18%</div>
+            <div class="band-progress"><div class="band-fill" id="fill-delta" style="background: #60a5fa; width: 18%;"></div></div>
+          </div>
+          <div class="band-card">
+            <div class="band-name" style="color: #34d399;">THETA (&theta;)</div>
+            <div class="band-freq">4 - 8 Hz</div>
+            <div class="band-pct" id="pct-theta" style="color: #34d399;">22%</div>
+            <div class="band-progress"><div class="band-fill" id="fill-theta" style="background: #34d399; width: 22%;"></div></div>
+          </div>
+          <div class="band-card">
+            <div class="band-name" style="color: #fbbf24;">ALPHA (&alpha;)</div>
+            <div class="band-freq">8 - 12 Hz</div>
+            <div class="band-pct" id="pct-alpha" style="color: #fbbf24;">44%</div>
+            <div class="band-progress"><div class="band-fill" id="fill-alpha" style="background: #fbbf24; width: 44%;"></div></div>
+          </div>
+          <div class="band-card">
+            <div class="band-name" style="color: #ec4899;">BETA (&beta;)</div>
+            <div class="band-freq">13 - 30 Hz</div>
+            <div class="band-pct" id="pct-beta" style="color: #ec4899;">16%</div>
+            <div class="band-progress"><div class="band-fill" id="fill-beta" style="background: #ec4899; width: 16%;"></div></div>
+          </div>
+        </div>
+
+        <div class="metrics-row">
+          <div class="metric-box">
+            <div class="metric-label">Índice Fatiga Cognitiva</div>
+            <div class="metric-val" id="val-fatigue">2.2 <span class="metric-unit">(&theta;+&alpha;)/&beta;</span></div>
+            <div class="metric-range">Alerta óptima: 1.5 - 2.8</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Carga Mental Estimada</div>
+            <div class="metric-val" id="val-workload" style="color: #ec4899;">34 <span class="metric-unit">%</span></div>
+            <div class="metric-range">Demanda atencional media</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Vigilia Operacional</div>
+            <div class="metric-val" id="val-vigilance" style="color: #10b981;">ALERTA</div>
+            <div class="metric-range">Riesgo microsueño: &lt; 5%</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Amplitud Pico a Pico</div>
+            <div class="metric-val" id="val-p2p" style="color: #38bdf8;">42 <span class="metric-unit">&mu;V</span></div>
+            <div class="metric-range">Calibración dipolo nominal</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="telemetry-card">
+        <div class="card-title">
+          <span>Estados Operativos y Cognitivos</span>
+        </div>
+        <div class="btn-group control-group">
+          <button class="btn active" onclick="setScenario('rest_alert')">
+            <strong>1. Vigilia Alerta / Reposo Ocular</strong><br>
+            <small style="color: var(--text-dim)">Ritmo alfa occipital dominante, bajo nivel de estrés</small>
+          </button>
+          <button class="btn" onclick="setScenario('high_workload')">
+            <strong>2. Alta Carga Mental en Misión (EVA / Acople)</strong><br>
+            <small style="color: var(--text-dim)">Desincronización alfa, elevación de oscilación beta rápida</small>
+          </button>
+          <button class="btn" onclick="setScenario('sleep_debt')">
+            <strong>3. Privación Crónica de Sueño (Día 18)</strong><br>
+            <small style="color: var(--text-dim)">Intrusión theta frontal, índice de fatiga elevado &gt; 4.5</small>
+          </button>
+          <button class="btn" onclick="setScenario('slow_wave_sleep')">
+            <strong>4. Sueño Profundo N3 (Ondas Lentas)</strong><br>
+            <small style="color: var(--text-dim)">Oscilaciones delta de alta amplitud 0.5-2 Hz, 75 &mu;V</small>
+          </button>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Nivel de Fatiga Acumulada</span>
+            <span id="slider-fatigue-val" style="color: var(--accent-amber); font-family: var(--font-mono);">Baja</span>
+          </div>
+          <input type="range" id="slider-fatigue" min="0" max="100" value="20" oninput="onManualFatigue(this.value)">
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Demanda Atencional / Tarea</span>
+            <span id="slider-task-val" style="color: var(--accent-pink); font-family: var(--font-mono);">Media</span>
+          </div>
+          <input type="range" id="slider-task" min="0" max="100" value="35" oninput="onManualTask(this.value)">
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 12px;">
+          <button class="btn" style="flex: 1; text-align: center;" onclick="togglePause()" id="btn-pause">Pausar</button>
+          <button class="btn" style="flex: 1; text-align: center;" onclick="resetSimulator()">Reiniciar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="science-panel">
+    <h3>Cronobiología Espacial, Polisomnografía Portátil y Neuroergonomía</h3>
+    <p>
+      En la ISS, la tripulación experimenta 16 transiciones luz-oscuridad al día. La pérdida de sincronizadores circadianos lumínicos naturales, sumada al ruido constante de sistemas ambientales y el estrés de tareas de alta responsabilidad, reduce la duración del sueño a una media de 6.0 horas nocturnas con pérdida selectiva de fases de ondas lentas (N3).
+    </p>
+    <ul>
+      <li><strong>Instrumentación Emergente:</strong> Diademas EEG de electrodos secos (e.g., <em>Dreem Headband</em>, validada en el estudio <em>Sleep in Orbit</em> de la ESA) y electrodos periauriculares impresos (<em>cEEGrid</em>).</li>
+      <li><strong>Variables Medidas vs Estimadas:</strong> El potencial eléctrico microvoltamperimétrico (&mu;V) es una medición biofísica directa. El índice de carga de trabajo mental y la profundidad del sueño son inferencias espectrales deterministas basadas en densidad de potencia por bandas.</li>
+      <li><strong>Limitaciones y Fuentes de Error:</strong> Artefactos oculares (parpadeos que generan ondas pseudo-delta frontales) y contracciones de músculos temporales/masticatorios (contaminación de alta frecuencia en banda beta/gamma).</li>
+    </ul>
+    <div class="citations">
+      <strong>Referencias Verificadas:</strong><br>
+      • NASA HRP Evidence Report: Risk of Performance Decrements and Disorders Associated with Sleep Loss and Circadian Misalignment (2020).<br>
+      • Dehais et al., "Monitoring Cognitive Workload in Real-World Environments With Dry-EEG Technology," <em>Frontiers in Neuroscience</em>, 2019.<br>
+      • Barger et al., "Prevalence of sleep deficiency and use of hypnotic drugs in astronauts," <em>The Lancet Neurology</em>, 2014.
+    </div>
+  </div>
+
+  <script>
+    let scenario = 'rest_alert';
+    let fatigue = 0.20;
+    let taskDemand = 0.35;
+    let isPaused = false;
+    let lastTime = performance.now();
+
+    // Spectral band weights (delta, theta, alpha, beta)
+    let pDelta = 0.18, pTheta = 0.22, pAlpha = 0.44, pBeta = 0.16;
+
+    const eegCanvas = document.getElementById('eeg-canvas');
+    const eegCtx = eegCanvas.getContext('2d');
+
+    const historyLen = 800;
+    const eegBuffer = new Float32Array(historyLen).fill(0);
+    let bufIdx = 0;
+
+    let timeAcc = 0;
+
+    function renderLoop(time) {
+      requestAnimationFrame(renderLoop);
+      if (isPaused) return;
+
+      const dt = Math.min((time - lastTime) / 1000, 0.1);
+      lastTime = time;
+      timeAcc += dt;
+
+      // Adjust band distribution dynamically based on scenario & sliders
+      if (scenario === 'rest_alert') {
+        pAlpha = 0.48 - fatigue * 0.15;
+        pBeta = 0.16 + taskDemand * 0.1;
+        pTheta = 0.18 + fatigue * 0.2;
+        pDelta = 0.18;
+      } else if (scenario === 'high_workload') {
+        pAlpha = 0.15;
+        pBeta = 0.50 + taskDemand * 0.2;
+        pTheta = 0.20;
+        pDelta = 0.15;
+      } else if (scenario === 'sleep_debt') {
+        pAlpha = 0.15;
+        pBeta = 0.10;
+        pTheta = 0.50 + fatigue * 0.2;
+        pDelta = 0.25;
+      } else if (scenario === 'slow_wave_sleep') {
+        pAlpha = 0.05;
+        pBeta = 0.05;
+        pTheta = 0.15;
+        pDelta = 0.75;
+      }
+
+      // Normalize band powers
+      const sumP = pDelta + pTheta + pAlpha + pBeta;
+      pDelta /= sumP; pTheta /= sumP; pAlpha /= sumP; pBeta /= sumP;
+
+      const samplesPerSec = 250;
+      const numSamples = Math.max(1, Math.round(dt * samplesPerSec));
+
+      for (let s = 0; s < numSamples; s++) {
+        const t = timeAcc + (s / samplesPerSec);
+
+        // Synthesize EEG multi-band oscillations with stochastic phases
+        const deltaWave = Math.sin(2 * Math.PI * 1.8 * t) * (pDelta * 45);
+        const thetaWave = Math.sin(2 * Math.PI * 6.2 * t) * (pTheta * 30);
+        const alphaWave = Math.sin(2 * Math.PI * 10.4 * t) * (pAlpha * 35);
+        const betaWave = Math.sin(2 * Math.PI * 21.0 * t) * (pBeta * 20);
+        const noise = (Math.random() - 0.5) * 4.0;
+
+        const val = deltaWave + thetaWave + alphaWave + betaWave + noise;
+
+        eegBuffer[bufIdx] = val;
+        bufIdx = (bufIdx + 1) % historyLen;
+      }
+
+      // Draw EEG trace
+      eegCtx.fillStyle = '#020617';
+      eegCtx.fillRect(0, 0, eegCanvas.width, eegCanvas.height);
+
+      // Grid
+      eegCtx.strokeStyle = '#1e293b';
+      eegCtx.lineWidth = 1;
+      eegCtx.beginPath();
+      for (let y = 30; y < eegCanvas.height; y += 35) {
+        eegCtx.moveTo(0, y); eegCtx.lineTo(eegCanvas.width, y);
+      }
+      eegCtx.stroke();
+
+      eegCtx.strokeStyle = '#a855f7'; // Purple phosphor
+      eegCtx.lineWidth = 1.6;
+      eegCtx.beginPath();
+      const centerY = eegCanvas.height / 2;
+
+      for (let i = 0; i < historyLen; i++) {
+        const idx = (bufIdx + i) % historyLen;
+        const x = (i / historyLen) * eegCanvas.width;
+        const y = centerY - eegBuffer[idx] * 1.5;
+        if (i === 0) eegCtx.moveTo(x, y);
+        else eegCtx.lineTo(x, y);
+      }
+      eegCtx.stroke();
+
+      // Sweep bar
+      const sweepX = (bufIdx / historyLen) * eegCanvas.width;
+      eegCtx.fillStyle = 'rgba(2, 6, 23, 0.7)';
+      eegCtx.fillRect(sweepX, 0, 16, eegCanvas.height);
+
+      // Update bands UI
+      const dPct = Math.round(pDelta * 100);
+      const tPct = Math.round(pTheta * 100);
+      const aPct = Math.round(pAlpha * 100);
+      const bPct = Math.round(pBeta * 100);
+
+      document.getElementById('pct-delta').innerText = `${dPct}%`;
+      document.getElementById('fill-delta').style.width = `${dPct}%`;
+      document.getElementById('pct-theta').innerText = `${tPct}%`;
+      document.getElementById('fill-theta').style.width = `${tPct}%`;
+      document.getElementById('pct-alpha').innerText = `${aPct}%`;
+      document.getElementById('fill-alpha').style.width = `${aPct}%`;
+      document.getElementById('pct-beta').innerText = `${bPct}%`;
+      document.getElementById('fill-beta').style.width = `${bPct}%`;
+
+      // Derived metrics
+      const fatigueIndex = ((pTheta + pAlpha) / Math.max(0.05, pBeta)).toFixed(1);
+      document.getElementById('val-fatigue').innerHTML = `${fatigueIndex} <span class="metric-unit">(&theta;+&alpha;)/&beta;</span>`;
+      const workloadPct = Math.round(pBeta * 140);
+      document.getElementById('val-workload').innerHTML = `${workloadPct} <span class="metric-unit">%</span>`;
+
+      const vigEl = document.getElementById('val-vigilance');
+      if (fatigueIndex > 4.0) {
+        vigEl.innerText = 'FATIGA ALTA';
+        vigEl.style.color = '#ef4444';
+      } else if (fatigueIndex > 2.8) {
+        vigEl.innerText = 'MODERADA';
+        vigEl.style.color = '#f59e0b';
+      } else {
+        vigEl.innerText = 'ALERTA';
+        vigEl.style.color = '#10b981';
+      }
+    }
+
+    function setScenario(scen) {
+      scenario = scen;
+      const btns = document.querySelectorAll('.btn-group .btn');
+      btns.forEach(b => b.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      if (scen === 'rest_alert') {
+        fatigue = 0.20; taskDemand = 0.35;
+      } else if (scen === 'high_workload') {
+        fatigue = 0.30; taskDemand = 0.85;
+      } else if (scen === 'sleep_debt') {
+        fatigue = 0.85; taskDemand = 0.30;
+      } else if (scen === 'slow_wave_sleep') {
+        fatigue = 0.90; taskDemand = 0.05;
+      }
+      document.getElementById('slider-fatigue').value = Math.round(fatigue * 100);
+      document.getElementById('slider-fatigue-val').innerText = fatigue > 0.6 ? 'Severa' : (fatigue > 0.3 ? 'Moderada' : 'Baja');
+      document.getElementById('slider-task').value = Math.round(taskDemand * 100);
+      document.getElementById('slider-task-val').innerText = taskDemand > 0.7 ? 'Muy Alta' : (taskDemand > 0.4 ? 'Media' : 'Baja');
+    }
+
+    function onManualFatigue(val) {
+      fatigue = parseInt(val) / 100;
+      document.getElementById('slider-fatigue-val').innerText = fatigue > 0.6 ? 'Severa' : (fatigue > 0.3 ? 'Moderada' : 'Baja');
+    }
+
+    function onManualTask(val) {
+      taskDemand = parseInt(val) / 100;
+      document.getElementById('slider-task-val').innerText = taskDemand > 0.7 ? 'Muy Alta' : (taskDemand > 0.4 ? 'Media' : 'Baja');
+    }
+
+    function togglePause() {
+      isPaused = !isPaused;
+      document.getElementById('btn-pause').innerText = isPaused ? 'Reanudar' : 'Pausar';
+    }
+
+    function resetSimulator() {
+      eegBuffer.fill(0);
+      setScenario('rest_alert');
+    }
+
+    requestAnimationFrame(renderLoop);
+  </script>
+</body>
+</html>

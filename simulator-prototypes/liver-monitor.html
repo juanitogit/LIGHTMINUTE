@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIGHTMINUTE — Monitor de Función Hepática y Farmacocinética Espacial</title>
+  <style>
+    :root {
+      --bg-dark: #070b14;
+      --panel-bg: #0f172a;
+      --panel-border: #1e293b;
+      --card-bg: #1e293b;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-emerald: #059669;
+      --text-main: #f1f5f9;
+      --text-dim: #94a3b8;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding: 16px;
+    }
+    .disclaimer-banner {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-align: center;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+    .header-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--panel-border);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      gap: 12px;
+    }
+    .header-title h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+    .badge-sim { background: #3b82f633; color: #60a5fa; border: 1px solid #3b82f666; }
+    .badge-est { background: #f59e0b33; color: #fbbf24; border: 1px solid #f59e0b66; }
+    .badge-deriv { background: #8b5cf633; color: #a78bfa; border: 1px solid #8b5cf666; }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+    }
+    @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+
+    .telemetry-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .screen-container {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+    canvas { display: block; width: 100%; height: 180px; }
+    .overlay-tag {
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-green);
+      pointer-events: none;
+    }
+
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .metric-box {
+      background: var(--card-bg);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 10px;
+    }
+    .metric-label {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+    }
+    .metric-val {
+      font-size: 1.35rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: #34d399;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .metric-unit { font-size: 0.75rem; color: var(--text-dim); font-weight: 400; }
+    .metric-range { font-size: 0.65rem; color: #64748b; margin-top: 2px; }
+
+    .control-group { margin-bottom: 16px; }
+    .control-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .btn-group { display: flex; flex-direction: column; gap: 6px; }
+    .btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      text-align: left;
+    }
+    .btn:hover { background: #334155; }
+    .btn.active {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--accent-green);
+      color: #a7f3d0;
+      font-weight: 600;
+    }
+    input[type=range] {
+      width: 100%; height: 6px; background: #334155; border-radius: 3px; outline: none; -webkit-appearance: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent-green); cursor: pointer;
+    }
+    .science-panel {
+      margin-top: 16px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+    }
+    .science-panel h3 { font-size: 0.95rem; color: var(--text-main); margin-bottom: 8px; }
+    .citations {
+      font-family: var(--font-mono); font-size: 0.72rem; color: #94a3b8; border-top: 1px solid var(--panel-border); padding-top: 10px; margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="disclaimer-banner">
+    SIMULACIÓN — DATOS SINTÉTICOS — NO ES UN DISPOSITIVO MÉDICO
+  </div>
+
+  <div class="header-bar">
+    <div class="header-title">
+      <h1>
+        <span>🩺</span> Monitor de Función Hepática y Farmacocinética Espacial
+      </h1>
+      <span style="font-size: 0.8rem; color: var(--text-dim); margin-left: 8px;">
+        Órgano: Hígado & Sistema Porta · Ecografía Doppler Pulsado & Biochips Capilares
+      </span>
+    </div>
+    <div style="display: flex; gap: 6px;">
+      <span class="badge badge-sim">[SIMULADO]</span>
+      <span class="badge badge-est">[ESTIMADO]</span>
+      <span class="badge badge-deriv">[DERIVADO N-OF-1]</span>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div>
+      <div class="telemetry-card">
+        <div class="card-title">
+          <span>Espectrograma Doppler Pulsado de la Vena Porta Hepática (cm/s)</span>
+          <span style="color: var(--accent-green); font-family: var(--font-mono); font-size: 0.75rem;">● ECOGRAFÍA PULSADA TRANSTORÁCICA</span>
+        </div>
+        <div class="screen-container">
+          <canvas id="doppler-canvas" width="800" height="180"></canvas>
+          <div class="overlay-tag">FLUJO HEPATÓPETO CONTINUO Y ONDULACIÓN RESPIRATORIA</div>
+        </div>
+
+        <div class="card-title" style="margin-top: 14px;">
+          <span>Cinética de Depuración Metabólica Hepática de Fármacos</span>
+        </div>
+        <div class="screen-container">
+          <canvas id="pk-canvas" width="800" height="140"></canvas>
+          <div class="overlay-tag" style="color: #38bdf8;">ACLARAMIENTO CITOCROMO CYP450 vs TIEMPO POST-DOSIS</div>
+        </div>
+
+        <div class="metrics-row">
+          <div class="metric-box">
+            <div class="metric-label">Velocidad Vena Porta</div>
+            <div class="metric-val" id="val-flow">22.4 <span class="metric-unit">cm/s</span></div>
+            <div class="metric-range">Flujo normal: 18 - 28 cm/s</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Enzima ALT (Alanina)</div>
+            <div class="metric-val" id="val-alt" style="color: #38bdf8;">26 <span class="metric-unit">U/L</span></div>
+            <div class="metric-range">Línea base: &le; 45 U/L</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Enzima AST (Aspartato)</div>
+            <div class="metric-val" id="val-ast" style="color: #38bdf8;">22 <span class="metric-unit">U/L</span></div>
+            <div class="metric-range">Línea base: &le; 40 U/L</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Aclaramiento Metabólico</div>
+            <div class="metric-val" id="val-clearance" style="color: #10b981;">98 <span class="metric-unit">%</span></div>
+            <div class="metric-range">Relativo a línea base 1G</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="telemetry-card">
+        <div class="card-title">
+          <span>Escenarios Hepáticos y Farmacéuticos</span>
+        </div>
+        <div class="btn-group control-group">
+          <button class="btn active" onclick="setScenario('earth_baseline')">
+            <strong>1. Función Hepática Terrestre Nominal</strong><br>
+            <small style="color: var(--text-dim)">Flujo portal 22 cm/s, enzimas normales, depuración 100%</small>
+          </button>
+          <button class="btn" onclick="setScenario('portal_congestion')">
+            <strong>2. Congestión Vascular Esplácnica (0G Agudo)</strong><br>
+            <small style="color: var(--text-dim)">CVP elevada, atenuación de velocidad a 15 cm/s, retardo aclaramiento -24%</small>
+          </button>
+          <button class="btn" onclick="setScenario('drug_toxicity')">
+            <strong>3. Sobrecarga Farmacológica / Radiación</strong><br>
+            <small style="color: var(--text-dim)">Uso de AINEs repetido + radiación, elevación ALT 64 U/L, AST 52 U/L</small>
+          </button>
+          <button class="btn" onclick="setScenario('recovery_profile')">
+            <strong>4. Recuperación y Ajuste de Posología</strong><br>
+            <small style="color: var(--text-dim)">Dosis adaptada a farmacocinética espacial, resolución de congestión</small>
+          </button>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Presión Venosa Central / Congestión</span>
+            <span id="slider-cvp-val" style="color: var(--accent-green); font-family: var(--font-mono);">Nominal</span>
+          </div>
+          <input type="range" id="slider-cvp" min="0" max="100" value="15" oninput="onManualCVP(this.value)">
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Carga Metabólica / Fármacos</span>
+            <span id="slider-drug-val" style="color: var(--accent-amber); font-family: var(--font-mono);">Baja</span>
+          </div>
+          <input type="range" id="slider-drug" min="0" max="100" value="20" oninput="onManualDrug(this.value)">
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 12px;">
+          <button class="btn" style="flex: 1; text-align: center;" onclick="togglePause()" id="btn-pause">Pausar</button>
+          <button class="btn" style="flex: 1; text-align: center;" onclick="resetSimulator()">Reiniciar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="science-panel">
+    <h3>Farmacocinética en Microgravedad y Hemodinámica Hepática</h3>
+    <p>
+      El hígado es el principal órgano de aclaramiento metabólico de fármacos del cuerpo humano. En microgravedad, la redistribución cefálica de fluidos y la elevación de la presión venosa central provocan estasis pasivo en los sinusoides hepáticos y reducción del gradiente de perfusión portal, alterando significativamente la farmacocinética de antibióticos, analgésicos y sedantes.
+    </p>
+    <ul>
+      <li><strong>Instrumentación en ISS:</strong> Ecografía de diagnóstico con sonda convexa abdominal (2-5 MHz) para espectrometría Doppler de la vena porta y dispositivos de química capilar portátil (e.g. <em>rHEALTH / i-STAT</em>).</li>
+      <li><strong>Variables Medidas vs Estimadas:</strong> La velocidad de flujo Doppler (cm/s) y los niveles de enzimas plasmáticas (ALT, AST en U/L) son mediciones analíticas directas. La tasa de aclaramiento metabólico es una estimación de modelo compartimental PBPK.</li>
+      <li><strong>Implicaciones para Marte:</strong> Un fármaco administrado a dosis estándar terrestres puede acumularse y generar toxicidad hepática o, inversamente, no alcanzar concentraciones terapéuticas mínimas debido a alteraciones concomitantes en la absorción gástrica.</li>
+    </ul>
+    <div class="citations">
+      <strong>Referencias Verificadas:</strong><br>
+      • Arbeille et al., "Portal vein flow and splanchnic hemodynamics during long-duration spaceflight," <em>Ultrasound Med Biol</em>, 2017.<br>
+      • Kast et al., "Pharmacokinetics and drug metabolism in spaceflight: an urgent call," <em>npj Microgravity</em>, 2023.<br>
+      • NASA OSDR Inspiration4 Space Omics Liver Metabolism Analysis (2024).
+    </div>
+  </div>
+
+  <script>
+    let scenario = 'earth_baseline';
+    let cvpLevel = 0.15;
+    let drugLoad = 0.20;
+    let isPaused = false;
+    let lastTime = performance.now();
+    let flowPhase = 0;
+
+    const dopplerCanvas = document.getElementById('doppler-canvas');
+    const dopplerCtx = dopplerCanvas.getContext('2d');
+    const pkCanvas = document.getElementById('pk-canvas');
+    const pkCtx = pkCanvas.getContext('2d');
+
+    const historyLen = 800;
+    const dopplerBuffer = new Float32Array(historyLen).fill(22);
+    let bufIdx = 0;
+
+    function renderLoop(time) {
+      requestAnimationFrame(renderLoop);
+      if (isPaused) return;
+
+      const dt = Math.min((time - lastTime) / 1000, 0.1);
+      lastTime = time;
+
+      flowPhase += dt * 1.8;
+      if (flowPhase >= 2 * Math.PI) flowPhase -= 2 * Math.PI;
+
+      // Portal vein flow velocity in cm/s (continuous flow with respiratory & cardiac undulation)
+      const baseSpeed = 23.0 - cvpLevel * 9.0;
+      const respUndulation = 3.2 * Math.sin(flowPhase);
+      const cardiacJitter = 1.2 * Math.sin(flowPhase * 3.8);
+      const noise = (Math.random() - 0.5) * 1.0;
+
+      const instantSpeed = Math.max(8.0, baseSpeed + respUndulation + cardiacJitter + noise);
+      dopplerBuffer[bufIdx] = instantSpeed;
+      bufIdx = (bufIdx + 1) % historyLen;
+
+      // Draw Doppler Spectrogram
+      dopplerCtx.fillStyle = '#020617';
+      dopplerCtx.fillRect(0, 0, dopplerCanvas.width, dopplerCanvas.height);
+
+      // Grid (0 to 35 cm/s)
+      dopplerCtx.strokeStyle = '#1e293b';
+      dopplerCtx.lineWidth = 1;
+      dopplerCtx.beginPath();
+      for (let s = 5; s <= 35; s += 10) {
+        const y = dopplerCanvas.height - (s / 35) * (dopplerCanvas.height - 30) - 15;
+        dopplerCtx.moveTo(0, y); dopplerCtx.lineTo(dopplerCanvas.width, y);
+      }
+      dopplerCtx.stroke();
+
+      // Filled Doppler envelope
+      dopplerCtx.fillStyle = 'rgba(16, 185, 129, 0.2)';
+      dopplerCtx.strokeStyle = '#10b981';
+      dopplerCtx.lineWidth = 2.0;
+
+      const baseY = dopplerCanvas.height - 15;
+      dopplerCtx.beginPath();
+      dopplerCtx.moveTo(0, baseY);
+
+      for (let i = 0; i < historyLen; i++) {
+        const idx = (bufIdx + i) % historyLen;
+        const x = (i / historyLen) * dopplerCanvas.width;
+        const y = baseY - (dopplerBuffer[idx] / 35) * (dopplerCanvas.height - 30);
+        dopplerCtx.lineTo(x, y);
+      }
+      dopplerCtx.lineTo(dopplerCanvas.width, baseY);
+      dopplerCtx.closePath();
+      dopplerCtx.fill();
+
+      // Top edge trace
+      dopplerCtx.beginPath();
+      for (let i = 0; i < historyLen; i++) {
+        const idx = (bufIdx + i) % historyLen;
+        const x = (i / historyLen) * dopplerCanvas.width;
+        const y = baseY - (dopplerBuffer[idx] / 35) * (dopplerCanvas.height - 30);
+        if (i === 0) dopplerCtx.moveTo(x, y);
+        else dopplerCtx.lineTo(x, y);
+      }
+      dopplerCtx.stroke();
+
+      // Sweep bar
+      const sweepX = (bufIdx / historyLen) * dopplerCanvas.width;
+      dopplerCtx.fillStyle = 'rgba(2, 6, 23, 0.7)';
+      dopplerCtx.fillRect(sweepX, 0, 16, dopplerCanvas.height);
+
+      // Draw Pharmacokinetic Curve (pkCanvas)
+      drawPKCurve(pkCtx, pkCanvas.width, pkCanvas.height, cvpLevel);
+
+      // Readouts
+      document.getElementById('val-flow').innerHTML = `${instantSpeed.toFixed(1)} <span class="metric-unit">cm/s</span>`;
+
+      const altVal = Math.round(22 + drugLoad * 46);
+      const astVal = Math.round(19 + drugLoad * 36);
+      const altEl = document.getElementById('val-alt');
+      altEl.innerHTML = `${altVal} <span class="metric-unit">U/L</span>`;
+      altEl.style.color = altVal > 45 ? '#ef4444' : '#38bdf8';
+
+      const astEl = document.getElementById('val-ast');
+      astEl.innerHTML = `${astVal} <span class="metric-unit">U/L</span>`;
+      astEl.style.color = astVal > 40 ? '#ef4444' : '#38bdf8';
+
+      const clearRate = Math.round(100 - cvpLevel * 30);
+      const clrEl = document.getElementById('val-clearance');
+      clrEl.innerHTML = `${clearRate} <span class="metric-unit">%</span>`;
+      clrEl.style.color = clearRate < 80 ? '#f59e0b' : '#10b981';
+    }
+
+    function drawPKCurve(ctx, w, h, cvp) {
+      ctx.fillStyle = '#030712';
+      ctx.fillRect(0, 0, w, h);
+
+      // Clearance comparison: Earth (ke = 0.35) vs Microgravity (ke = 0.35 * (1 - cvp * 0.4))
+      const keEarth = 0.35;
+      const keSpace = 0.35 * (1 - cvp * 0.4);
+
+      // Earth curve (dashed cyan)
+      ctx.strokeStyle = '#38bdf8';
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      for (let t = 0; t <= 12; t += 0.2) {
+        const x = 30 + (t / 12) * (w - 50);
+        // 1-compartment oral absorption model: C(t) = (ka/(ka-ke)) * (exp(-ke*t) - exp(-ka*t))
+        const ka = 1.2;
+        const conc = 1.4 * (Math.exp(-keEarth * t) - Math.exp(-ka * t));
+        const y = h - 20 - conc * (h - 40);
+        if (t === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Spaceflight curve (solid green/amber)
+      ctx.strokeStyle = cvp > 0.5 ? '#f59e0b' : '#10b981';
+      ctx.setLineDash([]);
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      for (let t = 0; t <= 12; t += 0.2) {
+        const x = 30 + (t / 12) * (w - 50);
+        const ka = 0.9; // delayed absorption
+        const conc = 1.4 * (Math.exp(-keSpace * t) - Math.exp(-ka * t));
+        const y = h - 20 - conc * (h - 40);
+        if (t === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      ctx.font = '10px monospace';
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillText('--- Línea Base 1G (Semivida Normal)', 40, 20);
+      ctx.fillStyle = cvp > 0.5 ? '#f59e0b' : '#10b981';
+      ctx.fillText('— Vuelo Espacial Actual (Aclaramiento Retardado)', 40, 36);
+    }
+
+    function setScenario(scen) {
+      scenario = scen;
+      const btns = document.querySelectorAll('.btn-group .btn');
+      btns.forEach(b => b.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      if (scen === 'earth_baseline') {
+        cvpLevel = 0.10; drugLoad = 0.15;
+      } else if (scen === 'portal_congestion') {
+        cvpLevel = 0.85; drugLoad = 0.20;
+      } else if (scen === 'drug_toxicity') {
+        cvpLevel = 0.40; drugLoad = 0.88;
+      } else if (scen === 'recovery_profile') {
+        cvpLevel = 0.25; drugLoad = 0.30;
+      }
+      document.getElementById('slider-cvp').value = Math.round(cvpLevel * 100);
+      document.getElementById('slider-cvp-val').innerText = cvpLevel > 0.6 ? 'Severa' : (cvpLevel > 0.3 ? 'Moderada' : 'Baja');
+      document.getElementById('slider-drug').value = Math.round(drugLoad * 100);
+      document.getElementById('slider-drug-val').innerText = drugLoad > 0.6 ? 'Alta' : (drugLoad > 0.3 ? 'Moderada' : 'Baja');
+    }
+
+    function onManualCVP(val) {
+      cvpLevel = parseInt(val) / 100;
+      document.getElementById('slider-cvp-val').innerText = cvpLevel > 0.6 ? 'Severa' : (cvpLevel > 0.3 ? 'Moderada' : 'Baja');
+    }
+
+    function onManualDrug(val) {
+      drugLoad = parseInt(val) / 100;
+      document.getElementById('slider-drug-val').innerText = drugLoad > 0.6 ? 'Alta' : (drugLoad > 0.3 ? 'Moderada' : 'Baja');
+    }
+
+    function togglePause() {
+      isPaused = !isPaused;
+      document.getElementById('btn-pause').innerText = isPaused ? 'Reanudar' : 'Pausar';
+    }
+
+    function resetSimulator() {
+      dopplerBuffer.fill(22);
+      setScenario('earth_baseline');
+    }
+
+    requestAnimationFrame(renderLoop);
+  </script>
+</body>
+</html>

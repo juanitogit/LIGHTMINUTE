@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIGHTMINUTE — Monitor Neuro-Ocular y Síndrome SANS</title>
+  <style>
+    :root {
+      --bg-dark: #070b14;
+      --panel-bg: #0f172a;
+      --panel-border: #1e293b;
+      --card-bg: #1e293b;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-blue: #3b82f6;
+      --text-main: #f1f5f9;
+      --text-dim: #94a3b8;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding: 16px;
+    }
+    .disclaimer-banner {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-align: center;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+    .header-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--panel-border);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      gap: 12px;
+    }
+    .header-title h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+    .badge-sim { background: #3b82f633; color: #60a5fa; border: 1px solid #3b82f666; }
+    .badge-est { background: #f59e0b33; color: #fbbf24; border: 1px solid #f59e0b66; }
+    .badge-deriv { background: #8b5cf633; color: #a78bfa; border: 1px solid #8b5cf666; }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+    }
+    @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+
+    .telemetry-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .screen-container {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+    canvas { display: block; width: 100%; }
+    .overlay-tag {
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+      pointer-events: none;
+    }
+
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .metric-box {
+      background: var(--card-bg);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 10px;
+    }
+    .metric-label {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+    }
+    .metric-val {
+      font-size: 1.35rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: #38bdf8;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .metric-unit { font-size: 0.75rem; color: var(--text-dim); font-weight: 400; }
+    .metric-range { font-size: 0.65rem; color: #64748b; margin-top: 2px; }
+
+    .control-group { margin-bottom: 16px; }
+    .control-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .btn-group { display: flex; flex-direction: column; gap: 6px; }
+    .btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      text-align: left;
+    }
+    .btn:hover { background: #334155; }
+    .btn.active {
+      background: rgba(6, 182, 212, 0.2);
+      border-color: var(--accent-cyan);
+      color: #67e8f9;
+      font-weight: 600;
+    }
+    input[type=range] {
+      width: 100%; height: 6px; background: #334155; border-radius: 3px; outline: none; -webkit-appearance: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent-cyan); cursor: pointer;
+    }
+    .science-panel {
+      margin-top: 16px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+    }
+    .science-panel h3 { font-size: 0.95rem; color: var(--text-main); margin-bottom: 8px; }
+    .citations {
+      font-family: var(--font-mono); font-size: 0.72rem; color: #94a3b8; border-top: 1px solid var(--panel-border); padding-top: 10px; margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="disclaimer-banner">
+    SIMULACIÓN — DATOS SINTÉTICOS — NO ES UN DISPOSITIVO MÉDICO
+  </div>
+
+  <div class="header-bar">
+    <div class="header-title">
+      <h1>
+        <span>👁️</span> Monitor Neuro-Ocular y Síndrome SANS
+      </h1>
+      <span style="font-size: 0.8rem; color: var(--text-dim); margin-left: 8px;">
+        Órgano: Globo Ocular y Nervio Óptico · Tonometría Icare & Ecografía Ocular ONSD
+      </span>
+    </div>
+    <div style="display: flex; gap: 6px;">
+      <span class="badge badge-sim">[SIMULADO]</span>
+      <span class="badge badge-est">[ESTIMADO]</span>
+      <span class="badge badge-deriv">[DERIVADO N-OF-1]</span>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div>
+      <div class="telemetry-card">
+        <div class="card-title">
+          <span>Presión Intraocular Pulsátil (IOP Beat-to-Beat en mmHg)</span>
+          <span style="color: var(--accent-cyan); font-family: var(--font-mono); font-size: 0.75rem;">● TONOMETRÍA DE REBOTE DINÁMICA</span>
+        </div>
+        <div class="screen-container">
+          <canvas id="iop-canvas" width="800" height="150"></canvas>
+          <div class="overlay-tag">PULSATILIDAD OCULAR ARTERIAL (AMPLITUD 1.8 mmHg)</div>
+        </div>
+
+        <div class="card-title" style="margin-top: 14px;">
+          <span>Corte Ecográfico Retrobulbar 2D: Vaina del Nervio Óptico (ONSD a 3 mm)</span>
+        </div>
+        <div class="screen-container">
+          <canvas id="onsd-canvas" width="800" height="180"></canvas>
+          <div class="overlay-tag" style="color: #a78bfa;">SONDA LINEAL 12 MHz · ECOGRAFÍA MODO B RETROBULBAR</div>
+        </div>
+
+        <div class="metrics-row">
+          <div class="metric-box">
+            <div class="metric-label">Presión Intraocular (IOP)</div>
+            <div class="metric-val" id="val-iop">15.4 <span class="metric-unit">mmHg</span></div>
+            <div class="metric-range">Banda segura: 11 - 21 mmHg</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Diámetro Vaina (ONSD)</div>
+            <div class="metric-val" id="val-onsd" style="color: #a78bfa;">4.6 <span class="metric-unit">mm</span></div>
+            <div class="metric-range">Umbral SANS: &gt; 5.0 mm</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Gradiente Translaminar (&Delta;P)</div>
+            <div class="metric-val" id="val-tlp" style="color: #10b981;">+3.2 <span class="metric-unit">mmHg</span></div>
+            <div class="metric-range">IOP - Presión Intracraneal (ICP)</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Edema de Disco (Frisén)</div>
+            <div class="metric-val" id="val-frisen" style="color: #38bdf8;">GRADO 0 <span class="metric-unit"></span></div>
+            <div class="metric-range">Fondo de ojo sin papiledema</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="telemetry-card">
+        <div class="card-title">
+          <span>Escenarios Gravitatorios y Vasculares</span>
+        </div>
+        <div class="btn-group control-group">
+          <button class="btn active" onclick="setScenario('earth_1g')">
+            <strong>1. Pre-vuelo 1G Terrestre (Línea Base)</strong><br>
+            <small style="color: var(--text-dim)">IOP 14.5 mmHg, ONSD 4.5 mm, gradiente translaminar positivo</small>
+          </button>
+          <button class="btn" onclick="setScenario('acute_0g')">
+            <strong>2. Microgravedad Aguda (Día 3)</strong><br>
+            <small style="color: var(--text-dim)">Desplazamiento cefálico fluido, IOP sube a 19.5 mmHg, ingurgitación coroidea</small>
+          </button>
+          <button class="btn" onclick="setScenario('sans_chronic')">
+            <strong>3. Fenotipo SANS Estable (Día 120+)</strong><br>
+            <small style="color: var(--text-dim)">ONSD 5.7 mm, aplanamiento escleral posterior, edema Frisén Grado 1-2</small>
+          </button>
+          <button class="btn" onclick="setScenario('lbnp_counter')">
+            <strong>4. Contramedida LBNP Activa (-25 mmHg)</strong><br>
+            <small style="color: var(--text-dim)">Tracción venosa caudal, descompresión de vaina retrobulbar ONSD 4.8 mm</small>
+          </button>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Presión Intraocular Media (mmHg)</span>
+            <span id="slider-iop-val" style="color: var(--accent-cyan); font-family: var(--font-mono);">15 mmHg</span>
+          </div>
+          <input type="range" id="slider-iop" min="10" max="30" value="15" oninput="onManualIOP(this.value)">
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Congestión Venosa Cefálica (CVP)</span>
+            <span id="slider-cvp-val" style="color: var(--accent-amber); font-family: var(--font-mono);">Normal</span>
+          </div>
+          <input type="range" id="slider-cvp" min="0" max="100" value="20" oninput="onManualCVP(this.value)">
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 12px;">
+          <button class="btn" style="flex: 1; text-align: center;" onclick="togglePause()" id="btn-pause">Pausar</button>
+          <button class="btn" style="flex: 1; text-align: center;" onclick="resetSimulator()">Reiniciar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="science-panel">
+    <h3>Fisiopatología del Síndrome SANS y Medición Ecográfica</h3>
+    <p>
+      El síndrome neuro-ocular asociado al vuelo espacial (SANS) afecta a más del 60% de los astronautas de misiones prolongadas en la ISS. La pérdida del gradiente gravitatorio ascendente elimina la reducción nocturna normal de la presión intracraneal e incrementa la presión en los senos venosos durales y en la vena yugular interna.
+    </p>
+    <ul>
+      <li><strong>Instrumentación en Vuelo:</strong> Tonómetros de rebote de mano (<em>Icare Pro / Tono-Pen</em>) y plataforma ecográfica <em>GE Vivid q</em> con sonda lineal para medición del ONSD a 3.0 mm de la papila óptica.</li>
+      <li><strong>Variables Medidas vs Estimadas:</strong> La IOP y el ONSD son mediciones biofísicas directas. El gradiente de presión translaminar (&Delta;P = IOP - ICP) es una estimación matemática indirecta, ya que la punción lumbar o monitor intraventricular de ICP son invasivos y no viables rutinariamente en vuelo.</li>
+      <li><strong>Limitaciones y Fuentes de Error:</strong> Error dependiente del operador al alinear la sonda ecográfica exactamente perpendicular a 3 mm por detrás de la esclerótica; variaciones de rigidez corneal interindividual.</li>
+    </ul>
+    <div class="citations">
+      <strong>Referencias Verificadas:</strong><br>
+      • Stenger et al., "Risk of Spaceflight Associated Neuro-ocular Syndrome (SANS)," NASA Evidence Report, 2019.<br>
+      • Mader et al., "Optic Disc Edema, Globe Flattening, and Choroidal Folds in Astronauts," <em>Ophthalmology</em>, 118(10): 2058-2069.<br>
+      • Laurie et al., "Optic Nerve Sheath Diameter Measurement with Ultrasound in Microgravity," <em>JAMA Ophthalmol</em>, 2020.
+    </div>
+  </div>
+
+  <script>
+    let scenario = 'earth_1g';
+    let meanIOP = 15.0;
+    let targetONSD = 4.5;
+    let currentONSD = 4.5;
+    let cvpStress = 0.2;
+    let isPaused = false;
+    let lastTime = performance.now();
+    let pulsePhase = 0;
+
+    const iopCanvas = document.getElementById('iop-canvas');
+    const iopCtx = iopCanvas.getContext('2d');
+    const onsdCanvas = document.getElementById('onsd-canvas');
+    const onsdCtx = onsdCanvas.getContext('2d');
+
+    const historyLen = 800;
+    const iopBuffer = new Float32Array(historyLen).fill(15);
+    let bufIdx = 0;
+
+    function renderLoop(time) {
+      requestAnimationFrame(renderLoop);
+      if (isPaused) return;
+
+      const dt = Math.min((time - lastTime) / 1000, 0.1);
+      lastTime = time;
+
+      currentONSD += (targetONSD - currentONSD) * 0.03;
+
+      const heartRate = 65;
+      const omega = (heartRate / 60) * 2 * Math.PI;
+
+      pulsePhase += omega * dt;
+      if (pulsePhase >= 2 * Math.PI) pulsePhase -= 2 * Math.PI;
+
+      // IOP beat-to-beat arterial pulse oscillation (amplitude ~1.5 mmHg)
+      const ocularPulse = 1.2 * Math.sin(pulsePhase) + 0.4 * Math.sin(2 * pulsePhase);
+      const instantIOP = meanIOP + ocularPulse + (Math.random() - 0.5) * 0.15;
+
+      iopBuffer[bufIdx] = instantIOP;
+      bufIdx = (bufIdx + 1) % historyLen;
+
+      // Draw IOP
+      iopCtx.fillStyle = '#020617';
+      iopCtx.fillRect(0, 0, iopCanvas.width, iopCanvas.height);
+
+      // Grid
+      iopCtx.strokeStyle = '#1e293b';
+      iopCtx.lineWidth = 1;
+      iopCtx.beginPath();
+      for (let p = 10; p <= 30; p += 5) {
+        const y = iopCanvas.height - ((p - 10) / 20) * (iopCanvas.height - 30) - 15;
+        iopCtx.moveTo(0, y); iopCtx.lineTo(iopCanvas.width, y);
+      }
+      iopCtx.stroke();
+
+      iopCtx.strokeStyle = '#38bdf8';
+      iopCtx.lineWidth = 1.8;
+      iopCtx.beginPath();
+      for (let i = 0; i < historyLen; i++) {
+        const idx = (bufIdx + i) % historyLen;
+        const x = (i / historyLen) * iopCanvas.width;
+        const y = iopCanvas.height - ((iopBuffer[idx] - 10) / 20) * (iopCanvas.height - 30) - 15;
+        if (i === 0) iopCtx.moveTo(x, y);
+        else iopCtx.lineTo(x, y);
+      }
+      iopCtx.stroke();
+
+      const sweepX = (bufIdx / historyLen) * iopCanvas.width;
+      iopCtx.fillStyle = 'rgba(2, 6, 23, 0.7)';
+      iopCtx.fillRect(sweepX, 0, 16, iopCanvas.height);
+
+      // Draw 2D Ultrasound ONSD Schematics
+      drawUltrasoundONSD(onsdCtx, onsdCanvas.width, onsdCanvas.height, currentONSD);
+
+      // Readouts
+      document.getElementById('val-iop').innerHTML = `${instantIOP.toFixed(1)} <span class="metric-unit">mmHg</span>`;
+      document.getElementById('val-onsd').innerHTML = `${currentONSD.toFixed(2)} <span class="metric-unit">mm</span>`;
+      const estICP = 9.5 + cvpStress * 8.0;
+      const tlp = (meanIOP - estICP).toFixed(1);
+      document.getElementById('val-tlp').innerHTML = `${tlp >= 0 ? '+' : ''}${tlp} <span class="metric-unit">mmHg</span>`;
+
+      const frisenEl = document.getElementById('val-frisen');
+      if (currentONSD > 5.5) {
+        frisenEl.innerText = 'GRADO 2';
+        frisenEl.style.color = '#ef4444';
+      } else if (currentONSD > 5.0) {
+        frisenEl.innerText = 'GRADO 1';
+        frisenEl.style.color = '#f59e0b';
+      } else {
+        frisenEl.innerText = 'GRADO 0';
+        frisenEl.style.color = '#10b981';
+      }
+    }
+
+    function drawUltrasoundONSD(ctx, w, h, onsdVal) {
+      ctx.fillStyle = '#030712';
+      ctx.fillRect(0, 0, w, h);
+
+      // Ultrasound speckle noise background simulation
+      ctx.fillStyle = 'rgba(148, 163, 184, 0.08)';
+      for (let i = 0; i < 200; i++) {
+        const rx = Math.random() * w;
+        const ry = Math.random() * h;
+        ctx.fillRect(rx, ry, 2, 2);
+      }
+
+      const cx = w * 0.45;
+      const cy = h * 0.5;
+
+      // Posterior scleral wall (white curve)
+      ctx.strokeStyle = '#f8fafc';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      // Flattening based on SANS severity
+      const flattenOffset = (onsdVal > 5.0) ? (onsdVal - 5.0) * 12 : 0;
+      ctx.arc(cx - 140 + flattenOffset, cy, 180, -Math.PI / 3.5, Math.PI / 3.5);
+      ctx.stroke();
+
+      // Optic nerve head (papilla)
+      ctx.fillStyle = (onsdVal > 5.2) ? '#f59e0b' : '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(cx + 40, cy, (onsdVal > 5.2 ? 14 : 9), 0, Math.PI * 2);
+      ctx.fill();
+
+      // Optic nerve sheath (hypoechoic cerebrospinal fluid band)
+      const sheathThickness = (onsdVal / 4.5) * 26; // visual scale in pixels
+      ctx.strokeStyle = '#818cf8';
+      ctx.lineWidth = 2.5;
+
+      // Upper and lower sheath boundaries
+      ctx.beginPath();
+      ctx.moveTo(cx + 40, cy - sheathThickness);
+      ctx.lineTo(cx + 260, cy - sheathThickness);
+      ctx.moveTo(cx + 40, cy + sheathThickness);
+      ctx.lineTo(cx + 260, cy + sheathThickness);
+      ctx.stroke();
+
+      // CSF fluid space fill
+      ctx.fillStyle = 'rgba(99, 102, 241, 0.18)';
+      ctx.fillRect(cx + 40, cy - sheathThickness, 220, sheathThickness * 2);
+
+      // Central optic nerve core (parenchyma)
+      ctx.fillStyle = 'rgba(148, 163, 184, 0.4)';
+      ctx.fillRect(cx + 40, cy - 10, 220, 20);
+
+      // Caliper measurement marker at 3.0 mm retrobulbar
+      const caliperX = cx + 110;
+      ctx.strokeStyle = '#f43f5e';
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(caliperX, cy - sheathThickness - 10);
+      ctx.lineTo(caliperX, cy + sheathThickness + 10);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Caliper text
+      ctx.fillStyle = '#f43f5e';
+      ctx.font = '11px monospace';
+      ctx.fillText(`Caliper @ 3.0mm: ONSD = ${onsdVal.toFixed(2)} mm`, caliperX + 8, cy - sheathThickness - 12);
+      ctx.fillText(`Polo Posterior Escleral`, cx - 80, cy - 60);
+    }
+
+    function setScenario(scen) {
+      scenario = scen;
+      const btns = document.querySelectorAll('.btn-group .btn');
+      btns.forEach(b => b.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      if (scen === 'earth_1g') {
+        meanIOP = 14.5; targetONSD = 4.45; cvpStress = 0.15;
+      } else if (scen === 'acute_0g') {
+        meanIOP = 19.5; targetONSD = 5.05; cvpStress = 0.65;
+      } else if (scen === 'sans_chronic') {
+        meanIOP = 16.8; targetONSD = 5.75; cvpStress = 0.85;
+      } else if (scen === 'lbnp_counter') {
+        meanIOP = 15.2; targetONSD = 4.80; cvpStress = 0.25;
+      }
+      document.getElementById('slider-iop').value = Math.round(meanIOP);
+      document.getElementById('slider-iop-val').innerText = `${Math.round(meanIOP)} mmHg`;
+      document.getElementById('slider-cvp').value = Math.round(cvpStress * 100);
+      document.getElementById('slider-cvp-val').innerText = cvpStress > 0.6 ? 'Severa' : (cvpStress > 0.3 ? 'Moderada' : 'Baja');
+    }
+
+    function onManualIOP(val) {
+      meanIOP = parseFloat(val);
+      document.getElementById('slider-iop-val').innerText = `${Math.round(meanIOP)} mmHg`;
+    }
+
+    function onManualCVP(val) {
+      cvpStress = parseInt(val) / 100;
+      targetONSD = 4.3 + cvpStress * 1.5;
+      document.getElementById('slider-cvp-val').innerText = cvpStress > 0.6 ? 'Severa' : (cvpStress > 0.3 ? 'Moderada' : 'Baja');
+    }
+
+    function togglePause() {
+      isPaused = !isPaused;
+      document.getElementById('btn-pause').innerText = isPaused ? 'Reanudar' : 'Pausar';
+    }
+
+    function resetSimulator() {
+      iopBuffer.fill(15);
+      setScenario('earth_1g');
+    }
+
+    requestAnimationFrame(renderLoop);
+  </script>
+</body>
+</html>
