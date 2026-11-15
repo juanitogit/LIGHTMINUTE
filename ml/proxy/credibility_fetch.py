@@ -24,6 +24,7 @@ SOURCES = {
     "osdr-575-files-v2": "https://visualization.osdr.nasa.gov/biodata/api/v2/dataset/OSD-575/files/?format=json",
     "osdr-575-files-legacy": "https://osdr.nasa.gov/osdr/data/osd/files/575",
     "osdr-575-meta-legacy": "https://osdr.nasa.gov/osdr/data/osd/meta/575",
+    "osdr-575-cmp": "https://osdr.nasa.gov/geode-py/ws/studies/OSD-575/download?source=datamanager&file=LSDS-8_Comprehensive_Metabolic_Panel_CMP_TRANSFORMED.csv",
     "osdr-569-v2": "https://visualization.osdr.nasa.gov/biodata/api/v2/dataset/OSD-569/?format=json",
 }
 
@@ -54,6 +55,12 @@ def main() -> None:
     path = HERE / "credibility-provenance.json"
     prior = json.loads(path.read_text()) if path.exists() else []
     for name in args.ids:
+        if name == "osdr-575-cmp":
+            manifest = json.loads((HERE / "cache/osdr-575-files-legacy.bin").read_bytes())
+            files = manifest["studies"]["OSD-575"]["study_files"]
+            if not any(entry["file_name"] == "LSDS-8_Comprehensive_Metabolic_Panel_CMP_TRANSFORMED.csv"
+                       and entry["restricted"] is False for entry in files):
+                raise ValueError("CMP release is not listed as unrestricted")
         result = fetch(name, SOURCES[name])
         prior.append(result)
         path.write_text(json.dumps(prior, indent=2), encoding="utf-8")

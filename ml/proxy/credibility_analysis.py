@@ -210,6 +210,8 @@ def osdr() -> dict:
                   if e["file_name"] == "LSDS-8_Comprehensive_Metabolic_Panel_CMP_TRANSFORMED.csv")
     assert source["restricted"] is False
     path = HERE / "cache" / "osdr-575-cmp.bin"
+    if sha(path) != "5eb1e7f025dd8443a9e70111e62bc32afae3432753024489c5c013e401d709d9":
+        raise ValueError("CMP archive differs from the audited public release")
     table = list(csv.DictReader(io.StringIO(path.read_text(encoding="utf-8-sig"))))
     indicators = [c for c in table[0] if c.endswith("_value") or "_value_" in c]
     grouped = defaultdict(list)
@@ -252,7 +254,7 @@ def osdr() -> dict:
                 model.robust_update(float(value))
             lo, hi = model.surprise(float(train[-1]))["ci95"]
             for day, value in post:
-                s = model.surprise(value)  # posterior frozen after pre-flight
+                # Every post-flight observation uses the same frozen preflight interval.
                 outputs.append({"subject": subject, "indicator": indicator,
                                 "units_from_column": indicator.split("_value_",1)[1] if "_value_" in indicator else "dimensionless ratio",
                                 "pre_n": len(pre), "post_visit_return_plus_days": day,

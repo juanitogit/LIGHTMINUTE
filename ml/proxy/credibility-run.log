@@ -1,0 +1,62 @@
+MMASH user_1 train 280 report 1121 raw 0.9376 context 0.9822
+MMASH user_2 train 257 report 1029 raw 0.9329 context 0.9417
+MMASH user_3 train 278 report 1116 raw 0.9185 context 0.9346
+MMASH user_4 train 271 report 1086 raw 0.9475 context 0.9512
+MMASH user_5 train 269 report 1080 raw 0.9306 context 0.9343
+MMASH user_6 train 278 report 1116 raw 0.9382 context 0.9319
+MMASH user_7 train 282 report 1128 raw 0.9317 context 0.9548
+MMASH user_8 train 164 report 657 raw 0.9543 context 0.9574
+MMASH user_9 train 161 report 647 raw 0.9181 context 0.9088
+MMASH user_10 train 244 report 980 raw 0.9296 context 0.9694
+MMASH user_11 train 285 report 1144 raw 0.9467 context 0.9755
+MMASH user_12 train 283 report 1134 raw 0.9259 context 0.9568
+MMASH user_13 train 278 report 1116 raw 0.9256 context 0.9462
+MMASH user_14 train 279 report 1117 raw 0.9338 context 0.9714
+MMASH user_15 train 298 report 1194 raw 0.9447 context 0.9481
+MMASH user_16 train 286 report 1148 raw 0.9242 context 0.9538
+MMASH user_17 train 281 report 1125 raw 0.9253 context 0.9511
+MMASH user_18 train 277 report 1108 raw 0.9278 context 0.9287
+MMASH user_19 train 281 report 1128 raw 0.9193 context 0.9645
+MMASH user_20 train 271 report 1087 raw 0.9347 context 0.9476
+MMASH user_21 train 277 report 1110 raw 0.9243 context 0.9468
+MMASH user_22 train 279 report 1117 raw 0.9248 context 0.9346
+{
+  "mmash": {
+    "raw": {
+      "report_n": 23488,
+      "covered": 21879,
+      "coverage": 0.9314969346049047,
+      "outside_band_flags_per_observed_person_day": 98.64441416893733,
+      "median_of_person_median_widths_bpm": 29.53011621211235,
+      "median_person_lag1_correlation": 0.7816609196360522,
+      "calibration_gate_pass": true
+    },
+    "circadian_residual": {
+      "report_n": 23488,
+      "covered": 22320,
+      "coverage": 0.9502724795640327,
+      "outside_band_flags_per_observed_person_day": 71.60762942779292,
+      "median_of_person_median_widths_bpm": 35.743369160904216,
+      "median_person_lag1_correlation": 0.8536519883629707,
+      "calibration_gate_pass": true
+    }
+  },
+  "context_helpful": false,
+  "osdr": {
+    "label": "real-public",
+    "synthetic": false,
+    "status": "DONE-EXPLORATORY",
+    "study": "OSD-575",
+    "csv_sha256": "5eb1e7f025dd8443a9e70111e62bc32afae3432753024489c5c013e401d709d9",
+    "subjects": 4,
+    "source_csv_rows": 28,
+    "indicator_columns": 19,
+    "eligible_subject_indicators": 72,
+    "post_predictions": 287,
+    "outside_band_predictions": 79,
+    "constant_preflight_subject_indicators": 0,
+    "literature_direction_concordance": "NOT DONE: no preregistered indicator-specific directional comparison; no concordance claim.",
+    "interpretation": "Sparse pre-flight empirical-Bayes exploration, not calibrated sensitivity/coverage or clinical detection. Post-flight does not update baseline."
+  },
+  "ended_at": "2026-11-15T00:26:46.065086+00:00"
+}
