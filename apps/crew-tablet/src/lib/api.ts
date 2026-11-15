@@ -7,7 +7,7 @@
  * and clearly labels when it had to fall back.
  */
 import { titleFromName } from "./format";
-import { verifySignedJson } from "./verifySigned";
+import { VerificationUnavailableError, verifySignedJson } from "./verifySigned";
 import {
   buildInvestigationScenario,
   isInvestigationScenario,
@@ -118,6 +118,20 @@ export interface ScenarioListResult {
   source: "api" | "index" | "defaults";
 }
 
+/**
+ * Read a signed static file. If this browser cannot verify Ed25519, the bytes are
+ * read anyway and reported as unverified: a platform limitation must not leave the
+ * whole workspace with no scenario, and it is never presented as verified data.
+ */
+async function readStaticJson<T>(path: string): Promise<{ body: T; verified: boolean }> {
+  try {
+    return { body: await verifySignedJson<T>(path, BASE, STATIC_TIMEOUT_MS), verified: true };
+  } catch (error) {
+    if (!(error instanceof VerificationUnavailableError)) throw error;
+    return { body: await fetchJson<T>(`${BASE}${path}`, STATIC_TIMEOUT_MS), verified: false };
+  }
+}
+
 const DEFAULT_NAMES = ["cmo_fever", "sep_sleep_loss", "co2_creep"];
 
 export const FALLBACK_SCENARIOS: ScenarioSummary[] = DEFAULT_NAMES.map((name) => ({
@@ -147,8 +161,8 @@ export async function loadScenarioIndex(): Promise<ScenarioListResult> {
   }
 
   try {
-    const body = await verifySignedJson<{ scenarios?: ScenarioSummary[] } | ScenarioSummary[]>(
-      "data/scenario-index.json", BASE, STATIC_TIMEOUT_MS,
+    const { body } = await readStaticJson<{ scenarios?: ScenarioSummary[] } | ScenarioSummary[]>(
+      "data/scenario-index.json",
     );
     const list = Array.isArray(body) ? body : body.scenarios;
     if (Array.isArray(list) && list.length > 0) {
@@ -219,23 +233,27 @@ export async function loadScenario(name: string): Promise<LoadedScenario> {
   }
 
   try {
-    const raw = await verifySignedJson<ScenarioDoc>(`data/scenario-${encoded}.json`, BASE, STATIC_TIMEOUT_MS);
+    const { body, verified } = await readStaticJson<ScenarioDoc>(`data/scenario-${encoded}.json`);
     return {
-      doc: asScenarioDoc(raw, name, true),
+      doc: asScenarioDoc(body, name, true),
       origin: "scenario-file",
       degraded: false,
-      originLabel: "static scenario file · signature verified",
+      originLabel: verified
+        ? "static scenario file · signature verified"
+        : "static scenario file · unverified (no Ed25519 in this browser)",
     };
   } catch {
     /* Last resort: the scaffold demo file. */
   }
 
-  const raw = await verifySignedJson<ScenarioDoc>("demo-data.json", BASE, STATIC_TIMEOUT_MS);
+  const { body: fallback, verified: fallbackVerified } = await readStaticJson<ScenarioDoc>("demo-data.json");
   return {
-    doc: asScenarioDoc(raw, name, true),
+    doc: asScenarioDoc(fallback, name, true),
     origin: "demo-data",
     degraded: true,
-    originLabel: "demo-data.json · signed static fallback",
+    originLabel: fallbackVerified
+      ? "demo-data.json · signed static fallback"
+      : "demo-data.json · unverified static fallback",
   };
 }
 

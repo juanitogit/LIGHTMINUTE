@@ -2,9 +2,21 @@ import { SCENARIO_PUBLIC_KEY } from "./scenarioKey";
 type Manifest = {algorithm:string;publicKey:string;signatures:Record<string,string>};
 const bytes = (base64:string) => Uint8Array.from(atob(base64), char=>char.charCodeAt(0));
 
+/**
+ * The payload could not be checked because this browser has no Ed25519 in
+ * WebCrypto (some Chromium builds reject `importKey` with "Unrecognized name").
+ * Callers may read the bytes unverified, but must label them as unverified.
+ */
+export class VerificationUnavailableError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "VerificationUnavailableError";
+  }
+}
+
 /** Checks exact response bytes, before parsing or displaying a scenario. */
 export async function verifySignedJson<T>(path:string,base:string,timeoutMs:number):Promise<T> {
-  if (!crypto.subtle) throw new Error("Signature verification unavailable on this device");
+  if (!crypto.subtle) throw new VerificationUnavailableError("Signature verification unavailable on this device");
   const controller=new AbortController();const timer=window.setTimeout(()=>controller.abort(),timeoutMs);
   try {
     const [manifestResponse,dataResponse]=await Promise.all([
@@ -13,7 +25,12 @@ export async function verifySignedJson<T>(path:string,base:string,timeoutMs:numb
     if (!manifestResponse.ok || !dataResponse.ok) throw new Error("Signed scenario unavailable");
     const manifest=await manifestResponse.json() as Manifest;
     if(manifest.algorithm!=="Ed25519" || manifest.publicKey!==SCENARIO_PUBLIC_KEY || !manifest.signatures?.[path]) throw new Error("Scenario signature or trusted key missing");
-    const key=await crypto.subtle.importKey("spki",bytes(SCENARIO_PUBLIC_KEY),{name:"Ed25519"},false,["verify"]);
+    let key:CryptoKey;
+    try {
+      key=await crypto.subtle.importKey("spki",bytes(SCENARIO_PUBLIC_KEY),{name:"Ed25519"},false,["verify"]);
+    } catch (error) {
+      throw new VerificationUnavailableError(error instanceof Error ? error.message : "Ed25519 unavailable");
+    }
     const data=await dataResponse.arrayBuffer();
     if(!await crypto.subtle.verify("Ed25519",key,bytes(manifest.signatures[path]),data)) throw new Error("Scenario signature invalid");
     return JSON.parse(new TextDecoder().decode(data)) as T;

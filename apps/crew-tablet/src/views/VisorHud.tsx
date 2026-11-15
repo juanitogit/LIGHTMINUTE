@@ -7,6 +7,7 @@ import { useDictation } from "../hooks/useDictation";
 import { useVisorSpeech } from "../hooks/useVisorSpeech";
 import { detectSpeechLang } from "../lib/kokoro";
 import { askVisorAssistant, localGroundedAnswer, snapshotSummary, type VisorSnapshot } from "../lib/visorAssistant";
+import { MARKER_POINTS, formatMetric, metricTone, metricWord, nasaCaseForDoc } from "../lib/nasaCases";
 import "../hud-visor.css";
 
 interface VisorHudProps {
@@ -75,6 +76,17 @@ export function VisorHud({
   const pvt = ind?.pvt_ms?.value ?? 270;
   const co2 = ind?.co2_ppm?.value ?? 820;
   const headache = ind?.headache_score?.value ?? 0;
+
+  // The active NASA case decides which metric earns a fixed HUD row.
+  const caseMeta = nasaCaseForDoc(scenario?.doc);
+  const metric = caseMeta?.critical;
+  const metricValue = metric ? ind?.[metric.key]?.value : undefined;
+  const metricLevel = metric ? metricTone(metric, metricValue) : "normal";
+  const metricColor = metricLevel === "alert" ? "#ff4a36" : metricLevel === "watch" ? "#ffe27a" : "#e8a321";
+  const metricRatio = metric && typeof metricValue === "number" && Number.isFinite(metricValue)
+    ? Math.min(100, Math.max(0, (metricValue / metric.barMax) * 100))
+    : 0;
+  const markerPoint = caseMeta?.marker ? MARKER_POINTS[caseMeta.marker.site] : undefined;
 
   // Severity level determination (l0: routine, l1: watch, l2: act/escalate)
   const levelClass = useMemo(() => {
@@ -463,7 +475,9 @@ export function VisorHud({
 
       {/* 11. Bottom-Left: Vital Signs & Rest Card */}
       <div className="hud-abs" id="hud-bl">
-        <div id="hud-bl-title">SIGNOS VITALES · REPOSO & COGNICIÓN</div>
+        <div id="hud-bl-title">
+          {caseMeta ? `PERSONALIZADO · CASO ${caseMeta.number}` : "SIGNOS VITALES · REPOSO & COGNICIÓN"}
+        </div>
 
         {/* Sleep */}
         <div className="hud-row">
@@ -489,24 +503,40 @@ export function VisorHud({
           <span className="hud-row-status" />
         </div>
 
-        {/* Headache */}
-        <div className="hud-row">
-          <div className="hud-row-info">
-            <span className="hud-row-lbl">Cefalea autoreportada</span>
-            <b>{headache.toFixed(0)} <small>/10</small></b>
-            <div className="hud-row-bar">
-              <i style={{ width: `${Math.min(100, (headache / 10) * 100)}%` }} />
+        {/* The critical metric of the active NASA case replaces the fixed headache row. */}
+        {metric && caseMeta ? (
+          <div className={`hud-row hud-row--case ${metricLevel}`}>
+            <div className="hud-row-info">
+              <span className="hud-row-lbl">{metric.label}</span>
+              <b style={{ color: metricColor, textShadow: `0 0 6px ${metricColor}` }}>
+                {formatMetric(metric, metricValue)}
+              </b>
+              <div className="hud-row-bar">
+                <i style={{ width: `${metricRatio}%`, background: metricColor, boxShadow: `0 0 4px ${metricColor}` }} />
+              </div>
             </div>
+            <span className="hud-row-tag" style={{ color: metricColor }}>{metricWord(metric, metricLevel)}</span>
           </div>
-          <span className="hud-row-status" />
-        </div>
+        ) : (
+          <div className="hud-row">
+            <div className="hud-row-info">
+              <span className="hud-row-lbl">Cefalea autoreportada</span>
+              <b>{headache.toFixed(0)} <small>/10</small></b>
+              <div className="hud-row-bar">
+                <i style={{ width: `${Math.min(100, (headache / 10) * 100)}%` }} />
+              </div>
+            </div>
+            <span className="hud-row-status" />
+          </div>
+        )}
       </div>
 
       {/* 12. Bottom-Right: Humanoid Body Scanner & Organs */}
       <div className="hud-abs" id="hud-br">
         <span id="hud-br-title">ESCÁNER CORPORAL</span>
 
-        <svg className="hud-body" viewBox="0 0 100 220" aria-label="Modelo corporal con órganos monitoreados">
+        <div className="hud-body-wrap">
+        <svg className="hud-body" viewBox="0 0 100 220" aria-label="Modelo corporal con órganos monitoreados y punto de fijación del sensor">
           {/* Anatomical Outline */}
           <ellipse className="hud-outline" cx="50" cy="18" rx="13" ry="16" />
           <path className="hud-outline" d="M44 32 L44 40 Q50 42 56 40 L56 32" />
@@ -585,7 +615,30 @@ export function VisorHud({
             fill="var(--c)"
             opacity="0.6"
           />
+
+          {/* Case sensor fixation point: eyes for SANS, neck for jugular stasis, etc. */}
+          {markerPoint ? (
+            <g
+              className={`hud-crosshair ${metricLevel}`}
+              transform={`translate(${markerPoint.x} ${markerPoint.y})`}
+              style={{ color: metricColor }}
+            >
+              <circle className="hud-xh-pulse" r="10" />
+              <circle className="hud-xh-ring" r="4.6" />
+              <path className="hud-xh-lines" d="M-13 0h6M7 0h6M0-13v6M0 7v6" />
+              <line className="hud-xh-lead" x1="0" y1="0" x2="26" y2="-14" />
+            </g>
+          ) : null}
         </svg>
+        {caseMeta?.marker && markerPoint ? (
+          <span
+            className={`hud-xh-label ${metricLevel}`}
+            style={{ top: `${(markerPoint.y / 220) * 100}%`, color: metricColor }}
+          >
+            {caseMeta.marker.label}
+          </span>
+        ) : null}
+        </div>
 
         <div>
           <div className="t">ESTADO ORGÁNICO</div>

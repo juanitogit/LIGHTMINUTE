@@ -4,11 +4,13 @@ import { Icon } from "../components/Icon";
 import { LevelBadge, Panel } from "../components/primitives";
 import { SyndromeStrip } from "../components/SyndromeStrip";
 import { AnimatedPolyline } from "../components/AnimatedPolyline";
+import { CaseHistoryBanner } from "../components/CaseHistoryBanner";
 import { fmt, fmtDelay, unitLabel } from "../lib/format";
 import { crewRoles, indicatorMeta, PERSONAL_LABEL } from "../lib/meta";
+import { nasaCaseForDoc } from "../lib/nasaCases";
 import type { LoadedScenario } from "../lib/types";
 
-export function Glance({ scenario, dayNumber, crewId, onCrew, onOpenWhy, onOpenAct, onOpenIndicator }: {
+export function Glance({ scenario, dayNumber, crewId, onCrew, onOpenWhy, onOpenAct, onOpenIndicator, onOpenDetection }: {
   scenario: LoadedScenario;
   dayNumber: number;
   crewId: string;
@@ -16,11 +18,13 @@ export function Glance({ scenario, dayNumber, crewId, onCrew, onOpenWhy, onOpenA
   onOpenWhy: () => void;
   onOpenAct: () => void;
   onOpenIndicator: (key: string) => void;
+  onOpenDetection: (day: number) => void;
 }) {
   const day = scenario.doc.days.find((d) => d.day === dayNumber);
   const member = day?.crew?.[crewId];
   const members = Object.values(day?.crew ?? {});
   const roles = crewRoles(scenario.doc);
+  const caseMeta = nasaCaseForDoc(scenario.doc);
   const attention = members.filter((m) => m.level === "act" || m.level === "escalate").length;
   const history = scenario.doc.days.filter((d) => d.day <= dayNumber).slice(-14);
   const series = history.flatMap((d) => {
@@ -34,6 +38,7 @@ export function Glance({ scenario, dayNumber, crewId, onCrew, onOpenWhy, onOpenA
       <div className="overview-day"><span>Mission day</span><strong>{String(dayNumber).padStart(2,"0")}</strong><span>of {scenario.doc.days.length}</span></div>
     </header>
     <div className="overview-context"><span>{members.length} crew members</span><span className={attention ? "context-attention" : ""}>{attention ? `${attention} requiring action` : "No action-level findings"}</span><span>Earth round trip {fmtDelay(member?.routing.expected_reply_s)}</span></div>
+    {caseMeta ? <CaseHistoryBanner meta={caseMeta} doc={scenario.doc} onDetect={onOpenDetection} /> : null}
     <section className="crew-section" aria-label="Select a crew member">
       {day ? <CrewStrip crew={day.crew} roles={roles} selected={crewId} onOpen={onCrew} /> : null}
     </section>

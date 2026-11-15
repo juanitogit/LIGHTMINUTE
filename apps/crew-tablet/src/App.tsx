@@ -21,11 +21,15 @@ import { SignalLibrary } from "./views/SignalLibrary";
 import { EarthLink } from "./views/EarthLink";
 import { Why } from "./views/Why";
 import { VisorHud } from "./views/VisorHud";
+import { NasaCases } from "./views/NasaCases";
+import { CaseTraceBadge } from "./components/CaseTraceBadge";
+import { nasaCaseForDoc } from "./lib/nasaCases";
 
 const VIEW_LABELS: { id: View; label: string; detail: string; icon: IconName }[] = [
   { id: "glance", label: "Overview", detail: "Glance", icon: "overview" },
   { id: "why", label: "Personal baseline", detail: "Why", icon: "pulse" },
   { id: "act", label: "Actions", detail: "Act", icon: "check" },
+  { id: "cases", label: "Casos Reales NASA", detail: "Casos", icon: "microscope" },
   { id: "radiation", label: "Space weather", detail: "NASA + NOAA", icon: "orbit" },
   { id: "today", label: "Today & check-in", detail: "Today", icon: "check" },
   { id: "signals", label: "Signal library", detail: "Signals", icon: "pulse" },
@@ -111,6 +115,7 @@ export function App() {
   const booted = health !== undefined && indexSource !== "loading";
   const scenario = useScenarioData(scenarioName, booted);
   const doc = scenario.data?.doc;
+  const activeCase = nasaCaseForDoc(doc);
 
   const crewIds = useMemo(() => {
     const first = doc?.days?.[0];
@@ -249,7 +254,7 @@ export function App() {
       <div className="workspace">
       <div className="chrome">
         <header className="topbar">
-          <div className="topbar__breadcrumb"><span className="mobile-brand">LIGHTMINUTE</span><span>Crew health</span><span aria-hidden="true">/</span><b>{state.view === "sources" ? "Data sources" : VIEW_LABELS.find((v) => v.id === state.view)?.label}</b></div>
+          <div className="topbar__breadcrumb"><span className="mobile-brand">LIGHTMINUTE</span><span>Crew health</span><span aria-hidden="true">/</span><b>{state.view === "sources" ? "Data sources" : VIEW_LABELS.find((v) => v.id === state.view)?.label}</b><CaseTraceBadge meta={activeCase} /></div>
 
           <div className="topbar__tools">
             <span className={`engine-badge ${health ? "is-online" : ""}`}><span className="status__dot" />{health ? "Engine connected" : health === undefined ? "Connecting…" : "Local simulation"}</span>
@@ -300,7 +305,7 @@ export function App() {
         </div>
       </div>
       <main id="main" className="main" tabIndex={-1}>
-        {state.view !== "sources" && scenario.phase === "loading" ? (
+        {!["sources", "cases"].includes(state.view) && scenario.phase === "loading" ? (
           <div className="view">
             <Panel>
               <p className="muted" role="status">Loading {titleFromName(scenarioName)}…</p>
@@ -309,7 +314,7 @@ export function App() {
           </div>
         ) : null}
 
-        {state.view !== "sources" && scenario.phase === "error" ? (
+        {!["sources", "cases"].includes(state.view) && scenario.phase === "error" ? (
           <div className="view">
             <Panel title="Scenario could not load" labelledBy="load-error">
               <EmptyState title="No data source reachable">
@@ -351,6 +356,7 @@ export function App() {
                 onOpenWhy={() => update({ view: "why" })}
                 onOpenAct={() => update({ view: "act" })}
                 onOpenIndicator={(key) => update({ indicator: key, view: "why" })}
+                onOpenDetection={(detectDay) => update({ day: detectDay, view: "why" })}
               />
             ) : null}
 
@@ -406,6 +412,15 @@ export function App() {
         {/* Local-only tools: they must work even when no scenario loads. */}
         {state.view === "checkin" ? <CheckIn /> : null}
         {state.view === "sources" ? <DataSources /> : null}
+        {state.view === "cases" ? (
+          <NasaCases
+            current={scenarioName}
+            onLoad={(name) => {
+              setPlaying(false);
+              update({ scenario: name, day: 1, view: "glance" });
+            }}
+          />
+        ) : null}
         {state.view === "moon" ? (
           <VisorHud
             scenario={scenario.data}

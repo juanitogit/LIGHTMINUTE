@@ -21,7 +21,8 @@ type IconName =
   | "send"
   | "clock"
   | "close"
-  | "chevron";
+  | "chevron"
+  | "microscope";
 
 
 const PATHS: Record<IconName, ReactNode> = {
@@ -94,6 +95,13 @@ const PATHS: Record<IconName, ReactNode> = {
   ),
   close: <path d="M6 6l12 12M18 6 6 18" />,
   chevron: <path d="m6 9 6 6 6-6" />,
+  microscope: (
+    <>
+      <path d="M6 21h12M10 21v-3.2a5.5 5.5 0 0 1 5.5-5.5H18" />
+      <path d="M9.6 3.4h3.2l1.2 7.6H8.4z" />
+      <path d="M11.2 3.4V1.8M8 7.4 5.8 8.6M15 7.4l2.2 1.2" />
+    </>
+  ),
 };
 
 export function Icon({

@@ -2347,3 +2347,303 @@ html[data-theme="light"] .region-glow {
 .check input {
   accent-color: var(--accent);
 }
+
+/* ---------------------------------------------------------------- NASA cases */
+
+.case-banner {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--line));
+  border-left: 3px solid var(--accent);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent-soft) 72%, var(--surface)),
+    var(--surface)
+  );
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin: 0 0 18px;
+}
+
+.case-banner__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.case-banner h2 {
+  font-size: 19px;
+  letter-spacing: -0.012em;
+  margin: 0 0 6px;
+}
+
+.case-banner h2 span {
+  color: var(--muted);
+  font-weight: 550;
+}
+
+.case-banner__line {
+  margin: 0 0 4px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 86ch;
+}
+
+.case-banner__line--ln b {
+  color: var(--ink);
+}
+
+.case-banner__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+  flex: 0 0 auto;
+  max-width: 300px;
+  text-align: right;
+}
+
+.case-banner__cta {
+  white-space: normal;
+  text-align: left;
+  line-height: 1.35;
+}
+
+.trace-badge {
+  margin-left: 10px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: 999px;
+  padding: 4px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.trace-badge:hover {
+  background: color-mix(in srgb, var(--accent-soft) 55%, var(--accent) 18%);
+}
+
+.case-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(6, 10, 18, 0.66);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.case-modal__card {
+  width: min(640px, 100%);
+  max-height: 86vh;
+  overflow: auto;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 16px;
+  padding: 20px 22px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+
+.case-modal__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+}
+
+.case-modal__head h2 {
+  font-size: 19px;
+  margin: 2px 0 4px;
+}
+
+.case-modal__cites {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.case-modal__cites li {
+  border-left: 2px solid var(--accent);
+  padding-left: 12px;
+}
+
+.case-modal__cites p {
+  margin: 0 0 4px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.case-modal__cites a {
+  color: var(--accent);
+}
+
+.case-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+.case-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.case-card.is-current {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.case-card__art {
+  position: relative;
+  padding: 12px 14px 4px;
+  color: var(--accent);
+  background: radial-gradient(
+    120% 140% at 20% 0%,
+    color-mix(in srgb, var(--accent-soft) 60%, transparent),
+    transparent 70%
+  );
+  border-bottom: 1px solid var(--line);
+}
+
+.case-patch {
+  display: block;
+  width: 100%;
+  height: 88px;
+}
+
+.case-card__num {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+.case-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px 16px;
+}
+
+.case-card__body h2 {
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.case-card__title {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.case-card__crew {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.case-card__dilemma {
+  margin: 2px 0 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.case-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.case-compare__col {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 9px 10px;
+  background: var(--surface-2);
+}
+
+.case-compare__col .micro {
+  display: block;
+  margin-bottom: 5px;
+  letter-spacing: 0.08em;
+}
+
+.case-compare__col p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+.case-compare__col--late {
+  border-left: 2px solid var(--watch);
+}
+
+.case-compare__col--lm {
+  border-left: 2px solid var(--accent);
+}
+
+.case-card__foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.case-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+@media (max-width: 720px) {
+  .case-banner {
+    align-items: flex-start;
+  }
+  .case-banner__actions {
+    align-items: flex-start;
+    text-align: left;
+    max-width: none;
+  }
+  .case-compare {
+    grid-template-columns: 1fr;
+  }
+  .trace-badge {
+    display: none;
+  }
+}
