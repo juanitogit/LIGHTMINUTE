@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIGHTMINUTE — Monitor Musculoesquelético y Carga Neuromuscular</title>
+  <style>
+    :root {
+      --bg-dark: #070b14;
+      --panel-bg: #0f172a;
+      --panel-border: #1e293b;
+      --card-bg: #1e293b;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-orange: #f97316;
+      --text-main: #f1f5f9;
+      --text-dim: #94a3b8;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding: 16px;
+    }
+    .disclaimer-banner {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-align: center;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+    .header-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--panel-border);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      gap: 12px;
+    }
+    .header-title h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+    .badge-sim { background: #3b82f633; color: #60a5fa; border: 1px solid #3b82f666; }
+    .badge-est { background: #f59e0b33; color: #fbbf24; border: 1px solid #f59e0b66; }
+    .badge-deriv { background: #8b5cf633; color: #a78bfa; border: 1px solid #8b5cf666; }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+    }
+    @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+
+    .telemetry-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .screen-container {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+    canvas { display: block; width: 100%; height: 180px; }
+    .overlay-tag {
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-orange);
+      pointer-events: none;
+    }
+
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .metric-box {
+      background: var(--card-bg);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 10px;
+    }
+    .metric-label {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+    }
+    .metric-val {
+      font-size: 1.35rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: #fb923c;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .metric-unit { font-size: 0.75rem; color: var(--text-dim); font-weight: 400; }
+    .metric-range { font-size: 0.65rem; color: #64748b; margin-top: 2px; }
+
+    .control-group { margin-bottom: 16px; }
+    .control-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .btn-group { display: flex; flex-direction: column; gap: 6px; }
+    .btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      text-align: left;
+    }
+    .btn:hover { background: #334155; }
+    .btn.active {
+      background: rgba(249, 115, 22, 0.2);
+      border-color: var(--accent-orange);
+      color: #fed7aa;
+      font-weight: 600;
+    }
+    input[type=range] {
+      width: 100%; height: 6px; background: #334155; border-radius: 3px; outline: none; -webkit-appearance: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent-orange); cursor: pointer;
+    }
+    .science-panel {
+      margin-top: 16px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+    }
+    .science-panel h3 { font-size: 0.95rem; color: var(--text-main); margin-bottom: 8px; }
+    .citations {
+      font-family: var(--font-mono); font-size: 0.72rem; color: #94a3b8; border-top: 1px solid var(--panel-border); padding-top: 10px; margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="disclaimer-banner">
+    SIMULACIÓN — DATOS SINTÉTICOS — NO ES UN DISPOSITIVO MÉDICO
+  </div>
+
+  <div class="header-bar">
+    <div class="header-title">
+      <h1>
+        <span>💪</span> Monitor Musculoesquelético y Dinámica Neuromuscular
+      </h1>
+      <span style="font-size: 0.8rem; color: var(--text-dim); margin-left: 8px;">
+        Órgano: Músculo Sóleo/Cuádriceps & Esqueleto Axial · sEMG Inalámbrico & Cargas ARED
+      </span>
+    </div>
+    <div style="display: flex; gap: 6px;">
+      <span class="badge badge-sim">[SIMULADO]</span>
+      <span class="badge badge-est">[ESTIMADO]</span>
+      <span class="badge badge-deriv">[DERIVADO N-OF-1]</span>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div>
+      <div class="telemetry-card">
+        <div class="card-title">
+          <span>Electromiograma de Superficie Canal Bipolar (Músculo Sóleo)</span>
+          <span style="color: var(--accent-orange); font-family: var(--font-mono); font-size: 0.75rem;">● sEMG RAW 2000 Hz / RMS ENVELOPE</span>
+        </div>
+        <div class="screen-container">
+          <canvas id="emg-canvas" width="800" height="180"></canvas>
+          <div class="overlay-tag">DESPOLARIZACIÓN DE UNIDADES MOTORAS (MUAP) & RECLUTAMIENTO</div>
+        </div>
+
+        <div class="card-title" style="margin-top: 14px;">
+          <span>Remodelado Óseo Dinámico: Tasa de Resorción vs Estimulación ARED</span>
+        </div>
+        <div class="screen-container">
+          <canvas id="bone-canvas" width="800" height="140"></canvas>
+          <div class="overlay-tag" style="color: #38bdf8;">MECANOSTATO DE FROST · RESORCIÓN N-TELOPÉPTIDO (NTx)</div>
+        </div>
+
+        <div class="metrics-row">
+          <div class="metric-box">
+            <div class="metric-label">Amplitud sEMG (RMS)</div>
+            <div class="metric-val" id="val-rms">245 <span class="metric-unit">&mu;V</span></div>
+            <div class="metric-range">Reclutamiento motor activo</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Frecuencia Mediana (MDF)</div>
+            <div class="metric-val" id="val-mdf" style="color: #34d399;">84 <span class="metric-unit">Hz</span></div>
+            <div class="metric-range">Fatiga metabólica: &lt; 65 Hz</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Fuerza Pico ARED</div>
+            <div class="metric-val" id="val-force" style="color: #facc15;">980 <span class="metric-unit">N</span></div>
+            <div class="metric-range">Carga de impacto osteogénico</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Pérdida Ósea Mensual Est.</div>
+            <div class="metric-val" id="val-bmd" style="color: #10b981;">-0.2 <span class="metric-unit">%/mes</span></div>
+            <div class="metric-range">Fémur proximal y L1-L4</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="telemetry-card">
+        <div class="card-title">
+          <span>Escenarios de Carga y Acondicionamiento</span>
+        </div>
+        <div class="btn-group control-group">
+          <button class="btn active" onclick="setScenario('ared_nominal')">
+            <strong>1. Entrenamiento Resistente ARED Nominal</strong><br>
+            <small style="color: var(--text-dim)">Fuerza 1100 N, alta activación sEMG, estímulo osteogénico preservado</small>
+          </button>
+          <button class="btn" onclick="setScenario('disuse_atrophy')">
+            <strong>2. Atrofia por Desuso (Salto de Ejercicio)</strong><br>
+            <small style="color: var(--text-dim)">Desactivación postural, pérdida ósea acelerada -1.4%/mes, pérdida de masa</small>
+          </button>
+          <button class="btn" onclick="setScenario('eva_fatigue')">
+            <strong>3. Fatiga Neuromuscular Severa en EVA</strong><br>
+            <small style="color: var(--text-dim)">6h de actividad en traje espacial, caída abrupta de MDF &lt; 55 Hz, temblor</small>
+          </button>
+          <button class="btn" onclick="setScenario('recovery')">
+            <strong>4. Reposo Post-Ejercicio y Recuperación</strong><br>
+            <small style="color: var(--text-dim)">Aclaramiento de lactato, restauración del potencial de membrana</small>
+          </button>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Intensidad de Contracción / Carga</span>
+            <span id="slider-load-val" style="color: var(--accent-orange); font-family: var(--font-mono);">Media-Alta</span>
+          </div>
+          <input type="range" id="slider-load" min="0" max="100" value="70" oninput="onManualLoad(this.value)">
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Tiempo de Fatiga Acumulada</span>
+            <span id="slider-fatigue-val" style="color: var(--accent-red); font-family: var(--font-mono);">Baja</span>
+          </div>
+          <input type="range" id="slider-fatigue" min="0" max="100" value="15" oninput="onManualFatigue(this.value)">
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 12px;">
+          <button class="btn" style="flex: 1; text-align: center;" onclick="togglePause()" id="btn-pause">Pausar</button>
+          <button class="btn" style="flex: 1; text-align: center;" onclick="resetSimulator()">Reiniciar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="science-panel">
+    <h3>Mecanobiología Musculoesquelética en Espacio: ARED y Frost</h3>
+    <p>
+      Sin gravedad constante, el músculo sóleo pierde hasta un tercio de su volumen y cambia su fenotipo metabólico de fibras oxidativas lentas resistentes a la fatiga a fibras glucolíticas rápidas. A nivel óseo, los osteocitos dejan de recibir deformaciones cíclicas elásticas (&mu;&epsilon;), cesando la síntesis de esclerostina y desatando una resorción neta del 1.0 al 1.5% del volumen mineral óseo cada mes.
+    </p>
+    <ul>
+      <li><strong>Instrumentación en Vuelo:</strong> Celdas de carga y sensores de posición en el <em>Advanced Resistive Exercise Device (ARED)</em> y sensores sEMG inalámbricos adhesivos tipo parche.</li>
+      <li><strong>Variables Medidas vs Derivadas:</strong> El potencial eléctrico muscular sEMG y la fuerza de reacción externa en barra son mediciones directas. La pérdida de densidad mineral ósea (BMD) se deriva computacionalmente mediante el modelo del mecanostato de Frost acoplado a biomarcadores séricos como el telopéptido NTx.</li>
+      <li><strong>Limitaciones y Fuentes de Error:</strong> Desplazamiento del sensor sEMG sobre la masa muscular en movimiento; atenuación por sudoración abundante durante ejercicio en cabina sin corrientes de aire convectivas.</li>
+    </ul>
+    <div class="citations">
+      <strong>Referencias Verificadas:</strong><br>
+      • Hackney et al., "The effect of spaceflight on skeletal muscle volume, strength, and endurance," <em>npj Microgravity</em>, 2015.<br>
+      • Sibonga et al., "Risk of Early Onset Osteoporosis Due to Spaceflight," NASA Evidence Report, 2017.<br>
+      • Frost, H. M., "Bone\x27s mechanostat: a 2003 update," <em>Anat Rec</em>, 2003.
+    </div>
+  </div>
+
+  <script>
+    let scenario = 'ared_nominal';
+    let loadLevel = 0.70;
+    let fatigue = 0.15;
+    let isPaused = false;
+    let lastTime = performance.now();
+    let emgPhase = 0;
+
+    const emgCanvas = document.getElementById('emg-canvas');
+    const emgCtx = emgCanvas.getContext('2d');
+    const boneCanvas = document.getElementById('bone-canvas');
+    const boneCtx = boneCanvas.getContext('2d');
+
+    const historyLen = 800;
+    const emgBuffer = new Float32Array(historyLen).fill(0);
+    const rmsBuffer = new Float32Array(historyLen).fill(0);
+    let bufIdx = 0;
+
+    function renderLoop(time) {
+      requestAnimationFrame(renderLoop);
+      if (isPaused) return;
+
+      const dt = Math.min((time - lastTime) / 1000, 0.1);
+      lastTime = time;
+
+      // Exercise cyclic repetition: 1 squat rep every 3 seconds
+      emgPhase += dt * (2 * Math.PI / 3.0);
+      if (emgPhase >= 2 * Math.PI) emgPhase -= 2 * Math.PI;
+
+      // Squat concentric/eccentric phase envelope (burst during 0 to PI)
+      const repBurst = (emgPhase < Math.PI) ? Math.sin(emgPhase) : 0.05;
+      const targetAmp = (loadLevel > 0.05) ? (loadLevel * repBurst * 400) : 10;
+
+      const samplesPerSec = 200;
+      const numSamples = Math.max(1, Math.round(dt * samplesPerSec));
+
+      // Median frequency declines with fatigue (from 90 Hz down to 50 Hz)
+      const currentMDF = Math.max(48, 92 - fatigue * 44);
+
+      for (let s = 0; s < numSamples; s++) {
+        // Synthesize interference pattern of motor unit action potentials (bandpass around MDF)
+        const f1 = currentMDF * (0.8 + 0.4 * Math.random());
+        const rawWave = (Math.sin(2 * Math.PI * f1 * (time / 1000)) + (Math.random() - 0.5) * 1.5) * (targetAmp / 150);
+
+        emgBuffer[bufIdx] = rawWave * 20;
+        rmsBuffer[bufIdx] = targetAmp;
+        bufIdx = (bufIdx + 1) % historyLen;
+      }
+
+      // Draw EMG
+      emgCtx.fillStyle = '#020617';
+      emgCtx.fillRect(0, 0, emgCanvas.width, emgCanvas.height);
+
+      // Grid
+      emgCtx.strokeStyle = '#1e293b';
+      emgCtx.lineWidth = 1;
+      emgCtx.beginPath();
+      for (let y = 20; y < emgCanvas.height; y += 35) {
+        emgCtx.moveTo(0, y); emgCtx.lineTo(emgCanvas.width, y);
+      }
+      emgCtx.stroke();
+
+      // Raw EMG signal
+      emgCtx.strokeStyle = 'rgba(249, 115, 22, 0.6)';
+      emgCtx.lineWidth = 1.2;
+      emgCtx.beginPath();
+      const centerY = emgCanvas.height / 2;
+
+      for (let i = 0; i < historyLen; i++) {
+        const idx = (bufIdx + i) % historyLen;
+        const x = (i / historyLen) * emgCanvas.width;
+        const y = centerY - emgBuffer[idx] * 1.5;
+        if (i === 0) emgCtx.moveTo(x, y);
+        else emgCtx.lineTo(x, y);
+      }
+      emgCtx.stroke();
+
+      // RMS Envelope
+      emgCtx.strokeStyle = '#fb923c';
+      emgCtx.lineWidth = 2.2;
+      emgCtx.beginPath();
+      for (let i = 0; i < historyLen; i++) {
+        const idx = (bufIdx + i) % historyLen;
+        const x = (i / historyLen) * emgCanvas.width;
+        const y = centerY - (rmsBuffer[idx] / 400) * (emgCanvas.height * 0.4);
+        if (i === 0) emgCtx.moveTo(x, y);
+        else emgCtx.lineTo(x, y);
+      }
+      emgCtx.stroke();
+
+      // Sweep bar
+      const sweepX = (bufIdx / historyLen) * emgCanvas.width;
+      emgCtx.fillStyle = 'rgba(2, 6, 23, 0.7)';
+      emgCtx.fillRect(sweepX, 0, 16, emgCanvas.height);
+
+      // Draw Bone Mechanostat Chart (boneCanvas)
+      drawMechanostatChart(boneCtx, boneCanvas.width, boneCanvas.height, loadLevel);
+
+      // Readouts
+      const currentRMS = Math.round(targetAmp * (0.8 + (Math.random() - 0.5) * 0.1));
+      document.getElementById('val-rms').innerHTML = `${currentRMS} <span class="metric-unit">&mu;V</span>`;
+      document.getElementById('val-mdf').innerHTML = `${Math.round(currentMDF)} <span class="metric-unit">Hz</span>`;
+      const curForce = Math.round(loadLevel * 1400 * (emgPhase < Math.PI ? Math.sin(emgPhase) : 0));
+      document.getElementById('val-force').innerHTML = `${curForce} <span class="metric-unit">N</span>`;
+
+      // Bone loss rate based on load: Frost mechanostat threshold ~ 1500 microstrain
+      const bmdRate = (loadLevel > 0.5) ? (-0.15 + (1 - loadLevel) * 0.3) : (-0.2 - (0.5 - loadLevel) * 2.4);
+      const bmdEl = document.getElementById('val-bmd');
+      bmdEl.innerHTML = `${bmdRate.toFixed(1)} <span class="metric-unit">%/mes</span>`;
+      if (bmdRate < -1.0) bmdEl.style.color = '#ef4444';
+      else if (bmdRate < -0.5) bmdEl.style.color = '#f59e0b';
+      else bmdEl.style.color = '#10b981';
+    }
+
+    function drawMechanostatChart(ctx, w, h, load) {
+      ctx.fillStyle = '#030712';
+      ctx.fillRect(0, 0, w, h);
+
+      // Regions: Resorption (left), Equilibrium / Window (center), Hypertrophy (right)
+      const w1 = w * 0.35;
+      const w2 = w * 0.40;
+
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.15)'; // Resorption zone
+      ctx.fillRect(0, 0, w1, h);
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.15)'; // Preserved bone window
+      ctx.fillRect(w1, 0, w2, h);
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.15)'; // Osteogenic gain
+      ctx.fillRect(w1 + w2, 0, w - (w1 + w2), h);
+
+      ctx.strokeStyle = '#334155';
+      ctx.beginPath();
+      ctx.moveTo(w1, 0); ctx.lineTo(w1, h);
+      ctx.moveTo(w1 + w2, 0); ctx.lineTo(w1 + w2, h);
+      ctx.stroke();
+
+      ctx.font = '10px monospace';
+      ctx.fillStyle = '#f87171'; ctx.fillText('DESUSO: PÉRDIDA ÓSEA NETA (&lt; 200 &mu;&epsilon;)', 10, 18);
+      ctx.fillStyle = '#34d399'; ctx.fillText('VENTANA DE MANTENIMIENTO ARED', w1 + 10, 18);
+      ctx.fillStyle = '#38bdf8'; ctx.fillText('OSTEOGÉNESIS (&gt; 2500 &mu;&epsilon;)', w1 + w2 + 10, 18);
+
+      // Operating point marker
+      const markerX = Math.max(15, Math.min(w - 15, load * w));
+      const markerY = h * 0.55;
+
+      ctx.fillStyle = load < 0.35 ? '#ef4444' : (load < 0.75 ? '#10b981' : '#38bdf8');
+      ctx.beginPath();
+      ctx.arc(markerX, markerY, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(`Estímulo Mecánico Actual: ${(load * 2800).toFixed(0)} &mu;&epsilon;`, Math.max(10, markerX - 80), markerY + 24);
+    }
+
+    function setScenario(scen) {
+      scenario = scen;
+      const btns = document.querySelectorAll('.btn-group .btn');
+      btns.forEach(b => b.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      if (scen === 'ared_nominal') {
+        loadLevel = 0.78; fatigue = 0.15;
+      } else if (scen === 'disuse_atrophy') {
+        loadLevel = 0.08; fatigue = 0.05;
+      } else if (scen === 'eva_fatigue') {
+        loadLevel = 0.55; fatigue = 0.88;
+      } else if (scen === 'recovery') {
+        loadLevel = 0.20; fatigue = 0.35;
+      }
+      document.getElementById('slider-load').value = Math.round(loadLevel * 100);
+      document.getElementById('slider-load-val').innerText = loadLevel > 0.7 ? 'Alta (ARED)' : (loadLevel > 0.3 ? 'Media' : 'Mínima');
+      document.getElementById('slider-fatigue').value = Math.round(fatigue * 100);
+      document.getElementById('slider-fatigue-val').innerText = fatigue > 0.6 ? 'Severa' : (fatigue > 0.3 ? 'Moderada' : 'Baja');
+    }
+
+    function onManualLoad(val) {
+      loadLevel = parseInt(val) / 100;
+      document.getElementById('slider-load-val').innerText = loadLevel > 0.7 ? 'Alta (ARED)' : (loadLevel > 0.3 ? 'Media' : 'Mínima');
+    }
+
+    function onManualFatigue(val) {
+      fatigue = parseInt(val) / 100;
+      document.getElementById('slider-fatigue-val').innerText = fatigue > 0.6 ? 'Severa' : (fatigue > 0.3 ? 'Moderada' : 'Baja');
+    }
+
+    function togglePause() {
+      isPaused = !isPaused;
+      document.getElementById('btn-pause').innerText = isPaused ? 'Reanudar' : 'Pausar';
+    }
+
+    function resetSimulator() {
+      emgBuffer.fill(0);
+      rmsBuffer.fill(0);
+      setScenario('ared_nominal');
+    }
+
+    requestAnimationFrame(renderLoop);
+  </script>
+</body>
+</html>
