@@ -18,7 +18,7 @@ export function Glance({ scenario, dayNumber, crewId, onCrew, onOpenWhy, onOpenA
   onOpenWhy: () => void;
   onOpenAct: () => void;
   onOpenIndicator: (key: string) => void;
-  onOpenDetection: (day: number) => void;
+  onOpenDetection: (day: number, crew: string) => void;
 }) {
   const day = scenario.doc.days.find((d) => d.day === dayNumber);
   const member = day?.crew?.[crewId];
@@ -65,7 +65,7 @@ export function Glance({ scenario, dayNumber, crewId, onCrew, onOpenWhy, onOpenA
                 const lo = Math.min(...finite), hi = Math.max(...finite);
                 const segments = values.map((v,i)=>typeof v === "number" && Number.isFinite(v) ? `${5+i*90/Math.max(1,values.length-1)},${32-(v-lo)/(hi-lo||1)*23}` : null)
                   .reduce<string[]>((all,p)=>{if(p===null)all.push("");else all[all.length-1]+=`${p} `;return all;},[""]);
-                const verdict=reading?.lens.personal, unusual=verdict==="unusual_high"||verdict==="unusual_low";
+                const verdict=reading?.lens.personal, unusual=verdict==="unusual_high"||verdict==="unusual_low"||verdict==="watch";
                 return <button type="button" key={key} className={`signal-row ${unusual?"is-unusual":""}`} onClick={()=>onOpenIndicator(key)} aria-label={`${meta.label}: ${reading?fmt(reading.value,meta.decimals):"no reading"}. Open personal baseline`}>
                   <span className="signal-row__name"><strong>{meta.label}</strong><small>{PERSONAL_LABEL[verdict??""]??"No reading today"}</small></span>
                   <span className="signal-row__value"><span className="metric-change" key={`${crewId}-${dayNumber}-${key}`}>{reading?fmt(reading.value,meta.decimals):"—"}</span><small>{unitLabel(reading?.unit??meta.unit)}</small></span>

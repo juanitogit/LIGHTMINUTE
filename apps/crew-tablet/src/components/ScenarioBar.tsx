@@ -35,6 +35,7 @@ export function ScenarioBar({
           <span className="micro">Scenario</span>
           <span className="select">
             <select
+              aria-label="Scenario"
               value={scenarioName}
               onChange={(event) => onScenario(event.target.value)}
             >

@@ -37,7 +37,8 @@ function parse(hash: string): Partial<HashState> {
   const indicator = params.get("ind");
   if (indicator) out.indicator = indicator;
   const view = params.get("view");
-  if (isView(view)) out.view = view;
+  if (view === "cases") out.view = "glance";
+  else if (isView(view)) out.view = view;
   if (params.get("pres") === "1") out.pres = true;
   return out;
 }

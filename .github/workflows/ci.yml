@@ -129,6 +129,10 @@ jobs:
           npx tsx tests/visor-endpoint-check.ts
           npx tsx tests/visor-voice-check.ts
 
+      - name: Historical scenarios in the crew workspace
+        working-directory: apps/crew-tablet
+        run: npx tsx tests/case-integration-check.ts
+
       - name: Browser integration checks (static build, no external API)
         working-directory: apps/crew-tablet
         env:

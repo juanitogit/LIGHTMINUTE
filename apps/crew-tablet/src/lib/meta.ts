@@ -251,6 +251,8 @@ export const SPACE_LABEL: Record<string, string> = {
 
 export const PERSONAL_LABEL: Record<string, string> = {
   typical: "Typical for you",
+  normal: "Within simulated reference",
+  watch: "Watch · simulated",
   unusual_high: "Unusual for you (high)",
   unusual_low: "Unusual for you (low)",
   learning: "Still learning",

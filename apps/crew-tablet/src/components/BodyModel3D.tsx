@@ -98,7 +98,7 @@ function isOrganAnomalous(organName: string, readings: Record<string, Reading>):
   const norm = organName.toLowerCase();
 
   for (const [key, reading] of Object.entries(readings)) {
-    const isUnusual = reading.lens.personal === "unusual_high" || reading.lens.personal === "unusual_low";
+    const isUnusual = ["unusual_high", "unusual_low", "watch"].includes(reading.lens.personal);
     if (!isUnusual) continue;
 
     // Cardiac specific
@@ -289,7 +289,7 @@ export function BodyModel3D({
     for (const [key, reading] of Object.entries(readings)) {
       const region = RISK_REGION[reading.hrp_risk];
       if (!region) continue;
-      const unusual = ["unusual_high", "unusual_low"].includes(reading.lens.personal);
+      const unusual = ["unusual_high", "unusual_low", "watch"].includes(reading.lens.personal);
       if (!byRegion.has(region) || unusual) {
         byRegion.set(region, { key, unusual, learning: reading.lens.personal === "learning" });
       }

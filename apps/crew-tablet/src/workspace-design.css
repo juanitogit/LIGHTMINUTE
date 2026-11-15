@@ -43,6 +43,18 @@ body { background: var(--bg-deep); font-family: var(--font-sans); font-size: 14p
 .viewhead h1 { font-size: clamp(26px, 2.5vw, 34px); font-weight: 650; letter-spacing: -.035em; }
 .viewhead__sub { font-size: 13px; }
 .overview-context { font-size: 12px; gap: 8px 20px; }
+.case-context { margin: 0 0 28px; padding: 20px 0; border-block: 1px solid var(--line); }
+.case-context__heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; }
+.case-context h2 { margin: 5px 0 0; font-size: 20px; letter-spacing: -.02em; }
+.case-context h2 span { color: var(--muted); font-weight: 400; }
+.case-context > p:not(.micro) { max-width: 90ch; margin: 10px 0 0; line-height: 1.55; color: var(--ink-2); }
+.case-context__sources { margin-top: 14px; }
+.case-context__sources summary { color: var(--accent); cursor: pointer; min-height: 44px; display: flex; align-items: center; width: fit-content; }
+.case-context__sources summary::after { content: "+"; margin-left: 10px; }
+.case-context__sources[open] summary::after { content: "−"; }
+.case-context__sources ul { margin: 0; padding-left: 18px; max-width: 90ch; }
+.case-context__sources li { padding: 6px 0; line-height: 1.55; }
+.case-context__sources a { color: var(--accent); }
 .panel, .overview-decision, .signals-section, .trend-panel { border-radius: 0; box-shadow: none; }
 .signal-row { transition: background-color 180ms var(--workspace-ease), color 180ms var(--workspace-ease); }
 .signal-row:hover { background: var(--surface-2); }
