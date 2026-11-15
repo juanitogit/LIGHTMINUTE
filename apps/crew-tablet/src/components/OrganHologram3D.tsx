@@ -185,7 +185,9 @@ export function OrganHologram3D({
       setLoading(true);
 
       try {
-        if (glbFile) {
+        // The selected body's geometry preserves side, shape and reference
+        // provenance. Standalone assets are used only when that mesh is absent.
+        if (glbFile && !fallbackGeometry?.attributes?.position) {
           setAssetType("glb");
           const glbUrl = `${import.meta.env.BASE_URL}assets/organs/${glbFile}`;
 
@@ -239,8 +241,6 @@ export function OrganHologram3D({
           const box = new THREE.Box3().setFromObject(modelScene);
           const center = new THREE.Vector3();
           box.getCenter(center);
-          modelScene.position.sub(center);
-
           const size = new THREE.Vector3();
           box.getSize(size);
           const maxDim = Math.max(size.x, size.y, size.z);
@@ -248,6 +248,8 @@ export function OrganHologram3D({
             modelScene.scale.multiplyScalar(1.65 / maxDim);
           }
 
+          // Translation must follow scale: the source centre also scales.
+          modelScene.position.sub(center.multiplyScalar(maxDim > 0 ? 1.65 / maxDim : 1));
           pivot.add(modelScene);
         } else if (fallbackGeometry && fallbackGeometry.attributes?.position) {
           // Geometry from body anatomy.json/bin
@@ -284,13 +286,13 @@ export function OrganHologram3D({
             if (geom.boundingBox) {
               const center = new THREE.Vector3();
               geom.boundingBox.getCenter(center);
-              mesh.position.sub(center);
               const size = new THREE.Vector3();
               geom.boundingBox.getSize(size);
               const maxDim = Math.max(size.x, size.y, size.z);
               if (maxDim > 0) {
                 mesh.scale.multiplyScalar(1.6 / maxDim);
               }
+              mesh.position.sub(center.multiplyScalar(maxDim > 0 ? 1.6 / maxDim : 1));
             }
 
             pivot.add(mesh);

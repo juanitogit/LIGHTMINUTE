@@ -232,6 +232,8 @@ try {
   await page.getByRole("combobox",{name:"Body systems",exact:true}).selectOption("all");
   await expect(page.locator(".human-viewer")).toHaveAttribute("data-model-status","ready",{timeout:30000});
   record("CC BY reference anatomy renders; male/female, systems, rotation, zoom and reset respond");
+  await page.getByRole("button",{name:"Front view",exact:true}).click();
+  await page.waitForTimeout(700); // Allow the camera reset to finish before the reference capture.
   await capture("01-overview");
 
   const noGpu = await browser.newContext();

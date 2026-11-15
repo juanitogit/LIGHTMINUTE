@@ -1,0 +1,26 @@
+
+> @lightminute/crew-tablet@0.1.0 test:e2e
+> node scripts/smoke.mjs
+
+PASS Installed service worker loads cached synthetic scenario after network loss
+PASS Voice-note control inserts a synthetic transcript with a mocked browser recognizer
+PASS Bluetooth mock connects, decodes a notification and disconnects
+PASS Ed25519 verification rejects modified synthetic scenario bytes
+PASS Audit signature verification detects tampering and checks an independently supplied key fingerprint
+PASS Static fallback, six indicators, four crew and LIGHTMINUTE branding
+PASS Heart animation uses the selected crew's synthetic heart rate; anatomy landmarks stay in view
+PASS CC BY reference anatomy renders; male/female, systems, rotation, zoom and reset respond
+PASS No-WebGL devices retain all six readings and a clear 3D unavailable state
+PASS Signal drilldown preserves the engine value and three-lens disagreement
+PASS Action checklist, simulated send and cited protocol runner
+PASS Crew switch resets message simulation, protocol and checklist context
+PASS Local check-in persists across reload and stays scoped to mission day
+PASS Three-signal trend limit, grounded offline handbook and explicit missing signal sources
+PASS NOAA historical snapshot + NASA DONKI events, real-public labels, timestamps and flux plot
+PASS Both benchmark cohorts, all four methods and published calibration
+PASS All three scenarios at start, day 16 and day 24
+PASS Ten views without page overflow at 375, 768, 1024 and 1440px
+PASS Light/dark persistence and presentation mode
+PASS Ground console, real scenario selection and private behavioural default
+PASS Double-click ground console and protocol demo using file://
+21 browser integration groups passed. Screenshots: docs/screenshots/
