@@ -1,10 +1,12 @@
 ---
 tags: [home, moc]
 status: decided
-updated: 2026-11-14
+updated: 2026-11-15
 ---
 # 🚀 LIGHTMINUTE — Home (Mapa de contenido)
 > *Tu línea base, aunque la Tierra esté fuera de alcance.* Proyecto para **NASA Space Apps 2026** · 14–15 nov.
+
+Estado de la revisión de anatomía y CI: [[2026-11-15]].
 
 ## Auditoría vigente
 [[Auditoria integral LIGHTMINUTE]] · [[ADR-005 Identidad y fuente de verdad]] · [[ADR-006 Interfaz nativa y modelo humano 3D]]

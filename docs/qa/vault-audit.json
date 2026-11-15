@@ -1,13 +1,13 @@
 {
   "vault": "vault/",
-  "notes": 47,
-  "wiki_edges": 215,
-  "markdown_edges": 46,
+  "notes": 49,
+  "wiki_edges": 227,
+  "markdown_edges": 47,
   "broken_links": [],
   "ambiguous_links": [],
   "missing_frontmatter": [],
-  "checkbox_count": 51,
-  "checked": 28,
+  "checkbox_count": 56,
+  "checked": 33,
   "checkboxes": [
     {
       "file": "vault/01-Research/Lecturas pendientes y verificar.md",
@@ -182,6 +182,36 @@
       "line": 33,
       "checked": false,
       "item": "Persistencia multi-sesión"
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 40,
+      "checked": true,
+      "item": "Integrar los cambios remotos antes de corregir la anatomía."
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 41,
+      "checked": true,
+      "item": "Corregir enfoque, centrado del visor y geometría del órgano seleccionado."
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 42,
+      "checked": true,
+      "item": "Verificar compilación y 21 grupos de navegador locales."
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 43,
+      "checked": true,
+      "item": "Publicar la anatomía con autorización del propietario y asignar docs/recursos-nasa.md al responsable documental."
+    },
+    {
+      "file": "vault/04-Execution/Board.md",
+      "line": 44,
+      "checked": true,
+      "item": "Confirmar el último resultado remoto de la tablet: 07daa90 con 3/3 checks en verde."
     },
     {
       "file": "vault/04-Execution/Checklist de entrega.md",
