@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { LoadedScenario } from "../lib/types";
 import { Icon } from "../components/Icon";
+import { Chip } from "../components/primitives";
 import "../moon-environment.css";
 
 interface MoonEnvironmentProps {
@@ -25,6 +26,7 @@ function createSeededRand(seed: number) {
 
 export function MoonEnvironmentView(props: MoonEnvironmentProps) {
   const { scenario, dayNumber = 1, embedded = false, onOpenTablet, onOpenHud } = props;
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Compute environmental telemetry from current scenario
   const sepEvent = Boolean(scenario?.doc?.scenario?.toLowerCase().includes("sep") ?? scenario?.doc?.name?.toLowerCase().includes("sep"));
@@ -111,64 +113,7 @@ export function MoonEnvironmentView(props: MoonEnvironmentProps) {
     return { dimStars: dims, brightStars: brights };
   }, []);
 
-  return (
-    <div className={`moon-view ${embedded ? "is-embedded" : ""}`}>
-      {/* Top Telemetry Overlay (only when standalone) */}
-      {!embedded && (
-        <>
-          <div className="moon-overlay-top">
-            <div className="moon-title-cluster">
-              <span className="micro">Artemis Base Camp · Lunar Surface</span>
-              <h1>
-                <Icon name="moon" size={16} /> Entorno Lunar (Shackleton Rim)
-              </h1>
-            </div>
-
-            <div className="moon-telemetry-strip">
-              <div className="moon-telemetry-item">
-                <span className="moon-telemetry-label">Flujo Protónico</span>
-                <span className="moon-telemetry-val">{radFlux.toFixed(1)} pfu</span>
-              </div>
-              <div className="moon-telemetry-item">
-                <span className="moon-telemetry-label">Temp. Superficie</span>
-                <span className="moon-telemetry-val">+114°C / -130°C</span>
-              </div>
-              <div className="moon-telemetry-item">
-                <span className="moon-telemetry-label">Latencia Tierra</span>
-                <span className="moon-telemetry-val">1.28 s (Direct)</span>
-              </div>
-              <div className="moon-telemetry-item">
-                <span className="moon-telemetry-label">Día Misión</span>
-                <span className="moon-telemetry-val">MD-{String(dayNumber).padStart(2, "0")}</span>
-              </div>
-            </div>
-
-            <div className="moon-nav-actions">
-              {onOpenHud && (
-                <button type="button" className="moon-btn moon-btn--primary" onClick={onOpenHud}>
-                  <Icon name="watch" size={14} /> Activar Visor HUD (EVA)
-                </button>
-              )}
-              {onOpenTablet && (
-                <button type="button" className="moon-btn" onClick={onOpenTablet}>
-                  ← Volver a la Tablet
-                </button>
-              )}
-            </div>
-          </div>
-
-          <div className="moon-overlay-bottom">
-            <div className="moon-coordinates">
-              COORD: 89.9° S, 0.0° E · ELEV: 1,940 m · G: 0.166 g (1/6 Earth)
-            </div>
-            <div className="moon-notice">
-              LIGHTMINUTE · Simulación de Entorno Extravehicular Lunar · Datos Sintéticos
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* SVG Lunar Environment Scene */}
+  const svgScene = (
       <svg
         className="moon-svg"
         viewBox="0 0 1920 1080"
@@ -659,6 +604,116 @@ export function MoonEnvironmentView(props: MoonEnvironmentProps) {
           />
         </g>
       </svg>
+  );
+
+  if (embedded) {
+    return <div className="moon-view--embedded">{svgScene}</div>;
+  }
+
+  return (
+    <div className="view moon-view">
+      <header className="viewhead">
+        <div>
+          <p className="micro">LIGHTMINUTE / ENTORNO OPERATIVO LUNAR</p>
+          <h1>Entorno lunar (Shackleton Rim)</h1>
+          <p className="viewhead__sub">
+            Simulación física de la superficie lunar a 89.9°S. Proyección orbital de la Tierra, iluminación rasante de bajo ángulo solar, flujo de radiación ambiental y telemetría de enlace directo.
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          {onOpenHud ? (
+            <button type="button" className="btn btn--primary" onClick={onOpenHud}>
+              <Icon name="visor" size={16} /> Visor EVA (HUD)
+            </button>
+          ) : null}
+          {onOpenTablet ? (
+            <button type="button" className="btn" onClick={onOpenTablet}>
+              <Icon name="overview" size={16} /> Volver a resumen
+            </button>
+          ) : null}
+        </div>
+      </header>
+
+      <div className="overview-context">
+        <span>Día de misión: <strong className="mono">{String(dayNumber).padStart(2, "0")}</strong></span>
+        <span>Flujo protónico: <strong className="mono">{radFlux.toFixed(1)} pfu</strong></span>
+        <span>Temperatura sup.: <strong className="mono">+114°C / -130°C</strong></span>
+        <span>Latencia Tierra: <strong className="mono">1.28 s (directo)</strong></span>
+        <span>Gravedad: <strong className="mono">0.166 g (1/6)</strong></span>
+        <span className={sepEvent ? "context-attention" : ""}>
+          {sepEvent ? "Alerta: Evento SEP activo" : "Fondo GCR nominal"}
+        </span>
+      </div>
+
+      <section className="panel">
+        <div className="panel__head">
+          <h2>Cámara de superficie lunar y proyección de órbita</h2>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <Chip tone={sepEvent ? "warn" : "accent"}>{sepEvent ? "SEP ALERTA" : "NOMINAL"}</Chip>
+            <button
+              type="button"
+              className="btn btn--tiny"
+              onClick={() => setIsFullscreen(!isFullscreen)}
+            >
+              {isFullscreen ? "Salir de pantalla completa" : "Pantalla completa"}
+            </button>
+          </div>
+        </div>
+
+        <div className={`moon-stage-frame ${isFullscreen ? "is-fullscreen" : ""}`}>
+          <div className="moon-frame-overlay-top">
+            <div className="moon-tag-box">
+              <span className="status-dot" />
+              <span>Shackleton Rim · 89.9°S, 0.0°E</span>
+            </div>
+            <div className="moon-frame-actions">
+              {isFullscreen && (
+                <button
+                  type="button"
+                  className="moon-fs-btn"
+                  onClick={() => setIsFullscreen(false)}
+                >
+                  ✕ Salir de pantalla completa
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="moon-frame-overlay-bottom">
+            <span className="moon-coord-pill">
+              ALT: 1,940 m · ILUMINACIÓN: 84% PICO DE LUZ PERPETUA · G: 0.166 g
+            </span>
+            <span className="moon-env-notice">
+              LIGHTMINUTE · DATOS SINTÉTICOS · NO ES UN DISPOSITIVO MÉDICO
+            </span>
+          </div>
+
+          {svgScene}
+        </div>
+
+        <div className="moon-telemetry-grid">
+          <div className="moon-metric-card">
+            <span className="micro">RADIACIÓN AMBIENTAL</span>
+            <strong>{radFlux.toFixed(1)} pfu</strong>
+            <span className="sub">{sepEvent ? "Flujo solar incrementado (SEP)" : "Nivel cósmico de fondo"}</span>
+          </div>
+          <div className="moon-metric-card">
+            <span className="micro">LATENCIA DE TELEMETRÍA</span>
+            <strong>1.28 s</strong>
+            <span className="sub">Enlace directo Tierra-Luna</span>
+          </div>
+          <div className="moon-metric-card">
+            <span className="micro">GRADIENTE TÉRMICO</span>
+            <strong>Δ 244 °C</strong>
+            <span className="sub">+114°C insolación / -130°C sombra</span>
+          </div>
+          <div className="moon-metric-card">
+            <span className="micro">ORBITADOR RELAY</span>
+            <strong>Gateway Artemis</strong>
+            <span className="sub">Tránsito orbital polar activo</span>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

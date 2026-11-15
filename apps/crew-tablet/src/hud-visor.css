@@ -1,31 +1,76 @@
-/* LIGHTMINUTE VISOR HUD — EVA IN-HELMET HEADS-UP DISPLAY */
+/* LIGHTMINUTE VISOR HUD — EVA IN-HELMET HEADS-UP DISPLAY
+ * Aligned with the application design system: calm mission-control surfaces,
+ * Inter typography, semantic tokens, and responsive panel framing.
+ */
 
 :root {
-  --hud-a: #e8a321;
-  --hud-a2: rgba(232, 163, 33, 0.4);
-  --hud-a3: rgba(232, 163, 33, 0.14);
-  --hud-cy: #5fdcff;
-  --hud-grn: #8dffa6;
+  --hud-amber: #e8a321;
+  --hud-amber-soft: rgba(232, 163, 33, 0.4);
+  --hud-amber-dim: rgba(232, 163, 33, 0.14);
+  --hud-cyan: #5fdcff;
+  --hud-green: #8dffa6;
   --hud-red: #ff4a36;
-  --hud-yel: #ffe27a;
+  --hud-yellow: #ffe27a;
 }
 
-.hud-container {
+/* Standalone View Container */
+.visor-view {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: var(--maxw);
+  padding: 32px 40px;
+}
+
+/* Simulation Controls Panel */
+.visor-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  align-items: center;
+  background: var(--surface);
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+}
+
+.visor-controls-grid .field {
+  gap: 6px;
+}
+
+/* Simulator Canvas Viewport Frame */
+.visor-viewport {
   position: relative;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 520px;
+  max-height: 700px;
   background: #000;
-  color: var(--hud-a);
-  font-family: "Bank Gothic", "Eurostile", "Agency FB", "Segoe UI", Arial, sans-serif;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  overflow: hidden;
   user-select: none;
+  font-family: var(--font-sans);
+  color: var(--hud-amber);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.3);
 }
 
-.hud-container.l0 { --c: var(--hud-a); }
-.hud-container.l1 { --c: var(--hud-yel); }
-.hud-container.l2 { --c: var(--hud-red); }
+.visor-viewport.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  max-height: none;
+  z-index: 10000;
+  border-radius: 0;
+  border: none;
+  margin: 0;
+}
+
+.visor-viewport.l0 { --c: var(--hud-amber); }
+.visor-viewport.l1 { --c: var(--hud-yellow); }
+.visor-viewport.l2 { --c: var(--hud-red); }
 
 /* Background container: renders the Moon SVG directly */
 .hud-moon-bg {
@@ -46,19 +91,19 @@
   backdrop-filter: sepia(0.68) contrast(1.12) saturate(1.3) brightness(0.94) hue-rotate(-10deg);
   -webkit-backdrop-filter: sepia(0.68) contrast(1.12) saturate(1.3) brightness(0.94) hue-rotate(-10deg);
   background:
-    linear-gradient(120deg, transparent 22%, rgba(255, 215, 105, 0.09) 30%, rgba(255, 175, 45, 0.14) 36%, transparent 44%),
+    linear-gradient(120deg, transparent 22%, rgba(255, 215, 105, 0.08) 30%, rgba(255, 175, 45, 0.12) 36%, transparent 44%),
     linear-gradient(112deg, transparent 58%, rgba(255, 195, 60, 0.05) 64%, transparent 72%),
-    radial-gradient(ellipse at 50% 45%, rgba(230, 160, 25, 0.22) 0%, rgba(180, 110, 15, 0.34) 55%, rgba(65, 35, 5, 0.68) 100%),
-    linear-gradient(rgba(195, 130, 20, 0.16), rgba(140, 85, 10, 0.22)),
+    radial-gradient(ellipse at 50% 45%, rgba(230, 160, 25, 0.20) 0%, rgba(180, 110, 15, 0.30) 55%, rgba(65, 35, 5, 0.65) 100%),
+    linear-gradient(rgba(195, 130, 20, 0.14), rgba(140, 85, 10, 0.20)),
     repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.03) 0 1px, transparent 1px 3px);
   box-shadow:
-    inset 0 0 140px 35px rgba(120, 70, 5, 0.6),
-    inset 0 0 50px rgba(0, 0, 0, 0.85);
+    inset 0 0 120px 30px rgba(120, 70, 5, 0.55),
+    inset 0 0 40px rgba(0, 0, 0, 0.8);
   transition: opacity 0.3s ease;
 }
 
 .hud-visor-filter.is-disabled {
-  opacity: 0.15;
+  opacity: 0.12;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
@@ -83,7 +128,7 @@
   transition: opacity 0.4s ease;
 }
 
-.hud-container.alarm .hud-alarm {
+.visor-viewport.alarm .hud-alarm {
   animation: hud-alarm-glow 2.4s ease-in-out infinite;
 }
 
@@ -99,7 +144,7 @@
 
 .hud-ln {
   fill: none;
-  stroke: var(--hud-a);
+  stroke: var(--c);
   stroke-width: 1.2;
   vector-effect: non-scaling-stroke;
 }
@@ -656,90 +701,81 @@
   100% { transform: translateY(500%); opacity: 0; }
 }
 
-/* TOP-RIGHT RETURN ACTION */
-.hud-exit-btn {
+/* Fullscreen Exit Button inside HUD */
+.hud-fs-exit-btn {
   position: absolute;
-  top: 16px;
-  left: 20px;
+  top: 14px;
+  left: 18px;
   z-index: 10;
-  background: rgba(14, 20, 28, 0.85);
-  color: #e8a321;
-  border: 1px solid rgba(232, 163, 33, 0.4);
-  border-radius: 6px;
+  background: rgba(14, 22, 32, 0.85);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-sm);
   padding: 6px 12px;
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-weight: 500;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.18s ease;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all var(--dur) var(--ease);
 }
 
-.hud-exit-btn:hover {
-  background: rgba(232, 163, 33, 0.2);
-  color: #ffd87a;
-  box-shadow: 0 0 10px rgba(232, 163, 33, 0.4);
+.hud-fs-exit-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
-/* BOTTOM INTERACTIVE CONTROLS BAR */
-#hud-sim {
-  position: absolute;
-  left: 50%;
-  bottom: 1.4vh;
-  transform: translateX(-50%);
+/* Stage footer info */
+.visor-stage-footer {
   display: flex;
-  gap: 12px;
+  justify-content: space-between;
   align-items: center;
-  font-size: 10px;
-  opacity: 0.45;
-  transition: opacity 0.2s ease;
-  z-index: 10;
-  background: rgba(8, 12, 18, 0.8);
-  backdrop-filter: blur(8px);
-  padding: 6px 16px;
-  border-radius: 20px;
-  border: 1px solid rgba(232, 163, 33, 0.3);
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  margin-top: 14px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
-#hud-sim:hover, #hud-sim:focus-within {
-  opacity: 1;
+/* 5-Organ Telemetry Grid below simulator */
+.hud-organs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+  margin-top: 14px;
 }
 
-#hud-sim select, #hud-sim button {
-  background: #000;
-  color: var(--hud-a);
-  border: 1px solid var(--hud-a2);
-  font: inherit;
-  padding: 3px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  text-transform: uppercase;
+.hud-organ-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
 }
 
-#hud-sim select:hover, #hud-sim button:hover {
-  border-color: var(--hud-a);
-  background: rgba(232, 163, 33, 0.1);
+.hud-organ-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-#hud-sim input[type="range"] {
-  accent-color: var(--hud-a);
-  width: 90px;
-  cursor: pointer;
+.hud-organ-card h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
 }
 
-#hud-note {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0.3vh;
-  text-align: center;
-  font-size: 8px;
-  opacity: 0.35;
-  pointer-events: none;
-  z-index: 6;
-  letter-spacing: 0.1em;
+.hud-organ-card .val {
+  font-size: 20px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--ink);
+}
+
+.hud-organ-card .desc {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.4;
 }

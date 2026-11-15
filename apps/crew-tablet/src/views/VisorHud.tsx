@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import type { LoadedScenario } from "../lib/types";
 import { MoonEnvironmentView } from "./MoonEnvironment";
+import { Icon } from "../components/Icon";
+import { Chip, LevelBadge } from "../components/primitives";
 import "../hud-visor.css";
 
 interface VisorHudProps {
@@ -35,6 +37,7 @@ export function VisorHud({
 }: VisorHudProps) {
   const [solarShield, setSolarShield] = useState(true);
   const [autoPlay, setAutoPlay] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Auto-play through mission days
   useEffect(() => {
@@ -110,23 +113,135 @@ export function VisorHud({
   }, [maxDay]);
 
   return (
-    <div className={`hud-container ${levelClass} ${isAlarm ? "alarm" : ""}`}>
-      {/* 1. Realistic Lunar Surface Environment Background */}
-      <div className="hud-moon-bg">
-        <MoonEnvironmentView embedded={true} scenario={scenario} dayNumber={dayNumber} />
-      </div>
+    <div className="view visor-view">
+      <header className="viewhead">
+        <div>
+          <p className="micro">LIGHTMINUTE / VISOR EXTRAVEHICULAR (EVA)</p>
+          <h1>Visor EVA (HUD de Casco)</h1>
+          <p className="viewhead__sub">
+            Simulación de visualización integrada en casco de traje lunar xEMU / Artemis. Constantes vitales sobre el terreno, escaneo orgánico fisiológico y supervisión sin retardo.
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          {onOpenMoon ? (
+            <button type="button" className="btn" onClick={onOpenMoon}>
+              <Icon name="moon" size={16} /> Entorno Lunar 3D
+            </button>
+          ) : null}
+          {onOpenTablet ? (
+            <button type="button" className="btn" onClick={onOpenTablet}>
+              <Icon name="overview" size={16} /> Volver a resumen
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className="btn btn--primary"
+            onClick={() => setIsFullscreen(!isFullscreen)}
+          >
+            {isFullscreen ? "Salir de pantalla completa" : "Pantalla completa"}
+          </button>
+        </div>
+      </header>
 
-      {/* 2. Amber/Gold Solar Shield Visor Optical Coating */}
-      <div className={`hud-visor-filter ${solarShield ? "" : "is-disabled"}`} />
+      {/* Simulator Interactive Controls */}
+      <section className="panel">
+        <div className="visor-controls-grid">
+          {/* Crew Selector */}
+          <div className="field">
+            <span className="micro">Tripulante monitoreado</span>
+            <div className="crew-selector">
+              {crewIds.map((id) => (
+                <button
+                  key={id}
+                  type="button"
+                  className={`crew-choice ${id === crewId ? "is-active" : ""}`}
+                  onClick={() => onCrew(id)}
+                >
+                  {id} · {CREW_NAMES[id]?.split(" · ")[1] ?? id}
+                </button>
+              ))}
+            </div>
+          </div>
 
-      {/* 3. Vignette and Emergency Alarm Glow */}
-      <div className="hud-vignette" />
-      <div className="hud-alarm" />
+          {/* Timeline Scrubber */}
+          <div className="field">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+              <span className="micro">Línea temporal de misión</span>
+              <span className="mono small">
+                Día <strong>{String(dayNumber).padStart(2, "0")}</strong> de {maxDay}
+              </span>
+            </div>
+            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+              <button
+                type="button"
+                className="btn btn--tiny"
+                onClick={() => setAutoPlay(!autoPlay)}
+                title="Auto-reproducción"
+              >
+                <Icon name={autoPlay ? "pause" : "play"} size={14} />
+                {autoPlay ? "Pausa" : "Simular"}
+              </button>
+              <input
+                type="range"
+                min={1}
+                max={maxDay}
+                value={dayNumber}
+                onChange={(e) => onDay(Number(e.target.value))}
+                style={{ flex: 1 }}
+              />
+            </div>
+          </div>
 
-      {/* 4. Top Navigation Action to Exit HUD */}
-      <button type="button" className="hud-exit-btn" onClick={onOpenTablet}>
-        ← Salir del Visor (Tablet)
-      </button>
+          {/* Visor Optical Shield Toggle */}
+          <div className="field">
+            <span className="micro">Óptica de visor EVA</span>
+            <button
+              type="button"
+              className="btn btn--tiny"
+              onClick={() => setSolarShield(!solarShield)}
+            >
+              <Icon name="sun" size={14} />
+              {solarShield ? "Escudo solar: Oro / Ámbar (EVA)" : "Filtro: Neutro claro"}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Helmet HUD Stage */}
+      <section className="panel">
+        <div className="panel__head">
+          <h2>Proyección de telemetría en casco</h2>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <LevelBadge level={member?.level ?? "info"} />
+            <Chip tone={integrityScore >= 80 ? "accent" : "warn"}>
+              Integridad {integrityScore}%
+            </Chip>
+          </div>
+        </div>
+
+        <div className={`visor-viewport ${isFullscreen ? "is-fullscreen" : ""} ${levelClass} ${isAlarm ? "alarm" : ""}`}>
+          {/* 1. Background Lunar Surface */}
+          <div className="hud-moon-bg">
+            <MoonEnvironmentView embedded={true} scenario={scenario} dayNumber={dayNumber} />
+          </div>
+
+          {/* 2. Amber/Gold Solar Shield Visor Optical Coating */}
+          <div className={`hud-visor-filter ${solarShield ? "" : "is-disabled"}`} />
+
+          {/* 3. Vignette and Emergency Alarm Glow */}
+          <div className="hud-vignette" />
+          <div className="hud-alarm" />
+
+          {/* 4. Fullscreen Exit Action (when in fullscreen) */}
+          {isFullscreen && (
+            <button
+              type="button"
+              className="hud-fs-exit-btn"
+              onClick={() => setIsFullscreen(false)}
+            >
+              ✕ Salir de pantalla completa
+            </button>
+          )}
 
       {/* 5. Helmet Outer Curvature Framing */}
       <svg className="hud-corner cl" viewBox="0 0 300 150" preserveAspectRatio="none" aria-hidden="true">
@@ -426,47 +541,102 @@ export function VisorHud({
         </div>
       </div>
 
-      {/* 13. Interactive Bottom Toolbar */}
-      <div id="hud-sim">
-        <label>
-          Tripulante:{" "}
-          <select value={crewId} onChange={(e) => onCrew(e.target.value)}>
-            {crewIds.map((id) => (
-              <option key={id} value={id}>
-                {CREW_NAMES[id] ?? `Tripulante ${id}`}
-              </option>
-            ))}
-          </select>
-        </label>
+        </div>
 
-        <label>
-          Día:{" "}
-          <input
-            type="range"
-            min="1"
-            max={maxDay}
-            value={dayNumber}
-            onChange={(e) => onDay(Number(e.target.value))}
-          />{" "}
-          <span>{dayNumber}</span>
-        </label>
+        <div className="visor-stage-footer">
+          <div className="overview-context" style={{ margin: 0 }}>
+            <span>FC: <strong className="mono">{hr.toFixed(0)} bpm</strong></span>
+            <span>Temp: <strong className="mono">{temp.toFixed(1)} °C</strong></span>
+            <span>CO₂ traje: <strong className="mono">{co2} ppm</strong></span>
+            <span>Sueño: <strong className="mono">{sleep.toFixed(1)} h</strong></span>
+            <span>PVT: <strong className="mono">{pvt.toFixed(0)} ms</strong></span>
+            <span>Radiación: <strong className="mono">S{sScale} ({radPfu.toFixed(1)} pfu)</strong></span>
+          </div>
+          <span className="micro muted">
+            LIGHTMINUTE · SIMULACIÓN DE CASCO EVA · DATOS SINTÉTICOS · NO ES UN DISPOSITIVO MÉDICO
+          </span>
+        </div>
+      </section>
 
-        <button type="button" onClick={() => setAutoPlay(!autoPlay)}>
-          {autoPlay ? "⏸ Pausa" : "▶ Auto"}
-        </button>
+      {/* 5-Organ Physiological Systems Evaluation */}
+      <section className="panel">
+        <div className="panel__head">
+          <h2>Evaluación fisiológica por subsistemas (EVA)</h2>
+          <span className="small muted">Algoritmos deterministas N-de-1 de referencia personal</span>
+        </div>
 
-        <button type="button" onClick={() => setSolarShield(!solarShield)}>
-          {solarShield ? "Visor: Dorado (EVA)" : "Visor: Claro"}
-        </button>
+        <div className="hud-organs-grid">
+          {/* 1. Brain / Neurological */}
+          <div className="hud-organ-card">
+            <div className="hud-organ-card__head">
+              <h3>Cerebro y Cognición</h3>
+              <span className={`status-label status-label--${brainStrain ? "act" : "info"}`}>
+                {brainStrain ? "Sobrecarga" : "Nominal"}
+              </span>
+            </div>
+            <div className="val">{pvt.toFixed(0)} <small className="mono">ms</small></div>
+            <p className="desc">
+              Tiempo de reacción psicomotora (PVT) y cefalea reportada ({headache.toFixed(0)}/10). Sensible a congestión cefálica (SANS) e hipoxia.
+            </p>
+          </div>
 
-        <button type="button" onClick={onOpenMoon}>
-          Entorno Lunar 3D
-        </button>
-      </div>
+          {/* 2. Cardiovascular */}
+          <div className="hud-organ-card">
+            <div className="hud-organ-card__head">
+              <h3>Sistema Cardiovascular</h3>
+              <span className={`status-label status-label--${heartStrain ? "act" : "info"}`}>
+                {heartStrain ? "Desviación" : "Nominal"}
+              </span>
+            </div>
+            <div className="val">{hr.toFixed(0)} <small className="mono">bpm</small></div>
+            <p className="desc">
+              Frecuencia cardíaca en reposo y evaluación de flujo venoso yugular interno (IJV) para detección temprana de estasis o trombosis.
+            </p>
+          </div>
 
-      <div id="hud-note">
-        LIGHTMINUTE · SIMULACIÓN DE CASCO EVA · DATOS SINTÉTICOS · NO ES UN DISPOSITIVO MÉDICO
-      </div>
+          {/* 3. Respiratory */}
+          <div className="hud-organ-card">
+            <div className="hud-organ-card__head">
+              <h3>Respiratorio y Traje</h3>
+              <span className={`status-label status-label--${lungStrain ? "act" : "info"}`}>
+                {lungStrain ? "Atención CO₂" : "Nominal"}
+              </span>
+            </div>
+            <div className="val">{co2} <small className="mono">ppm</small></div>
+            <p className="desc">
+              Presión parcial de CO₂ en bucle de respiración de traje lunar. Prevención de hipercapnia e incremento de presión intracraneal.
+            </p>
+          </div>
+
+          {/* 4. Thermal */}
+          <div className="hud-organ-card">
+            <div className="hud-organ-card__head">
+              <h3>Termorregulación Central</h3>
+              <span className={`status-label status-label--${liverStrain ? "act" : "info"}`}>
+                {liverStrain ? "Hipertermia" : "Nominal"}
+              </span>
+            </div>
+            <div className="val">{temp.toFixed(1)} <small className="mono">°C</small></div>
+            <p className="desc">
+              Temperatura central de reposo circadiana. Indicador precoz de respuesta inmunitaria activa o sobrecalentamiento metabólico en EVA.
+            </p>
+          </div>
+
+          {/* 5. Rest / Sleep */}
+          <div className="hud-organ-card">
+            <div className="hud-organ-card__head">
+              <h3>Recuperación y Sueño</h3>
+              <span className={`status-label status-label--${sleep < 6 ? "watch" : "info"}`}>
+                {sleep < 6 ? "Deuda de sueño" : "Adecuado"}
+              </span>
+            </div>
+            <div className="val">{sleep.toFixed(1)} <small className="mono">h</small></div>
+            <p className="desc">
+              Horas acumuladas de sueño vigilia. Monitoreo del ritmo circadiano frente a alteraciones de luz solar rasante en superficie lunar.
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

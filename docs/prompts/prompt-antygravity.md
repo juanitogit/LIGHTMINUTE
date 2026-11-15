@@ -2147,3 +2147,15 @@ continue
 
 ---
 
+## Prompt 31 — Adaptación Estética del Simulador al Sistema de Diseño de la Página
+- **Fecha y Hora (UTC):** `2026-11-15T16:59:24Z`
+- **Modelo de IA utilizado:** `Gemini 3.8 Flash (Medium)`
+- **Propósito:** *Alinear visual y estructuralmente los módulos del simulador (Visor EVA HUD y Entorno Lunar) con el sistema de diseño de la aplicación (LIGHTMINUTE). Eliminar estilos arcade/fijos (100vw, fuentes 'Bank Gothic', contenedores flotantes desconectados) y reemplazarlos por los contenedores (.view, .viewhead, .panel), tipografías (Inter Variable, mono para telemetría), variables semánticas (--surface, --line, --ink, --accent, --ok, --watch, --act) y controles interactivos estándar (.crew-selector, .crew-choice, .btn, .chip), manteniendo todo estrictamente en local sin realizar commit, push ni merge.*
+
+### Contenido del Prompt:
+```text
+usa los estilos de la paginaen el simulador,los actuales no corresponden,dame un reporte de los cambios,aun no subas nada,todo em local
+```
+
+---
+

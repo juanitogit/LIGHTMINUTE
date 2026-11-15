@@ -1,14 +1,54 @@
-/* MOON ENVIRONMENT — LUNAR SURFACE SIMULATION STYLES */
+/* LIGHTMINUTE — LUNAR SURFACE ENVIRONMENT SIMULATOR STYLES
+ * Aligned with the application design system: calm mission-control surfaces,
+ * Inter typography, semantic tokens, and responsive panel framing.
+ */
 
 .moon-view {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: var(--maxw);
+  padding: 32px 40px;
+}
+
+.moon-view--embedded {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: 100vh;
-  min-height: 100vh;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  max-width: none;
   background: #000;
   overflow: hidden;
-  color: #e0e6ed;
-  font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+  z-index: 0;
+}
+
+/* Simulator Canvas Viewport Frame */
+.moon-stage-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 480px;
+  max-height: 680px;
+  background: #000000;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+}
+
+.moon-stage-frame.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  max-height: none;
+  z-index: 10000;
+  border-radius: 0;
+  border: none;
+  margin: 0;
 }
 
 .moon-svg {
@@ -19,12 +59,12 @@
   pointer-events: none;
 }
 
-/* Standalone HUD Overlays */
-.moon-overlay-top {
+/* Frame overlay telemetry header (inside canvas) */
+.moon-frame-overlay-top {
   position: absolute;
-  top: 16px;
-  left: 20px;
-  right: 20px;
+  top: 14px;
+  left: 18px;
+  right: 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -32,133 +72,119 @@
   pointer-events: auto;
 }
 
-.moon-title-cluster {
+.moon-tag-box {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  background: rgba(8, 12, 18, 0.75);
-  backdrop-filter: blur(8px);
+  align-items: center;
+  gap: 8px;
+  background: rgba(14, 22, 32, 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: 11px;
+  color: #f1f3ec;
+  font-weight: 500;
 }
 
-.moon-title-cluster h1 {
-  font-size: 14px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #fff;
-  margin: 0;
+.moon-tag-box .status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ok);
+}
+
+.moon-frame-actions {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.moon-title-cluster .micro {
-  font-size: 9px;
-  letter-spacing: 0.15em;
-  color: #e8a321;
-  text-transform: uppercase;
-}
-
-.moon-telemetry-strip {
-  display: flex;
-  gap: 12px;
-  background: rgba(8, 12, 18, 0.75);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  padding: 6px 14px;
-  font-size: 11px;
-}
-
-.moon-telemetry-item {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.moon-telemetry-label {
-  font-size: 8px;
-  letter-spacing: 0.12em;
-  color: #8c9ba8;
-  text-transform: uppercase;
-}
-
-.moon-telemetry-val {
-  font-size: 13px;
-  font-weight: 600;
-  color: #5fdcff;
-  font-family: var(--font-mono, monospace);
-}
-
-.moon-nav-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.moon-btn {
-  background: rgba(14, 20, 28, 0.85);
-  color: #e8a321;
-  border: 1px solid rgba(232, 163, 33, 0.4);
-  border-radius: 6px;
+.moon-fs-btn {
+  background: rgba(14, 22, 32, 0.78);
+  color: #f1f3ec;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-sm);
   padding: 6px 12px;
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-weight: 500;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.18s ease;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all var(--dur) var(--ease);
 }
 
-.moon-btn:hover {
-  background: rgba(232, 163, 33, 0.15);
-  border-color: #e8a321;
-  color: #ffd87a;
-  box-shadow: 0 0 10px rgba(232, 163, 33, 0.3);
+.moon-fs-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
 }
 
-.moon-btn--primary {
-  background: #e8a321;
-  color: #0b0f14;
-  border-color: #e8a321;
-}
-
-.moon-btn--primary:hover {
-  background: #ffb834;
-  color: #000;
-  box-shadow: 0 0 14px rgba(232, 163, 33, 0.5);
-}
-
-.moon-overlay-bottom {
+.moon-frame-overlay-bottom {
   position: absolute;
-  bottom: 16px;
-  left: 20px;
-  right: 20px;
+  bottom: 14px;
+  left: 18px;
+  right: 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   z-index: 10;
-  pointer-events: auto;
-  font-size: 10px;
-  color: #8c9ba8;
+  pointer-events: none;
+  font-size: 11px;
 }
 
-.moon-coordinates {
-  background: rgba(8, 12, 18, 0.7);
-  backdrop-filter: blur(6px);
-  padding: 4px 10px;
+.moon-coord-pill {
+  background: rgba(10, 16, 24, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  font-family: var(--font-mono, monospace);
+  padding: 4px 10px;
+  color: #b0c0ce;
+  font-family: var(--font-mono);
+  font-size: 10px;
 }
 
-.moon-notice {
+.moon-env-notice {
+  color: rgba(255, 255, 255, 0.45);
   font-size: 9px;
-  color: rgba(255, 255, 255, 0.4);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Moon panel below simulator */
+.moon-telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.moon-metric-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 16px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+}
+
+.moon-metric-card .micro {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.moon-metric-card strong {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  font-family: var(--font-mono);
+}
+
+.moon-metric-card span.sub {
+  font-size: 11px;
+  color: var(--muted);
 }
