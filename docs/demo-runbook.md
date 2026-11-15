@@ -16,10 +16,11 @@
 
 The Luna and EVA visors include a voice assistant. It answers only with the values the page is
 already showing (day, crew, telemetry, space weather); it never diagnoses, never estimates and
-never invents a threshold. English is synthesized with Kokoro (`kokoro-js`) and Spanish with
-MMS TTS (`Xenova/mms-tts-spa`), both running locally in the browser and downloaded on first
-play; the language is chosen automatically from the text. The browser voice is only a last
-resort when a model cannot load. Both are simulated voices, not a crew recording.
+never invents a threshold. Speech is synthesized locally with MMS TTS (`Xenova/mms-tts-spa`
+and `Xenova/mms-tts-eng`), downloaded on first play; the language is chosen automatically
+from the text. The browser voice is only a last resort when the model cannot load. It is a
+simulated voice, not a crew recording. Kokoro was removed: its WebAssembly session froze the
+page on some browsers.
 
 Groq is configured per environment, never in the bundle:
 

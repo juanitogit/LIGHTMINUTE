@@ -1,18 +1,19 @@
 /**
  * Speech for the helmet visors, synthesized on the device.
  *
- * English: Kokoro 82M (kokoro-js). Spanish: MMS TTS (VITS) exported for
- * transformers.js, because kokoro-js 1.2.1 ships only English voices and its
- * phonemizer is fixed to English, so Kokoro cannot pronounce Spanish. Both
- * engines run locally through WebAssembly; the browser's own voice is kept only
- * as a last resort. The UI names the engine that actually spoke; nothing is
- * claimed to be a recording or a real crew voice.
+ * Both languages use MMS TTS (VITS) exported for transformers.js: it is small
+ * enough to load without freezing the page. Kokoro was dropped because its
+ * WebAssembly session blocked the main thread on some browsers and the visor
+ * stopped responding. The browser's own voice is kept only as a last resort.
+ * The UI names the engine that actually spoke; nothing is claimed to be a
+ * recording or a real crew voice.
  */
 export type SpeechLang = "es" | "en";
 
-const MODEL = "onnx-community/Kokoro-82M-v1.0-ONNX";
-const EN_VOICE = "af_heart";
-const ES_MODEL = "Xenova/mms-tts-spa";
+const MODELS: Record<SpeechLang, string> = {
+  es: "Xenova/mms-tts-spa",
+  en: "Xenova/mms-tts-eng",
+};
 const ES_LANGUAGE = "es-ES";
 
 const SPANISH_ACCENT = /[ñÑáéíóúÁÉÍÓÚüÜ¿¡]/;
@@ -32,75 +33,48 @@ export function detectSpeechLang(text: string): SpeechLang {
   return spanish >= english ? "es" : "en";
 }
 
-type KokoroModel = Awaited<ReturnType<typeof loadKokoro>>;
-let modelPromise: Promise<KokoroModel> | null = null;
-
-async function loadKokoro(onProgress?: (message: string) => void) {
-  const { KokoroTTS } = await import("kokoro-js");
-  return KokoroTTS.from_pretrained(MODEL, {
-    dtype: "q8",
-    device: "wasm",
-    progress_callback: (event: { status?: string; progress?: number; file?: string }) => {
-      if (!onProgress) return;
-      if (event.status === "progress" && typeof event.progress === "number") {
-        onProgress(`Preparando Kokoro… ${Math.round(event.progress)}%`);
-      } else if (event.status === "ready") {
-        onProgress("Kokoro listo.");
-      }
-    },
-  });
-}
-
-function kokoro(onProgress?: (message: string) => void) {
-  modelPromise ??= loadKokoro(onProgress).catch((error: unknown) => {
-    // A failed download must not poison every later attempt.
-    modelPromise = null;
-    throw error;
-  });
-  return modelPromise;
-}
-
-export interface SpokenClip { url: string; mime: string }
-
-/** English only: see the module comment about the voice table. */
-export async function kokoroClip(text: string, onProgress?: (message: string) => void): Promise<SpokenClip> {
-  const tts = await kokoro(onProgress);
-  const audio = await tts.generate(text, { voice: EN_VOICE });
-  const blob = await audio.toBlob();
-  return { url: URL.createObjectURL(blob), mime: blob.type || "audio/wav" };
-}
-
 type SpeechPipeline = (text: string) => Promise<{ audio: Float32Array; sampling_rate: number }>;
-let spanishPromise: Promise<SpeechPipeline> | null = null;
+const pipelines = new Map<SpeechLang, Promise<SpeechPipeline>>();
 
-async function loadSpanish(onProgress?: (message: string) => void) {
+async function load(lang: SpeechLang, onProgress?: (message: string) => void) {
   const { pipeline } = await import("@huggingface/transformers");
-  const loaded = await pipeline("text-to-speech", ES_MODEL, {
+  const loaded = await pipeline("text-to-speech", MODELS[lang], {
     dtype: "q8",
     device: "wasm",
     progress_callback: (event: { status?: string; progress?: number }) => {
       if (!onProgress) return;
       if (event.status === "progress" && typeof event.progress === "number") {
-        onProgress(`Preparando la voz española… ${Math.round(event.progress)}%`);
+        onProgress(`Preparando la voz local… ${Math.round(event.progress)}%`);
       } else if (event.status === "ready") {
-        onProgress("Voz española lista.");
+        onProgress("Voz local lista.");
       }
     },
   });
   return loaded as unknown as SpeechPipeline;
 }
 
-function spanish(onProgress?: (message: string) => void) {
-  spanishPromise ??= loadSpanish(onProgress).catch((error: unknown) => {
-    spanishPromise = null;
-    throw error;
-  });
-  return spanishPromise;
+function model(lang: SpeechLang, onProgress?: (message: string) => void) {
+  let pending = pipelines.get(lang);
+  if (!pending) {
+    pending = load(lang, onProgress).catch((error: unknown) => {
+      // A failed download must not poison every later attempt.
+      pipelines.delete(lang);
+      throw error;
+    });
+    pipelines.set(lang, pending);
+  }
+  return pending;
 }
 
-/** Spanish neural voice: MMS TTS (VITS) running locally. */
-export async function spanishClip(text: string, onProgress?: (message: string) => void): Promise<SpokenClip> {
-  const tts = await spanish(onProgress);
+export interface SpokenClip { url: string; mime: string }
+
+/** Neural voice, generated locally in the browser for the detected language. */
+export async function neuralClip(
+  text: string,
+  lang: SpeechLang,
+  onProgress?: (message: string) => void,
+): Promise<SpokenClip> {
+  const tts = await model(lang, onProgress);
   const result = await tts(text);
   const samples = result.audio instanceof Float32Array ? result.audio : Float32Array.from(result.audio);
   return { url: URL.createObjectURL(wavBlob(samples, result.sampling_rate)), mime: "audio/wav" };
@@ -136,10 +110,10 @@ function wavBlob(samples: Float32Array, sampleRate: number): Blob {
 }
 
 /**
- * Browser speech engine, kept only as a last resort when a local model cannot
- * load. Picks the best installed voice instead of the first one: the neural
- * voices that ship with the system ("Natural", "Neural", "Online") sound far
- * closer to a person than the legacy compact ones.
+ * Browser speech engine, kept only as a last resort when the local model
+ * cannot load. Picks the best installed voice instead of the first one: the
+ * neural voices that ship with the system ("Natural", "Neural", "Online")
+ * sound far closer to a person than the legacy compact ones.
  */
 export function browserSpeak(text: string, lang: SpeechLang, onEnd: () => void): boolean {
   if (!("speechSynthesis" in window)) return false;
@@ -177,7 +151,7 @@ function bestVoice(voices: SpeechSynthesisVoice[], lang: SpeechLang): SpeechSynt
 }
 
 // Chrome fills its voice list asynchronously; asking once at startup means the
-// first spoken answer already uses the best voice instead of the default one.
+// first answer already uses the best voice instead of the default one.
 if (typeof window !== "undefined" && "speechSynthesis" in window) {
   window.speechSynthesis.getVoices();
 }

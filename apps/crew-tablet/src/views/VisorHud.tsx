@@ -5,7 +5,7 @@ import { Icon } from "../components/Icon";
 import { Chip, LevelBadge } from "../components/primitives";
 import { useDictation } from "../hooks/useDictation";
 import { useVisorSpeech } from "../hooks/useVisorSpeech";
-import { detectSpeechLang } from "../lib/kokoro";
+import { detectSpeechLang } from "../lib/speech";
 import { askVisorAssistant, localGroundedAnswer, type VisorSnapshot } from "../lib/visorAssistant";
 import "../hud-visor.css";
 
@@ -651,13 +651,11 @@ export function VisorHud({
         <div className="panel__head">
           <h2 id="visor-voice">Asistente de voz del visor</h2>
           <span className="small muted">
-            {speech.engine === "kokoro"
-              ? "Kokoro · inglés"
-              : speech.engine === "spanish"
-                ? "Voz neuronal local · español"
-                : speech.engine === "browser"
-                  ? "Voz del navegador (respaldo)"
-                  : "Español/inglés automático"}
+            {speech.engine === "neural"
+              ? "Voz neuronal local · español/inglés"
+              : speech.engine === "browser"
+                ? "Voz del navegador (respaldo)"
+                : "Español/inglés automático"}
           </span>
         </div>
         <p className="small muted">
@@ -678,9 +676,9 @@ export function VisorHud({
         </div>
         <p className="small muted">
           Habla: el visor responde en voz alta y vuelve a escuchar solo, sin pulsar nada más.
-          Kokoro sintetiza el inglés y un modelo VITS español (MMS) el español, ambos en este
-          equipo; el navegador solo interviene si un modelo no puede cargar. La primera vez
-          se descarga el modelo en este equipo.
+          La voz se sintetiza en este equipo con MMS TTS, en español o inglés según el texto;
+          el navegador solo interviene si el modelo no puede cargar. La primera vez se descarga
+          el modelo, unos 40 MB por idioma.
         </p>
         {!dictation.supported ? (
           <p className="small muted">Este navegador no ofrece dictado por voz; el asistente sigue explicando los valores de la página en pantalla.</p>
