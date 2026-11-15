@@ -62,7 +62,7 @@ export function useScenarioData(name: string, enabled = true): ScenarioState {
       setComputing(true);setComputeError(null);setComputeProgress("Starting worker…");
       const worker = new Worker(new URL("../lib/browserEngine.worker.ts", import.meta.url), {type:"module"});
       workerRef.current=worker;
-      const timeout=window.setTimeout(()=>{if(workerRef.current!==worker)return;worker.terminate();workerRef.current=null;setComputing(false);setComputeError("On-device engine took too long to load. Static scenario remains available.");}, 120000);
+      const timeout=window.setTimeout(()=>{if(workerRef.current!==worker)return;worker.terminate();workerRef.current=null;setComputing(false);setComputeError("On-device engine took too long to load. Check your connection and retry. Static scenario remains available.");}, 600000);
       const expected=name;
       worker.onmessage = (event:MessageEvent<{ok?:boolean;progress?:string;data?:LoadedScenario["doc"];error?:string}>) => {
         if(workerRef.current===worker && event.data.progress){setComputeProgress(event.data.progress);return;}

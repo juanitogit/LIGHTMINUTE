@@ -40,8 +40,16 @@ function offlineBundle() {
       for (const file of files) { digest.update(file); digest.update(readFileSync(join(root, file))); }
       const version = digest.digest("hex").slice(0, 16);
       const serviceWorker = `const CACHE=${JSON.stringify("lightminute-static-" + version)};
-const ASSETS=${JSON.stringify(files.map(file => "./" + file))};
-self.addEventListener("install", event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS))));
+const ASSETS=${JSON.stringify(files.slice().sort((a,b) => Number(!a.startsWith("assets/pyodide/")) - Number(!b.startsWith("assets/pyodide/"))).map(file => "./" + file))};
+// Limit parallel downloads so first installation does not saturate the connection
+// while the user starts the on-device engine. A failed asset still fails install.
+self.addEventListener("install", event => event.waitUntil((async () => {
+  const cache = await caches.open(CACHE);
+  let next = 0;
+  await Promise.all(Array.from({length: 3}, async () => {
+    while (next < ASSETS.length) await cache.add(ASSETS[next++]);
+  }));
+})()));
 self.addEventListener("activate", event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith("lightminute-static-") && key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim())));
 self.addEventListener("fetch", event => {
   const request = event.request, url = new URL(request.url);

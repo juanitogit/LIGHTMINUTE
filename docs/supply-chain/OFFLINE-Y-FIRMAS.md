@@ -8,6 +8,11 @@ servidor. El almacenamiento del navegador puede ser limitado o eliminado.
 Tras integrar los modelos de órganos del remoto, `dist/` ocupa 96.677.713 bytes
 antes de compresión en esta revisión; varía por build. La descarga y el espacio
 necesarios son significativos para una conexión limitada.
+Una comprobación en producción con conexión lenta superó el límite anterior de
+dos minutos durante la descarga de Pyodide. El instalador ahora limita a tres las
+descargas simultáneas y prioriza el runtime; el motor espera hasta diez minutos.
+Esto reduce la competencia de descargas, pero no garantiza terminar en redes
+lentas: la ejecución pública debe volver a comprobarse tras el despliegue.
 
 El botón de ejecución local inicia en un worker el mismo código Python del motor
 con Pyodide, NumPy y SciPy locales. El escenario generado es sintético, usa la

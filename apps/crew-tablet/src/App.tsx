@@ -281,7 +281,7 @@ export function App() {
           playing={playing}
           onTogglePlay={() => setPlaying((value) => !value)}
         />
-        <div className="engine-local-control"><button type="button" className="btn" disabled={scenario.computing || scenario.phase !== "ready"} onClick={scenario.runOnDevice}>{scenario.computing ? "Preparing on-device engine…" : "Run engine on this device"}</button><p className="small muted">Runs the synthetic scenario locally. Offline setup downloads Python, 3D models and scenario files to this device.</p>{scenario.computing?<p role="status">{scenario.computeProgress}</p>:null}{scenario.computeError?<p role="alert">{scenario.computeError}</p>:null}</div>
+        <div className="engine-local-control"><button type="button" className="btn" disabled={scenario.computing || scenario.phase !== "ready"} onClick={scenario.runOnDevice}>{scenario.computing ? "Preparing on-device engine…" : "Run engine on this device"}</button><p className="small muted">Runs the synthetic scenario locally. The first offline setup downloads about 97 MB and may take several minutes on a slow connection.</p>{scenario.computing?<p role="status">{scenario.computeProgress}</p>:null}{scenario.computeError?<p role="alert">{scenario.computeError}</p>:null}</div>
         <div className="mobile-notice">
           <Chip tone="warn">SYNTHETIC DATA</Chip>
           <Chip tone="quiet">not a medical device</Chip>
