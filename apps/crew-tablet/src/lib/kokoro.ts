@@ -1,17 +1,18 @@
 /**
- * Kokoro TTS for the helmet visors.
+ * Speech for the helmet visors, synthesized on the device.
  *
- * kokoro-js 1.2.1 ships only English voices: the Spanish voices of the
- * checkpoint are not wired into its voice table, and its phonemizer path is
- * fixed to English. So English is synthesized with Kokoro
- * and Spanish with the browser's own speech engine, chosen automatically from
- * the text. The UI names the engine that actually spoke; nothing is claimed to
- * be a recording or a real crew voice.
+ * English: Kokoro 82M (kokoro-js). Spanish: MMS TTS (VITS) exported for
+ * transformers.js, because kokoro-js 1.2.1 ships only English voices and its
+ * phonemizer is fixed to English, so Kokoro cannot pronounce Spanish. Both
+ * engines run locally through WebAssembly; the browser's own voice is kept only
+ * as a last resort. The UI names the engine that actually spoke; nothing is
+ * claimed to be a recording or a real crew voice.
  */
 export type SpeechLang = "es" | "en";
 
 const MODEL = "onnx-community/Kokoro-82M-v1.0-ONNX";
 const EN_VOICE = "af_heart";
+const ES_MODEL = "Xenova/mms-tts-spa";
 const ES_LANGUAGE = "es-ES";
 
 const SPANISH_ACCENT = /[ñÑáéíóúÁÉÍÓÚüÜ¿¡]/;
@@ -69,11 +70,76 @@ export async function kokoroClip(text: string, onProgress?: (message: string) =>
   return { url: URL.createObjectURL(blob), mime: blob.type || "audio/wav" };
 }
 
+type SpeechPipeline = (text: string) => Promise<{ audio: Float32Array; sampling_rate: number }>;
+let spanishPromise: Promise<SpeechPipeline> | null = null;
+
+async function loadSpanish(onProgress?: (message: string) => void) {
+  const { pipeline } = await import("@huggingface/transformers");
+  const loaded = await pipeline("text-to-speech", ES_MODEL, {
+    dtype: "q8",
+    device: "wasm",
+    progress_callback: (event: { status?: string; progress?: number }) => {
+      if (!onProgress) return;
+      if (event.status === "progress" && typeof event.progress === "number") {
+        onProgress(`Preparando la voz española… ${Math.round(event.progress)}%`);
+      } else if (event.status === "ready") {
+        onProgress("Voz española lista.");
+      }
+    },
+  });
+  return loaded as unknown as SpeechPipeline;
+}
+
+function spanish(onProgress?: (message: string) => void) {
+  spanishPromise ??= loadSpanish(onProgress).catch((error: unknown) => {
+    spanishPromise = null;
+    throw error;
+  });
+  return spanishPromise;
+}
+
+/** Spanish neural voice: MMS TTS (VITS) running locally. */
+export async function spanishClip(text: string, onProgress?: (message: string) => void): Promise<SpokenClip> {
+  const tts = await spanish(onProgress);
+  const result = await tts(text);
+  const samples = result.audio instanceof Float32Array ? result.audio : Float32Array.from(result.audio);
+  return { url: URL.createObjectURL(wavBlob(samples, result.sampling_rate)), mime: "audio/wav" };
+}
+
+/** Minimal 16-bit PCM WAV wrapper: the models return raw float samples. */
+function wavBlob(samples: Float32Array, sampleRate: number): Blob {
+  const buffer = new ArrayBuffer(44 + samples.length * 2);
+  const view = new DataView(buffer);
+  const text = (offset: number, value: string) => {
+    for (let index = 0; index < value.length; index += 1) view.setUint8(offset + index, value.charCodeAt(index));
+  };
+  text(0, "RIFF");
+  view.setUint32(4, 36 + samples.length * 2, true);
+  text(8, "WAVE");
+  text(12, "fmt ");
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(34, 16, true);
+  text(36, "data");
+  view.setUint32(40, samples.length * 2, true);
+  let offset = 44;
+  for (let index = 0; index < samples.length; index += 1) {
+    const sample = Math.max(-1, Math.min(1, samples[index] ?? 0));
+    view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
+    offset += 2;
+  }
+  return new Blob([buffer], { type: "audio/wav" });
+}
+
 /**
- * Browser speech engine, used for Spanish and as the fallback. Picks the best
- * installed voice instead of the first one: the neural voices that ship with
- * the system ("Natural", "Neural", "Online") sound far closer to a person than
- * the legacy compact ones.
+ * Browser speech engine, kept only as a last resort when a local model cannot
+ * load. Picks the best installed voice instead of the first one: the neural
+ * voices that ship with the system ("Natural", "Neural", "Online") sound far
+ * closer to a person than the legacy compact ones.
  */
 export function browserSpeak(text: string, lang: SpeechLang, onEnd: () => void): boolean {
   if (!("speechSynthesis" in window)) return false;

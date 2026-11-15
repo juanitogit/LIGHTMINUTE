@@ -651,7 +651,13 @@ export function VisorHud({
         <div className="panel__head">
           <h2 id="visor-voice">Asistente de voz del visor</h2>
           <span className="small muted">
-            {speech.engine === "kokoro" ? "Kokoro TTS" : speech.engine === "browser" ? "Voz del navegador (español)" : "Español/inglés automático"}
+            {speech.engine === "kokoro"
+              ? "Kokoro · inglés"
+              : speech.engine === "spanish"
+                ? "Voz neuronal local · español"
+                : speech.engine === "browser"
+                  ? "Voz del navegador (respaldo)"
+                  : "Español/inglés automático"}
           </span>
         </div>
         <p className="small muted">
@@ -672,8 +678,9 @@ export function VisorHud({
         </div>
         <p className="small muted">
           Habla: el visor responde en voz alta y vuelve a escuchar solo, sin pulsar nada más.
-          Kokoro sintetiza inglés; el español se lee con la mejor voz instalada en el navegador,
-          porque esta versión de Kokoro aún no incluye voces españolas.
+          Kokoro sintetiza el inglés y un modelo VITS español (MMS) el español, ambos en este
+          equipo; el navegador solo interviene si un modelo no puede cargar. La primera vez
+          se descarga el modelo en este equipo.
         </p>
         {!dictation.supported ? (
           <p className="small muted">Este navegador no ofrece dictado por voz; el asistente sigue explicando los valores de la página en pantalla.</p>
